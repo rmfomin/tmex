@@ -9,7 +9,7 @@ import { SimpleEditableTitle } from "./EditableTitle";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { genUniqLocalId } from "../state/actionHelpers";
 import { insertBetween } from "../helpers/fractionalIndexes";
-import { JoinBetaModal } from "./modals/JoinBetaModal";
+// import { JoinBetaModal } from "./modals/JoinBetaModal";
 import { trackStat } from "../helpers/stats";
 
 export function SpacesList(p: {
@@ -62,7 +62,7 @@ export function SpacesList(p: {
   const deleteSpace = (space: ISpace) => {
     const bookmarksCount = space.folders.reduce(
       (count, f) => count + f.items.length,
-      0
+      0,
     );
     const stickersCount = space.widgets?.length ?? 0;
     const totalCount = bookmarksCount + stickersCount;
@@ -79,27 +79,23 @@ export function SpacesList(p: {
   };
 
   const onAddSpace = () => {
-    if (p.betaMode) {
-      const lastSpace = p.spaces.at(-1);
-      const spaceId = genUniqLocalId();
-      dispatch({
-        type: Action.CreateSpace,
-        spaceId: spaceId,
-        title: `New space`,
-        position: insertBetween(lastSpace?.position ?? "", ""),
-      });
+    const lastSpace = p.spaces.at(-1);
+    const spaceId = genUniqLocalId();
+    dispatch({
+      type: Action.CreateSpace,
+      spaceId: spaceId,
+      title: `New space`,
+      position: insertBetween(lastSpace?.position ?? "", ""),
+    });
 
-      dispatch({
-        type: Action.SelectSpace,
-        spaceId: spaceId,
-      });
+    dispatch({
+      type: Action.SelectSpace,
+      spaceId: spaceId,
+    });
 
-      setEditingSpaceId(spaceId);
+    setEditingSpaceId(spaceId);
 
-      trackStat("spaceCreated", { source: "new-space-button" });
-    } else {
-      setJoinBetaModalOpen(true);
-    }
+    trackStat("spaceCreated", { source: "new-space-button" });
   };
 
   return (
@@ -170,9 +166,10 @@ export function SpacesList(p: {
           <PlusIcon />
         </div>
       )}
-      {isJoinBetaModalOpen && (
+
+      {/* {isJoinBetaModalOpen && (
         <JoinBetaModal onClose={() => setJoinBetaModalOpen(false)} />
-      )}
+      )} */}
     </div>
   );
 }
