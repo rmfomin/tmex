@@ -14,9 +14,9 @@ import {
 } from "../helpers/importExportHelpers";
 import { ImportConfirmationModal } from "./modals/ImportConfirmationModal";
 import { trackStat } from "../helpers/stats";
-import { LeaveBetaModal } from "./modals/LeaveBetaModal";
+// import { LeaveBetaModal } from "./modals/LeaveBetaModal";
 import { loadFaviconUrl } from "../helpers/faviconUtils";
-import { JoinBetaModal } from "./modals/JoinBetaModal";
+// import { JoinBetaModal } from "./modals/JoinBetaModal";
 import { ShortcutsModal } from "./modals/ShortcutsModal";
 import { OverrideModal } from "./modals/OverrideModal";
 import { IFolderItem } from "../helpers/types";
@@ -41,115 +41,115 @@ export type OptionsConfig = Array<
   OnClickOption | OnToggleOption | { separator: true }
 >;
 
-export const BetaOptions = (props: { appState: IAppState }) => {
-  const [leavingBetaModalOpen, setLeavingBetaModalOpen] = useState<boolean>(
-    false
-  );
+// export const BetaOptions = (props: { appState: IAppState }) => {
+//   const [leavingBetaModalOpen, setLeavingBetaModalOpen] = useState<boolean>(
+//     false
+//   );
 
-  function onStopBeta() {
-    trackStat("settingsClicked", { settingName: "betaStopped" });
-    setLeavingBetaModalOpen(true);
-  }
+//   function onStopBeta() {
+//     trackStat("settingsClicked", { settingName: "betaStopped" });
+//     setLeavingBetaModalOpen(true);
+//   }
 
-  function onSendFeedbackBeta() {
-    chrome.tabs.create({
-      url:
-        "https://docs.google.com/forms/d/e/1FAIpQLSeA-xs3GjBVNQQEzSbHiGUs1y9_XIo__pQBJKQth737VqAEOw/formResponse",
-      active: true,
-    });
-    trackStat("settingsClicked", { settingName: "sendFeedbackBeta" });
-  }
+//   function onSendFeedbackBeta() {
+//     chrome.tabs.create({
+//       url:
+//         "https://docs.google.com/forms/d/e/1FAIpQLSeA-xs3GjBVNQQEzSbHiGUs1y9_XIo__pQBJKQth737VqAEOw/formResponse",
+//       active: true,
+//     });
+//     trackStat("settingsClicked", { settingName: "sendFeedbackBeta" });
+//   }
 
-  type OnClickOption = {
-    onClick: (e: any) => void;
-    title: string;
-    text: string;
-    hidden?: boolean;
-    isFile?: boolean;
-  };
-  type OnToggleOption = {
-    onToggle: () => void;
-    value: boolean;
-    title: string;
-    text: string;
-    hidden?: boolean;
-  };
-  const options: Array<OnClickOption | OnToggleOption | { separator: true }> = [
-    {
-      onClick: onSendFeedbackBeta,
-      title:
-        "I appreciate honest feedback on what needs to be improved or bug reports. Thanks for your time and support!",
-      text: "Send feedback",
-    },
-    {
-      onClick: onStopBeta,
-      title: "Cancel the beta program and switch to free plan",
-      text: "Cancel Beta program 👋",
-      hidden: !props.appState.betaMode,
-    },
-  ];
+//   type OnClickOption = {
+//     onClick: (e: any) => void;
+//     title: string;
+//     text: string;
+//     hidden?: boolean;
+//     isFile?: boolean;
+//   };
+//   type OnToggleOption = {
+//     onToggle: () => void;
+//     value: boolean;
+//     title: string;
+//     text: string;
+//     hidden?: boolean;
+//   };
+//   const options: Array<OnClickOption | OnToggleOption | { separator: true }> = [
+//     {
+//       onClick: onSendFeedbackBeta,
+//       title:
+//         "I appreciate honest feedback on what needs to be improved or bug reports. Thanks for your time and support!",
+//       text: "Send feedback",
+//     },
+//     {
+//       onClick: onStopBeta,
+//       title: "Cancel the beta program and switch to free plan",
+//       text: "Cancel Beta program 👋",
+//       hidden: !props.appState.betaMode,
+//     },
+//   ];
 
-  return (
-    <>
-      <Options optionsConfig={options} />
-      {leavingBetaModalOpen && (
-        <LeaveBetaModal
-          onClose={() => setLeavingBetaModalOpen(false)}
-          spaces={props.appState.spaces}
-        />
-      )}
-    </>
-  );
-};
+//   return (
+//     <>
+//       <Options optionsConfig={options} />
+//       {leavingBetaModalOpen && (
+//         <LeaveBetaModal
+//           onClose={() => setLeavingBetaModalOpen(false)}
+//           spaces={props.appState.spaces}
+//         />
+//       )}
+//     </>
+//   );
+// };
 
 export const HelpOptions = (p: { appState: IAppState }) => {
   const dispatch = useContext(DispatchContext);
-  const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
+  // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
   const [isShortcutsModalOpen, setShortcutsModalOpen] = useState(false);
 
-  function onSendFeedback() {
-    chrome.tabs.create({
-      url:
-        "https://docs.google.com/forms/d/e/1FAIpQLSeA-xs3GjBVNQQEzSbHiGUs1y9_XIo__pQBJKQth737VqAEOw/formResponse",
-      active: true,
-    });
-    trackStat("settingsClicked", { settingName: "sendFeedback" });
-  }
+  // function onSendFeedback() {
+  //   chrome.tabs.create({
+  //     url:
+  //       "https://docs.google.com/forms/d/e/1FAIpQLSeA-xs3GjBVNQQEzSbHiGUs1y9_XIo__pQBJKQth737VqAEOw/formResponse",
+  //     active: true,
+  //   });
+  //   trackStat("settingsClicked", { settingName: "sendFeedback" });
+  // }
 
-  function onRateInStore() {
-    if (__OVERRIDE_NEWTAB) {
-      chrome.tabs.create({
-        url:
-          "https://chromewebstore.google.com/detail/tabme/jnhiookaaldadiimlgncedhkpmhlmmip/reviews",
-        active: true,
-      });
-    } else {
-      chrome.tabs.create({
-        url:
-          "https://chromewebstore.google.com/detail/tabme-%E2%80%94-version-without-n/jjdbikbbknmhkknpfnlhgpcikbfjldee/reviews",
-        active: true,
-      });
-    }
-    trackStat("settingsClicked", { settingName: "rateInStore" });
-  }
+  // function onRateInStore() {
+  //   if (__OVERRIDE_NEWTAB) {
+  //     chrome.tabs.create({
+  //       url:
+  //         "https://chromewebstore.google.com/detail/tabme/jnhiookaaldadiimlgncedhkpmhlmmip/reviews",
+  //       active: true,
+  //     });
+  //   } else {
+  //     chrome.tabs.create({
+  //       url:
+  //         "https://chromewebstore.google.com/detail/tabme-%E2%80%94-version-without-n/jjdbikbbknmhkknpfnlhgpcikbfjldee/reviews",
+  //       active: true,
+  //     });
+  //   }
+  //   trackStat("settingsClicked", { settingName: "rateInStore" });
+  // }
 
-  function onHowToUse() {
-    chrome.tabs.create({
-      url: "https://gettabme.com/guide.html",
-      active: true,
-    });
-    trackStat("settingsClicked", { settingName: "HowToUse" });
-  }
+  // function onHowToUse() {
+  //   chrome.tabs.create({
+  //     url: "https://gettabme.com/guide.html",
+  //     active: true,
+  //   });
+  //   trackStat("settingsClicked", { settingName: "HowToUse" });
+  // }
 
   function showShortcutsModal() {
     setShortcutsModalOpen(true);
     trackStat("settingsClicked", { settingName: "shortcuts" });
   }
 
-  function tryBeta() {
-    setJoinBetaModalOpen(true);
-    trackStat("settingsClicked", { settingName: "tryBeta" });
-  }
+  // function tryBeta() {
+  //   setJoinBetaModalOpen(true);
+  //   trackStat("settingsClicked", { settingName: "tryBeta" });
+  // }
 
   function invalidateFavicon(folderItem: IFolderItem): Promise<void> {
     if (folderItem.url) {
@@ -174,7 +174,7 @@ export const HelpOptions = (p: { appState: IAppState }) => {
   function invalidateBrokenIcons() {
     const promises: Promise<unknown>[] = [minTimeoutPromise()];
     const currentSpace = p.appState.spaces.find(
-      (s) => s.id === p.appState.currentSpaceId
+      (s) => s.id === p.appState.currentSpaceId,
     );
     if (currentSpace) {
       currentSpace.folders.forEach((f) => {
@@ -195,6 +195,7 @@ export const HelpOptions = (p: { appState: IAppState }) => {
     hidden?: boolean;
     isFile?: boolean;
   };
+
   type OnToggleOption = {
     onToggle: () => void;
     value: boolean;
@@ -202,14 +203,15 @@ export const HelpOptions = (p: { appState: IAppState }) => {
     text: string;
     hidden?: boolean;
   };
+
   const settingsOptions: Array<
     OnClickOption | OnToggleOption | { separator: true }
   > = [
-    {
-      onClick: onHowToUse,
-      title: "Learn more about Tabme. There is a lot of hidden functionality",
-      text: "Guide: How to use",
-    },
+    // {
+    //   onClick: onHowToUse,
+    //   title: "Learn more about Tabme. There is a lot of hidden functionality",
+    //   text: "Guide: How to use",
+    // },
     {
       onClick: showShortcutsModal,
       title: "Keyboard shortcuts",
@@ -220,36 +222,38 @@ export const HelpOptions = (p: { appState: IAppState }) => {
       title:
         "Sometimes favicons are not showing, this option may help to fix it. Applied only for bookmarks in the current space.",
       text: "Reload favicons",
-      hidden: !p.appState.alphaMode,
+      // hidden: !p.appState.alphaMode,
     },
-    {
-      onClick: onRateInStore,
-      title: "Thank you for using Tabme 🖤",
-      text: "Rate Tabme in Chrome Store",
-    },
-    {
-      onClick: onSendFeedback,
-      title: "I appreciate any feedback, ideas and bug reports.",
-      text: "Send feedback",
-    },
+    // {
+    //   onClick: onRateInStore,
+    //   title: "Thank you for using Tabme 🖤",
+    //   text: "Rate Tabme in Chrome Store",
+    // },
+    // {
+    //   onClick: onSendFeedback,
+    //   title: "I appreciate any feedback, ideas and bug reports.",
+    //   text: "Send feedback",
+    // },
     {
       separator: true,
       hidden: p.appState.betaMode,
     },
-    {
-      onClick: tryBeta,
-      title: "Join Beta",
-      text: "Try new functionality [Beta]",
-      hidden: p.appState.betaMode,
-    },
+    // {
+    //   onClick: tryBeta,
+    //   title: "Join Beta",
+    //   text: "Try new functionality [Beta]",
+    //   hidden: p.appState.betaMode,
+    // },
   ];
 
   return (
     <>
       <Options optionsConfig={settingsOptions} />
-      {isJoinBetaModalOpen && (
+
+      {/* {isJoinBetaModalOpen && (
         <JoinBetaModal onClose={() => setJoinBetaModalOpen(false)} />
-      )}
+      )} */}
+
       {isShortcutsModalOpen && (
         <ShortcutsModal setOpen={setShortcutsModalOpen} />
       )}
@@ -273,7 +277,7 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
         dispatch({ type: Action.UpdateShowNotUsedItems, value: true });
         showMessage(
           "Unused items for the past 60 days are highlighted",
-          dispatch
+          dispatch,
         );
       } else {
         showErrorMessage(`There are no unused items to highlight`, dispatch);
