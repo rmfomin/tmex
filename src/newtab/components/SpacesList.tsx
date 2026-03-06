@@ -21,7 +21,7 @@ export function SpacesList(p: {
   const dispatch = useContext(DispatchContext);
 
   const [menuSpaceId, setMenuSpaceId] = useState(-1);
-  const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
+  // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
 
   const setEditingSpaceId = (spaceId: number | undefined) => {
     dispatch({

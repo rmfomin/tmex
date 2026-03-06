@@ -18,7 +18,7 @@ import { trackStat } from "../helpers/stats";
 import { loadFaviconUrl } from "../helpers/faviconUtils";
 // import { JoinBetaModal } from "./modals/JoinBetaModal";
 import { ShortcutsModal } from "./modals/ShortcutsModal";
-import { OverrideModal } from "./modals/OverrideModal";
+// import { OverrideModal } from "./modals/OverrideModal";
 import { IFolderItem } from "../helpers/types";
 import { CL } from "../helpers/classNameHelper";
 
@@ -266,7 +266,7 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
   const fileEvent = useRef(null);
   const dispatch = useContext(DispatchContext);
 
-  const [isOverrideModalOpen, setOverrideModalOpen] = useState(false);
+  // const [isOverrideModalOpen, setOverrideModalOpen] = useState(false);
 
   function onToggleNotUsed() {
     if (p.appState.showNotUsed) {
@@ -379,17 +379,17 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
         "You can also open bookmarks on the new tab with pressed CMD or CTRL",
       text: "Open bookmarks on the same tab",
     },
-    {
-      title: "Manage browser new tab override by Tabme",
-      onToggle: () => {
-        setOverrideModalOpen(true);
-        trackStat("settingsClicked", {
-          settingName: "toggleShowTabmeOnEachNewTab",
-        });
-      },
-      value: __OVERRIDE_NEWTAB,
-      text: "Show Tabme on each new tab",
-    },
+    // {
+    //   title: "Manage browser new tab override by Tabme",
+    //   onToggle: () => {
+    //     setOverrideModalOpen(true);
+    //     trackStat("settingsClicked", {
+    //       settingName: "toggleShowTabmeOnEachNewTab",
+    //     });
+    //   },
+    //   value: __OVERRIDE_NEWTAB,
+    //   text: "Show Tabme on each new tab",
+    // },
     {
       separator: true,
     },
@@ -432,10 +432,12 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
   return (
     <>
       <Options optionsConfig={settingsOptions} />
+
       {importConfirmationOpen && (
         <ImportConfirmationModal onClose={onImportTypeConfirmed} />
       )}
-      {isOverrideModalOpen && <OverrideModal setOpen={setOverrideModalOpen} />}
+
+      {/* {isOverrideModalOpen && <OverrideModal setOpen={setOverrideModalOpen} />} */}
     </>
   );
 };
