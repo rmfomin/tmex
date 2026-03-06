@@ -3,27 +3,29 @@ import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { handleSearchKeyDown } from "../helpers/handleBookmarksKeyDown";
 import { Action, IAppState } from "../state/state";
 import { DispatchContext } from "../state/actions";
-import { BetaOptions, HelpOptions, SettingsOptions } from "./SettingsOptions";
+// import { BetaOptions } from "./SettingsOptions";
+import { HelpOptions, SettingsOptions } from "./SettingsOptions";
 import { CL } from "../helpers/classNameHelper";
 import IconHelp from "../icons/help.svg";
 import IconSettings from "../icons/settings.svg";
 import IconFind from "../icons/find.svg";
-import IconBeta from "../icons/beta.svg";
-import IconGift from "../icons/gift.svg";
+// import IconBeta from "../icons/beta.svg";
+// import IconGift from "../icons/gift.svg";
 import { SpacesList } from "./SpacesList";
-import { WhatsNewModal } from "./modals/WhatsNewModal";
-import { WhatsNew } from "../helpers/whats-new";
+// import { WhatsNewModal } from "./modals/WhatsNewModal";
+// import { WhatsNew } from "../helpers/whats-new";
 
 export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
   const dispatch = useContext(DispatchContext);
-  const [betaMenuVisibility, setBetaMenuVisibility] = useState<boolean>(false);
+  // const [betaMenuVisibility, setBetaMenuVisibility] = useState<boolean>(false);
   const [settingsMenuVisibility, setSettingsMenuVisibility] = useState<boolean>(
-    false
+    false,
   );
   const [helpMenuVisibility, setHelpMenuVisibility] = useState<boolean>(false);
-  const [whatsNewForModal, setWhatsNewForModal] = useState<
-    WhatsNew | undefined
-  >(undefined);
+
+  // const [whatsNewForModal, setWhatsNewForModal] = useState<
+  //   WhatsNew | undefined
+  // >(undefined);
 
   function onToggleHelpSettings() {
     setHelpMenuVisibility(!helpMenuVisibility);
@@ -41,13 +43,13 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
     dispatch({ type: Action.UpdateSearch, value: "" });
   }
 
-  function toggleBetaMenu() {
-    setBetaMenuVisibility(!betaMenuVisibility);
-  }
+  // function toggleBetaMenu() {
+  //   setBetaMenuVisibility(!betaMenuVisibility);
+  // }
 
-  function onWhatsNewClick() {
-    setWhatsNewForModal(p.appState.currentWhatsNew);
-  }
+  // function onWhatsNewClick() {
+  //   setWhatsNewForModal(p.appState.currentWhatsNew);
+  // }
 
   async function onLogout() {
     localStorage.removeItem("authToken");
@@ -63,6 +65,7 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
       {p.appState.search && (
         <div className="search-results-header">Search results:</div>
       )}
+
       {!p.appState.search && (
         <SpacesList
           betaMode={p.appState.betaMode}
@@ -71,15 +74,18 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
           itemInEdit={p.appState.itemInEdit}
         />
       )}
+
       <div className="menu-stretching-space"></div>
-      {p.appState.currentWhatsNew && (
+
+      {/* {p.appState.currentWhatsNew && (
         <div className="whats-new" onClick={onWhatsNewClick}>
           <IconGift />
           <div className="whats-new__text">
             {p.appState.currentWhatsNew.buttonText}
           </div>
         </div>
-      )}
+      )} */}
+
       <div
         style={{ display: "flex", marginRight: "12px", position: "relative" }}
       >
@@ -106,7 +112,7 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
       </div>
 
       <div className="menu-buttons">
-        {p.appState.betaMode && (
+        {/* {p.appState.betaMode && (
           <>
             <span
               className={CL("beta-mode-label", { active: betaMenuVisibility })}
@@ -128,19 +134,22 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
               </DropdownMenu>
             )}
           </>
-        )}
+        )} */}
+
         <button
           className={`btn__icon ${helpMenuVisibility ? "active" : ""}`}
           onClick={onToggleHelpSettings}
         >
           <IconHelp />
         </button>
+
         <button
           className={`btn__icon ${settingsMenuVisibility ? "active" : ""}`}
           onClick={onToggleSettings}
         >
           <IconSettings />
         </button>
+
         {helpMenuVisibility && (
           <DropdownMenu
             onClose={() => {
@@ -153,6 +162,7 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
             <HelpOptions appState={p.appState} />
           </DropdownMenu>
         )}
+
         {settingsMenuVisibility && (
           <DropdownMenu
             onClose={() => {
@@ -166,14 +176,14 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
           </DropdownMenu>
         )}
 
-        {whatsNewForModal && (
+        {/* {whatsNewForModal && (
           <WhatsNewModal
             onClose={() => setWhatsNewForModal(undefined)}
             whatsNew={whatsNewForModal}
             isBeta={p.appState.betaMode}
             firstSessionDate={p.appState.stat?.firstSessionDate}
           />
-        )}
+        )} */}
       </div>
     </div>
   );
