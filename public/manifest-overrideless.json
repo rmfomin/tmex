@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "short_name": "Tabme",
-  "name": "Tab and Bookmark Manager | Tabme Mini",
-  "description": "The easiest Tab and Bookmark Manager with built-in Sticky Notes.",
+  "short_name": "Tmex",
+  "name": "Tmex",
+  "description": "Tmex",
+  "default_locale": "ru",
   "version": "1.37.0",
-  "author": "gettabme@gmail.com",
+  "author": "tmex@gmail.com",
   "icons": {
     "16": "icon_16.png",
     "32": "icon_32.png",
@@ -17,15 +18,8 @@
   },
   "action": {
     "default_icon": "icon_48.png",
-    "default_title": "Open Tabme"
+    "default_title": "Tmex"
   },
-  "permissions": [
-    "bookmarks",
-    "storage",
-    "history",
-    "tabs"
-  ],
-  "optional_host_permissions": [
-    "<all_urls>"
-  ]
+  "permissions": ["bookmarks", "storage", "history", "tabs"],
+  "optional_host_permissions": ["<all_urls>"]
 }

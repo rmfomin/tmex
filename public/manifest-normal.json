@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "short_name": "Tabme",
-  "name": "__MSG_extName__",
-  "description": "__MSG_extDesc__",
-  "default_locale": "en",
+  "short_name": "Tmex",
+  "name": "Tmex",
+  "description": "Tmex",
+  "default_locale": "ru",
   "version": "1.37.0",
-  "author": "gettabme@gmail.com",
+  "author": "tmex@gmail.com",
   "icons": {
     "16": "icon_16.png",
     "32": "icon_32.png",
@@ -18,18 +18,11 @@
   },
   "action": {
     "default_icon": "icon_48.png",
-    "default_title": "__MSG_extDefaultTitle__"
+    "default_title": "Tmex"
   },
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
-  "permissions": [
-    "bookmarks",
-    "storage",
-    "history",
-    "tabs"
-  ],
-  "optional_host_permissions": [
-    "<all_urls>"
-  ]
+  "permissions": ["bookmarks", "storage", "history", "tabs"],
+  "optional_host_permissions": ["<all_urls>"]
 }
