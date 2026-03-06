@@ -1,20 +1,25 @@
-import React, { useState } from "react"
-import { Modal } from "./Modal"
+import React, { useState } from "react";
+import { Modal } from "./Modal";
 
-export const ImportConfirmationModal = (p: { onClose: (opt: string) => void }) => {
-  const [importOption, setImportOption] = useState("add")
+export const ImportConfirmationModal = (p: {
+  onClose: (opt: string) => void;
+}) => {
+  const [importOption, setImportOption] = useState("add");
 
   // todo improve this logic later
   const handleOptionChange = (event: any) => {
-    setImportOption(event.target.value)
-  }
+    setImportOption(event.target.value);
+  };
 
   const handleSubmit = () => {
-    p.onClose(importOption)
-  }
+    p.onClose(importOption);
+  };
 
   return (
-    <Modal className="spaces-settings-modal" onClose={() => p.onClose(importOption)}>
+    <Modal
+      className="spaces-settings-modal"
+      onClose={() => p.onClose(importOption)}
+    >
       {/*<h2>How to add imported bookmarks?</h2>*/}
       {/*<p>*/}
       {/*  <label>*/}
@@ -45,9 +50,25 @@ export const ImportConfirmationModal = (p: { onClose: (opt: string) => void }) =
       {/*    Done*/}
       {/*  </button>*/}
       {/*</p>*/}
-      <h2>Importing JSON backup will replace <br/>all current bookmarks</h2>
-      <button className="btn__setting" style={{ float: "right" }} onClick={() => p.onClose('cancel')}>Cancel</button>
-      <button className="btn__setting primary" style={{ float: "right" }} onClick={() => p.onClose('import')} autoFocus={true}>Import</button>
+      <h2>
+        Importing JSON backup will replace <br />
+        all current bookmarks
+      </h2>
+      <button
+        className="btn__setting"
+        style={{ float: "right" }}
+        onClick={() => p.onClose("cancel")}
+      >
+        Cancel
+      </button>
+      <button
+        className="btn__setting primary"
+        style={{ float: "right" }}
+        onClick={() => p.onClose("import")}
+        autoFocus={true}
+      >
+        Import
+      </button>
     </Modal>
-  )
-}
+  );
+};

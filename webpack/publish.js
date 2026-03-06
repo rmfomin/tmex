@@ -35,7 +35,9 @@ const updateVersionInManifest = (isPatch, manifestFile) => {
 // Function to build the project with the specified environment
 const buildProject = (env) => {
   console.log(`Building project with BUILD_TYPE=${env.BUILD_TYPE}...`);
-  execSync(`npm run build -- --env BUILD_TYPE=${env.BUILD_TYPE}`, { stdio: "inherit" });
+  execSync(`npm run build -- --env BUILD_TYPE=${env.BUILD_TYPE}`, {
+    stdio: "inherit",
+  });
   console.log(`Build completed for BUILD_TYPE=${env.BUILD_TYPE}`);
 };
 
@@ -52,8 +54,8 @@ const zipDistFolder = (version, buildType, onCompleted) => {
   output.on("close", () => {
     console.log(`${archive.pointer()} total bytes`);
     console.log(`Archive ${zipName} created successfully`);
-    if(onCompleted) {
-      onCompleted()
+    if (onCompleted) {
+      onCompleted();
     }
   });
 
@@ -75,23 +77,27 @@ const main = async () => {
     execSync(`npm run clean`);
 
     // Step 1: Update version in manifest.json for tabme
-    let newVersion = updateVersionInManifest(isPatch, 'manifest-normal.json')
+    let newVersion = updateVersionInManifest(isPatch, "manifest-normal.json");
     // Step 2: Build the test version (window.isTest = true)
     buildProject({ BUILD_TYPE: "normal" });
     // Step 3: Zip the test version
     zipDistFolder(newVersion, "normal", () => {
-
       // now build without new tab
       // Step: Clean
       execSync(`npm run clean`);
 
       // Step 4: Update version in manifest.json for tabme - version without newtab
-      newVersion = updateVersionInManifest(isPatch, 'manifest-overrideless.json')
+      newVersion = updateVersionInManifest(
+        isPatch,
+        "manifest-overrideless.json"
+      );
       // // Step 5: Build the prod version (window.isTest = false)
       buildProject({ BUILD_TYPE: "overrideless" });
       // // Step 6: Zip the prod version
       zipDistFolder(newVersion, "overrideless", () => {
-        console.log("Don't forget to update \"What's new\" in the ChromeStore admin panel.");
+        console.log(
+          "Don't forget to update \"What's new\" in the ChromeStore admin panel."
+        );
       });
     });
   } catch (error) {

@@ -1,58 +1,62 @@
-import { IFolderItem } from "./types"
-import { getGlobalAppState } from "../components/App"
-import { findItemById } from "../state/actionHelpers"
+import { IFolderItem } from "./types";
+import { getGlobalAppState } from "../components/App";
+import { findItemById } from "../state/actionHelpers";
 
-let selectedItemsElements: HTMLElement[] = []
-const SELECTOR = `folder-item--selected`
-const FIRST_SELECTOR = `folder-item--first-selected`
+let selectedItemsElements: HTMLElement[] = [];
+const SELECTOR = `folder-item--selected`;
+const FIRST_SELECTOR = `folder-item--first-selected`;
 
-const INNER_SELECTOR = `folder-item__inner--selected`
+const INNER_SELECTOR = `folder-item__inner--selected`;
 
 export function selectItems(elements: HTMLElement[]) {
-  unselectAllItems()
+  unselectAllItems();
 
   elements.forEach((el: HTMLElement) => {
-    el.classList.add(INNER_SELECTOR)
-    el.parentElement?.classList.add(SELECTOR)
-  })
+    el.classList.add(INNER_SELECTOR);
+    el.parentElement?.classList.add(SELECTOR);
+  });
 
-  const prevSelectedElement = document.querySelector(`.${FIRST_SELECTOR}`)
-  const newFirstSelectedElement = document.querySelector(`.${SELECTOR}`)
-  if (newFirstSelectedElement && prevSelectedElement !== newFirstSelectedElement) {
-    newFirstSelectedElement.classList.add(FIRST_SELECTOR)
+  const prevSelectedElement = document.querySelector(`.${FIRST_SELECTOR}`);
+  const newFirstSelectedElement = document.querySelector(`.${SELECTOR}`);
+  if (
+    newFirstSelectedElement &&
+    prevSelectedElement !== newFirstSelectedElement
+  ) {
+    newFirstSelectedElement.classList.add(FIRST_SELECTOR);
   }
   if (prevSelectedElement) {
-    prevSelectedElement.classList.remove(FIRST_SELECTOR)
+    prevSelectedElement.classList.remove(FIRST_SELECTOR);
   }
 
-  selectedItemsElements = elements
+  selectedItemsElements = elements;
 }
 
 function unselectItemForced(el: HTMLElement) {
-  el.classList.remove(INNER_SELECTOR)
-  el.parentElement?.classList.remove(SELECTOR)
-  document.querySelector(`.${FIRST_SELECTOR}`)?.classList.remove(FIRST_SELECTOR)
+  el.classList.remove(INNER_SELECTOR);
+  el.parentElement?.classList.remove(SELECTOR);
+  document
+    .querySelector(`.${FIRST_SELECTOR}`)
+    ?.classList.remove(FIRST_SELECTOR);
 }
 
 export function unselectAllItems() {
-  selectedItemsElements.forEach(item => unselectItemForced(item))
-  selectedItemsElements.length = 0
+  selectedItemsElements.forEach((item) => unselectItemForced(item));
+  selectedItemsElements.length = 0;
 }
 
 export function getSelectedItemsElements(): HTMLElement[] {
-  return selectedItemsElements
+  return selectedItemsElements;
 }
 
 export function getSelectedItemsIds(): number[] {
-  return selectedItemsElements.map(el => getId(el))
+  return selectedItemsElements.map((el) => getId(el));
 }
 
 export function getSelectedItems(): IFolderItem[] {
-  const state = getGlobalAppState()
-  return selectedItemsElements.map(el => findItemById(state, getId(el))!)
+  const state = getGlobalAppState();
+  return selectedItemsElements.map((el) => findItemById(state, getId(el))!);
 }
 
 function getId(el: HTMLElement): number {
-  return parseInt(el.dataset.id || "", 10)
+  return parseInt(el.dataset.id || "", 10);
 }
-

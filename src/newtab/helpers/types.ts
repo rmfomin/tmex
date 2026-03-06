@@ -1,58 +1,60 @@
 export interface IObject {
-  id: number // local id
-  remoteId?: number // server id
-  position: string
+  id: number; // local id
+  remoteId?: number; // server id
+  position: string;
 }
 
 export interface ISpace extends IObject {
-  title: string
-  folders: IFolder[]
-  widgets?: IWidget[]
+  title: string;
+  folders: IFolder[];
+  widgets?: IWidget[];
 }
 
 export interface IFolder extends IObject {
-  title: string
-  items: IFolderItem[]
-  color?: string
-  twoColumn?: boolean
-  archived?: boolean
+  title: string;
+  items: IFolderItem[];
+  color?: string;
+  twoColumn?: boolean;
+  archived?: boolean;
 }
 
 export interface IFolderItem extends IObject {
-  favIconUrl: string
-  title: string
-  url: string
-  archived?: boolean
-  isSection?: boolean // todo - replace on "type later". not store bool on server
-  inEdit?: boolean
+  favIconUrl: string;
+  title: string;
+  url: string;
+  archived?: boolean;
+  isSection?: boolean; // todo - replace on "type later". not store bool on server
+  inEdit?: boolean;
 }
 
-export type WidgetType = "Sticker"
-
+export type WidgetType = "Sticker";
 
 export type IWidgetPos = {
   point: {
-    x: number,
-    y: number
-  }
-}
+    x: number;
+    y: number;
+  };
+};
 
 export type IWidgetContent = {
-  contentType: "Sticker"
-  text: string
-  color: string
-  fontSize: number
-  strikethrough?: boolean
-}
+  contentType: "Sticker";
+  text: string;
+  color: string;
+  fontSize: number;
+  strikethrough?: boolean;
+};
 
 export interface IWidget extends IObject {
-  widgetType: WidgetType
-  pos: IWidgetPos // this is actual {x,y} position for widgets
-  content: IWidgetContent
+  widgetType: WidgetType;
+  pos: IWidgetPos; // this is actual {x,y} position for widgets
+  content: IWidgetContent;
 }
 
 // Data for not yet created FolderItem
-export type IFolderItemToCreate = Pick<IFolderItem, "id" | "favIconUrl" | "url" | "title" | "isSection"> & { position?: string }
+export type IFolderItemToCreate = Pick<
+  IFolderItem,
+  "id" | "favIconUrl" | "url" | "title" | "isSection"
+> & { position?: string };
 
 // undefined === 'system'
-export type ColorTheme = "light" | "dark" | undefined
+export type ColorTheme = "light" | "dark" | undefined;

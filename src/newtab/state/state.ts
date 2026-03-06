@@ -1,63 +1,71 @@
-import { ActionDispatcher } from "./actions"
-import { ColorTheme, IFolder, IFolderItem, IFolderItemToCreate, ISpace, IWidgetContent, IWidgetPos } from "../helpers/types"
-import { ISavingAppState } from "./storage"
-import { RecentItem } from "../helpers/recentHistoryUtils"
-import { WhatsNew } from "../helpers/whats-new"
-import Tab = chrome.tabs.Tab
+import { ActionDispatcher } from "./actions";
+import {
+  ColorTheme,
+  IFolder,
+  IFolderItem,
+  IFolderItemToCreate,
+  ISpace,
+  IWidgetContent,
+  IWidgetPos,
+} from "../helpers/types";
+import { ISavingAppState } from "./storage";
+import { RecentItem } from "../helpers/recentHistoryUtils";
+import { WhatsNew } from "../helpers/whats-new";
+import Tab = chrome.tabs.Tab;
 
 export type IAppStats = {
-  sessionNumber: number
-  firstSessionDate: number
-  lastVersion: string // need to update
-}
+  sessionNumber: number;
+  firstSessionDate: number;
+  lastVersion: string; // need to update
+};
 
 export type IAppAchievements = {
   // folders
-  folderCreated: number
-  folderRenamed: number
-  folderColorChanged: number
-  folderDeleted: number
-  folderDragged: number
+  folderCreated: number;
+  folderRenamed: number;
+  folderColorChanged: number;
+  folderDeleted: number;
+  folderDragged: number;
 
   // bookmark items
-  itemDraggedFromSidebar: number
-  itemRenamed: number
-  itemCopiedUrl: number
-  itemEditedUrl: number
-  itemArchived: number
-  itemUnarchived: number
+  itemDraggedFromSidebar: number;
+  itemRenamed: number;
+  itemCopiedUrl: number;
+  itemEditedUrl: number;
+  itemArchived: number;
+  itemUnarchived: number;
 
   // sections
-  sectionAddedFromSidebar: number
-  sectionAddedFromFolder: number
+  sectionAddedFromSidebar: number;
+  sectionAddedFromFolder: number;
 
   // cleanup
-  cleanupUsed: number
+  cleanupUsed: number;
 
   // showArchived
-  archivedItemsShowed: number
+  archivedItemsShowed: number;
 
   // todo add more
-}
+};
 
 export type APICommand = {
-  id: string
-  status: string
-  apiAction: string
-  body: any
-}
+  id: string;
+  status: string;
+  apiAction: string;
+  body: any;
+};
 
 export type UndoStep = {
-  id: number,
-  subSteps: ActionPayload[]
-}
+  id: number;
+  subSteps: ActionPayload[];
+};
 
 export type IAppState = {
-  spaces: ISpace[], // Stored in LS
-  currentSpaceId: number // Stored in LS
+  spaces: ISpace[]; // Stored in LS
+  currentSpaceId: number; // Stored in LS
 
   tabs: Tab[];
-  currentWindowId: number | undefined
+  currentWindowId: number | undefined;
   recentItems: RecentItem[];
   notification: {
     visible: boolean;
@@ -66,9 +74,9 @@ export type IAppState = {
     isLoading?: boolean;
     button?: { onClick?: () => void; text: string };
   };
-  lastActiveTabIds: number[]
+  lastActiveTabIds: number[];
   search: string;
-  itemInEdit: undefined | number, //can be item or folder or space
+  itemInEdit: undefined | number; //can be item or folder or space
   showRecent: boolean; // Stored in LS
   showArchived: boolean; // Stored in LS
   showNotUsed: boolean; // Stored in LS
@@ -76,35 +84,35 @@ export type IAppState = {
   sidebarCollapsed: boolean; // Stored in LS
   colorTheme?: ColorTheme; // Stored in LS
   sidebarHovered: boolean; // for hover effects
-  alphaMode: boolean
-  betaMode: boolean
-  page: "default" | "import" | "welcome",
-  stat: IAppStats | undefined // Stored in LS
-  achievements: IAppAchievements  // Stored in LS
-  loaded: boolean
+  alphaMode: boolean;
+  betaMode: boolean;
+  page: "default" | "import" | "welcome";
+  stat: IAppStats | undefined; // Stored in LS
+  achievements: IAppAchievements; // Stored in LS
+  loaded: boolean;
 
-  selectedWidgetIds: number[]
-  editingWidgetId: number | undefined
+  selectedWidgetIds: number[];
+  editingWidgetId: number | undefined;
 
-  currentWhatsNew: WhatsNew | undefined
+  currentWhatsNew: WhatsNew | undefined;
 
   // API
-  apiCommandsQueue: APICommandPayloadFull[],
-  apiCommandId?: number
-  apiLastError?: string
+  apiCommandsQueue: APICommandPayloadFull[];
+  apiCommandId?: number;
+  apiLastError?: string;
 
   // undo actions (some single actions can be reverted only by set of actions)
-  undoSteps: UndoStep[]
+  undoSteps: UndoStep[];
 
   // saved data format version
-  version: number
+  version: number;
 
   /**
    * depracated. DONT USE
    */
-  folders: IFolder[]
-  hiddenFeatureIsEnabled: boolean
-}
+  folders: IFolder[];
+  hiddenFeatureIsEnabled: boolean;
+};
 
 let initState: IAppState = {
   version: 2,
@@ -137,7 +145,7 @@ let initState: IAppState = {
   stat: {
     sessionNumber: 0,
     firstSessionDate: 0,
-    lastVersion: ""
+    lastVersion: "",
   },
   hiddenFeatureIsEnabled: false,
   apiCommandsQueue: [],
@@ -165,16 +173,16 @@ let initState: IAppState = {
     cleanupUsed: 0,
 
     // showArchived
-    archivedItemsShowed: 0
-  }
-}
+    archivedItemsShowed: 0,
+  },
+};
 
 export function setInitAppState(savedState: ISavingAppState): void {
-  initState = { ...initState, ...savedState }
+  initState = { ...initState, ...savedState };
 }
 
 export function getInitAppState(): IAppState {
-  return initState
+  return initState;
 }
 
 export enum Action {
@@ -234,66 +242,166 @@ export enum Action {
   APIConfirmEntityCreated = "api-confirm-entity-created",
 }
 
-export type APICommandPayload = (
+export type APICommandPayload =
   | { type: Action.CreateFolder; body: { folder: Partial<IFolder> } }
   | { type: Action.DeleteFolder; body: { folderId: number } }
-  | { type: Action.UpdateFolder; body: { folderId: number, folder: Partial<IFolder> } }
-  | { type: Action.MoveFolder; body: { folderId: number, position: string } }
-
-  | { type: Action.CreateFolderItem; body: { folderId: number, item: IFolderItem } }
+  | {
+      type: Action.UpdateFolder;
+      body: { folderId: number; folder: Partial<IFolder> };
+    }
+  | { type: Action.MoveFolder; body: { folderId: number; position: string } }
+  | {
+      type: Action.CreateFolderItem;
+      body: { folderId: number; item: IFolderItem };
+    }
   | { type: Action.DeleteFolderItems; body: { folderItemIds: number[] } }
-  | { type: Action.UpdateFolderItem; body: { folderItemId: number, item: Partial<IFolderItem> } }
-  | { type: Action.MoveFolderItems; body: { folderId: number, items: { folderItemId: number, position: string }[] } }
-  )
+  | {
+      type: Action.UpdateFolderItem;
+      body: { folderItemId: number; item: Partial<IFolderItem> };
+    }
+  | {
+      type: Action.MoveFolderItems;
+      body: {
+        folderId: number;
+        items: { folderItemId: number; position: string }[];
+      };
+    };
 
-export type APICommandPayloadFull = APICommandPayload & { commandId: number, rollbackState: IAppState }
-export type HistoryActionPayload = { byUndo?: boolean, historyStepId?: number }
+export type APICommandPayloadFull = APICommandPayload & {
+  commandId: number;
+  rollbackState: IAppState;
+};
+export type HistoryActionPayload = { byUndo?: boolean; historyStepId?: number };
 export type ActionPayload = (
-  | { type: Action.Undo, dispatch: ActionDispatcher }
-  | { type: Action.ShowNotification; message: string; button?: { onClick?: () => void; text: string }; isError?: boolean, isLoading?: boolean }
+  | { type: Action.Undo; dispatch: ActionDispatcher }
+  | {
+      type: Action.ShowNotification;
+      message: string;
+      button?: { onClick?: () => void; text: string };
+      isError?: boolean;
+      isLoading?: boolean;
+    }
   | { type: Action.HideNotification }
   | { type: Action.UpdateSearch; value: string }
-  | { type: Action.InitDashboard; spaces?: ISpace[], sidebarCollapsed?: boolean, saveToLS?: boolean, init?: boolean }
-  | { type: Action.UpdateTab; tabId: number; opt: Tab; }
+  | {
+      type: Action.InitDashboard;
+      spaces?: ISpace[];
+      sidebarCollapsed?: boolean;
+      saveToLS?: boolean;
+      init?: boolean;
+    }
+  | { type: Action.UpdateTab; tabId: number; opt: Tab }
   | { type: Action.CloseTabs; tabIds: number[] }
   | { type: Action.SetTabsOrHistory; tabs?: Tab[]; recentItems?: RecentItem[] }
   | { type: Action.ToggleDarkMode }
   | { type: Action.UpdateShowArchivedItems; value: boolean }
   | { type: Action.UpdateShowNotUsedItems; value: boolean }
   | { type: Action.FixBrokenIcons }
-  | { type: Action.SelectSpace; spaceId?: number, spaceIndex?: number } // !!! стоить ли очищать стикеры когда свайпишься?
+  | { type: Action.SelectSpace; spaceId?: number; spaceIndex?: number } // !!! стоить ли очищать стикеры когда свайпишься?
   | { type: Action.SwipeSpace; direction: "left" | "right" } // !!! стоить ли очищать стикеры когда свайпишься?
   | { type: Action.UpdateAppState; newState: Partial<IAppState> }
-
-  | { type: Action.CreateSpace; spaceId: number; title: string; position?: string }
-  | { type: Action.DeleteSpace; spaceId: number; }
-  | { type: Action.MoveSpace; spaceId: number; insertBeforeSpaceId: number | undefined; }
-  | { type: Action.UpdateSpace; spaceId: number; title?: string; position?: string; }
-
-  | { type: Action.CreateFolder; newFolderId?: number; title?: string; color?: string; position?: string; items?: IFolderItemToCreate[]; spaceId?: number, folderType?: string }
-  | { type: Action.DeleteFolder; folderId: number; }
-  | { type: Action.UpdateFolder; folderId: number; title?: string; color?: string; archived?: boolean; twoColumn?: boolean; position?: string }
-  | { type: Action.MoveFolder; folderId: number; targetSpaceId: number, insertBeforeFolderId: number | undefined; }
-
-  | { type: Action.CreateFolderItem; folderId: number; insertBeforeItemId: number | undefined; item: IFolderItemToCreate; }
-  | { type: Action.CreateFolderItems; folderId: number; items: IFolderItemToCreate[]; }
+  | {
+      type: Action.CreateSpace;
+      spaceId: number;
+      title: string;
+      position?: string;
+    }
+  | { type: Action.DeleteSpace; spaceId: number }
+  | {
+      type: Action.MoveSpace;
+      spaceId: number;
+      insertBeforeSpaceId: number | undefined;
+    }
+  | {
+      type: Action.UpdateSpace;
+      spaceId: number;
+      title?: string;
+      position?: string;
+    }
+  | {
+      type: Action.CreateFolder;
+      newFolderId?: number;
+      title?: string;
+      color?: string;
+      position?: string;
+      items?: IFolderItemToCreate[];
+      spaceId?: number;
+      folderType?: string;
+    }
+  | { type: Action.DeleteFolder; folderId: number }
+  | {
+      type: Action.UpdateFolder;
+      folderId: number;
+      title?: string;
+      color?: string;
+      archived?: boolean;
+      twoColumn?: boolean;
+      position?: string;
+    }
+  | {
+      type: Action.MoveFolder;
+      folderId: number;
+      targetSpaceId: number;
+      insertBeforeFolderId: number | undefined;
+    }
+  | {
+      type: Action.CreateFolderItem;
+      folderId: number;
+      insertBeforeItemId: number | undefined;
+      item: IFolderItemToCreate;
+    }
+  | {
+      type: Action.CreateFolderItems;
+      folderId: number;
+      items: IFolderItemToCreate[];
+    }
   | { type: Action.DeleteFolderItems; itemIds: number[] }
-  | { type: Action.UpdateFolderItem; itemId: number; title?: string; archived?: boolean; url?: string; favIconUrl?: string }
-  | { type: Action.MoveFolderItems; itemIds: number[]; targetFolderId: number; insertBeforeItemId: number | undefined; }
-
-  | { type: Action.SaveBookmarksToCloud; }
-
-  | { type: Action.CreateWidget; spaceId?: number; widgetId: number; position?: string, pos: IWidgetPos, content?: Partial<IWidgetContent> }
-  | { type: Action.UpdateWidget; widgetId: number; position?: string; pos?: IWidgetPos; content?: Partial<IWidgetContent> }
-  | { type: Action.DeleteWidgets; widgetIds: number[]; }
-
-  | { type: Action.SelectWidgets; widgetIds: number[]; }
-  | { type: Action.SetEditingWidget; widgetId: number | undefined; }
+  | {
+      type: Action.UpdateFolderItem;
+      itemId: number;
+      title?: string;
+      archived?: boolean;
+      url?: string;
+      favIconUrl?: string;
+    }
+  | {
+      type: Action.MoveFolderItems;
+      itemIds: number[];
+      targetFolderId: number;
+      insertBeforeItemId: number | undefined;
+    }
+  | { type: Action.SaveBookmarksToCloud }
+  | {
+      type: Action.CreateWidget;
+      spaceId?: number;
+      widgetId: number;
+      position?: string;
+      pos: IWidgetPos;
+      content?: Partial<IWidgetContent>;
+    }
+  | {
+      type: Action.UpdateWidget;
+      widgetId: number;
+      position?: string;
+      pos?: IWidgetPos;
+      content?: Partial<IWidgetContent>;
+    }
+  | { type: Action.DeleteWidgets; widgetIds: number[] }
+  | { type: Action.SelectWidgets; widgetIds: number[] }
+  | { type: Action.SetEditingWidget; widgetId: number | undefined }
   | { type: Action.DuplicateWidgets; widgetIds: number[] }
-  | { type: Action.BringToFront; widgetIds: number[]; }
-  | { type: Action.SendToBack; widgetIds: number[]; }
-  | { type: Action.RestoreWidgetOrder; data: { spaceId: number, orderedWidgetIds: number[] }[] }
-
-  | { type: Action.APICommandResolved; commandId: number, }
-  | { type: Action.APIConfirmEntityCreated; localId: number; remoteId: number; entityType: "folder" | "bookmark" }
-  ) & HistoryActionPayload;
+  | { type: Action.BringToFront; widgetIds: number[] }
+  | { type: Action.SendToBack; widgetIds: number[] }
+  | {
+      type: Action.RestoreWidgetOrder;
+      data: { spaceId: number; orderedWidgetIds: number[] }[];
+    }
+  | { type: Action.APICommandResolved; commandId: number }
+  | {
+      type: Action.APIConfirmEntityCreated;
+      localId: number;
+      remoteId: number;
+      entityType: "folder" | "bookmark";
+    }
+) &
+  HistoryActionPayload;

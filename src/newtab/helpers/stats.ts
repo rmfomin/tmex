@@ -1,24 +1,24 @@
-import mixpanel from "mixpanel-browser"
+import mixpanel from "mixpanel-browser";
 
 function generateUUID(): string {
-  return crypto.randomUUID()
+  return crypto.randomUUID();
 }
 
 function getUserStatId(): Promise<string> {
   return new Promise((resolve) => {
     chrome.storage.sync.get("userStatId", (data) => {
       if (!data.userStatId) {
-        const userStatId = generateUUID()
+        const userStatId = generateUUID();
         chrome.storage.sync.set({ userStatId }, () => {
-          console.log("Generated new userStatID:", userStatId)
-          resolve(userStatId)
-        })
+          console.log("Generated new userStatID:", userStatId);
+          resolve(userStatId);
+        });
       } else {
-        console.log("Existing userStatID:", data.userStatId)
-        resolve(data.userStatId)
+        console.log("Existing userStatID:", data.userStatId);
+        resolve(data.userStatId);
       }
-    })
-  })
+    });
+  });
 }
 
 export function initStats(): Promise<void> {
@@ -26,20 +26,19 @@ export function initStats(): Promise<void> {
     try {
       mixpanel.init(process.env.MIXPANEL_TOKEN, {
         autocapture: false,
-        debug: process.env.NODE_ENV === "development"
-      })
+        debug: process.env.NODE_ENV === "development",
+      });
 
-      getUserStatId().then(id => {
-        console.log("mixpanel.identify", id)
-        mixpanel.identify(id)
-        resolve()
-      })
+      getUserStatId().then((id) => {
+        console.log("mixpanel.identify", id);
+        mixpanel.identify(id);
+        resolve();
+      });
     } catch (e) {
-      console.error(e)
-      resolve()
+      console.error(e);
+      resolve();
     }
-  })
-
+  });
 }
 
 //Key flows
@@ -78,20 +77,20 @@ export function initStats(): Promise<void> {
 // Error tracking
 
 export type CommonStatProps = {
-  zIsBeta: boolean
-  zIsFirstTime: boolean
-  zTotalOpenTabsCount: number
-  zTotalBookmarksCount: number
-  zTotalFoldersCount: number
-  zTotalSpacesCount: number
-  zTotalWindowsCount: number
-  zTabmeType: string
-  zColorTheme: string
-  zSidebarCollapsed: boolean
-}
+  zIsBeta: boolean;
+  zIsFirstTime: boolean;
+  zTotalOpenTabsCount: number;
+  zTotalBookmarksCount: number;
+  zTotalFoldersCount: number;
+  zTotalSpacesCount: number;
+  zTotalWindowsCount: number;
+  zTabmeType: string;
+  zColorTheme: string;
+  zSidebarCollapsed: boolean;
+};
 
 type EventOptionsMap = {
-  appLoaded: {}
+  appLoaded: {};
 
   // WELCOME
   welcomeShown: {};
@@ -104,50 +103,50 @@ type EventOptionsMap = {
   importedTabmeBookmarks: { version: string };
 
   // TABS
-  tabOpened: { inNewTab: boolean, source: string }; // it means bookmark clicked
-  tabFocused: { source: string }
-  tabClosed: { source: string }
+  tabOpened: { inNewTab: boolean; source: string }; // it means bookmark clicked
+  tabFocused: { source: string };
+  tabClosed: { source: string };
   tabsDeduplicated: { count: number };
   tabsStashed: { stashedTabsClosed: boolean };
   tabsSaved: { source: string };
 
   // SPACES
-  spaceCreated: { source: string }
+  spaceCreated: { source: string };
 
   // BOOKMARKS
-  bookmarksHidden: {}
-  bookmarksDragged: { count: number }
+  bookmarksHidden: {};
+  bookmarksDragged: { count: number };
 
   // FOLDER
-  folderCreated: { source: string }
+  folderCreated: { source: string };
 
   // STICKERS
-  widgetCreated: { source: string, type: string }
+  widgetCreated: { source: string; type: string };
 
   // UI SETTINGS
-  "toggleSidebar": { sidebarCollapsed: boolean };
-  "settingsClicked": { settingName: string },
-  "searchUsed": {}
+  toggleSidebar: { sidebarCollapsed: boolean };
+  settingsClicked: { settingName: string };
+  searchUsed: {};
 
   // BETA
-  "betaModalShown": {},
-  "betaModalClosed": {},
-  "betaModalJoined": { email: string },
-  "betaLeave": {},
+  betaModalShown: {};
+  betaModalClosed: {};
+  betaModalJoined: { email: string };
+  betaLeave: {};
 
   // OTHER
-  "whatsNewOpened": { key: string },
+  whatsNewOpened: { key: string };
 };
 
 let commonProps: Partial<CommonStatProps> = {
-  zTabmeType: __OVERRIDE_NEWTAB ? "newtab" : "overrideless"
-}
+  zTabmeType: __OVERRIDE_NEWTAB ? "newtab" : "overrideless",
+};
 
 export function setCommonStatProps(props: Partial<CommonStatProps>) {
   commonProps = {
     ...commonProps,
-    ...props
-  }
+    ...props,
+  };
 }
 
 export function trackStat<T extends keyof EventOptionsMap>(
@@ -156,12 +155,11 @@ export function trackStat<T extends keyof EventOptionsMap>(
 ): void {
   try {
     if (process.env.NODE_ENV !== "development") {
-      mixpanel.track(eventName, { ...commonProps, ...opt })
+      mixpanel.track(eventName, { ...commonProps, ...opt });
     } else {
-      console.log("TRACK", eventName, opt, commonProps)
+      console.log("TRACK", eventName, opt, commonProps);
     }
   } catch (e) {
-    console.error(e)
+    console.error(e);
   }
 }
-

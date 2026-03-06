@@ -1,17 +1,17 @@
-import Tab = chrome.tabs.Tab
-import HistoryItem = chrome.history.HistoryItem
-import { IFolderItem, ISpace } from "./types"
-import type React from "react"
-import { isTabmeTab } from "./isTabmeTab"
-import { RecentItem } from "./recentHistoryUtils"
-import { getTempFavIconUrl } from "../state/actionHelpers"
+import Tab = chrome.tabs.Tab;
+import HistoryItem = chrome.history.HistoryItem;
+import { IFolderItem, ISpace } from "./types";
+import type React from "react";
+import { isTabmeTab } from "./isTabmeTab";
+import { RecentItem } from "./recentHistoryUtils";
+import { getTempFavIconUrl } from "../state/actionHelpers";
 
-export const SECTION_ICON_BASE64 = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIgLz4KPC9zdmc+Cg==`
+export const SECTION_ICON_BASE64 = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIgLz4KPC9zdmc+Cg==`;
 
-export const DEFAULT_FOLDER_COLOR = "#f0f0f0"
-export const EMPTY_FOLDER_COLOR = "transparent"
+export const DEFAULT_FOLDER_COLOR = "#f0f0f0";
+export const EMPTY_FOLDER_COLOR = "transparent";
 
-export const MAX_LAST_ACTIVE_TABS_COUNT = 3
+export const MAX_LAST_ACTIVE_TABS_COUNT = 3;
 
 const uselessWords = [
   "| Greenhouse",
@@ -21,28 +21,28 @@ const uselessWords = [
   " - Stash",
   " - Confluence",
   " - YouTube",
-  ", Visual Workspace for Innovation"
-]
+  ", Visual Workspace for Innovation",
+];
 
 export function removeUselessProductName(str: string | undefined): string {
   if (str === undefined) {
-    return ""
+    return "";
   } else {
     uselessWords.forEach((uw) => {
-      str = str!.replace(uw, "")
-    })
-    return str
+      str = str!.replace(uw, "");
+    });
+    return str;
   }
 }
 
 export function extractHostname(url: string | undefined): string {
   if (url === undefined) {
-    return ""
+    return "";
   } else {
     try {
-      return (new URL(url)).host
+      return new URL(url).host;
     } catch (e) {
-      return ""
+      return "";
     }
   }
 }
@@ -54,27 +54,26 @@ const important_urls = [
   "docs.google.com",
   "app2.greenhouse.io",
   "miro.latticehq.com",
-  "notion.so"
-]
+  "notion.so",
+];
 
 export function filterNonImportant(tab: Tab): boolean {
   return important_urls.some(
     (importantUrl) => tab.url && tab.url.includes(importantUrl)
-  )
+  );
 }
 
-export function filterTabsBySearch(
-  list: Tab[],
-  searchValue: string
-): Tab[] {
-  const searchValueLC = searchValue.toLowerCase()
-  return list.filter(item => {
+export function filterTabsBySearch(list: Tab[], searchValue: string): Tab[] {
+  const searchValueLC = searchValue.toLowerCase();
+  return list.filter((item) => {
     if (searchValue === "") {
-      return canDisplayTabInSidebar(item)
+      return canDisplayTabInSidebar(item);
     } else {
-      return canDisplayTabInSidebar(item) && isContainsSearch(item, searchValueLC)
+      return (
+        canDisplayTabInSidebar(item) && isContainsSearch(item, searchValueLC)
+      );
     }
-  })
+  });
 }
 
 export function filterRecentItemsBySearch(
@@ -82,44 +81,52 @@ export function filterRecentItemsBySearch(
   searchValue: string
 ): RecentItem[] {
   if (searchValue === "") {
-    return list
+    return list;
   }
-  const searchValueLC = searchValue.toLowerCase()
-  return list.filter(item => {
-    return isContainsSearch(item, searchValueLC)
-  })
+  const searchValueLC = searchValue.toLowerCase();
+  return list.filter((item) => {
+    return isContainsSearch(item, searchValueLC);
+  });
 }
 
 export function hasArchivedItems(spaces: ISpace[]): boolean {
-  return spaces.some(s => {
-    return s.folders.some(f => f.archived || f.items.some(i => i.archived))
-  })
+  return spaces.some((s) => {
+    return s.folders.some((f) => f.archived || f.items.some((i) => i.archived));
+  });
 }
 
-export function hasItemsToHighlight(spaces: ISpace[], recentItems: RecentItem[]): boolean {
-  return spaces.some(s => {
-    return s.folders.some(f => f.items.some(i => isFolderItemNotUsed(i, recentItems)))
-  })
+export function hasItemsToHighlight(
+  spaces: ISpace[],
+  recentItems: RecentItem[]
+): boolean {
+  return spaces.some((s) => {
+    return s.folders.some((f) =>
+      f.items.some((i) => isFolderItemNotUsed(i, recentItems))
+    );
+  });
 }
 
-export function filterItemsBySearch<T extends { title?: string, url?: string }>(
+export function filterItemsBySearch<T extends { title?: string; url?: string }>(
   list: T[],
   searchValue: string
 ): T[] {
   if (searchValue === "") {
-    return list
+    return list;
   } else {
-    const searchValueLC = searchValue.toLowerCase()
-    return list.filter(item => isContainsSearch(item, searchValueLC))
+    const searchValueLC = searchValue.toLowerCase();
+    return list.filter((item) => isContainsSearch(item, searchValueLC));
   }
 }
 
-export function isContainsSearch<T extends { title?: string, url?: string }>(
+export function isContainsSearch<T extends { title?: string; url?: string }>(
   item: T,
   searchValue: string
 ): boolean {
-  return item.title?.toLowerCase().includes(searchValue)
-    || item.url?.toLowerCase().includes(searchValue) || false
+  return (
+    item.title?.toLowerCase().includes(searchValue) ||
+    item.url?.toLowerCase().includes(searchValue) ||
+    false
+  );
 }
 
 // const irrelecantHosts = [
@@ -186,7 +193,7 @@ export const colors = [
   "#f0f4c3",
   "#ffecb3",
   "#ffccbc",
-  "#d7ccc8"
+  "#d7ccc8",
 
   // "#ffcdd2",
   // "#f8bbd0",
@@ -206,64 +213,70 @@ export const colors = [
   // "#ffccbc",
   // "#d7ccc8",
   // "#cfd8dc"
-]
+];
 
 export function getRandomHEXColor(): string {
-  return colors[Math.round(Math.random() * (colors.length - 1))]
+  return colors[Math.round(Math.random() * (colors.length - 1))];
 }
 
-let runtimeIdCounter = 10000
+let runtimeIdCounter = 10000;
 
 /**
  * NOTE: Can be used only within single app instance
  */
 export function genNextRuntimeId(): number {
-  return ++runtimeIdCounter
+  return ++runtimeIdCounter;
 }
 
 // temporary and for debug only
-let fakeRemoteIdCounter = 1000000
+let fakeRemoteIdCounter = 1000000;
 
 export function get_FAKE_REMOTE_ID_TO_BE_DELETED(): number {
-  return ++fakeRemoteIdCounter
+  return ++fakeRemoteIdCounter;
 }
 
 export function filterOpenedTabsFromHistory(
   tabs: Tab[],
   historyItems: HistoryItem[]
 ): HistoryItem[] {
-  return historyItems.filter((hi) => !tabs.some((tab) => hi.url === tab.url))
+  return historyItems.filter((hi) => !tabs.some((tab) => hi.url === tab.url));
 }
 
 export function canDisplayTabInSidebar(t: Tab): boolean {
-  return !isTabmeTab(t) && !t.pinned
+  return !isTabmeTab(t) && !t.pinned;
 }
 
 export function findTabsByURL(url: string | undefined, tabs: Tab[]): Tab[] {
   if (!url || url === "") {
-    return []
+    return [];
   }
-  return tabs.filter(t => t.url === url || t.pendingUrl === url)
+  return tabs.filter((t) => t.url === url || t.pendingUrl === url);
 }
 
-export function isFolderItemNotUsed(item: IFolderItem, historyItems: RecentItem[]): boolean {
+export function isFolderItemNotUsed(
+  item: IFolderItem,
+  historyItems: RecentItem[]
+): boolean {
   if (item.isSection) {
-    return false
+    return false;
   }
-  const historyItem = historyItems.find(hi => hi.url === item.url)
-  return !historyItem
+  const historyItem = historyItems.find((hi) => hi.url === item.url);
+  return !historyItem;
 }
 
 export function hlSearch(str: string, search: string): { __html: string } {
   if (search) {
-    const searchRE = new RegExp(escapeRegex(search), "i")
+    const searchRE = new RegExp(escapeRegex(search), "i");
     return {
       __html: sanitizeHTML(
-        str.replace(searchRE, (match) => `<span class="searched">${match}</span>`)
-      )
-    }
+        str.replace(
+          searchRE,
+          (match) => `<span class="searched">${match}</span>`
+        )
+      ),
+    };
   } else {
-    return { __html: sanitizeHTML(str) }
+    return { __html: sanitizeHTML(str) };
   }
 }
 
@@ -272,133 +285,161 @@ export function sanitizeHTML(html: string): string {
     .replace(/<script.*?>.*?<\/script>/gi, "")
     .replace(/on\w+=".*?"/gi, "")
     .replace(/javascript:/gi, "")
-    .replace(/\n/g, "<br>")
+    .replace(/\n/g, "<br>");
 }
 
 function escapeRegex(s: string): string {
-  return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")
+  return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 }
 
 export function blurSearch(e: React.MouseEvent) {
-  if (document.activeElement && document.activeElement === document.querySelector("input.search")) {
-    (document.activeElement as HTMLElement).blur()
+  if (
+    document.activeElement &&
+    document.activeElement === document.querySelector("input.search")
+  ) {
+    (document.activeElement as HTMLElement).blur();
     // e.preventDefault() // commented it and it seems like everything works
   }
 }
 
-export function isTargetSupportsDragAndDrop(e: React.MouseEvent, ignoreElementWithClass?: string): boolean {
-  const target = e.target as HTMLElement
-  if (ignoreElementWithClass && target.classList.contains(ignoreElementWithClass)) {
-    return false
+export function isTargetSupportsDragAndDrop(
+  e: React.MouseEvent,
+  ignoreElementWithClass?: string
+): boolean {
+  const target = e.target as HTMLElement;
+  if (
+    ignoreElementWithClass &&
+    target.classList.contains(ignoreElementWithClass)
+  ) {
+    return false;
   }
-  return !isTargetInputOrTextArea(target)
+  return !isTargetInputOrTextArea(target);
 }
 
 export function isTargetInputOrTextArea(target: Element): boolean {
-  return target.tagName === "INPUT" || target.tagName === "TEXTAREA"
+  return target.tagName === "INPUT" || target.tagName === "TEXTAREA";
 }
 
 export function debounce(f: any, ms: number): (...attrs: any[]) => void {
+  let isCooldown = false;
 
-  let isCooldown = false
-
-  return function() {
+  return function () {
     if (isCooldown) {
-      return
+      return;
     }
 
     //[!]does not save context
     // should be 'this' instead of 'null'
-    f.apply(null, arguments)
+    f.apply(null, arguments);
 
-    isCooldown = true
+    isCooldown = true;
 
-    setTimeout(() => isCooldown = false, ms)
-  }
-
+    setTimeout(() => (isCooldown = false), ms);
+  };
 }
 
 //[!]does not save context
 // should be 'this' instead of 'null'
 export function throttle(func: any, ms: number): (...attrs: any[]) => void {
-
   let isThrottled = false,
     savedArgs: any,
-    savedThis: any
+    savedThis: any;
 
   function wrapper() {
-    savedArgs = arguments
-    savedThis = null
-    if (isThrottled) { // (2)
-      return
+    savedArgs = arguments;
+    savedThis = null;
+    if (isThrottled) {
+      // (2)
+      return;
     }
 
     //func.apply(null, arguments); // (1)
 
-    isThrottled = true
+    isThrottled = true;
 
-    setTimeout(function() {
-      isThrottled = false // (3)
+    setTimeout(function () {
+      isThrottled = false; // (3)
       if (savedArgs) {
-        func.apply(savedThis, savedArgs)
-        savedArgs = savedThis = null
+        func.apply(savedThis, savedArgs);
+        savedArgs = savedThis = null;
       }
-    }, ms)
+    }, ms);
   }
 
-  return wrapper
+  return wrapper;
 }
 
 export function getTopVisitedFromHistory(history: RecentItem[], limit = 20) {
-  const sortedHistory = Array.from(history)
-  sortedHistory.sort((a, b) => (b.visitCount || 0) - (a.visitCount || 0))
-  return sortedHistory.slice(0, limit)
+  const sortedHistory = Array.from(history);
+  sortedHistory.sort((a, b) => (b.visitCount || 0) - (a.visitCount || 0));
+  return sortedHistory.slice(0, limit);
 }
 
 export function scrollElementIntoView(selector: string) {
   requestAnimationFrame(() => {
-    const element = document.querySelector(selector)
+    const element = document.querySelector(selector);
     if (element) {
-      const rect = element.getBoundingClientRect()
-      const viewportHeight = window.document.body.clientHeight
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.document.body.clientHeight;
       if (rect.bottom > viewportHeight) {
-        element.scrollIntoView({ block: "center", behavior: "smooth" })
+        element.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     }
-  })
+  });
 }
 
-export function isSomeParentHaveClass(targetElement: Element | null, classOnParent: string | string[]): boolean {
-  let el = targetElement
-  classOnParent = Array.isArray(classOnParent) ? classOnParent : [classOnParent]
+export function isSomeParentHaveClass(
+  targetElement: Element | null,
+  classOnParent: string | string[]
+): boolean {
+  let el = targetElement;
+  classOnParent = Array.isArray(classOnParent)
+    ? classOnParent
+    : [classOnParent];
   while (el) {
-    if (classOnParent.some(className => el!.classList.contains(className))) {
-      return true
+    if (classOnParent.some((className) => el!.classList.contains(className))) {
+      return true;
     }
-    el = el.parentElement
+    el = el.parentElement;
   }
-  return false
+  return false;
 }
 
-export function findParentWithClass(targetElement: any | null, classOnParent: string): HTMLElement | undefined {
-  let el = targetElement
+export function findParentWithClass(
+  targetElement: any | null,
+  classOnParent: string
+): HTMLElement | undefined {
+  let el = targetElement;
   while (el) {
     if (el.classList.contains(classOnParent)) {
-      return el as HTMLElement
+      return el as HTMLElement;
     }
-    el = el.parentElement
+    el = el.parentElement;
   }
-  return undefined
+  return undefined;
 }
 
 export function getCurrentData() {
-  const today = new Date()
-  const dd = String(today.getDate()).padStart(2, "0")
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  const mm = months[today.getMonth()]
-  const min = String(today.getMinutes()).padStart(2, "0")
-  const hours = String(today.getHours()).padStart(2, "0")
-  return `${dd} ${mm}, ${hours}:${min}`
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, "0");
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const mm = months[today.getMonth()];
+  const min = String(today.getMinutes()).padStart(2, "0");
+  const hours = String(today.getHours()).padStart(2, "0");
+  return `${dd} ${mm}, ${hours}:${min}`;
 }
 
 /**
@@ -407,23 +448,23 @@ export function getCurrentData() {
  * Return new objects
  */
 export function mergeObjects<T>(o1: T, o2: Partial<T>): T {
-  const merged = { ...o1 } as T
+  const merged = { ...o1 } as T;
   for (let key in o2) {
     if (o2[key] !== undefined) {
       // @ts-ignore
-      merged[key] = o2[key]
+      merged[key] = o2[key];
     }
   }
 
-  return merged
+  return merged;
 }
 
 export function isArraysEqual(arr1: number[], arr2: number[]): boolean {
   if (arr1.length !== arr2.length) {
-    return false
+    return false;
   }
 
-  return arr1.every((value, index) => value === arr2[index])
+  return arr1.every((value, index) => value === arr2[index]);
 }
 
-export const IS_MAC_DEVICE: boolean = false// navigator.userAgent.indexOf("Mac OS X") != -1
+export const IS_MAC_DEVICE: boolean = false; // navigator.userAgent.indexOf("Mac OS X") != -1

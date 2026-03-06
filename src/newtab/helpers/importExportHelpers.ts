@@ -1,153 +1,184 @@
-import { IFolder, ISpace } from "./types"
-import { Action } from "../state/state"
-import { ActionDispatcher } from "../state/actions"
-import { createNewFolderItem, genUniqLocalId, getTempFavIconUrl } from "../state/actionHelpers"
-import { showMessage } from "./actionsHelpersWithDOM"
-import { getTopVisitedFromHistory } from "./utils"
-import HistoryItem = chrome.history.HistoryItem
-import { trackStat } from "./stats"
-import { RecentItem } from "./recentHistoryUtils"
+import { IFolder, ISpace } from "./types";
+import { Action } from "../state/state";
+import { ActionDispatcher } from "../state/actions";
+import {
+  createNewFolderItem,
+  genUniqLocalId,
+  getTempFavIconUrl,
+} from "../state/actionHelpers";
+import { showMessage } from "./actionsHelpersWithDOM";
+import { getTopVisitedFromHistory } from "./utils";
+import HistoryItem = chrome.history.HistoryItem;
+import { trackStat } from "./stats";
+import { RecentItem } from "./recentHistoryUtils";
 
 type IBackup = {
-  isTabme: true,
-  version: number,
-  spaces: ISpace[]
-}
+  isTabme: true;
+  version: number;
+  spaces: ISpace[];
+};
 
 function isLegacyImportJson(data: IFolder[]) {
-  return Array.isArray(data) && data[0]?.title && data[0]?.items
+  return Array.isArray(data) && data[0]?.title && data[0]?.items;
 }
 
 function isImportJsonV2(data: IBackup) {
-  return data.isTabme && Array.isArray(data.spaces) && data.version === 2
+  return data.isTabme && Array.isArray(data.spaces) && data.version === 2;
 }
 
 export function importFromJson(event: any, dispatch: ActionDispatcher) {
   function receivedText(e: any) {
-    let lines = e.target.result
+    let lines = e.target.result;
     try {
-      const res = JSON.parse(lines)
+      const res = JSON.parse(lines);
       if (isLegacyImportJson(res)) {
-        dispatch({ // clear existing folders
+        dispatch({
+          // clear existing folders
           type: Action.InitDashboard,
           spaces: [],
-          saveToLS: true
-        })
+          saveToLS: true,
+        });
 
-        const defaultSpaceId = genUniqLocalId()
-        dispatch({ type: Action.CreateSpace, spaceId: defaultSpaceId, title: "Bookmarks" })
-        dispatch({ type: Action.SelectSpace, spaceId: defaultSpaceId })
+        const defaultSpaceId = genUniqLocalId();
+        dispatch({
+          type: Action.CreateSpace,
+          spaceId: defaultSpaceId,
+          title: "Bookmarks",
+        });
+        dispatch({ type: Action.SelectSpace, spaceId: defaultSpaceId });
 
-        const loadedFolders = res as IFolder[]
-        loadedFolders.forEach(loadedFolder => {
+        const loadedFolders = res as IFolder[];
+        loadedFolders.forEach((loadedFolder) => {
           dispatch({
             type: Action.CreateFolder, // intentionally does not send additional stat here
             title: loadedFolder.title,
             items: loadedFolder.items,
-            color: loadedFolder.color
-          })
-        })
+            color: loadedFolder.color,
+          });
+        });
 
-        trackStat("importedTabmeBookmarks", { version: "v1" })
-        showMessage("Backup has been imported", dispatch)
+        trackStat("importedTabmeBookmarks", { version: "v1" });
+        showMessage("Backup has been imported", dispatch);
       } else if (isImportJsonV2(res)) {
-        const data = res as IBackup
+        const data = res as IBackup;
         dispatch({
           type: Action.InitDashboard,
           spaces: data.spaces,
-          saveToLS: true
-        })
+          saveToLS: true,
+        });
 
         dispatch({
           type: Action.SelectSpace,
-          spaceId: -1 //hack to force update
-        })
+          spaceId: -1, //hack to force update
+        });
 
-        trackStat("importedTabmeBookmarks", { version: "v2" })
-        showMessage("Backup has been imported", dispatch)
+        trackStat("importedTabmeBookmarks", { version: "v2" });
+        showMessage("Backup has been imported", dispatch);
       } else {
-        dispatch({ type: Action.ShowNotification, isError: true, message: "Unsupported JSON format" })
+        dispatch({
+          type: Action.ShowNotification,
+          isError: true,
+          message: "Unsupported JSON format",
+        });
       }
     } catch (e) {
-      console.error(e)
-      dispatch({ type: Action.ShowNotification, isError: true, message: "Unsupported JSON format" })
+      console.error(e);
+      dispatch({
+        type: Action.ShowNotification,
+        isError: true,
+        message: "Unsupported JSON format",
+      });
     }
   }
 
-  const file = event.target.files[0]
-  const fr = new FileReader()
-  fr.onload = receivedText
-  fr.readAsText(file)
+  const file = event.target.files[0];
+  const fr = new FileReader();
+  fr.onload = receivedText;
+  fr.readAsText(file);
 }
 
 export function onExportJson(spaces: ISpace[]) {
   function downloadObjectAsJson(exportObj: any, exportName: string) {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj))
-    const downloadAnchorNode = document.createElement("a")
-    downloadAnchorNode.setAttribute("href", dataStr)
-    downloadAnchorNode.setAttribute("download", exportName + ".json")
-    document.body.appendChild(downloadAnchorNode) // required for firefox
-    downloadAnchorNode.click()
-    downloadAnchorNode.remove()
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(exportObj));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
   }
 
   const backup: IBackup = {
     spaces,
     isTabme: true,
-    version: 2
-  }
-  downloadObjectAsJson(backup, "tabme_backup")
+    version: 2,
+  };
+  downloadObjectAsJson(backup, "tabme_backup");
 }
 
-export function onImportFromToby(event: any, dispatch: ActionDispatcher, onReady?: () => void) {
+export function onImportFromToby(
+  event: any,
+  dispatch: ActionDispatcher,
+  onReady?: () => void
+) {
   function receivedText(e: any) {
-    let lines = e.target.result
+    let lines = e.target.result;
     try {
-      const tobyData = JSON.parse(lines) as ITobyJson
-      const validFormat = Array.isArray(tobyData.lists)
+      const tobyData = JSON.parse(lines) as ITobyJson;
+      const validFormat = Array.isArray(tobyData.lists);
       if (validFormat) {
-        let count = 0
-        tobyData.lists.forEach(tobyFolder => {
+        let count = 0;
+        tobyData.lists.forEach((tobyFolder) => {
           dispatch({
             type: Action.CreateFolder, // intentionally does not send additional stat here
             title: tobyFolder.title,
-            items: tobyFolder.cards.map(card => ({
+            items: tobyFolder.cards.map((card) => ({
               id: genUniqLocalId(),
               title: card.title,
               url: card.url,
-              favIconUrl: getTempFavIconUrl(card.url)
-            }))
-          })
-          count += tobyFolder.cards.length
-        })
-        trackStat("importedTobyBookmarks", { count })
-        onReady && onReady()
+              favIconUrl: getTempFavIconUrl(card.url),
+            })),
+          });
+          count += tobyFolder.cards.length;
+        });
+        trackStat("importedTobyBookmarks", { count });
+        onReady && onReady();
       } else {
-        dispatch({ type: Action.ShowNotification, isError: true, message: "Unsupported JSON format" })
+        dispatch({
+          type: Action.ShowNotification,
+          isError: true,
+          message: "Unsupported JSON format",
+        });
       }
     } catch (e) {
-      console.error(e)
-      dispatch({ type: Action.ShowNotification, isError: true, message: "Unsupported JSON format" })
+      console.error(e);
+      dispatch({
+        type: Action.ShowNotification,
+        isError: true,
+        message: "Unsupported JSON format",
+      });
     }
   }
 
-  const file = event.target.files[0]
-  const fr = new FileReader()
-  fr.onload = receivedText
-  fr.readAsText(file)
+  const file = event.target.files[0];
+  const fr = new FileReader();
+  fr.onload = receivedText;
+  fr.readAsText(file);
 }
 
 type ITobyItem = {
-  "title": string,
-  "url": string,
-}
+  title: string;
+  url: string;
+};
 type ITobyFolder = {
-  title: string
-  cards: ITobyItem[]
-}
+  title: string;
+  cards: ITobyItem[];
+};
 type ITobyJson = {
-  lists: ITobyFolder[]
-}
+  lists: ITobyFolder[];
+};
 
 //////////////////////////////////////////////////////////////////////
 // IMPORT BROWSER BOOKMARKS HELPERS
@@ -155,8 +186,8 @@ type ITobyJson = {
 
 // copy-paste Chrome types
 export type CustomBookmarkTreeNode = {
-  checked?: boolean
-  mostVisited?: boolean
+  checked?: boolean;
+  mostVisited?: boolean;
 
   /** Optional. The 0-based position of this node within its parent folder.  */
   index?: number;
@@ -181,60 +212,82 @@ export type CustomBookmarkTreeNode = {
    * user. Omitted if the node can be modified by the user and the extension (default).
    */
   unmodifiable?: any;
-}
+};
 
 export type PlainListRecord = {
-  breadcrumbs: CustomBookmarkTreeNode[]
-  folder: CustomBookmarkTreeNode
-}
-export type BookmarksAsPlainList = PlainListRecord[]
+  breadcrumbs: CustomBookmarkTreeNode[];
+  folder: CustomBookmarkTreeNode;
+};
+export type BookmarksAsPlainList = PlainListRecord[];
 
-export function getBrowserBookmarks(onReady: (res: BookmarksAsPlainList) => void, recentItems: RecentItem[], dispatch: ActionDispatcher): void {
-  const history = getTopVisitedFromHistory(recentItems, 1000)
+export function getBrowserBookmarks(
+  onReady: (res: BookmarksAsPlainList) => void,
+  recentItems: RecentItem[],
+  dispatch: ActionDispatcher
+): void {
+  const history = getTopVisitedFromHistory(recentItems, 1000);
 
   // Fetch bookmark folders from Chrome API
   chrome.bookmarks.getTree((bookmarks) => {
-    const root = bookmarks[0]
+    const root = bookmarks[0];
     if (root.children) {
-      const plain: BookmarksAsPlainList = []
-      traverseTree(root.children, plain, [], history)
-      onReady(plain)
+      const plain: BookmarksAsPlainList = [];
+      traverseTree(root.children, plain, [], history);
+      onReady(plain);
     } else {
       dispatch({
         type: Action.ShowNotification,
         message: "No browser bookmarks found",
-        isError: true
-      })
+        isError: true,
+      });
     }
-  })
+  });
 }
 
-function traverseTree(nodes: CustomBookmarkTreeNode[], plainList: BookmarksAsPlainList, breadcrumbs: CustomBookmarkTreeNode[], history: RecentItem[]) {
-  nodes.forEach(node => {
+function traverseTree(
+  nodes: CustomBookmarkTreeNode[],
+  plainList: BookmarksAsPlainList,
+  breadcrumbs: CustomBookmarkTreeNode[],
+  history: RecentItem[]
+) {
+  nodes.forEach((node) => {
     if (node.children && node.children.length > 0) {
       plainList.push({
         breadcrumbs,
-        folder: node
-      })
-      traverseTree(node.children, plainList, [...breadcrumbs, node], history)
+        folder: node,
+      });
+      traverseTree(node.children, plainList, [...breadcrumbs, node], history);
     } else {
-      node.mostVisited = history.some(hItem => node.url && hItem.url?.includes(node.url))
+      node.mostVisited = history.some(
+        (hItem) => node.url && hItem.url?.includes(node.url)
+      );
     }
-  })
+  });
 }
 
-export function importBrowserBookmarks(records: BookmarksAsPlainList, dispatch: ActionDispatcher, skipChecked: boolean) {
-  let count = 0
-  records.forEach(rec => {
+export function importBrowserBookmarks(
+  records: BookmarksAsPlainList,
+  dispatch: ActionDispatcher,
+  skipChecked: boolean
+) {
+  let count = 0;
+  records.forEach((rec) => {
     if (skipChecked || rec.folder.checked) {
       const items = rec.folder.children
-        ?.filter(item => (skipChecked || item.checked) && item.url)
-        .map(item => createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url)))
-      count += items?.length ?? 0
+        ?.filter((item) => (skipChecked || item.checked) && item.url)
+        .map((item) =>
+          createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url))
+        );
+      count += items?.length ?? 0;
 
-      const newFolderId = genUniqLocalId()
-      dispatch({ type: Action.CreateFolder, newFolderId, title: rec.folder.title, items }) // intentionally does not send additional stat here
+      const newFolderId = genUniqLocalId();
+      dispatch({
+        type: Action.CreateFolder,
+        newFolderId,
+        title: rec.folder.title,
+        items,
+      }); // intentionally does not send additional stat here
     }
-  })
-  trackStat("importedBrowserBookmarks", { count })
+  });
+  trackStat("importedBrowserBookmarks", { count });
 }
