@@ -9,7 +9,6 @@ import {
 import { showMessage } from "./actionsHelpersWithDOM";
 import { getTopVisitedFromHistory } from "./utils";
 import HistoryItem = chrome.history.HistoryItem;
-import { trackStat } from "./stats";
 import { RecentItem } from "./recentHistoryUtils";
 
 type IBackup = {
@@ -57,7 +56,6 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
           });
         });
 
-        trackStat("importedTabmeBookmarks", { version: "v1" });
         showMessage("Backup has been imported", dispatch);
       } else if (isImportJsonV2(res)) {
         const data = res as IBackup;
@@ -72,7 +70,6 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
           spaceId: -1, //hack to force update
         });
 
-        trackStat("importedTabmeBookmarks", { version: "v2" });
         showMessage("Backup has been imported", dispatch);
       } else {
         dispatch({
@@ -121,7 +118,7 @@ export function onExportJson(spaces: ISpace[]) {
 export function onImportFromToby(
   event: any,
   dispatch: ActionDispatcher,
-  onReady?: () => void
+  onReady?: () => void,
 ) {
   function receivedText(e: any) {
     let lines = e.target.result;
@@ -143,7 +140,6 @@ export function onImportFromToby(
           });
           count += tobyFolder.cards.length;
         });
-        trackStat("importedTobyBookmarks", { count });
         onReady && onReady();
       } else {
         dispatch({
@@ -223,7 +219,7 @@ export type BookmarksAsPlainList = PlainListRecord[];
 export function getBrowserBookmarks(
   onReady: (res: BookmarksAsPlainList) => void,
   recentItems: RecentItem[],
-  dispatch: ActionDispatcher
+  dispatch: ActionDispatcher,
 ): void {
   const history = getTopVisitedFromHistory(recentItems, 1000);
 
@@ -248,7 +244,7 @@ function traverseTree(
   nodes: CustomBookmarkTreeNode[],
   plainList: BookmarksAsPlainList,
   breadcrumbs: CustomBookmarkTreeNode[],
-  history: RecentItem[]
+  history: RecentItem[],
 ) {
   nodes.forEach((node) => {
     if (node.children && node.children.length > 0) {
@@ -259,7 +255,7 @@ function traverseTree(
       traverseTree(node.children, plainList, [...breadcrumbs, node], history);
     } else {
       node.mostVisited = history.some(
-        (hItem) => node.url && hItem.url?.includes(node.url)
+        (hItem) => node.url && hItem.url?.includes(node.url),
       );
     }
   });
@@ -268,7 +264,7 @@ function traverseTree(
 export function importBrowserBookmarks(
   records: BookmarksAsPlainList,
   dispatch: ActionDispatcher,
-  skipChecked: boolean
+  skipChecked: boolean,
 ) {
   let count = 0;
   records.forEach((rec) => {
@@ -276,7 +272,11 @@ export function importBrowserBookmarks(
       const items = rec.folder.children
         ?.filter((item) => (skipChecked || item.checked) && item.url)
         .map((item) =>
-          createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url))
+          createNewFolderItem(
+            item.url,
+            item.title,
+            getTempFavIconUrl(item.url),
+          ),
         );
       count += items?.length ?? 0;
 
@@ -289,5 +289,4 @@ export function importBrowserBookmarks(
       }); // intentionally does not send additional stat here
     }
   });
-  trackStat("importedBrowserBookmarks", { count });
 }

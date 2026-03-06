@@ -34,7 +34,6 @@ import IconNonFilter from "../icons/no-filter-thin.svg";
 import HistoryItem = chrome.history.HistoryItem;
 import { getTempFavIconUrl } from "../state/actionHelpers";
 import { DispatchContext } from "../state/actions";
-import { trackStat } from "../helpers/stats";
 import { getBrokenImgSVG } from "../helpers/faviconUtils";
 import { TabOrRecentItem } from "./SidebarItem";
 import { ISpace } from "../helpers/types";
@@ -101,7 +100,7 @@ const RecentList = React.memo(
         })}
       </div>
     );
-  }
+  },
 );
 
 export const SidebarRecent = React.memo(
@@ -113,19 +112,19 @@ export const SidebarRecent = React.memo(
   }) => {
     const dispatch = useContext(DispatchContext);
     const [filterByDomainEnabled, setFilterByDomainEnabled] = React.useState(
-      false
+      false,
     );
     const [enabledFilers, setEnabledFilters] = useState<IFilter[]>(
-      historyFilters
+      historyFilters,
     );
     const enabledFiltersCount = enabledFilers.reduce(
       (prevVal, filter) => prevVal + (filter.enabled ? 1 : 0),
-      0
+      0,
     );
 
     const itemsFilteredBySearch = filterRecentItemsBySearch(
       p.recentItems,
-      p.search
+      p.search,
     );
 
     const itemsFilteredBySearchAndFilter =
@@ -157,7 +156,7 @@ export const SidebarRecent = React.memo(
               enabled: false,
             };
           }
-        })
+        }),
       );
     };
 
@@ -168,7 +167,7 @@ export const SidebarRecent = React.memo(
             ...f,
             enabled: false, //enabledFiltersCount === 0
           };
-        })
+        }),
       );
     };
 
@@ -246,7 +245,7 @@ export const SidebarRecent = React.memo(
         )}
       </div>
     );
-  }
+  },
 );
 
 const historyFilters: IFilter[] = [

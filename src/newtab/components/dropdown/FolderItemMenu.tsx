@@ -12,7 +12,6 @@ import {
 } from "../../helpers/actionsHelpersWithDOM";
 import { findFolderByItemId } from "../../state/actionHelpers";
 import { scrollElementIntoView } from "../../helpers/utils";
-import { trackStat } from "../../helpers/stats";
 
 export const FolderItemMenu = React.memo(
   (p: {
@@ -44,7 +43,6 @@ export const FolderItemMenu = React.memo(
           chrome.tabs.create({ url: item.url });
         }
       });
-      trackStat("tabOpened", { inNewTab: true, source: "bookmark-menu" });
       p.onClose();
     }
 
@@ -68,7 +66,7 @@ export const FolderItemMenu = React.memo(
       alert(
         "The “Hiding” feature will be deprecated soon due to very low usage.\n" +
           "All previously hidden bookmarks will became visible again.\n" +
-          "Sorry for the inconvenience, and thank you for understanding!"
+          "Sorry for the inconvenience, and thank you for understanding!",
       );
       mergeStepsInHistory((historyStepId) => {
         selectedItems.forEach((item) => {
@@ -81,7 +79,6 @@ export const FolderItemMenu = React.memo(
         });
       });
       showMessageWithUndo("Bookmark has been hidden", dispatch);
-      trackStat("bookmarksHidden", {});
     }
 
     function onRestore() {
@@ -123,7 +120,7 @@ export const FolderItemMenu = React.memo(
         const folderId = createFolderWithStat(
           dispatch,
           { historyStepId, spaceId },
-          "by-move-to-new-folder"
+          "by-move-to-new-folder",
         );
         dispatch({
           type: Action.MoveFolderItems,
@@ -177,7 +174,7 @@ export const FolderItemMenu = React.memo(
                 p.spaces,
                 moveToFolder,
                 moveToNewFolder,
-                findFolderByItemId(p, p.item.id)?.id
+                findFolderByItemId(p, p.item.id)?.id,
               )}
             />
             <button
@@ -293,7 +290,7 @@ export const FolderItemMenu = React.memo(
                     p.spaces,
                     moveToFolder,
                     moveToNewFolder,
-                    findFolderByItemId(p, p.item.id)?.id
+                    findFolderByItemId(p, p.item.id)?.id,
                   )}
                 />
                 <button
@@ -308,5 +305,5 @@ export const FolderItemMenu = React.memo(
         )}
       </>
     );
-  }
+  },
 );

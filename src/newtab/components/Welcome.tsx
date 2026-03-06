@@ -9,7 +9,6 @@ import {
   onImportFromToby,
 } from "../helpers/importExportHelpers";
 import ReadyIcon from "../icons/ready-for-use.svg";
-import { trackStat } from "../helpers/stats";
 
 const SCREEN = {
   FIRST: "first",
@@ -23,34 +22,26 @@ export function Welcome(p: { appState: IAppState }) {
   const dispatch = useContext(DispatchContext);
   const [screen, setScreen] = useState(SCREEN.FIRST);
 
-  useEffect(() => {
-    trackStat("welcomeShown", {});
-  }, []);
-
   const changeScreen = (screen: string) => {
     setScreen(screen);
-    trackStat("welcomeStep", { welcomeStepName: screen });
   };
 
   const goPrevScreen = (screen: string) => {
     setScreen(screen);
-    trackStat("welcomeStep", { welcomeStepName: "prev__" + screen });
   };
 
   const onCloseOnboarding = () => {
-    trackStat("welcomeCompleted", {});
     dispatch({ type: Action.UpdateAppState, newState: { page: "default" } });
   };
 
   const onImportAllBookmarks = () => {
-    trackStat("welcomeStep", { welcomeStepName: "importAllBookmarks" });
     getBrowserBookmarks(
       (records) => {
         importBrowserBookmarks(records, dispatch, true);
         setScreen(SCREEN.READY_TO_USE);
       },
       p.appState.recentItems,
-      dispatch
+      dispatch,
     );
   };
 
@@ -134,7 +125,7 @@ export function Welcome(p: { appState: IAppState }) {
                 style={{ visibility: "hidden", position: "absolute" }}
                 onChange={(e) =>
                   onImportFromToby(e, dispatch, () =>
-                    changeScreen(SCREEN.READY_TO_USE)
+                    changeScreen(SCREEN.READY_TO_USE),
                   )
                 }
               />

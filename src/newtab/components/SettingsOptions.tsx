@@ -13,12 +13,8 @@ import {
   onImportFromToby,
 } from "../helpers/importExportHelpers";
 import { ImportConfirmationModal } from "./modals/ImportConfirmationModal";
-import { trackStat } from "../helpers/stats";
-// import { LeaveBetaModal } from "./modals/LeaveBetaModal";
 import { loadFaviconUrl } from "../helpers/faviconUtils";
-// import { JoinBetaModal } from "./modals/JoinBetaModal";
 import { ShortcutsModal } from "./modals/ShortcutsModal";
-// import { OverrideModal } from "./modals/OverrideModal";
 import { IFolderItem } from "../helpers/types";
 import { CL } from "../helpers/classNameHelper";
 
@@ -41,115 +37,21 @@ export type OptionsConfig = Array<
   OnClickOption | OnToggleOption | { separator: true }
 >;
 
-// export const BetaOptions = (props: { appState: IAppState }) => {
-//   const [leavingBetaModalOpen, setLeavingBetaModalOpen] = useState<boolean>(
-//     false
-//   );
-
-//   function onStopBeta() {
-//     trackStat("settingsClicked", { settingName: "betaStopped" });
-//     setLeavingBetaModalOpen(true);
-//   }
-
-//   function onSendFeedbackBeta() {
-//     chrome.tabs.create({
-//       url:
-//         "https://docs.google.com/forms/d/e/1FAIpQLSeA-xs3GjBVNQQEzSbHiGUs1y9_XIo__pQBJKQth737VqAEOw/formResponse",
-//       active: true,
-//     });
-//     trackStat("settingsClicked", { settingName: "sendFeedbackBeta" });
-//   }
-
-//   type OnClickOption = {
-//     onClick: (e: any) => void;
-//     title: string;
-//     text: string;
-//     hidden?: boolean;
-//     isFile?: boolean;
-//   };
-//   type OnToggleOption = {
-//     onToggle: () => void;
-//     value: boolean;
-//     title: string;
-//     text: string;
-//     hidden?: boolean;
-//   };
-//   const options: Array<OnClickOption | OnToggleOption | { separator: true }> = [
-//     {
-//       onClick: onSendFeedbackBeta,
-//       title:
-//         "I appreciate honest feedback on what needs to be improved or bug reports. Thanks for your time and support!",
-//       text: "Send feedback",
-//     },
-//     {
-//       onClick: onStopBeta,
-//       title: "Cancel the beta program and switch to free plan",
-//       text: "Cancel Beta program 👋",
-//       hidden: !props.appState.betaMode,
-//     },
-//   ];
-
-//   return (
-//     <>
-//       <Options optionsConfig={options} />
-//       {leavingBetaModalOpen && (
-//         <LeaveBetaModal
-//           onClose={() => setLeavingBetaModalOpen(false)}
-//           spaces={props.appState.spaces}
-//         />
-//       )}
-//     </>
-//   );
-// };
-
 export const HelpOptions = (p: { appState: IAppState }) => {
   const dispatch = useContext(DispatchContext);
   // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
   const [isShortcutsModalOpen, setShortcutsModalOpen] = useState(false);
 
-  // function onSendFeedback() {
-  //   chrome.tabs.create({
-  //     url:
-  //       "https://docs.google.com/forms/d/e/1FAIpQLSeA-xs3GjBVNQQEzSbHiGUs1y9_XIo__pQBJKQth737VqAEOw/formResponse",
-  //     active: true,
-  //   });
-  //   trackStat("settingsClicked", { settingName: "sendFeedback" });
-  // }
-
-  // function onRateInStore() {
-  //   if (__OVERRIDE_NEWTAB) {
-  //     chrome.tabs.create({
-  //       url:
-  //         "https://chromewebstore.google.com/detail/tabme/jnhiookaaldadiimlgncedhkpmhlmmip/reviews",
-  //       active: true,
-  //     });
-  //   } else {
-  //     chrome.tabs.create({
-  //       url:
-  //         "https://chromewebstore.google.com/detail/tabme-%E2%80%94-version-without-n/jjdbikbbknmhkknpfnlhgpcikbfjldee/reviews",
-  //       active: true,
-  //     });
-  //   }
-  //   trackStat("settingsClicked", { settingName: "rateInStore" });
-  // }
-
-  // function onHowToUse() {
-  //   chrome.tabs.create({
-  //     url: "https://gettabme.com/guide.html",
-  //     active: true,
-  //   });
-  //   trackStat("settingsClicked", { settingName: "HowToUse" });
-  // }
+  function onGithubOpen() {
+    chrome.tabs.create({
+      url: "https://github.com/",
+      active: true,
+    });
+  }
 
   function showShortcutsModal() {
     setShortcutsModalOpen(true);
-    trackStat("settingsClicked", { settingName: "shortcuts" });
   }
-
-  // function tryBeta() {
-  //   setJoinBetaModalOpen(true);
-  //   trackStat("settingsClicked", { settingName: "tryBeta" });
-  // }
 
   function invalidateFavicon(folderItem: IFolderItem): Promise<void> {
     if (folderItem.url) {
@@ -207,11 +109,6 @@ export const HelpOptions = (p: { appState: IAppState }) => {
   const settingsOptions: Array<
     OnClickOption | OnToggleOption | { separator: true }
   > = [
-    // {
-    //   onClick: onHowToUse,
-    //   title: "Learn more about Tabme. There is a lot of hidden functionality",
-    //   text: "Guide: How to use",
-    // },
     {
       onClick: showShortcutsModal,
       title: "Keyboard shortcuts",
@@ -224,35 +121,19 @@ export const HelpOptions = (p: { appState: IAppState }) => {
       text: "Reload favicons",
       // hidden: !p.appState.alphaMode,
     },
-    // {
-    //   onClick: onRateInStore,
-    //   title: "Thank you for using Tabme 🖤",
-    //   text: "Rate Tabme in Chrome Store",
-    // },
-    // {
-    //   onClick: onSendFeedback,
-    //   title: "I appreciate any feedback, ideas and bug reports.",
-    //   text: "Send feedback",
-    // },
     {
       separator: true,
-      hidden: p.appState.betaMode,
     },
-    // {
-    //   onClick: tryBeta,
-    //   title: "Join Beta",
-    //   text: "Try new functionality [Beta]",
-    //   hidden: p.appState.betaMode,
-    // },
+    {
+      onClick: onGithubOpen,
+      title: "Open Github",
+      text: "Open Github (example)",
+    },
   ];
 
   return (
     <>
       <Options optionsConfig={settingsOptions} />
-
-      {/* {isJoinBetaModalOpen && (
-        <JoinBetaModal onClose={() => setJoinBetaModalOpen(false)} />
-      )} */}
 
       {isShortcutsModalOpen && (
         <ShortcutsModal setOpen={setShortcutsModalOpen} />
@@ -265,8 +146,6 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
   const [importConfirmationOpen, setImportConfirmationOpen] = useState(false);
   const fileEvent = useRef(null);
   const dispatch = useContext(DispatchContext);
-
-  // const [isOverrideModalOpen, setOverrideModalOpen] = useState(false);
 
   function onToggleNotUsed() {
     if (p.appState.showNotUsed) {
@@ -283,8 +162,6 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
         showErrorMessage(`There are no unused items to highlight`, dispatch);
       }
     }
-
-    trackStat("settingsClicked", { settingName: "ToggleNotUsed" });
   }
 
   function onToggleHidden() {
@@ -296,13 +173,10 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
       ? "Hidden items are visible"
       : "Hidden items are hidden";
     showMessage(message, dispatch);
-
-    trackStat("settingsClicked", { settingName: "ToggleHidden" });
   }
 
   function onImportExistingBookmarks() {
     dispatch({ type: Action.UpdateAppState, newState: { page: "import" } });
-    trackStat("settingsClicked", { settingName: "ImportExistingBookmarks" });
   }
 
   function onToggleRecentVisibility() {
@@ -310,12 +184,10 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
       type: Action.UpdateAppState,
       newState: { showRecent: !p.appState.showRecent },
     });
-    trackStat("settingsClicked", { settingName: "ToggleRecentVisibility" });
   }
 
   function onToggleMode() {
     dispatch({ type: Action.ToggleDarkMode });
-    trackStat("settingsClicked", { settingName: "ToggleDarkMode" });
   }
 
   function onToggleOpenInTheNewTab() {
@@ -323,13 +195,11 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
       type: Action.UpdateAppState,
       newState: { openBookmarksInNewTab: !p.appState.openBookmarksInNewTab },
     });
-    trackStat("settingsClicked", { settingName: "ToggleOpenInTheNewTab" });
   }
 
   function onImportClick(e: any) {
     fileEvent.current = e;
     setImportConfirmationOpen(true);
-    trackStat("settingsClicked", { settingName: "ImportTabmeJSON" });
   }
 
   function onImportTypeConfirmed(opt: string) {
@@ -379,17 +249,6 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
         "You can also open bookmarks on the new tab with pressed CMD or CTRL",
       text: "Open bookmarks on the same tab",
     },
-    // {
-    //   title: "Manage browser new tab override by Tabme",
-    //   onToggle: () => {
-    //     setOverrideModalOpen(true);
-    //     trackStat("settingsClicked", {
-    //       settingName: "toggleShowTabmeOnEachNewTab",
-    //     });
-    //   },
-    //   value: __OVERRIDE_NEWTAB,
-    //   text: "Show Tabme on each new tab",
-    // },
     {
       separator: true,
     },
@@ -403,7 +262,6 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
         onImportFromToby(e, dispatch, () => {
           showMessage("Bookmarks has been imported", dispatch);
         });
-        trackStat("settingsClicked", { settingName: "ImportFromToby" });
       },
       title:
         "To get Toby`s 'JSON file' go to Account -> Export -> Json in the Toby App",
@@ -422,7 +280,6 @@ export const SettingsOptions = (p: { appState: IAppState }) => {
     {
       onClick: () => {
         onExportJson(p.appState.spaces);
-        trackStat("settingsClicked", { settingName: "ExportToJson" });
       },
       title: "Export all Folders and Bookmarks to JSON file",
       text: "Export to JSON",

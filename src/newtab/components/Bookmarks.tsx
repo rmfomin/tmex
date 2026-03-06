@@ -23,7 +23,6 @@ import {
 import { Canvas } from "./Canvas";
 import { IPoint } from "../helpers/MathTypes";
 import { TopBar } from "./TopBar";
-import { trackStat } from "../helpers/stats";
 import { Toolbar } from "./Toolbar";
 import { hideWidgetsContextMenu } from "./canvas/widgetsContextMenu";
 import { hideWidgetsSelectionFrame } from "./canvas/widgetsSelectionFrame";
@@ -42,10 +41,10 @@ export function Bookmarks(p: { appState: IAppState }) {
   >(undefined);
   const [isScrolled, setIsScrolled] = useState(false);
   const [canvasMenuPos, setCanvasMenuPos] = useState<IPoint | undefined>(
-    undefined
+    undefined,
   );
   const [canvasMenuType, setCanvasMenuType] = useState<"canvas" | "widgets">(
-    "canvas"
+    "canvas",
   );
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -100,7 +99,7 @@ export function Bookmarks(p: { appState: IAppState }) {
       const onDropItems = (
         folderId: number,
         insertBeforeItemId: number | undefined,
-        targetsIds: number[]
+        targetsIds: number[],
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
@@ -108,7 +107,7 @@ export function Bookmarks(p: { appState: IAppState }) {
             folderId = createFolderWithStat(
               dispatch,
               { historyStepId },
-              "by-drag-in-new-folder--bookmarks"
+              "by-drag-in-new-folder--bookmarks",
             );
           }
 
@@ -120,7 +119,6 @@ export function Bookmarks(p: { appState: IAppState }) {
             insertBeforeItemId: insertBeforeItemId,
             historyStepId,
           });
-          trackStat("bookmarksDragged", { count: targetsIds.length });
         });
 
         setMouseDownEvent(undefined);
@@ -128,7 +126,7 @@ export function Bookmarks(p: { appState: IAppState }) {
       const onDropFolder = (
         folderId: number,
         targetSpaceId: number | undefined,
-        insertBeforeFolderId: number | undefined
+        insertBeforeFolderId: number | undefined,
       ) => {
         dispatch({
           type: Action.MoveFolder,
@@ -152,7 +150,7 @@ export function Bookmarks(p: { appState: IAppState }) {
           p.appState,
           dispatch,
           meta,
-          p.appState.openBookmarksInNewTab
+          p.appState.openBookmarksInNewTab,
         );
       };
 
@@ -180,7 +178,6 @@ export function Bookmarks(p: { appState: IAppState }) {
           pos: { point: point },
         });
         canvasAPI.setEditingWidget(dispatch, widgetId);
-        trackStat("widgetCreated", { type: "sticker", source: "double-click" });
       };
 
       const onWidgetsRightClick = (pos: IPoint, targetWidgetId: number) => {
@@ -241,7 +238,7 @@ export function Bookmarks(p: { appState: IAppState }) {
         {
           onChangeSpacePosition,
           canSortSpaces: () => p.appState.spaces.length > 1,
-        }
+        },
       );
     }
   }, [mouseDownEvent]);
@@ -259,7 +256,7 @@ export function Bookmarks(p: { appState: IAppState }) {
       canvasMenuType,
       p.appState,
       folders,
-      () => setCanvasMenuPos(undefined)
+      () => setCanvasMenuPos(undefined),
     );
   };
 
@@ -267,7 +264,7 @@ export function Bookmarks(p: { appState: IAppState }) {
     const folderId = createFolderWithStat(
       dispatch,
       {},
-      "by-click-new-in-bookmarks"
+      "by-click-new-in-bookmarks",
     );
     dispatch({
       type: Action.UpdateAppState,
@@ -283,7 +280,7 @@ export function Bookmarks(p: { appState: IAppState }) {
       folders = p.appState.showArchived
         ? currentSpace.folders ?? [] // just in case of broken data
         : currentSpace.folders.filter(
-            (f) => canShowArchived(p.appState) || !f.archived
+            (f) => canShowArchived(p.appState) || !f.archived,
           );
 
       widgets = currentSpace.widgets ?? [];

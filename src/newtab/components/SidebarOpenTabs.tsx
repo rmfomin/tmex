@@ -4,7 +4,6 @@ import { ISpace } from "../helpers/types";
 import { DispatchContext } from "../state/actions";
 import { Action } from "../state/state";
 import { showMessage } from "../helpers/actionsHelpersWithDOM";
-import { trackStat } from "../helpers/stats";
 import { TabOrRecentItem } from "./SidebarItem";
 import Tab = chrome.tabs.Tab;
 
@@ -24,7 +23,6 @@ export const SidebarOpenTabs = memo(
         tabIds: [tabId],
       });
       showMessage("Tab has been closed", dispatch);
-      trackStat("tabClosed", { source: "sidebar" });
     }
 
     const tabsByWindows: Map<number, Tab[]> = new Map();
@@ -41,7 +39,7 @@ export const SidebarOpenTabs = memo(
 
     const sortedWindowsWithTabs = getSortedWindowsWithTabs(
       tabsByWindows,
-      p.currentWindowId
+      p.currentWindowId,
     );
 
     return (
@@ -86,12 +84,12 @@ export const SidebarOpenTabs = memo(
         /*{props.search === "" ? SectionItem : null}*/}
       </div>
     );
-  }
+  },
 );
 
 function getSortedWindowsWithTabs(
   map: Map<number, Tab[]>,
-  currentWindowId: number | undefined
+  currentWindowId: number | undefined,
 ): { windowId: number; tabs: Tab[] }[] {
   const res = Array.from(map.entries()); // Get entries to maintain access to the window ID
   let allWindows: { windowId: number; tabs: Tab[] }[] = [];

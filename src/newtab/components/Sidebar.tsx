@@ -23,7 +23,6 @@ import {
   createFolderWithStat,
   showMessage,
 } from "../helpers/actionsHelpersWithDOM";
-import { trackStat } from "../helpers/stats";
 import { SidebarRecent } from "./SidebarRecent";
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
 import { RecentItem } from "../helpers/recentHistoryUtils";
@@ -46,7 +45,7 @@ export function Sidebar(p: { appState: IAppState }) {
       const onDrop = (
         folderId: number,
         insertBeforeItemId: number | undefined,
-        targetTabsOrRecentIds: number[]
+        targetTabsOrRecentIds: number[],
       ) => {
         const targetTabId = targetTabsOrRecentIds[0]; // we support D&D only single element from sidebar
         let tabOrRecentItem:
@@ -56,7 +55,7 @@ export function Sidebar(p: { appState: IAppState }) {
 
         if (!tabOrRecentItem) {
           tabOrRecentItem = p.appState.recentItems.find(
-            (hi) => hi.id === targetTabId
+            (hi) => hi.id === targetTabId,
           );
         }
 
@@ -65,7 +64,7 @@ export function Sidebar(p: { appState: IAppState }) {
           folderId = createFolderWithStat(
             dispatch,
             {},
-            "by-drag-in-new-folder--sidebar"
+            "by-drag-in-new-folder--sidebar",
           );
         }
 
@@ -85,7 +84,6 @@ export function Sidebar(p: { appState: IAppState }) {
               itemInEdit: item.id,
             },
           });
-          trackStat("tabsSaved", { source: "sidebar-open-tabs" });
         } else {
           console.error("ERROR: tab not found");
         }
@@ -99,14 +97,12 @@ export function Sidebar(p: { appState: IAppState }) {
         if (tab) {
           chrome.tabs.update(tabOrRecentId, { active: true });
           chrome.windows.update(tab.windowId, { focused: true });
-          trackStat("tabFocused", { source: "sidebar-open-tabs" });
         } else {
           const recent = p.appState.recentItems.find(
-            (ri) => ri.id === tabOrRecentId
+            (ri) => ri.id === tabOrRecentId,
           );
           if (recent && recent.url) {
             chrome.tabs.create({ url: recent.url, active: true });
-            trackStat("tabFocused", { source: "sidebar-recent" });
           }
         }
       };
@@ -156,9 +152,6 @@ export function Sidebar(p: { appState: IAppState }) {
   };
 
   function onToggleSidebar() {
-    trackStat("toggleSidebar", {
-      sidebarCollapsed: !p.appState.sidebarCollapsed,
-    });
     dispatch({
       type: Action.UpdateAppState,
       newState: {
@@ -249,15 +242,13 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
       const folderId = createFolderWithStat(
         dispatch,
         { title, items },
-        "by-stash"
+        "by-stash",
       );
 
       dispatch({
         type: Action.ShowNotification,
         message: "All Tabs has been saved",
       });
-      trackStat("tabsStashed", { stashedTabsClosed: shouldCloseTabs });
-
       scrollElementIntoView(`[data-folder-id="${folderId}"]`);
     });
   };
@@ -332,7 +323,6 @@ const CleanupButton = React.memo((props: { tabs: Tab[] }) => {
           ? `${duplicatedTabs.length} duplicate tabs was closed`
           : "There are no duplicate tabs";
       showMessage(message, dispatch);
-      trackStat("tabsDeduplicated", { count: duplicatedTabs.length });
     });
   }
 

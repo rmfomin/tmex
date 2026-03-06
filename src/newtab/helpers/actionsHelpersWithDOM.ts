@@ -6,12 +6,11 @@ import {
   genUniqLocalId,
   isCustomActionItem,
 } from "../state/actionHelpers";
-import { trackStat } from "./stats";
 
 export function showMessage(
   message: string,
   dispatch: ActionDispatcher,
-  isLoading = false
+  isLoading = false,
 ): void {
   dispatch({
     type: Action.ShowNotification,
@@ -22,7 +21,7 @@ export function showMessage(
 
 export function showErrorMessage(
   errorMessage: string,
-  dispatch: ActionDispatcher
+  dispatch: ActionDispatcher,
 ): void {
   dispatch({
     type: Action.ShowNotification,
@@ -43,17 +42,16 @@ type CreateFolderProps = {
 export function createFolderWithStat(
   dispatch: any,
   props: CreateFolderProps,
-  statSource: string
+  statSource: string,
 ): number {
   const newFolderId = genUniqLocalId();
   dispatch({ type: Action.CreateFolder, newFolderId, ...props });
-  trackStat("folderCreated", { source: statSource });
   return newFolderId;
 }
 
 export function showMessageWithUndo(
   message: string,
-  dispatch: ActionDispatcher
+  dispatch: ActionDispatcher,
 ): void {
   dispatch({
     type: Action.ShowNotification,
@@ -70,7 +68,7 @@ export function showMessageWithUndo(
 
 export function getCanDragChecker(
   search: string,
-  dispatch: ActionDispatcher
+  dispatch: ActionDispatcher,
 ): () => boolean {
   return () => {
     if (search) {
@@ -90,7 +88,7 @@ export function clickFolderItem(
   appState: IAppState,
   dispatch: ActionDispatcher,
   openInNewTab: boolean,
-  openBookmarksInNewTab: boolean
+  openBookmarksInNewTab: boolean,
 ) {
   const targetItem = findItemById(appState, targetId);
   if (targetItem?.isSection) {
@@ -106,7 +104,6 @@ export function clickFolderItem(
     if (openInNewTab) {
       // open in new tab
       chrome.tabs.create({ url: targetItem.url, active: false });
-      trackStat("tabOpened", { inNewTab: true, source: "bookmarks" });
       //TODO fix bug of not updating bold items when move to new tab in new window
     } else {
       // open in the same tab or switch to already opened
@@ -114,7 +111,6 @@ export function clickFolderItem(
       if (tab && tab.id) {
         chrome.tabs.update(tab.id, { active: true });
         chrome.windows.update(tab.windowId, { focused: true });
-        trackStat("tabFocused", { source: "bookmarks" });
       } else {
         chrome.tabs.getCurrent((t) => {
           if (openBookmarksInNewTab) {
@@ -122,7 +118,6 @@ export function clickFolderItem(
           } else {
             chrome.tabs.update(t?.id!, { url: targetItem.url });
           }
-          trackStat("tabOpened", { inNewTab: false, source: "bookmarks" });
         });
       }
     }

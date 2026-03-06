@@ -9,8 +9,6 @@ import { SimpleEditableTitle } from "./EditableTitle";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { genUniqLocalId } from "../state/actionHelpers";
 import { insertBetween } from "../helpers/fractionalIndexes";
-// import { JoinBetaModal } from "./modals/JoinBetaModal";
-import { trackStat } from "../helpers/stats";
 
 export function SpacesList(p: {
   betaMode: boolean;
@@ -94,8 +92,6 @@ export function SpacesList(p: {
     });
 
     setEditingSpaceId(spaceId);
-
-    trackStat("spaceCreated", { source: "new-space-button" });
   };
 
   return (

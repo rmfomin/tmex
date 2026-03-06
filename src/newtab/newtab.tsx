@@ -17,7 +17,7 @@ import {
 } from "./helpers/fractionalIndexes";
 import { ISpace } from "./helpers/types";
 import { genUniqLocalId } from "./state/actionHelpers";
-import { initStats } from "./helpers/stats";
+// import { initStats } from "./helpers/stats";
 import { faviconsStorage } from "./helpers/faviconUtils";
 import { getAvailableWhatsNew } from "./helpers/whats-new";
 
@@ -42,7 +42,7 @@ if (loadFromNetwork()) {
 }
 
 async function runLocally() {
-  await initStats();
+  // await initStats();
   // loading state from LS
   getStateFromLS((res) => {
     migrateToSpaces(res);
@@ -57,7 +57,7 @@ function mountApp() {
   const root = createRoot(document.getElementById("root")!);
   root.render(
     // <React.StrictMode>
-    <App />
+    <App />,
     // </React.StrictMode>
   );
 }
@@ -74,7 +74,7 @@ function migrateToSpaces(state: ISavingAppState) {
             ...f,
             items: regeneratePositions(f.items),
           };
-        })
+        }),
       ),
       position: insertBetween("", ""),
     };
@@ -133,7 +133,7 @@ function preprocessLoadedState(state: ISavingAppState): void {
   ////////////////////////////////////////////////////////////
   state.currentWhatsNew = getAvailableWhatsNew(
     state.stat.firstSessionDate,
-    state.betaMode
+    state.betaMode,
   );
 
   ////////////////////////////////////////////////////////////
@@ -149,6 +149,6 @@ function preprocessLoadedState(state: ISavingAppState): void {
 
 function disableHideItemFunctionality(res: ISavingAppState) {
   res.hiddenFeatureIsEnabled = res.spaces.some((s) =>
-    s.folders.some((f) => f.archived || f.items.some((i) => i.archived))
+    s.folders.some((f) => f.archived || f.items.some((i) => i.archived)),
   );
 }

@@ -22,7 +22,6 @@ import { insertBetween } from "../../helpers/fractionalIndexes";
 import { getMouseX, getMouseY } from "../KeyboardAndMouseManager";
 import { sticker_size_half } from "./const";
 import { round10 } from "../../helpers/mathUtils";
-import { trackStat } from "../../helpers/stats";
 import { getGlobalAppState } from "../App";
 import { defaultStickerColor, stickerSizeS } from "./WidgetsHorMenu";
 
@@ -92,7 +91,7 @@ class CanvasAPI {
     }
 
     await navigator.clipboard.writeText(
-      JSON.stringify({ widgets, action: "copy" })
+      JSON.stringify({ widgets, action: "copy" }),
     );
   }
 
@@ -105,7 +104,7 @@ class CanvasAPI {
     }
 
     await navigator.clipboard.writeText(
-      JSON.stringify({ widgets, action: "cut" })
+      JSON.stringify({ widgets, action: "cut" }),
     );
     this.deleteWidgets(dispatch, widgetIds);
   }
@@ -125,7 +124,7 @@ class CanvasAPI {
         this.createWidgetsUnderTheCursor(
           clipboard.widgets,
           dispatch,
-          currentSpaceId
+          currentSpaceId,
         );
       }
     } catch (e) {
@@ -148,7 +147,7 @@ class CanvasAPI {
   private createWidgetsUnderTheCursor(
     widgets: IWidget[],
     dispatch: ActionDispatcher,
-    currentSpaceId: number
+    currentSpaceId: number,
   ) {
     const canvasOffset = getCanvasScrolledOffset();
 
@@ -195,14 +194,14 @@ class CanvasAPI {
 
   createFolderInCurrentViewport(
     dispatch: ActionDispatcher,
-    folders: IFolder[]
+    folders: IFolder[],
   ) {
     const folderId = createFolderWithStat(
       dispatch,
       {
         position: findPositionForNewFolder(folders),
       },
-      "toolbar"
+      "toolbar",
     );
 
     dispatch({
@@ -213,7 +212,7 @@ class CanvasAPI {
 
   createStickerInCurrentViewport(
     dispatch: ActionDispatcher,
-    currentSpaceId: number
+    currentSpaceId: number,
   ) {
     const canvasOffset = getCanvasScrolledOffset();
     newStickerShift += 6;
@@ -221,10 +220,10 @@ class CanvasAPI {
       newStickerShift = 0;
     }
     const x = round10(
-      document.body.clientWidth / 2 - 200 + canvasOffset.x + newStickerShift
+      document.body.clientWidth / 2 - 200 + canvasOffset.x + newStickerShift,
     );
     const y = round10(
-      document.body.clientHeight / 2 - 200 + canvasOffset.y + newStickerShift
+      document.body.clientHeight / 2 - 200 + canvasOffset.y + newStickerShift,
     );
     const widgetId = genUniqLocalId();
     dispatch({
@@ -234,7 +233,6 @@ class CanvasAPI {
       pos: { point: { x, y } },
     });
     canvasAPI.selectWidgets(dispatch, [widgetId]);
-    trackStat("widgetCreated", { type: "sticker", source: "toolbar" });
   }
 
   createStickerUnderCursor(dispatch: ActionDispatcher, spaceId: number) {
@@ -255,10 +253,6 @@ class CanvasAPI {
     });
     canvasAPI.selectWidgets(dispatch, [widgetId]);
     canvasAPI.setEditingWidget(dispatch, widgetId);
-    trackStat("widgetCreated", {
-      type: "sticker",
-      source: "canvas-context-menu",
-    });
   }
 }
 
@@ -268,7 +262,7 @@ function findPositionForNewFolder(folders: IFolder[]): string {
   const MIN_TOP = 70;
   const screenHeight = document.body.clientHeight - 40;
   const folderH2Elements = Array.from(
-    document.querySelectorAll<HTMLElement>(".folder h2.draggable-folder")
+    document.querySelectorAll<HTMLElement>(".folder h2.draggable-folder"),
   );
   let prevFolderId: number | undefined = undefined;
   let onscreenFolderId: number | undefined = undefined;

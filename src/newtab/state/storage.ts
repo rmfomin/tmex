@@ -1,7 +1,6 @@
 import { IAppState } from "./state";
 import { throttle } from "../helpers/utils";
 import { ColorTheme, IFolder } from "../helpers/types";
-import { setCommonStatProps } from "../helpers/stats";
 import { WhatsNew } from "../helpers/whats-new";
 
 /**
@@ -46,7 +45,7 @@ const savingStateDefaultValues = {
 };
 type SavingStateKeys = keyof typeof savingStateDefaultValues;
 export const savingStateKeys = Object.keys(
-  savingStateDefaultValues
+  savingStateDefaultValues,
 ) as SavingStateKeys[];
 
 export type ISavingAppState = {
@@ -59,7 +58,7 @@ export type ISavingAppState = {
 };
 
 export function getStateFromLS(
-  callback: (state: ISavingAppState) => void
+  callback: (state: ISavingAppState) => void,
 ): void {
   chrome.storage.local.get(savingStateKeys, (res) => {
     const result = {} as ISavingAppState;
@@ -114,9 +113,6 @@ function setThemeStyle(useDarkMode: boolean) {
   } else {
     document.documentElement.classList.remove("dark-theme");
   }
-  setCommonStatProps({
-    zColorTheme: useDarkMode ? "dark" : "light",
-  });
 }
 
 ////////////////////////////////////////////////////////

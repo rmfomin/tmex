@@ -13,11 +13,6 @@ import Tab = chrome.tabs.Tab;
 import { apiGetToken } from "../../api/api";
 import { CL } from "../helpers/classNameHelper";
 import { Welcome } from "./Welcome";
-import {
-  CommonStatProps,
-  setCommonStatProps,
-  trackStat,
-} from "../helpers/stats";
 import { getHistory, tryLoadMoreHistory } from "../helpers/recentHistoryUtils";
 
 let notificationTimeout: number | undefined;
@@ -29,15 +24,8 @@ export function getGlobalAppState(): IAppState {
 
 function invalidateStats(
   newState: IAppState,
-  prevState: IAppState | undefined
+  prevState: IAppState | undefined,
 ) {
-  const statProps: Partial<CommonStatProps> = {};
-
-  statProps.zTotalSpacesCount = newState.spaces.length;
-  statProps.zSidebarCollapsed = newState.sidebarCollapsed;
-  statProps.zIsBeta = newState.betaMode;
-  statProps.zIsFirstTime = newState.stat?.sessionNumber === 1;
-
   if (newState.tabs !== prevState?.tabs) {
     const uniqWinIds: number[] = [];
     newState.tabs.forEach((tab) => {
@@ -45,28 +33,7 @@ function invalidateStats(
         uniqWinIds.push(tab.windowId);
       }
     });
-
-    statProps.zTotalOpenTabsCount = newState.tabs.length;
-    statProps.zTotalWindowsCount = uniqWinIds.length;
   }
-
-  if (newState.spaces !== prevState?.spaces) {
-    statProps.zTotalFoldersCount = newState.spaces.reduce(
-      (sum, curSpace) => sum + curSpace.folders.length,
-      0
-    );
-    statProps.zTotalBookmarksCount = newState.spaces.reduce(
-      (sSum, curSpace) =>
-        sSum +
-        curSpace.folders.reduce(
-          (fSum, folder) => fSum + folder.items.length,
-          0
-        ),
-      0
-    );
-  }
-
-  setCommonStatProps(statProps);
 }
 
 export function App() {
@@ -110,9 +77,6 @@ export function App() {
       dispatch({ type: Action.UpdateAppState, newState: { loaded: true } });
 
       requestAnimationFrame(() => {
-        // raf needed to invalidate number of tabs and windows in stat
-        trackStat("appLoaded", {});
-
         setTimeout(() => {
           // preload more history
           tryLoadMoreHistory(dispatch);
@@ -223,7 +187,7 @@ export function App() {
   useEffect(() => {
     if (appState.apiCommandId) {
       const currentCommand = appState.apiCommandsQueue.find(
-        (cmd) => cmd.commandId === appState.apiCommandId
+        (cmd) => cmd.commandId === appState.apiCommandId,
       );
       if (currentCommand) {
         executeAPICall(currentCommand, dispatch);
@@ -281,7 +245,7 @@ function getLastActiveTabsIds() {
         } else {
           res([]);
         }
-      }
+      },
     );
   });
 }

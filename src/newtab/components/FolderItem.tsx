@@ -8,7 +8,6 @@ import { CL } from "../helpers/classNameHelper";
 import IconClose from "../icons/close.svg";
 import IconMore from "../icons/more.svg";
 import { FolderItemMenu } from "./dropdown/FolderItemMenu";
-import { trackStat } from "../helpers/stats";
 import { getBrokenImgSVG, loadFaviconUrl } from "../helpers/faviconUtils";
 import { RecentItem } from "../helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
@@ -75,7 +74,6 @@ export const FolderItem = React.memo(
         type: Action.CloseTabs,
         tabIds: tabIds,
       });
-      trackStat("tabClosed", { source: "bookmarks" });
     }
 
     function handleImageError(e: React.SyntheticEvent) {
@@ -153,5 +151,5 @@ export const FolderItem = React.memo(
         </a>
       </div>
     );
-  }
+  },
 );
