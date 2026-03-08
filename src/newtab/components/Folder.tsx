@@ -370,6 +370,7 @@ export const Folder = React.memo(function Folder(p: {
           </DropdownMenu>
         ) : null}
       </h2>
+
       {folderItems.length === 0 && !folderIsEmptyDuringSearch ? (
         <div className="folder-empty-tip">
           To add bookmark, drop an item form the sidebar
@@ -377,19 +378,23 @@ export const Folder = React.memo(function Folder(p: {
       ) : null}
 
       <div className="folder-items-box" data-folder-id={p.folder.id}>
-        {folderItems.map((item) => (
-          <FolderItem
-            key={item.id}
-            spaces={p.spaces}
-            item={item}
-            inEdit={item.id === p.itemInEdit}
-            tabs={p.tabs}
-            recentItems={p.recentItems}
-            showNotUsed={p.showNotUsed}
-            search={p.search}
-            hiddenFeatureIsEnabled={p.hiddenFeatureIsEnabled}
-          />
-        ))}
+        {folderItems.map((item) => {
+          // console.log("---> item: ", item);
+
+          return (
+            <FolderItem
+              key={item.id}
+              spaces={p.spaces}
+              item={item}
+              inEdit={item.id === p.itemInEdit}
+              tabs={p.tabs}
+              recentItems={p.recentItems}
+              showNotUsed={p.showNotUsed}
+              search={p.search}
+              hiddenFeatureIsEnabled={p.hiddenFeatureIsEnabled}
+            />
+          );
+        })}
       </div>
     </div>
   );
