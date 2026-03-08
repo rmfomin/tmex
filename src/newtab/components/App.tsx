@@ -73,7 +73,7 @@ export function App() {
       });
       dispatch({ type: Action.UpdateAppState, newState: { lastActiveTabIds } });
       dispatch({ type: Action.UpdateAppState, newState: { currentWindowId } });
-      dispatch({ type: Action.UpdateAppState, newState: { version: 2 } });
+      dispatch({ type: Action.UpdateAppState, newState: { version: 3 } });
       dispatch({ type: Action.UpdateAppState, newState: { loaded: true } });
 
       requestAnimationFrame(() => {

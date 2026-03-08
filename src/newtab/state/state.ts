@@ -111,7 +111,7 @@ export type IAppState = {
 };
 
 let initState: IAppState = {
-  version: 2,
+  version: 3,
   spaces: [],
   currentSpaceId: -1,
   recentItems: [],
