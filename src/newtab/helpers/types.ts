@@ -1,15 +1,27 @@
+/**
+ * @deprecated Legacy runtime object for data format v2.
+ * Keep until the application fully switches to v3.
+ */
 export interface IObject {
   id: number; // local id
   remoteId?: number; // server id
   position: string;
 }
 
+/**
+ * @deprecated Legacy runtime object for data format v2.
+ * Keep until the application fully switches to v3.
+ */
 export interface ISpace extends IObject {
   title: string;
   folders: IFolder[];
   widgets?: IWidget[];
 }
 
+/**
+ * @deprecated Legacy runtime object for data format v2.
+ * Keep until the application fully switches to v3.
+ */
 export interface IFolder extends IObject {
   title: string;
   items: IFolderItem[];
@@ -18,6 +30,10 @@ export interface IFolder extends IObject {
   archived?: boolean;
 }
 
+/**
+ * @deprecated Legacy runtime object for data format v2.
+ * Keep until the application fully switches to v3.
+ */
 export interface IFolderItem extends IObject {
   favIconUrl: string;
   title: string;
@@ -50,7 +66,10 @@ export interface IWidget extends IObject {
   content: IWidgetContent;
 }
 
-// Data for not yet created FolderItem
+/**
+ * @deprecated Legacy runtime object for data format v2.
+ * Keep until the application fully switches to v3.
+ */
 export type IFolderItemToCreate = Pick<
   IFolderItem,
   "id" | "favIconUrl" | "url" | "title" | "isSection"
@@ -58,3 +77,56 @@ export type IFolderItemToCreate = Pick<
 
 // undefined === 'system'
 export type ColorTheme = "light" | "dark" | undefined;
+
+export type ObjectTypeV3 = "space" | "folder" | "bookmark" | "group";
+
+export type ItemTypeV3 = "bookmark" | "group";
+
+export interface SpaceV3 {
+  id: number;
+  position: string;
+  objectType: "space";
+  title: string;
+  folders: FolderV3[];
+  widgets?: IWidget[];
+}
+
+export interface FolderV3 {
+  id: number;
+  position: string;
+  objectType: "folder";
+  title: string;
+  items: ItemV3[];
+  color?: string;
+  collapsed?: boolean;
+}
+
+export interface ItemBaseV3 {
+  id: number;
+  position: string;
+  title: string;
+  type: ItemTypeV3;
+  objectType?: "bookmark" | "group";
+}
+
+export interface BookmarkItemV3 extends ItemBaseV3 {
+  type: "bookmark";
+  objectType?: "bookmark";
+  url: string;
+  favIconUrl: string;
+}
+
+export interface GroupV3 extends ItemBaseV3 {
+  type: "group";
+  objectType?: "group";
+  collapsed?: boolean;
+  groupItems: BookmarkItemV3[];
+}
+
+export type ItemV3 = BookmarkItemV3 | GroupV3;
+
+export interface DataBackupV3 {
+  isTabme: true;
+  version: 3;
+  spaces: SpaceV3[];
+}

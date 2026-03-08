@@ -11,7 +11,6 @@ import {
 import { apiGetDashboard, loadFromNetwork } from "../api/api";
 import { createRoot } from "react-dom/client";
 import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
-// import { initStats } from "./helpers/stats";
 import { faviconsStorage } from "./helpers/faviconUtils";
 import { getAvailableWhatsNew } from "./helpers/whats-new";
 
