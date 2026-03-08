@@ -78,9 +78,15 @@ export type IFolderItemToCreate = Pick<
 // undefined === 'system'
 export type ColorTheme = "light" | "dark" | undefined;
 
-export type ObjectTypeV3 = "space" | "folder" | "bookmark" | "group";
-
 export type ItemTypeV3 = "bookmark" | "group";
+
+// v3 data
+
+export interface DataBackupV3 {
+  isTabme: true;
+  version: 3;
+  spaces: SpaceV3[];
+}
 
 export interface SpaceV3 {
   id: number;
@@ -124,9 +130,3 @@ export interface GroupV3 extends ItemBaseV3 {
 }
 
 export type ItemV3 = BookmarkItemV3 | GroupV3;
-
-export interface DataBackupV3 {
-  isTabme: true;
-  version: 3;
-  spaces: SpaceV3[];
-}
