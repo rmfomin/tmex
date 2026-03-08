@@ -1,0 +1,75 @@
+{
+  "spaces": [
+    {
+      "folders": [
+        {
+          "collapsed": false,
+          "color": "#f8bbd0",
+          "id": 1772054267443,
+          "items": [
+            {
+              "favIconUrl": "data:image/png;base64,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",
+              "id": 1745924516410,
+              "position": "UtT",
+              "title": "План/Факт - RBS - Slack",
+              "type": "bookmark",
+              "url": "https://app.slack.com/client/T07JL3WFK"
+            },
+            {
+              "favIconUrl": "https://johnweek.tst.rbstest.ru/johnweek/favicon.svg",
+              "id": 1745503349737,
+              "position": "h`4",
+              "title": "JohnWeek",
+              "type": "bookmark",
+              "url": "https://johnweek.tst.rbstest.ru/"
+            },
+            {
+              "groupItems": [
+                {
+                  "favIconUrl": "https://static.figma.com/app/icon/1/favicon.svg",
+                  "id": 1772472130626,
+                  "objectType": "bookmark",
+                  "position": "9u?",
+                  "title": "Playground / Fomin – Figma",
+                  "type": "bookmark",
+                  "url": "https://www.figma.com/design/fHSmIoTjUMB22GPcOscLUD/Playground---Fomin?node-id=0-1&p=f&t=igncwXEF4exjbFZ6-0"
+                },
+                {
+                  "favIconUrl": "https://static.figma.com/app/icon/1/favicon.svg",
+                  "id": 1770216757374,
+                  "objectType": "bookmark",
+                  "position": "K2I",
+                  "title": "Remaster GIS",
+                  "type": "bookmark",
+                  "url": "https://www.figma.com/design/Oo4MNBjbYbQMR6rBhxlMWU/%D0%AD%D0%BA%D1%80%D0%B0%D0%BD-%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D1%8B-%D0%92%D0%91%D0%A0%D0%A0?node-id=0-1&p=f&t=SRtW3l5FxwGIBGif-0"
+                },
+                {
+                  "favIconUrl": "https://static.figma.com/app/icon/1/favicon.svg",
+                  "id": 1753021296471,
+                  "position": "P=M",
+                  "title": "VBRR_xfer",
+                  "type": "bookmark",
+                  "url": "https://www.figma.com/design/JEkcPTVzs2DO9zgMX2YdTs/VBRR_P2P_cross_border_payments?node-id=32-1517&t=MjYRpMYuO7gSmwLN-0"
+                }
+              ],
+              "id": 1753014013622,
+              "position": "zzxFI",
+              "title": "Figma",
+              "type": "group"
+            }
+          ],
+          "objectType": "folder",
+          "position": "2B^",
+          "title": "CurrentWork"
+        }
+      ],
+      "id": 1772063406573,
+      "objectType": "space",
+      "position": "W;Y",
+      "title": "FAST",
+      "widgets": []
+    }
+  ],
+  "isTabme": true,
+  "version": 3
+}
