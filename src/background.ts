@@ -7,9 +7,11 @@
 ////////////////////////////////////////////////////////
 
 console.log("Background started");
+console.log("---1---");
 
 const chromeAny: any = chrome; // hotfix for "chrome.action"
 chromeAny.action.onClicked.addListener(async function () {
+  console.log("---2---");
   const viewTabUrl = chrome.runtime.getURL("newtab.html");
   chrome.tabs.create({ url: viewTabUrl });
 });
@@ -60,7 +62,7 @@ chrome.runtime.setUninstallURL(uninstallURL, () => {
   if (chrome.runtime.lastError) {
     console.error(
       "Error setting uninstall URL:",
-      chrome.runtime.lastError.message
+      chrome.runtime.lastError.message,
     );
   }
 });

@@ -107,16 +107,11 @@ export type IAppState = {
   // saved data format version
   version: number;
 
-  /**
-   * depracated. DONT USE
-   */
-  folders: IFolder[];
   hiddenFeatureIsEnabled: boolean;
 };
 
 let initState: IAppState = {
   version: 2,
-  folders: [],
   spaces: [],
   currentSpaceId: -1,
   recentItems: [],

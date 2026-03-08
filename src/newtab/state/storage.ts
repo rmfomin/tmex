@@ -1,6 +1,6 @@
 import { IAppState } from "./state";
 import { throttle } from "../helpers/utils";
-import { ColorTheme, IFolder } from "../helpers/types";
+import { ColorTheme } from "../helpers/types";
 import { WhatsNew } from "../helpers/whats-new";
 
 /**
@@ -41,7 +41,6 @@ const savingStateDefaultValues = {
   showArchived: false,
   showNotUsed: false,
   version: 1,
-  folders: undefined, // "folders" is legacy. Dont delete it until all users are migrated
 };
 type SavingStateKeys = keyof typeof savingStateDefaultValues;
 export const savingStateKeys = Object.keys(
@@ -53,7 +52,6 @@ export type ISavingAppState = {
 } & {
   hiddenFeatureIsEnabled: boolean;
   betaMode: boolean;
-  folders: IFolder[];
   currentWhatsNew: WhatsNew | undefined;
 };
 

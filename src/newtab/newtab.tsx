@@ -10,18 +10,15 @@ import {
 } from "./state/storage";
 import { apiGetDashboard, loadFromNetwork } from "../api/api";
 import { createRoot } from "react-dom/client";
-import {
-  getFirstSortedByPosition,
-  insertBetween,
-  regeneratePositions,
-} from "./helpers/fractionalIndexes";
-import { ISpace } from "./helpers/types";
-import { genUniqLocalId } from "./state/actionHelpers";
+import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
 // import { initStats } from "./helpers/stats";
 import { faviconsStorage } from "./helpers/faviconUtils";
 import { getAvailableWhatsNew } from "./helpers/whats-new";
 
+console.log("---newtab-1-start---");
+
 if (loadFromNetwork()) {
+  console.log("---newtab-2-loadFromNetwork---");
   // todo: Always start from LS. rendering should happen without loaded cloud data
   // todo: and load last data async (optional). Maybe in background thread
   getStateFromLS((res) => {
@@ -38,6 +35,7 @@ if (loadFromNetwork()) {
       });
   });
 } else {
+  console.log("---newtab-3-runLocally---");
   runLocally();
 }
 
@@ -45,7 +43,6 @@ async function runLocally() {
   // await initStats();
   // loading state from LS
   getStateFromLS((res) => {
-    migrateToSpaces(res);
     preprocessLoadedState(res);
     disableHideItemFunctionality(res);
     setInitAppState(res);
@@ -60,27 +57,6 @@ function mountApp() {
     <App />,
     // </React.StrictMode>
   );
-}
-
-// TODO remove in JUNE WHEN EVERYONE has version more than v1.30
-function migrateToSpaces(state: ISavingAppState) {
-  if (Array.isArray(state.folders)) {
-    const initSpace: ISpace = {
-      id: genUniqLocalId(),
-      title: "Bookmarks",
-      folders: regeneratePositions(
-        state.folders.map((f) => {
-          return {
-            ...f,
-            items: regeneratePositions(f.items),
-          };
-        }),
-      ),
-      position: insertBetween("", ""),
-    };
-    state.spaces = [initSpace];
-    state.folders = null!; // to prevent the next migrations
-  }
 }
 
 function preprocessLoadedState(state: ISavingAppState): void {
