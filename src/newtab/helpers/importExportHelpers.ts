@@ -1,4 +1,13 @@
-import { IFolder, ISpace } from "./types";
+import {
+  BookmarkItemV3,
+  DataBackupV3,
+  FolderV3,
+  IFolder,
+  IFolderItem,
+  ISpace,
+  ItemV3,
+  SpaceV3,
+} from "./types";
 import { Action } from "../state/state";
 import { ActionDispatcher } from "../state/actions";
 import {
@@ -23,6 +32,54 @@ function isLegacyImportJson(data: IFolder[]) {
 
 function isImportJsonV2(data: IBackup) {
   return data.isTabme && Array.isArray(data.spaces) && data.version === 2;
+}
+
+function isImportJsonV3(data: DataBackupV3) {
+  return data.isTabme && Array.isArray(data.spaces) && data.version === 3;
+}
+
+function normalizeBookmarkItemV3(item: BookmarkItemV3): IFolderItem {
+  return {
+    id: item.id,
+    position: item.position,
+    title: item.title,
+    url: item.url,
+    favIconUrl: item.favIconUrl,
+  };
+}
+
+function normalizeFolderItemsV3(items: ItemV3[]): IFolderItem[] {
+  return items.flatMap((item) => {
+    if (item.type === "bookmark") {
+      return [normalizeBookmarkItemV3(item)];
+    }
+
+    return item.groupItems.map(normalizeBookmarkItemV3);
+  });
+}
+
+function normalizeFolderV3(folder: FolderV3): IFolder {
+  return {
+    id: folder.id,
+    position: folder.position,
+    title: folder.title,
+    color: folder.color,
+    items: normalizeFolderItemsV3(folder.items),
+  };
+}
+
+function normalizeSpaceV3(space: SpaceV3): ISpace {
+  return {
+    id: space.id,
+    position: space.position,
+    title: space.title,
+    widgets: space.widgets,
+    folders: space.folders.map(normalizeFolderV3),
+  };
+}
+
+export function normalizeSpacesFromV3(data: DataBackupV3): ISpace[] {
+  return data.spaces.map(normalizeSpaceV3);
 }
 
 export function importFromJson(event: any, dispatch: ActionDispatcher) {
@@ -62,6 +119,20 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
         dispatch({
           type: Action.InitDashboard,
           spaces: data.spaces,
+          saveToLS: true,
+        });
+
+        dispatch({
+          type: Action.SelectSpace,
+          spaceId: -1, //hack to force update
+        });
+
+        showMessage("Backup has been imported", dispatch);
+      } else if (isImportJsonV3(res)) {
+        const data = res as DataBackupV3;
+        dispatch({
+          type: Action.InitDashboard,
+          spaces: normalizeSpacesFromV3(data),
           saveToLS: true,
         });
 
