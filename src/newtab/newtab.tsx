@@ -63,10 +63,12 @@ function preprocessLoadedState(state: ISavingAppState): void {
   // initialize app.stat
   ////////////////////////////////////////////////////////////
   if (state.stat) {
+    console.log("---newtab-3-stat---");
     // not first run, need to update stat
     state.stat.sessionNumber++;
     state.stat.lastVersion = chrome.runtime.getManifest().version;
   } else {
+    console.log("---newtab-3-NO-stat---");
     // the most first run of the extension
     state.stat = {
       sessionNumber: 1,

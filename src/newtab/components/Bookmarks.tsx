@@ -340,6 +340,7 @@ export function Bookmarks(p: { appState: IAppState }) {
           <div style={{ marginLeft: "58px" }}>No bookmarks found</div>
         ) : null}
       </div>
+
       {canvasMenuPos && p.appState.search === "" && (
         <DropdownMenu
           onClose={() => {
@@ -350,6 +351,7 @@ export function Bookmarks(p: { appState: IAppState }) {
           <Options optionsConfig={getCanvasMenuOptionWrapper} />
         </DropdownMenu>
       )}
+
       {p.appState.search === "" && (
         <Toolbar folders={folders} currentSpaceId={p.appState.currentSpaceId} />
       )}
