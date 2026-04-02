@@ -1098,6 +1098,25 @@ input.search {
   padding-bottom: 40px;
 }
 
+.folder-group {
+  margin: 8px 0 12px 28px;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-color);
+}
+
+.folder-group__title {
+  color: var(--section-text-color);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 4px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.folder-group__items {
+  position: relative;
+}
+
 .folder-item-new {
   span {
     font-size: 14px;

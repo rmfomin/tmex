@@ -3,11 +3,11 @@ import { BookmarkItemV3, FolderV3, IFolderItem, SpaceV3 } from "../helpers/types
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
-  filterItemsBySearch,
   scrollElementIntoView,
 } from "../helpers/utils";
 import { DropdownMenu, DropdownSubMenu } from "./dropdown/DropdownMenu";
 import { FolderItem } from "./FolderItem";
+import { FolderGroup } from "./FolderGroup";
 import { EditableTitle } from "./EditableTitle";
 import { CL } from "../helpers/classNameHelper";
 import { Action } from "../state/state";
@@ -24,7 +24,9 @@ import {
   findSpaceByFolderId,
 } from "../state/actionHelpers";
 import { RecentItem } from "../helpers/recentHistoryUtils";
-import { getFolderDisplayItems } from "./getFolderDisplayItems";
+import {
+  getVisibleFolderDisplayItems,
+} from "./getFolderDisplayItems";
 
 function toLegacyDisplayItem(item: BookmarkItemV3): IFolderItem {
   return {
@@ -193,8 +195,11 @@ export const Folder = React.memo(function Folder(p: {
     });
   }
 
-  const folderDisplayItems = getFolderDisplayItems(p.folder);
-  const flatFolderDisplayItems = folderDisplayItems.flatMap((item) => {
+  const visibleFolderDisplayItems = getVisibleFolderDisplayItems(
+    p.folder,
+    p.search,
+  );
+  const flatFolderDisplayItems = visibleFolderDisplayItems.flatMap((item) => {
     if (item.type === "bookmark") {
       return [toLegacyDisplayItem(item.item)];
     }
@@ -202,7 +207,7 @@ export const Folder = React.memo(function Folder(p: {
     return item.items.map(toLegacyDisplayItem);
   });
 
-  const folderItems = filterItemsBySearch(flatFolderDisplayItems, p.search).filter(
+  const folderItems = flatFolderDisplayItems.filter(
     (i) => canShowArchived(p) || !i.archived,
   );
 
@@ -402,19 +407,47 @@ export const Folder = React.memo(function Folder(p: {
       ) : null}
 
       <div className="folder-items-box" data-folder-id={p.folder.id}>
-        {folderItems.map((item) => {
-          // console.log("---> item: ", item);
+        {visibleFolderDisplayItems.map((item) => {
+          if (item.type === "bookmark") {
+            const legacyItem = toLegacyDisplayItem(item.item);
+            if (!canShowArchived(p) && legacyItem.archived) {
+              return null;
+            }
+
+            return (
+              <FolderItem
+                key={legacyItem.id}
+                spaces={p.spaces}
+                item={legacyItem}
+                inEdit={legacyItem.id === p.itemInEdit}
+                tabs={p.tabs}
+                recentItems={p.recentItems}
+                showNotUsed={p.showNotUsed}
+                search={p.search}
+                hiddenFeatureIsEnabled={p.hiddenFeatureIsEnabled}
+              />
+            );
+          }
+
+          const visibleGroupItems = item.items.filter(
+            (groupItem) => canShowArchived(p) || !groupItem.archived,
+          );
+
+          if (p.search !== "" && visibleGroupItems.length === 0) {
+            return null;
+          }
 
           return (
-            <FolderItem
-              key={item.id}
+            <FolderGroup
+              key={item.group.id}
               spaces={p.spaces}
-              item={item}
-              inEdit={item.id === p.itemInEdit}
+              group={item.group}
+              items={visibleGroupItems}
               tabs={p.tabs}
               recentItems={p.recentItems}
               showNotUsed={p.showNotUsed}
               search={p.search}
+              itemInEdit={p.itemInEdit}
               hiddenFeatureIsEnabled={p.hiddenFeatureIsEnabled}
             />
           );
