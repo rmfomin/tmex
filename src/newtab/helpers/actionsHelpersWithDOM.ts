@@ -1,4 +1,4 @@
-import { BookmarkItemV3, IFolderItemToCreate, ISpace, SpaceV3 } from "./types";
+import { BookmarkItemV3, IFolderItemToCreate, SpaceV3 } from "./types";
 import { ActionDispatcher, executeCustomAction } from "../state/actions";
 import { Action, IAppState } from "../state/state";
 import {
@@ -85,7 +85,7 @@ export function getCanDragChecker(
 
 export function clickFolderItem(
   targetId: number,
-  appState: { spaces: SpaceV3[] | ISpace[]; tabs: IAppState["tabs"] },
+  appState: { spaces: SpaceV3[]; tabs: IAppState["tabs"] },
   dispatch: ActionDispatcher,
   openInNewTab: boolean,
   openBookmarksInNewTab: boolean,

@@ -5,10 +5,8 @@ import {
   BookmarkItemV3,
   FolderV3,
   GroupV3,
-  IFolder,
   IFolderItem,
   IFolderItemToCreate,
-  ISpace,
   IWidget,
   ItemV3,
   SpaceV3,
@@ -19,7 +17,6 @@ import { SECTION_ICON_BASE64 } from "../helpers/utils"
 import Tab = chrome.tabs.Tab
 import HistoryItem = chrome.history.HistoryItem
 import { RecentItem } from "../helpers/recentHistoryUtils"
-import { getV3SpacesView } from "../helpers/dataFormatAdapters"
 
 export function genUniqLocalId(): number {
   return (new Date()).valueOf() + Math.round(Math.random() * 10000000)
@@ -68,15 +65,11 @@ export function createNewSection(title = "Title"): IFolderItemToCreate {
   }
 }
 
-type SpacesState = { spaces: SpaceV3[] | ISpace[] }
-
-function toV3Spaces(spaces: SpaceV3[] | ISpace[]): SpaceV3[] {
-  return getV3SpacesView(spaces)
-}
+type SpacesState = { spaces: SpaceV3[] }
 
 export function findItemById(appState: SpacesState, itemId: number): BookmarkItemV3 | undefined {
   let res: BookmarkItemV3 | undefined = undefined
-  toV3Spaces(appState.spaces).some((space) => {
+  appState.spaces.some((space) => {
     return space.folders.some((folder) => {
       return folder.items.some((item) => {
         if (item.type === "bookmark" && item.id === itemId) {
@@ -105,7 +98,7 @@ export function findAnyItemById(
   itemId: number,
 ): BookmarkItemV3 | GroupV3 | undefined {
   let res: BookmarkItemV3 | GroupV3 | undefined = undefined
-  toV3Spaces(appState.spaces).some((space) => {
+  appState.spaces.some((space) => {
     return space.folders.some((folder) => {
       return folder.items.some((item) => {
         if (item.id === itemId) {
@@ -131,7 +124,7 @@ export function findAnyItemById(
 
 export function findFolderById(state: SpacesState, folderId: number): FolderV3 | undefined {
   let res: FolderV3 | undefined = undefined
-  toV3Spaces(state.spaces).some((space) => {
+  state.spaces.some((space) => {
     res = space.folders.find((folder) => folder.id === folderId)
     return !!res
   })
@@ -140,13 +133,13 @@ export function findFolderById(state: SpacesState, folderId: number): FolderV3 |
 }
 
 export function findSpaceByFolderId(state: SpacesState, folderId: number): SpaceV3 | undefined {
-  return toV3Spaces(state.spaces).find((space) => {
+  return state.spaces.find((space) => {
     return !!space.folders.find((folder) => folder.id === folderId)
   })
 }
 
 export function findSpaceById(state: SpacesState, spaceId: number | undefined): SpaceV3 | undefined {
-  return toV3Spaces(state.spaces).find((space) => space.id === spaceId)
+  return state.spaces.find((space) => space.id === spaceId)
 }
 
 export function createNewFolderItem(url?: string, title?: string, favIconUrl?: string): IFolderItemToCreate {
@@ -181,7 +174,7 @@ export function getTempFavIconUrl(val?: string | URL): string {
 
 export function findFolderByItemId(appState: SpacesState, itemId: number): FolderV3 | undefined {
   let res: FolderV3 | undefined = undefined
-  toV3Spaces(appState.spaces).some((space) => {
+  appState.spaces.some((space) => {
     const folder = space.folders.find((currentFolder) => {
       return currentFolder.items.some((item) => {
         if (item.id === itemId) {
@@ -276,7 +269,7 @@ export function removeItemFromFolderItems(
 
 export function findWidgetById(appState: SpacesState, widgetId: number): IWidget | undefined {
   let res: IWidget | undefined = undefined
-  toV3Spaces(appState.spaces).some((space) => {
+  appState.spaces.some((space) => {
     const widget = (space.widgets ?? []).find((currentWidget) => currentWidget.id === widgetId)
     res = widget
     return !!widget
@@ -286,12 +279,11 @@ export function findWidgetById(appState: SpacesState, widgetId: number): IWidget
 }
 
 export function updateSpace(
-  spaces: SpaceV3[] | ISpace[],
+  spaces: SpaceV3[],
   spaceId: number,
   newSpace: Partial<SpaceV3> | ((space: SpaceV3) => SpaceV3)
 ): SpaceV3[] {
-  const v3Spaces = toV3Spaces(spaces)
-  const updatedSpaces = sortByPosition(v3Spaces.map((space) => {
+  const updatedSpaces = sortByPosition(spaces.map((space) => {
     if (space.id === spaceId) {
       if (typeof newSpace === "function") {
         return newSpace(space)
@@ -307,12 +299,12 @@ export function updateSpace(
 }
 
 export function updateFolder(
-  spaces: SpaceV3[] | ISpace[],
+  spaces: SpaceV3[],
   folderId: number,
   newFolder: Partial<FolderV3> | ((folder: FolderV3) => FolderV3),
   sortFolders = false
 ): SpaceV3[] {
-  const updatedSpaces = toV3Spaces(spaces).map((space) => {
+  const updatedSpaces = spaces.map((space) => {
     const hasTargetFolder = space.folders.find((folder) => folder.id === folderId)
     if (hasTargetFolder) {
       const newFolders = space.folders.map((folder) => {
@@ -344,7 +336,7 @@ export function updateFolder(
 }
 
 export function updateFolderItem(
-  spaces: SpaceV3[] | ISpace[],
+  spaces: SpaceV3[],
   itemId: number,
   newItemProps: Partial<IFolderItem> & { collapsed?: boolean },
   folderId?: number //just optimization
@@ -353,7 +345,7 @@ export function updateFolderItem(
     const folder = findFolderByItemId({ spaces }, itemId)
     if (!folder) {
       console.error("updateFolderItem can not find folder item")
-      return toV3Spaces(spaces)
+      return spaces
     }
     folderId = folder.id
   }

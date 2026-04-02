@@ -126,17 +126,15 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
   fr.readAsText(file);
 }
 
-export function createExportBackupV3(
-  spaces: SpaceV3[] | ISpace[],
-): DataBackupV3 {
+export function createExportBackupV3(spaces: SpaceV3[]): DataBackupV3 {
   return normalizeBackupV3({
     isTabme: true,
     version: 3,
-    spaces: getV3SpacesView(spaces),
+    spaces,
   });
 }
 
-export function onExportJson(spaces: SpaceV3[] | ISpace[]) {
+export function onExportJson(spaces: SpaceV3[]) {
   function downloadObjectAsJson(exportObj: any, exportName: string) {
     const dataStr =
       "data:text/json;charset=utf-8," +
