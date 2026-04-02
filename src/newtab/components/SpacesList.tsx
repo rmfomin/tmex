@@ -12,7 +12,6 @@ import { insertBetween } from "../helpers/fractionalIndexes";
 import { collectBookmarksV3 } from "../helpers/v3Traversal";
 
 export function SpacesList(p: {
-  betaMode: boolean;
   spaces: SpaceV3[];
   currentSpaceId: number;
   itemInEdit: number | undefined;

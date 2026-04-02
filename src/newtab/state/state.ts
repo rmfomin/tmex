@@ -79,7 +79,6 @@ export type IAppState = {
   colorTheme?: ColorTheme; // Stored in LS
   sidebarHovered: boolean; // for hover effects
   alphaMode: boolean;
-  betaMode: boolean;
   page: "default" | "import";
   achievements: IAppAchievements; // Stored in LS
   loaded: boolean;
@@ -120,7 +119,6 @@ let initState: IAppState = {
   openBookmarksInNewTab: false,
   sidebarCollapsed: false, //should be named "sidebarCollapsable"
   sidebarHovered: false,
-  betaMode: false,
   alphaMode: !!localStorage.getItem("betaStickers"),
   loaded: false,
 

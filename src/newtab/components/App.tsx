@@ -9,7 +9,6 @@ import { DispatchContext, stateReducer } from "../state/actions";
 import { getBC, getStateFromLS } from "../state/storage";
 import { executeAPICall } from "../../api/serverCommands";
 import Tab = chrome.tabs.Tab;
-import { apiGetToken } from "../../api/api";
 import { CL } from "../helpers/classNameHelper";
 import { getHistory, tryLoadMoreHistory } from "../helpers/recentHistoryUtils";
 
@@ -42,12 +41,6 @@ export function App() {
     // hack for getting last instance of appState in "getBC().onmessage" callback
     globalAppState = appState;
   });
-
-  useEffect(() => {
-    if (appState.betaMode) {
-      document.body.classList.add("beta");
-    }
-  }, [appState.betaMode]);
 
   useEffect(() => {
     if (appState.loaded) {
@@ -137,17 +130,6 @@ export function App() {
       }
     });
 
-    window.betaLogin = async () => {
-      try {
-        const userName = prompt("Enter your login")!;
-        const res = await apiGetToken(userName);
-        localStorage.setItem("authToken", res.token);
-        dispatch({ type: Action.UpdateAppState, newState: { betaMode: true } });
-        alert("Login successful!");
-      } catch (e) {
-        alert("Invalid credentials. Please try again.");
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -249,7 +231,6 @@ function getCurrentWindow() {
 
 declare global {
   interface Window {
-    betaLogin: () => void;
     pSBC: any;
   }
 }

@@ -5,7 +5,6 @@ import {
   applyTheme,
   getStateFromLS,
   ISavingAppState,
-  isBetaMode,
   saveStateThrottled,
 } from "./state/storage";
 import { apiGetDashboard, loadFromNetwork } from "../api/api";
@@ -74,14 +73,9 @@ function preprocessLoadedState(state: ISavingAppState): void {
   });
 
   ////////////////////////////////////////////////////////////
-  // Check if user in betaMode
-  ////////////////////////////////////////////////////////////
-  state.betaMode = isBetaMode();
-
-  ////////////////////////////////////////////////////////////
   // Init available "Whats new"
   ////////////////////////////////////////////////////////////
-  state.currentWhatsNew = getAvailableWhatsNew(state.betaMode);
+  state.currentWhatsNew = getAvailableWhatsNew();
 
   ////////////////////////////////////////////////////////////
   // Apply Dark Light Themes

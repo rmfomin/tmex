@@ -33,11 +33,6 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
     dispatch({ type: Action.UpdateSearch, value: "" });
   }
 
-  async function onLogout() {
-    localStorage.removeItem("authToken");
-    alert("Logout successful");
-  }
-
   return (
     <div
       className={CL("bookmarks-menu", {
@@ -50,7 +45,6 @@ export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
 
       {!p.appState.search && (
         <SpacesList
-          betaMode={p.appState.betaMode}
           spaces={p.appState.spaces}
           currentSpaceId={p.appState.currentSpaceId}
           itemInEdit={p.appState.itemInEdit}

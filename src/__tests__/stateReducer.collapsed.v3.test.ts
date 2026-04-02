@@ -98,7 +98,6 @@ function createState(): IAppState {
     openBookmarksInNewTab: false,
     sidebarCollapsed: false,
     sidebarHovered: false,
-    betaMode: false,
     alphaMode: false,
     loaded: true,
     selectedWidgetIds: [],

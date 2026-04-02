@@ -92,7 +92,6 @@ function createAppState(): IAppState {
     colorTheme: "light",
     sidebarHovered: false,
     alphaMode: false,
-    betaMode: false,
     page: "default",
     achievements: {
       folderCreated: 0,

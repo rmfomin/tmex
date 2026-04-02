@@ -55,7 +55,6 @@ export type ISavingAppState = {
   [key in SavingStateKeys]: IAppState[key];
 } & {
   hiddenFeatureIsEnabled: boolean;
-  betaMode: boolean;
   currentWhatsNew: WhatsNew | undefined;
 };
 
@@ -76,7 +75,6 @@ export function normalizeStateFromStorageResult(
   result.spaces = Array.isArray(res.spaces) ? getV3SpacesView(res.spaces as any) : [];
   result.version = 3;
   result.hiddenFeatureIsEnabled = res.hiddenFeatureIsEnabled ?? false;
-  result.betaMode = res.betaMode ?? false;
   result.currentWhatsNew = res.currentWhatsNew;
 
   return result;
@@ -149,16 +147,6 @@ cmd.clearChromeAndLocalStorages = () => {
   localStorage.clear();
 };
 
-cmd.startBeta = () => {
-  localStorage.setItem("betaMode", "true");
-  location.reload();
-};
-
-cmd.stopBeta = () => {
-  localStorage.removeItem("betaMode");
-  location.reload();
-};
-
 cmd.startAlpha = () => {
   localStorage.setItem("betaStickers", "true");
   location.reload();
@@ -168,7 +156,3 @@ cmd.stopAlpha = () => {
   localStorage.removeItem("betaStickers");
   location.reload();
 };
-
-export function isBetaMode(): boolean {
-  return !!localStorage.getItem("betaMode");
-}

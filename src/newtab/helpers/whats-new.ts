@@ -8,7 +8,6 @@ export type WhatsNew = {
   bodyTitle: string;
   bodyHtml: string;
   approxReleaseDate: string;
-  availableForBetaOnly?: boolean;
 };
 
 export const WhatsNewConfig: { [x in WhatsNewKey]: WhatsNew } = {
@@ -42,18 +41,12 @@ function getSeenWhatsNewKeys(): WhatsNewKey[] {
  *
  * If none is available, it returns undefined.
  */
-export function getAvailableWhatsNew(
-  isBeta: boolean
-): WhatsNew | undefined {
+export function getAvailableWhatsNew(): WhatsNew | undefined {
   const seen = getSeenWhatsNewKeys();
   const now = new Date();
   return Object.values(WhatsNewConfig).find((whatsNew) => {
     const releaseDate = parseDate(whatsNew.approxReleaseDate);
-    return (
-      now >= releaseDate &&
-      (!whatsNew.availableForBetaOnly || isBeta) &&
-      !seen.includes(whatsNew.key)
-    );
+    return now >= releaseDate && !seen.includes(whatsNew.key);
   });
 }
 
