@@ -75,6 +75,24 @@ export type IFolderItemToCreate = Pick<
   "id" | "favIconUrl" | "url" | "title" | "isSection"
 > & { position?: string };
 
+/**
+ * Compatibility-only payload shape for legacy API/import boundaries.
+ * Do not use as a runtime source of truth.
+ */
+export type LegacyFolderItemApiPayload = Pick<
+  IFolderItem,
+  "id" | "position" | "favIconUrl" | "title" | "url" | "archived" | "isSection"
+>;
+
+/**
+ * Compatibility-only payload shape for legacy API/import boundaries.
+ * Do not use as a runtime source of truth.
+ */
+export type LegacyFolderApiPayload = Pick<
+  IFolder,
+  "id" | "position" | "title" | "items" | "color" | "twoColumn" | "archived"
+>;
+
 // undefined === 'system'
 export type ColorTheme = "light" | "dark" | undefined;
 

@@ -1,9 +1,9 @@
 import { ActionDispatcher } from "./actions";
 import {
   ColorTheme,
-  IFolder,
-  IFolderItem,
   IFolderItemToCreate,
+  LegacyFolderApiPayload,
+  LegacyFolderItemApiPayload,
   SpaceV3,
   IWidgetContent,
   IWidgetPos,
@@ -238,21 +238,21 @@ export enum Action {
 }
 
 export type APICommandPayload =
-  | { type: Action.CreateFolder; body: { folder: Partial<IFolder> } }
+  | { type: Action.CreateFolder; body: { folder: Partial<LegacyFolderApiPayload> } }
   | { type: Action.DeleteFolder; body: { folderId: number } }
   | {
       type: Action.UpdateFolder;
-      body: { folderId: number; folder: Partial<IFolder> };
+      body: { folderId: number; folder: Partial<LegacyFolderApiPayload> };
     }
   | { type: Action.MoveFolder; body: { folderId: number; position: string } }
   | {
       type: Action.CreateFolderItem;
-      body: { folderId: number; item: IFolderItem };
+      body: { folderId: number; item: LegacyFolderItemApiPayload };
     }
   | { type: Action.DeleteFolderItems; body: { folderItemIds: number[] } }
   | {
       type: Action.UpdateFolderItem;
-      body: { folderItemId: number; item: Partial<IFolderItem> };
+      body: { folderItemId: number; item: Partial<LegacyFolderItemApiPayload> };
     }
   | {
       type: Action.MoveFolderItems;

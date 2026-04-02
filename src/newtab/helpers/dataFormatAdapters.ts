@@ -3,10 +3,10 @@ import {
   DataBackupV3,
   FolderV3,
   GroupV3,
-  IFolder,
-  IFolderItem,
   ISpace,
   ItemV3,
+  LegacyFolderApiPayload,
+  LegacyFolderItemApiPayload,
   SpaceV3,
 } from "./types";
 
@@ -56,7 +56,9 @@ export function normalizeBackupV3(data: DataBackupV3): DataBackupV3 {
   };
 }
 
-function convertBookmarkItemV3ToLegacy(item: BookmarkItemV3): IFolderItem {
+export function convertBookmarkItemV3ToLegacy(
+  item: BookmarkItemV3,
+): LegacyFolderItemApiPayload {
   return {
     id: item.id,
     position: item.position,
@@ -66,7 +68,7 @@ function convertBookmarkItemV3ToLegacy(item: BookmarkItemV3): IFolderItem {
   };
 }
 
-function convertFolderItemsV3ToLegacy(items: ItemV3[]): IFolderItem[] {
+function convertFolderItemsV3ToLegacy(items: ItemV3[]): LegacyFolderItemApiPayload[] {
   return items.flatMap((item) => {
     if (item.type === "bookmark") {
       return [convertBookmarkItemV3ToLegacy(item)];
@@ -76,13 +78,25 @@ function convertFolderItemsV3ToLegacy(items: ItemV3[]): IFolderItem[] {
   });
 }
 
-function convertFolderV3ToLegacy(folder: FolderV3): IFolder {
+export function convertFolderV3ToLegacy(folder: FolderV3): LegacyFolderApiPayload {
   return {
     id: folder.id,
     position: folder.position,
     title: folder.title,
     color: folder.color,
     items: convertFolderItemsV3ToLegacy(folder.items),
+  };
+}
+
+export function convertFolderPatchV3ToLegacy(
+  folder: Partial<FolderV3>,
+): Partial<LegacyFolderApiPayload> {
+  return {
+    title: folder.title,
+    color: folder.color,
+    archived: folder.archived,
+    twoColumn: folder.twoColumn,
+    position: folder.position,
   };
 }
 
@@ -100,7 +114,7 @@ export function convertV3BackupToLegacySpaces(data: DataBackupV3): ISpace[] {
   return normalizeBackupV3(data).spaces.map(convertSpaceV3ToLegacy);
 }
 
-function convertLegacyFolderItemToV3(item: IFolderItem): BookmarkItemV3 {
+function convertLegacyFolderItemToV3(item: LegacyFolderItemApiPayload): BookmarkItemV3 {
   return {
     id: item.id,
     position: item.position,
@@ -112,7 +126,7 @@ function convertLegacyFolderItemToV3(item: IFolderItem): BookmarkItemV3 {
   };
 }
 
-function convertLegacyFolderToV3(folder: IFolder): FolderV3 {
+function convertLegacyFolderToV3(folder: LegacyFolderApiPayload): FolderV3 {
   return {
     id: folder.id,
     position: folder.position,
@@ -120,6 +134,17 @@ function convertLegacyFolderToV3(folder: IFolder): FolderV3 {
     title: folder.title,
     items: folder.items.map(convertLegacyFolderItemToV3),
     color: folder.color,
+  };
+}
+
+export function convertBookmarkPatchV3ToLegacy(
+  item: Partial<BookmarkItemV3> & { collapsed?: boolean },
+): Partial<LegacyFolderItemApiPayload> {
+  return {
+    title: item.title,
+    archived: item.archived,
+    url: item.url,
+    favIconUrl: item.favIconUrl,
   };
 }
 

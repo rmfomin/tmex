@@ -12,8 +12,6 @@ import {
   BookmarkItemV3,
   ColorTheme,
   FolderV3,
-  IFolder,
-  IFolderItem,
   ISpace,
   IWidget,
   SpaceV3,
@@ -25,6 +23,10 @@ import {
   sortByPosition,
 } from "../helpers/fractionalIndexes";
 import {
+  convertBookmarkItemV3ToLegacy,
+  convertBookmarkPatchV3ToLegacy,
+  convertFolderPatchV3ToLegacy,
+  convertFolderV3ToLegacy,
 } from "../helpers/dataFormatAdapters";
 import { loadFromNetwork } from "../../api/api";
 import {
@@ -425,7 +427,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       if (isNetworkAvailable()) {
         apiCommandsQueue = getCommandsQueue(state, {
           type: Action.CreateFolder,
-          body: { folder: newFolder as unknown as Partial<IFolder> },
+          body: { folder: convertFolderV3ToLegacy(newFolder) },
         });
       }
 
@@ -515,7 +517,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           type: Action.UpdateFolder,
           body: {
             folderId: targetFolder.remoteId,
-            folder: newProps as Partial<IFolder>,
+            folder: convertFolderPatchV3ToLegacy(newProps),
           },
         });
       }
@@ -643,7 +645,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           type: Action.CreateFolderItem, // TODO USE DIFFERENT ACTION TYPES !!!
           body: {
             folderId: targetFolder.remoteId,
-            item: createdItem,
+            item: convertBookmarkItemV3ToLegacy(createdItem),
           },
         });
       }
@@ -743,7 +745,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           type: Action.UpdateFolderItem,
           body: {
             folderItemId: originalItem.remoteId,
-            item: newProps,
+            item: convertBookmarkPatchV3ToLegacy(newProps),
           },
         });
       }
