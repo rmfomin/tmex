@@ -14,6 +14,7 @@ import {
   IFolderItem,
   ISpace,
   IWidget,
+  SpaceV3,
 } from "../helpers/types";
 import { applyTheme, saveStateThrottled, savingStateKeys } from "./storage";
 import {
@@ -21,6 +22,10 @@ import {
   insertBetween,
   sortByPosition,
 } from "../helpers/fractionalIndexes";
+import {
+  convertLegacySpacesToV3Backup,
+  getLegacySpacesView,
+} from "../helpers/dataFormatAdapters";
 import { loadFromNetwork } from "../../api/api";
 import {
   findFolderById,
@@ -275,6 +280,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
 
       const newSpace = {
         id: action.spaceId,
+        objectType: "space" as const,
         title: action.title,
         position:
           action?.position ?? insertBetween(lastSpace?.position ?? "", ""),
@@ -550,7 +556,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
         targetFolderSpace.folders[insertBeforeFolderIndex]?.position ?? ""
       );
 
-      let spaces: ISpace[];
+      let spaces: SpaceV3[];
       if (prevFolderSpace.id === targetFolderSpace.id) {
         spaces = updateFolder(
           state.spaces,
@@ -559,7 +565,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           true
         );
       } else {
-        spaces = state.spaces.map((s) => {
+        const movedSpaces = getLegacySpacesView(state.spaces).map((s) => {
           if (s.id === prevFolderSpace.id) {
             return {
               ...s,
@@ -580,6 +586,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
             return s;
           }
         });
+        spaces = convertLegacySpacesToV3Backup(movedSpaces).spaces;
       }
 
       let apiCommandsQueue = state.apiCommandsQueue;
@@ -669,9 +676,9 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       }));
 
       const deleteItemsFromFolders = (
-        spaces: ISpace[],
+        spaces: SpaceV3[],
         itemId: number
-      ): ISpace[] => {
+      ): SpaceV3[] => {
         const folder = findFolderByItemId({ spaces }, itemId);
         if (folder) {
           return updateFolder(spaces, folder.id, (folder) => {
@@ -762,7 +769,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       //   originalPosition: item.position
       // }))
 
-      const spaceWithFolderWithRemovedItems: ISpace[] = movingItems.reduce(
+      const spaceWithFolderWithRemovedItems: SpaceV3[] = movingItems.reduce(
         (spaces, movingItem) => {
           const folder = findFolderByItemId({ spaces }, movingItem.id)!;
           return updateFolder(spaces, folder.id, (folder) => ({

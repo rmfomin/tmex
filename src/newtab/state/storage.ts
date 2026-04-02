@@ -2,11 +2,6 @@ import { IAppState } from "./state";
 import { throttle } from "../helpers/utils";
 import { ColorTheme } from "../helpers/types";
 import { WhatsNew } from "../helpers/whats-new";
-import {
-  convertLegacySpacesToV3Backup,
-  convertV3BackupToLegacySpaces,
-} from "../helpers/importExportHelpers";
-import { DataBackupV3, ISpace } from "../helpers/types";
 
 /**
  * SAVING STATE AND BROADCASTING CHANGES
@@ -18,32 +13,10 @@ export function getBC() {
   return bc;
 }
 
-type RawSavingState = Omit<ISavingAppState, "spaces"> & {
-  spaces: ISpace[] | DataBackupV3["spaces"];
-};
-
-function getSpacesForSave(appState: IAppState): DataBackupV3["spaces"] {
-  return convertLegacySpacesToV3Backup(appState.spaces).spaces;
-}
-
-function getSpacesForLoad(rawState: RawSavingState): ISpace[] {
-  if (rawState.version === 3) {
-    return convertV3BackupToLegacySpaces({
-      isTabme: true,
-      version: 3,
-      spaces: rawState.spaces as DataBackupV3["spaces"],
-    });
-  }
-
-  return rawState.spaces as ISpace[];
-}
-
 function saveState(appState: IAppState): void {
   const savingState: any = {};
   savingStateKeys.forEach((key) => {
-    if (key === "spaces") {
-      savingState[key] = getSpacesForSave(appState);
-    } else if (key === "version") {
+    if (key === "version") {
       savingState[key] = 3;
     } else {
       savingState[key] = appState[key as SavingStateKeys];
@@ -90,20 +63,16 @@ export function getStateFromLS(
   callback: (state: ISavingAppState) => void,
 ): void {
   chrome.storage.local.get(savingStateKeys, (res) => {
-    const rawState = {} as RawSavingState;
+    const result = {} as ISavingAppState;
     savingStateKeys.forEach((key) => {
       if (res.hasOwnProperty(key)) {
         // @ts-ignore
-        rawState[key] = res[key];
+        result[key] = res[key];
       } else {
         // @ts-ignore
-        rawState[key] = savingStateDefaultValues[key as SavingStateKeys];
+        result[key] = savingStateDefaultValues[key as SavingStateKeys];
       }
     });
-    const result = {
-      ...rawState,
-      spaces: getSpacesForLoad(rawState),
-    } as ISavingAppState;
     console.log("getStateFromLS", res, result);
     callback(result);
   });

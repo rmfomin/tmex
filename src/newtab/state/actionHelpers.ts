@@ -1,13 +1,14 @@
 /**
  * CAN NOT IMPORT REACT AS DEPENDENCY OR ANY DOM API
  */
-import { IFolder, IFolderItem, IFolderItemToCreate, ISpace, IWidget } from "../helpers/types"
+import { IFolder, IFolderItem, IFolderItemToCreate, ISpace, IWidget, SpaceV3 } from "../helpers/types"
 import { sortByPosition } from "../helpers/fractionalIndexes"
 import { type IAppState } from "./state"
 import { SECTION_ICON_BASE64 } from "../helpers/utils"
 import Tab = chrome.tabs.Tab
 import HistoryItem = chrome.history.HistoryItem
 import { RecentItem } from "../helpers/recentHistoryUtils"
+import { convertLegacySpacesToV3Backup, getLegacySpacesView } from "../helpers/dataFormatAdapters"
 
 export function genUniqLocalId(): number {
   return (new Date()).valueOf() + Math.round(Math.random() * 10000000)
@@ -56,9 +57,19 @@ export function createNewSection(title = "Title"): IFolderItemToCreate {
   }
 }
 
-export function findItemById(appState: Pick<IAppState, "spaces">, itemId: number): IFolderItem | undefined {
+type SpacesState = { spaces: SpaceV3[] | ISpace[] }
+
+function toLegacySpaces(spaces: SpaceV3[] | ISpace[]): ISpace[] {
+  return getLegacySpacesView(spaces)
+}
+
+function toV3Spaces(spaces: SpaceV3[] | ISpace[]): SpaceV3[] {
+  return convertLegacySpacesToV3Backup(toLegacySpaces(spaces)).spaces
+}
+
+export function findItemById(appState: SpacesState, itemId: number): IFolderItem | undefined {
   let res: IFolderItem | undefined = undefined
-  appState.spaces.some(s => {
+  toLegacySpaces(appState.spaces).some(s => {
     return s.folders.some(f => {
       const item = f.items.find(i => i.id === itemId)
       res = item
@@ -69,9 +80,9 @@ export function findItemById(appState: Pick<IAppState, "spaces">, itemId: number
   return res
 }
 
-export function findFolderById(state: Pick<IAppState, "spaces">, folderId: number): IFolder | undefined {
+export function findFolderById(state: SpacesState, folderId: number): IFolder | undefined {
   let res: IFolder | undefined = undefined
-  state.spaces.some(s => {
+  toLegacySpaces(state.spaces).some(s => {
     res = s.folders.find(f => f.id === folderId)
     return !!res
   })
@@ -79,14 +90,14 @@ export function findFolderById(state: Pick<IAppState, "spaces">, folderId: numbe
   return res
 }
 
-export function findSpaceByFolderId(state: Pick<IAppState, "spaces">, folderId: number): ISpace | undefined {
-  return state.spaces.find(s => {
+export function findSpaceByFolderId(state: SpacesState, folderId: number): ISpace | undefined {
+  return toLegacySpaces(state.spaces).find(s => {
     return !!s.folders.find(f => f.id === folderId)
   })
 }
 
-export function findSpaceById(state: Pick<IAppState, "spaces">, spaceId: number | undefined): ISpace | undefined {
-  return state.spaces.find(s => s.id === spaceId)
+export function findSpaceById(state: SpacesState, spaceId: number | undefined): ISpace | undefined {
+  return toLegacySpaces(state.spaces).find(s => s.id === spaceId)
 }
 
 export function createNewFolderItem(url?: string, title?: string, favIconUrl?: string): IFolderItemToCreate {
@@ -119,9 +130,9 @@ export function getTempFavIconUrl(val?: string | URL): string {
   }
 }
 
-export function findFolderByItemId(appState: Pick<IAppState, "spaces">, itemId: number): IFolder | undefined {
+export function findFolderByItemId(appState: SpacesState, itemId: number): IFolder | undefined {
   let res: IFolder | undefined = undefined
-  appState.spaces.some(s => {
+  toLegacySpaces(appState.spaces).some(s => {
     const folder = s.folders.find(f => {
       return f.items.find(i => i.id === itemId)
     })
@@ -132,9 +143,9 @@ export function findFolderByItemId(appState: Pick<IAppState, "spaces">, itemId: 
   return res
 }
 
-export function findWidgetById(appState: Pick<IAppState, "spaces">, widgetId: number): IWidget | undefined {
+export function findWidgetById(appState: SpacesState, widgetId: number): IWidget | undefined {
   let res: IWidget | undefined = undefined
-  appState.spaces.some(s => {
+  toLegacySpaces(appState.spaces).some(s => {
     const widget = (s.widgets ?? []).find(w => w.id === widgetId)
     res = widget
     return !!widget
@@ -144,11 +155,11 @@ export function findWidgetById(appState: Pick<IAppState, "spaces">, widgetId: nu
 }
 
 export function updateSpace(
-  spaces: ISpace[],
+  spaces: SpaceV3[] | ISpace[],
   spaceId: number,
   newSpace: Partial<ISpace> | ((space: ISpace) => ISpace)
-): ISpace[] {
-  return sortByPosition(spaces.map((s) => {
+): SpaceV3[] {
+  const updatedSpaces = sortByPosition(toLegacySpaces(spaces).map((s) => {
     if (s.id === spaceId) {
       if (typeof newSpace === "function") {
         return newSpace(s)
@@ -159,15 +170,17 @@ export function updateSpace(
       return s
     }
   }))
+
+  return toV3Spaces(updatedSpaces)
 }
 
 export function updateFolder(
-  spaces: ISpace[],
+  spaces: SpaceV3[] | ISpace[],
   folderId: number,
   newFolder: Partial<IFolder> | ((folder: IFolder) => IFolder),
   sortFolders = false
-): ISpace[] {
-  return spaces.map((space) => {
+): SpaceV3[] {
+  const updatedSpaces = toLegacySpaces(spaces).map((space) => {
     const hasTargetFolder = space.folders.find(f => f.id === folderId)
     if (hasTargetFolder) {
 
@@ -195,19 +208,21 @@ export function updateFolder(
       return space
     }
   })
+
+  return toV3Spaces(updatedSpaces)
 }
 
 export function updateFolderItem(
-  spaces: ISpace[],
+  spaces: SpaceV3[] | ISpace[],
   itemId: number,
   newItemProps: Partial<IFolderItem>,
   folderId?: number //just optimization
-): ISpace[] {
+): SpaceV3[] {
   if (!folderId) {
     const folder = findFolderByItemId({ spaces }, itemId)
     if (!folder) {
       console.error("updateFolderItem can not find folder item")
-      return spaces
+      return toV3Spaces(spaces)
     }
     folderId = folder.id
   }

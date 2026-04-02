@@ -14,6 +14,7 @@ import { apiGetToken } from "../../api/api";
 import { CL } from "../helpers/classNameHelper";
 import { Welcome } from "./Welcome";
 import { getHistory, tryLoadMoreHistory } from "../helpers/recentHistoryUtils";
+import { getLegacyAppStateView } from "../helpers/legacyAppStateView";
 
 let notificationTimeout: number | undefined;
 let globalAppState: IAppState;
@@ -38,6 +39,7 @@ function invalidateStats(
 
 export function App() {
   const [appState, dispatch] = useReducer(stateReducer, getInitAppState());
+  const legacyAppState = getLegacyAppStateView(appState);
 
   useEffect(() => {
     invalidateStats(appState, globalAppState);
@@ -212,8 +214,8 @@ export function App() {
           )}
           {appState.page === "default" && (
             <>
-              <Sidebar appState={appState} />
-              <Bookmarks appState={appState} />
+              <Sidebar appState={legacyAppState} />
+              <Bookmarks appState={legacyAppState} />
               <KeyboardAndMouseManager
                 search={appState.search}
                 selectedWidgetIds={appState.selectedWidgetIds}

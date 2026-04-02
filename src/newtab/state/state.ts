@@ -5,6 +5,7 @@ import {
   IFolderItem,
   IFolderItemToCreate,
   ISpace,
+  SpaceV3,
   IWidgetContent,
   IWidgetPos,
 } from "../helpers/types";
@@ -61,7 +62,7 @@ export type UndoStep = {
 };
 
 export type IAppState = {
-  spaces: ISpace[]; // Stored in LS
+  spaces: SpaceV3[]; // Stored in LS
   currentSpaceId: number; // Stored in LS
 
   tabs: Tab[];
@@ -267,6 +268,9 @@ export type APICommandPayloadFull = APICommandPayload & {
   rollbackState: IAppState;
 };
 export type HistoryActionPayload = { byUndo?: boolean; historyStepId?: number };
+export type AppStateLegacyView = Omit<IAppState, "spaces"> & {
+  spaces: ISpace[];
+};
 export type ActionPayload = (
   | { type: Action.Undo; dispatch: ActionDispatcher }
   | {
@@ -280,7 +284,7 @@ export type ActionPayload = (
   | { type: Action.UpdateSearch; value: string }
   | {
       type: Action.InitDashboard;
-      spaces?: ISpace[];
+      spaces?: SpaceV3[];
       sidebarCollapsed?: boolean;
       saveToLS?: boolean;
       init?: boolean;

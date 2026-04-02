@@ -7,7 +7,7 @@ import {
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
 import { Folder } from "./Folder";
 import { handleBookmarksKeyDown } from "../helpers/handleBookmarksKeyDown";
-import { Action, IAppState } from "../state/state";
+import { Action, AppStateLegacyView } from "../state/state";
 import {
   canShowArchived,
   DispatchContext,
@@ -34,7 +34,7 @@ import { getCanvasMenuOption } from "./canvas/getCanvasMenuOptions";
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
 
-export function Bookmarks(p: { appState: IAppState }) {
+export function Bookmarks(p: { appState: AppStateLegacyView }) {
   const dispatch = useContext(DispatchContext);
   const [mouseDownEvent, setMouseDownEvent] = useState<
     React.MouseEvent | undefined

@@ -1,6 +1,6 @@
 import { IFolderItem, IFolderItemToCreate } from "./types";
 import { ActionDispatcher, executeCustomAction } from "../state/actions";
-import { Action, IAppState } from "../state/state";
+import { Action, AppStateLegacyView } from "../state/state";
 import {
   findItemById,
   genUniqLocalId,
@@ -85,7 +85,7 @@ export function getCanDragChecker(
 
 export function clickFolderItem(
   targetId: number,
-  appState: IAppState,
+  appState: AppStateLegacyView,
   dispatch: ActionDispatcher,
   openInNewTab: boolean,
   openBookmarksInNewTab: boolean,

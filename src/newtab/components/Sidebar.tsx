@@ -9,7 +9,7 @@ import {
 } from "../helpers/utils";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { CL } from "../helpers/classNameHelper";
-import { Action, IAppState } from "../state/state";
+import { Action, AppStateLegacyView } from "../state/state";
 import { DispatchContext } from "../state/actions";
 import IconClean from "../icons/clean.svg";
 import IconStash from "../icons/stash.svg";
@@ -27,7 +27,7 @@ import { SidebarRecent } from "./SidebarRecent";
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
 import { RecentItem } from "../helpers/recentHistoryUtils";
 
-export function Sidebar(p: { appState: IAppState }) {
+export function Sidebar(p: { appState: AppStateLegacyView }) {
   const dispatch = useContext(DispatchContext);
   const keepSidebarOpened =
     !p.appState.sidebarCollapsed || p.appState.sidebarHovered;

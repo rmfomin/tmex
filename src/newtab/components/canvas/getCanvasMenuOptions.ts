@@ -1,14 +1,14 @@
 import { OptionsConfig } from "../SettingsOptions";
 import { canvasAPI } from "./canvasAPI";
 import { ActionDispatcher } from "../../state/actions";
-import { IAppState } from "../../state/state";
+import { AppStateLegacyView } from "../../state/state";
 import { IPoint } from "../../helpers/MathTypes";
 import { IFolder } from "../../helpers/types";
 
 export function getCanvasMenuOption(
   dispatch: ActionDispatcher,
   canvasMenuType: "canvas" | "widgets",
-  appState: IAppState,
+  appState: AppStateLegacyView,
   currentFolders: IFolder[],
   onClose: () => void
 ): OptionsConfig {

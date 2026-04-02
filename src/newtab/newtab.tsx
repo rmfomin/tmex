@@ -13,6 +13,7 @@ import { createRoot } from "react-dom/client";
 import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
 import { faviconsStorage } from "./helpers/faviconUtils";
 import { getAvailableWhatsNew } from "./helpers/whats-new";
+import { getLegacySpacesView } from "./helpers/dataFormatAdapters";
 
 console.log("---newtab-1-start---");
 
@@ -59,6 +60,7 @@ function mountApp() {
 }
 
 function preprocessLoadedState(state: ISavingAppState): void {
+  const legacySpaces = getLegacySpacesView(state.spaces);
   ////////////////////////////////////////////////////////////
   // initialize app.stat
   ////////////////////////////////////////////////////////////
@@ -92,7 +94,7 @@ function preprocessLoadedState(state: ISavingAppState): void {
   // Process FavIcons
   ////////////////////////////////////////////////////////////
 
-  state.spaces.forEach((s) => {
+  legacySpaces.forEach((s) => {
     s.folders.forEach((f) => {
       f.items.forEach((i) => {
         faviconsStorage.registerInCache(i.favIconUrl, i.url);
@@ -125,7 +127,8 @@ function preprocessLoadedState(state: ISavingAppState): void {
 }
 
 function disableHideItemFunctionality(res: ISavingAppState) {
-  res.hiddenFeatureIsEnabled = res.spaces.some((s) =>
+  const legacySpaces = getLegacySpacesView(res.spaces);
+  res.hiddenFeatureIsEnabled = legacySpaces.some((s) =>
     s.folders.some((f) => f.archived || f.items.some((i) => i.archived)),
   );
 }
