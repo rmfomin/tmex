@@ -1,25 +1,33 @@
-import { IFolderItem, ItemV3 } from "../helpers/types";
+import { BookmarkItemV3, FolderV3, GroupV3 } from "../helpers/types";
 
-function toLegacyDisplayItem(item: Extract<ItemV3, { type: "bookmark" }>): IFolderItem {
-  return {
-    id: item.id,
-    remoteId: item.remoteId,
-    position: item.position,
-    title: item.title,
-    url: item.url,
-    favIconUrl: item.favIconUrl,
-    archived: item.archived,
-    isSection: item.isSection,
-    inEdit: item.inEdit,
-  };
-}
+export type FolderDisplayItem =
+  | {
+      type: "bookmark";
+      item: BookmarkItemV3;
+    }
+  | {
+      type: "group";
+      group: GroupV3;
+      items: BookmarkItemV3[];
+    };
 
-export function getFolderDisplayItems(items: ItemV3[]): IFolderItem[] {
-  return items.flatMap((item) => {
+export function getFolderDisplayItems(folder: FolderV3): FolderDisplayItem[] {
+  if (folder.collapsed) {
+    return [];
+  }
+
+  return folder.items.map((item) => {
     if (item.type === "bookmark") {
-      return [toLegacyDisplayItem(item)];
+      return {
+        type: "bookmark",
+        item,
+      };
     }
 
-    return item.groupItems.map(toLegacyDisplayItem);
+    return {
+      type: "group",
+      group: item,
+      items: item.collapsed ? [] : item.groupItems,
+    };
   });
 }

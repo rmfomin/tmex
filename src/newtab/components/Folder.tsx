@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FolderV3, SpaceV3 } from "../helpers/types";
+import { BookmarkItemV3, FolderV3, IFolderItem, SpaceV3 } from "../helpers/types";
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
@@ -25,6 +25,20 @@ import {
 } from "../state/actionHelpers";
 import { RecentItem } from "../helpers/recentHistoryUtils";
 import { getFolderDisplayItems } from "./getFolderDisplayItems";
+
+function toLegacyDisplayItem(item: BookmarkItemV3): IFolderItem {
+  return {
+    id: item.id,
+    remoteId: item.remoteId,
+    position: item.position,
+    title: item.title,
+    url: item.url,
+    favIconUrl: item.favIconUrl,
+    archived: item.archived,
+    isSection: item.isSection,
+    inEdit: item.inEdit,
+  };
+}
 
 export const Folder = React.memo(function Folder(p: {
   spaces: SpaceV3[];
@@ -158,7 +172,7 @@ export const Folder = React.memo(function Folder(p: {
   }
 
   function onOpenAll() {
-    folderDisplayItems.forEach((item) => {
+    flatFolderDisplayItems.forEach((item) => {
       if (!item.archived && !item.isSection) {
         chrome.tabs.create({ url: item.url, active: false });
       }
@@ -179,9 +193,16 @@ export const Folder = React.memo(function Folder(p: {
     });
   }
 
-  const folderDisplayItems = getFolderDisplayItems(p.folder.items);
+  const folderDisplayItems = getFolderDisplayItems(p.folder);
+  const flatFolderDisplayItems = folderDisplayItems.flatMap((item) => {
+    if (item.type === "bookmark") {
+      return [toLegacyDisplayItem(item.item)];
+    }
 
-  const folderItems = filterItemsBySearch(folderDisplayItems, p.search).filter(
+    return item.items.map(toLegacyDisplayItem);
+  });
+
+  const folderItems = filterItemsBySearch(flatFolderDisplayItems, p.search).filter(
     (i) => canShowArchived(p) || !i.archived,
   );
 
