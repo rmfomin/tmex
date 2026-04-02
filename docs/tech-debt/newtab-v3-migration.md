@@ -1,47 +1,69 @@
-# Newtab V3 Migration Tech Debt
+# Техдолг по миграции newtab на v3
 
-## Context
+## Контекст
 
-Current uncommitted changes switch `newtab` runtime storage from legacy `ISpace[]` to `SpaceV3[]`, but most UI and part of the reducer logic still operate on legacy structures through adapters.
+В проекте начата миграция `newtab` с legacy-модели `ISpace[]` на `SpaceV3[]`.
 
-This commit is intentionally treated as an intermediate migration step.
+Что уже сделано:
 
-## Known Risks
+- `spaces` в runtime/state теперь считаются `SpaceV3[]`
+- storage сохраняет `spaces` как `v3`
+- вынесены адаптеры в `src/newtab/helpers/dataFormatAdapters.ts`
+- для старого UI добавлен legacy-view через `src/newtab/helpers/legacyAppStateView.ts`
 
-### Lossy conversions in state updates
+Это промежуточный этап. Миграция не завершена.
 
-`src/newtab/state/actionHelpers.ts` now converts `SpaceV3[]` to legacy and back inside `updateSpace`, `updateFolder`, and `updateFolderItem`.
+## Текущее состояние
 
-This is not safe for real `v3` data:
+Сейчас код работает в смешанном режиме:
 
-- `group` items are flattened into plain bookmarks
-- `collapsed` fields are dropped
-- legacy-only and network-related fields are not preserved consistently
-- any action that rewrites folders/items can silently destroy `v3`-specific structure
+- state и storage уже `v3`
+- часть UI и helper-логики всё ещё ожидает legacy-структуры
+- для совместимости используются адаптеры между `v3` и legacy
 
-### Storage migration is incomplete
+Такой подход позволил сдвинуть хранение данных на `v3`, но оставил опасные места в runtime-логике.
 
-`src/newtab/state/storage.ts` now saves `spaces` as-is and forces `version = 3`, but old local data is not explicitly migrated on read.
+## Проблемы
 
-This leaves a transitional state where:
+- В `src/newtab/state/actionHelpers.ts` есть конвертация `v3 -> legacy -> v3`.
 
-- old users may still have legacy-shaped `spaces`
-- the code relies on runtime shape detection via `objectType`
-- the stored `version` no longer guarantees the actual payload format
+Это происходит в `updateSpace`, `updateFolder` и `updateFolderItem`.
 
-### Legacy adapter remains in the hot path
+Проблема в том, что такая конвертация lossy:
 
-UI components currently receive legacy views via `legacyAppStateView`.
+- `group` разворачивается в обычные bookmark-элементы
+- теряются `collapsed` и другие `v3`-поля
+- часть legacy/network полей сохраняется неявно или нестабильно
 
-That keeps the app working short-term, but it means the migration is not complete and further features can accidentally keep depending on the deprecated model.
+Следствие:
 
-## Follow-up Work
+- любое обновление `spaces`, папки или элемента может повредить реальные `v3`-данные
 
-1. Make reducer updates operate on native `SpaceV3` structures without round-tripping through legacy adapters.
-2. Decide and implement an explicit one-time migration path for old local storage data.
-3. Limit legacy adapters to read-only compatibility boundaries, then remove them from runtime state flows.
-4. Add regression coverage for `v3`-only structures such as grouped items and collapsed states.
+Отдельная проблема в `src/newtab/state/storage.ts`:
 
-## Commit Intent
+- в storage всегда пишется `version = 3`
+- но старые данные из local storage явно не мигрируются при чтении
+- фактически формат определяется по shape данных, а не по `version`
 
-This document records why the intermediate commit exists and what must be addressed before considering the `v3` migration complete.
+Это значит, что переход старых пользователей на новый формат пока не оформлен явно.
+
+## Что нужно сделать
+
+1. Перевести reducer и helper-обновления на работу с `SpaceV3[]` без round-trip через legacy-адаптеры.
+2. Описать и реализовать явную миграцию старых данных из local storage в `v3`.
+3. Оставить legacy-адаптеры только для временного read-only слоя совместимости в UI.
+4. Постепенно переписать UI и helper-код так, чтобы они работали напрямую с `v3`.
+5. Добавить проверки или тесты на `v3`-структуры:
+   - `group`
+   - `collapsed`
+   - загрузка старых данных
+   - обновление без потери структуры
+
+## Цель
+
+Итоговое состояние должно быть таким:
+
+- один основной runtime-формат: `SpaceV3[]`
+- storage хранит только реальный `v3`
+- legacy-адаптеры не участвуют в изменении данных
+- старые данные мигрируются один раз и дальше не требуют специальных обходов
