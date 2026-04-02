@@ -22,7 +22,7 @@ import {
   googlePresentationHashRegExp,
   googleSpreadsheetsHashRegExp,
   hashGetterFactory,
-  IFilter,
+  RecentFilter,
   jiraHashRegExp,
   loomHashRegExp,
   miroHashRegExp,
@@ -114,7 +114,7 @@ export const SidebarRecent = React.memo(
     const [filterByDomainEnabled, setFilterByDomainEnabled] = React.useState(
       false,
     );
-    const [enabledFilers, setEnabledFilters] = useState<IFilter[]>(
+    const [enabledFilers, setEnabledFilters] = useState<RecentFilter[]>(
       historyFilters,
     );
     const enabledFiltersCount = enabledFilers.reduce(
@@ -142,7 +142,7 @@ export const SidebarRecent = React.memo(
       tryLoadMoreHistory(dispatch);
     };
 
-    const onFilterClick = (filter: IFilter) => {
+    const onFilterClick = (filter: RecentFilter) => {
       setEnabledFilters(
         enabledFilers.map((f) => {
           if (f.pattern === filter.pattern) {
@@ -248,7 +248,7 @@ export const SidebarRecent = React.memo(
   },
 );
 
-const historyFilters: IFilter[] = [
+const historyFilters: RecentFilter[] = [
   {
     title: "Miro",
     icon:

@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { hasItemsToHighlight } from "../helpers/utils";
-import { Action, IAppState } from "../state/state";
+import { Action, AppState } from "../state/state";
 import { DispatchContext } from "../state/actions";
 import Switch from "react-switch";
 import {
@@ -38,7 +38,7 @@ export type OptionsConfig = Array<
   OnClickOption | OnToggleOption | { separator: true }
 >;
 
-export const HelpOptions = (p: { appState: IAppState }) => {
+export const HelpOptions = (p: { appState: AppState }) => {
   const dispatch = useContext(DispatchContext);
   // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
   const [isShortcutsModalOpen, setShortcutsModalOpen] = useState(false);
@@ -141,7 +141,7 @@ export const HelpOptions = (p: { appState: IAppState }) => {
   );
 };
 
-export const SettingsOptions = (p: { appState: IAppState }) => {
+export const SettingsOptions = (p: { appState: AppState }) => {
   const [importConfirmationOpen, setImportConfirmationOpen] = useState(false);
   const fileEvent = useRef(null);
   const dispatch = useContext(DispatchContext);

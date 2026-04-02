@@ -1,4 +1,4 @@
-import { IWidget } from "../../helpers/types";
+import { Widget } from "../../helpers/types";
 import React, { useContext, useRef } from "react";
 import { DispatchContext } from "../../state/actions";
 import { useWidgetsContextMenu } from "./widgetsContextMenu";
@@ -40,7 +40,7 @@ function getNextVal(
 
 export function WidgetsHorMenu(p: {
   selectedWidgetIds: number[];
-  widgets: IWidget[];
+  widgets: Widget[];
 }) {
   const dispatch = useContext(DispatchContext);
   const widgetsMenuRef = useRef<HTMLDivElement>(null);
@@ -51,7 +51,7 @@ export function WidgetsHorMenu(p: {
   useWidgetsContextMenu(widgetsMenuRef);
 
   const onChangeColor = () => {
-    selectedWidgets.forEach((widget: IWidget) => {
+    selectedWidgets.forEach((widget: Widget) => {
       dispatch({
         type: Action.UpdateWidget,
         widgetId: widget.id,
@@ -63,7 +63,7 @@ export function WidgetsHorMenu(p: {
   };
 
   const onChangeSize = () => {
-    selectedWidgets.forEach((widget: IWidget) => {
+    selectedWidgets.forEach((widget: Widget) => {
       const nextLabel =
         getNextVal(currentFontSizeLabel, SizeLabels) ?? SizeLabels[0];
 
@@ -79,7 +79,7 @@ export function WidgetsHorMenu(p: {
   };
 
   const onToggleStrike = () => {
-    selectedWidgets.forEach((widget: IWidget) => {
+    selectedWidgets.forEach((widget: Widget) => {
       dispatch({
         type: Action.UpdateWidget,
         widgetId: widget.id,

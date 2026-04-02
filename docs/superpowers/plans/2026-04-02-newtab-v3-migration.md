@@ -234,7 +234,7 @@ git commit -m "refactor: migrate stored newtab data to v3 on load"
 
 - [ ] **Step 1: Change export API to accept `SpaceV3[]`**
 
-`onExportJson` should export the actual runtime model instead of pretending export starts from `ISpace[]`.
+`onExportJson` should export the actual runtime model instead of pretending export starts from `LegacySpace[]`.
 
 - [ ] **Step 2: Keep import backward compatibility**
 
@@ -343,7 +343,7 @@ Do not remove adapter code before all component boundaries are migrated.
 Run: `npm test -- --runInBand`
 
 Expected:
-- no component still requires `ISpace[]` to render
+- no component still requires `LegacySpace[]` to render
 
 - [ ] **Step 5: Commit**
 

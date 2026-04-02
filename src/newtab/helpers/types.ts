@@ -2,7 +2,7 @@
  * @deprecated Legacy runtime object for data format v2.
  * Keep until the application fully switches to v3.
  */
-export interface IObject {
+export interface LegacyObject {
   id: number; // local id
   remoteId?: number; // server id
   position: string;
@@ -12,19 +12,19 @@ export interface IObject {
  * @deprecated Legacy runtime object for data format v2.
  * Keep until the application fully switches to v3.
  */
-export interface ISpace extends IObject {
+export interface LegacySpace extends LegacyObject {
   title: string;
-  folders: IFolder[];
-  widgets?: IWidget[];
+  folders: LegacyFolder[];
+  widgets?: Widget[];
 }
 
 /**
  * @deprecated Legacy runtime object for data format v2.
  * Keep until the application fully switches to v3.
  */
-export interface IFolder extends IObject {
+export interface LegacyFolder extends LegacyObject {
   title: string;
-  items: IFolderItem[];
+  items: LegacyFolderItem[];
   color?: string;
   twoColumn?: boolean;
   archived?: boolean;
@@ -34,7 +34,7 @@ export interface IFolder extends IObject {
  * @deprecated Legacy runtime object for data format v2.
  * Keep until the application fully switches to v3.
  */
-export interface IFolderItem extends IObject {
+export interface LegacyFolderItem extends LegacyObject {
   favIconUrl: string;
   title: string;
   url: string;
@@ -45,14 +45,14 @@ export interface IFolderItem extends IObject {
 
 export type WidgetType = "Sticker";
 
-export type IWidgetPos = {
+export type WidgetPos = {
   point: {
     x: number;
     y: number;
   };
 };
 
-export type IWidgetContent = {
+export type WidgetContent = {
   contentType: "Sticker";
   text: string;
   color: string;
@@ -60,18 +60,18 @@ export type IWidgetContent = {
   strikethrough?: boolean;
 };
 
-export interface IWidget extends IObject {
+export interface Widget extends LegacyObject {
   widgetType: WidgetType;
-  pos: IWidgetPos; // this is actual {x,y} position for widgets
-  content: IWidgetContent;
+  pos: WidgetPos; // this is actual {x,y} position for widgets
+  content: WidgetContent;
 }
 
 /**
  * @deprecated Legacy runtime object for data format v2.
  * Keep until the application fully switches to v3.
  */
-export type IFolderItemToCreate = Pick<
-  IFolderItem,
+export type FolderItemToCreate = Pick<
+  LegacyFolderItem,
   "id" | "favIconUrl" | "url" | "title" | "isSection"
 > & { position?: string };
 
@@ -80,7 +80,7 @@ export type IFolderItemToCreate = Pick<
  * Do not use as a runtime source of truth.
  */
 export type LegacyFolderItemApiPayload = Pick<
-  IFolderItem,
+  LegacyFolderItem,
   "id" | "position" | "favIconUrl" | "title" | "url" | "archived" | "isSection"
 >;
 
@@ -89,7 +89,7 @@ export type LegacyFolderItemApiPayload = Pick<
  * Do not use as a runtime source of truth.
  */
 export type LegacyFolderApiPayload = Pick<
-  IFolder,
+  LegacyFolder,
   "id" | "position" | "title" | "items" | "color" | "twoColumn" | "archived"
 >;
 
@@ -113,7 +113,7 @@ export interface SpaceV3 {
   objectType: "space";
   title: string;
   folders: FolderV3[];
-  widgets?: IWidget[];
+  widgets?: Widget[];
 }
 
 export interface FolderV3 {

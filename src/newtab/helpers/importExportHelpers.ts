@@ -1,7 +1,7 @@
 import {
   DataBackupV3,
-  IFolder,
-  ISpace,
+  LegacyFolder,
+  LegacySpace,
   SpaceV3,
 } from "./types";
 import { Action } from "../state/state";
@@ -21,19 +21,19 @@ import {
   normalizeBackupV3,
 } from "./dataFormatAdapters";
 
-type IBackup = {
+type LegacyBackup = {
   isTabme: true;
   version: number;
-  spaces: ISpace[];
+  spaces: LegacySpace[];
 };
 
 // TODO(v3-migration): delete after legacy import formats are dropped.
-function isLegacyImportJson(data: IFolder[]) {
+function isLegacyImportJson(data: LegacyFolder[]) {
   return Array.isArray(data) && data[0]?.title && data[0]?.items;
 }
 
 // TODO(v3-migration): delete after version 2 backups are no longer supported.
-function isImportJsonV2(data: IBackup) {
+function isImportJsonV2(data: LegacyBackup) {
   return data.isTabme && Array.isArray(data.spaces) && data.version === 2;
 }
 
@@ -63,7 +63,7 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
         });
         dispatch({ type: Action.SelectSpace, spaceId: defaultSpaceId });
 
-        const loadedFolders = res as IFolder[];
+        const loadedFolders = res as LegacyFolder[];
         loadedFolders.forEach((loadedFolder) => {
           dispatch({
             type: Action.CreateFolder,
@@ -76,7 +76,7 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
         showMessage("Backup has been imported", dispatch);
       } else if (isImportJsonV2(res)) {
         // TODO(v3-migration): delete this branch after support for version 2 backups is dropped.
-        const data = res as IBackup;
+        const data = res as LegacyBackup;
         dispatch({
           type: Action.InitDashboard,
           spaces: convertLegacySpacesToV3Backup(data.spaces).spaces,
@@ -159,7 +159,7 @@ export function onImportFromToby(
   function receivedText(e: any) {
     let lines = e.target.result;
     try {
-      const tobyData = JSON.parse(lines) as ITobyJson;
+      const tobyData = JSON.parse(lines) as TobyJson;
       const validFormat = Array.isArray(tobyData.lists);
       if (validFormat) {
         let count = 0;
@@ -200,16 +200,16 @@ export function onImportFromToby(
   fr.readAsText(file);
 }
 
-type ITobyItem = {
+type TobyItem = {
   title: string;
   url: string;
 };
-type ITobyFolder = {
+type TobyFolder = {
   title: string;
-  cards: ITobyItem[];
+  cards: TobyItem[];
 };
-type ITobyJson = {
-  lists: ITobyFolder[];
+type TobyJson = {
+  lists: TobyFolder[];
 };
 
 //////////////////////////////////////////////////////////////////////

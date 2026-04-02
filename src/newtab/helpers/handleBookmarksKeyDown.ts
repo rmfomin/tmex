@@ -1,5 +1,5 @@
 import React from "react";
-import { IAppState } from "../state/state";
+import { AppState } from "../state/state";
 import { ActionDispatcher } from "../state/actions";
 import { clickFolderItem } from "./actionsHelpersWithDOM";
 import { findFolderByItemId } from "../state/actionHelpers";
@@ -32,7 +32,7 @@ function focusVerticalItem(offset: number) {
   }
 }
 
-function focusHorizontalItem(offset: number, appState: IAppState) {
+function focusHorizontalItem(offset: number, appState: AppState) {
   if (document.activeElement) {
     const folderItems = convertItemsIntoHorizontalList(
       document.activeElement as HTMLElement,
@@ -44,7 +44,7 @@ function focusHorizontalItem(offset: number, appState: IAppState) {
 
 function openFocusedItem(
   event: React.KeyboardEvent,
-  appState: IAppState,
+  appState: AppState,
   dispatch: ActionDispatcher,
 ) {
   const link = event.target as HTMLLinkElement;
@@ -66,7 +66,7 @@ function openFocusedItem(
 
 export function handleBookmarksKeyDown(
   event: React.KeyboardEvent,
-  appState: IAppState,
+  appState: AppState,
   dispatch: ActionDispatcher,
 ) {
   const activeElement = document.activeElement as HTMLElement;
@@ -162,7 +162,7 @@ function convertItemsIntoVerticalList(): Element[] {
 
 function convertItemsIntoHorizontalList(
   currentItem: HTMLElement,
-  appState: IAppState,
+  appState: AppState,
 ): Element[] {
   const currentFolder = findFolderByItemId(
     appState,

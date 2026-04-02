@@ -9,7 +9,7 @@ import { createContext } from "react";
 import { CL } from "../../helpers/classNameHelper";
 import ReactDOM from "react-dom";
 import { isSomeParentHaveClass } from "../../helpers/utils";
-import { IOffset, IPoint } from "../../helpers/MathTypes";
+import { Offset, Point } from "../../helpers/MathTypes";
 
 export const DropdownSetMenuIdContext = createContext((id: number) => {});
 export const DropdownMenuIdContext = createContext(-1);
@@ -21,7 +21,7 @@ interface DropdownSubMenuProps {
   submenuContent: React.ReactNode; //todo make is a function to calc it lazily
 }
 
-function getOffsets(o?: Partial<IOffset>): IOffset {
+function getOffsets(o?: Partial<Offset>): Offset {
   return {
     top: o?.top ?? 0,
     bottom: o?.bottom ?? 8,
@@ -116,8 +116,8 @@ export const DropdownSubMenu = ({
 
 export function DropdownMenu(p: {
   className?: string;
-  offset?: Partial<IOffset>;
-  absPosition?: IPoint;
+  offset?: Partial<Offset>;
+  absPosition?: Point;
   width?: number;
   alignRight?: boolean;
   children: any; //todo fix types

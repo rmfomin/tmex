@@ -3,7 +3,7 @@ import {
   DataBackupV3,
   FolderV3,
   GroupV3,
-  ISpace,
+  LegacySpace,
   ItemV3,
   LegacyFolderApiPayload,
   LegacyFolderItemApiPayload,
@@ -100,7 +100,7 @@ export function convertFolderPatchV3ToLegacy(
   };
 }
 
-function convertSpaceV3ToLegacy(space: SpaceV3): ISpace {
+function convertSpaceV3ToLegacy(space: SpaceV3): LegacySpace {
   return {
     id: space.id,
     position: space.position,
@@ -110,7 +110,7 @@ function convertSpaceV3ToLegacy(space: SpaceV3): ISpace {
   };
 }
 
-export function convertV3BackupToLegacySpaces(data: DataBackupV3): ISpace[] {
+export function convertV3BackupToLegacySpaces(data: DataBackupV3): LegacySpace[] {
   return normalizeBackupV3(data).spaces.map(convertSpaceV3ToLegacy);
 }
 
@@ -148,7 +148,7 @@ export function convertBookmarkPatchV3ToLegacy(
   };
 }
 
-function convertLegacySpaceToV3(space: ISpace): SpaceV3 {
+function convertLegacySpaceToV3(space: LegacySpace): SpaceV3 {
   return {
     id: space.id,
     position: space.position,
@@ -159,7 +159,7 @@ function convertLegacySpaceToV3(space: ISpace): SpaceV3 {
   };
 }
 
-export function convertLegacySpacesToV3Backup(spaces: ISpace[]): DataBackupV3 {
+export function convertLegacySpacesToV3Backup(spaces: LegacySpace[]): DataBackupV3 {
   return {
     isTabme: true,
     version: 3,
@@ -167,7 +167,7 @@ export function convertLegacySpacesToV3Backup(spaces: ISpace[]): DataBackupV3 {
   };
 }
 
-export function getLegacySpacesView(spaces: SpaceV3[] | ISpace[]): ISpace[] {
+export function getLegacySpacesView(spaces: SpaceV3[] | LegacySpace[]): LegacySpace[] {
   const firstSpace = spaces[0];
   if (!firstSpace) {
     return [];
@@ -181,10 +181,10 @@ export function getLegacySpacesView(spaces: SpaceV3[] | ISpace[]): ISpace[] {
     });
   }
 
-  return spaces as ISpace[];
+  return spaces as LegacySpace[];
 }
 
-export function getV3SpacesView(spaces: SpaceV3[] | ISpace[]): SpaceV3[] {
+export function getV3SpacesView(spaces: SpaceV3[] | LegacySpace[]): SpaceV3[] {
   const firstSpace = spaces[0];
   if (!firstSpace) {
     return [];
@@ -198,5 +198,5 @@ export function getV3SpacesView(spaces: SpaceV3[] | ISpace[]): SpaceV3[] {
     }).spaces;
   }
 
-  return convertLegacySpacesToV3Backup(spaces as ISpace[]).spaces;
+  return convertLegacySpacesToV3Backup(spaces as LegacySpace[]).spaces;
 }

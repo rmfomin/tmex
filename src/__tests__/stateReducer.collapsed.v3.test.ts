@@ -39,9 +39,9 @@ Object.defineProperty(global, "localStorage", {
 
 const { stateReducer } = require("../newtab/state/actions");
 const { Action } = require("../newtab/state/state");
-type IAppState = import("../newtab/state/state").IAppState;
+type AppState = import("../newtab/state/state").AppState;
 
-function createState(): IAppState {
+function createState(): AppState {
   return {
     version: 3,
     currentSpaceId: 1,

@@ -1,16 +1,16 @@
-export interface IPoint {
+export interface Point {
   x: number;
   y: number;
 }
 
-export interface IRect {
+export interface Rect {
   x: number;
   y: number;
   width: number;
   height: number;
 }
 
-export interface IOffset {
+export interface Offset {
   top: number;
   bottom: number;
   left: number;

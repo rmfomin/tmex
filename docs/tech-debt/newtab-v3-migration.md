@@ -19,7 +19,7 @@
 3. Добавлена явная миграция/нормализация storage-load в `src/newtab/state/storage.ts`.
 4. Export переведён на реальный `DataBackupV3` в `src/newtab/helpers/importExportHelpers.ts`.
 5. Preload и runtime read-path переведены на `v3`-traversal helper-ы.
-6. UI-слой переведён с `AppStateLegacyView` на `IAppState`/`SpaceV3[]`.
+6. UI-слой переведён с `AppStateLegacyView` на `AppState`/`SpaceV3[]`.
 7. Добавлены тесты на:
    - lossy legacy round-trip
    - `group` / `groupItems`
@@ -55,7 +55,7 @@ Legacy-адаптеры сохраняются только для совмес�
 
 Небольшой остаточный техдолг ещё есть:
 
-- часть helper/API типов всё ещё допускает `ISpace[] | SpaceV3[]` для совместимости
+- часть helper/API типов всё ещё допускает `LegacySpace[] | SpaceV3[]` для совместимости
 - network payload типы исторически описаны через legacy-формы и могут быть упрощены отдельной задачей
 - legacy-конвертеры стоит удалить полностью после окончания периода поддержки старых backup-форматов
 - в item-модели `bookmark/group` сейчас дублируются `type` и `objectType`

@@ -1,4 +1,4 @@
-import { IFolder } from "../newtab/helpers/types";
+import { LegacyFolder } from "../newtab/helpers/types";
 
 export interface APIResponseBase<T> {
   data: T;
@@ -15,5 +15,5 @@ export type APIResponseGetToken = {
 };
 
 export type APIResponseDashboard = {
-  spaces: { folders: IFolder[] }[];
+  spaces: { folders: LegacyFolder[] }[];
 };

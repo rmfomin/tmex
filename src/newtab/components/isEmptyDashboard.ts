@@ -1,8 +1,8 @@
-import { IAppState } from "../state/state";
+import { AppState } from "../state/state";
 import { findSpaceById } from "../state/actionHelpers";
 
 export function isEmptyDashboard(
-  appState: Pick<IAppState, "spaces" | "currentSpaceId" | "search">,
+  appState: Pick<AppState, "spaces" | "currentSpaceId" | "search">,
 ): boolean {
   if (appState.search !== "") {
     return false;

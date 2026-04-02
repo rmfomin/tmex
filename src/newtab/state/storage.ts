@@ -1,4 +1,4 @@
-import { IAppState } from "./state";
+import { AppState } from "./state";
 import { throttle } from "../helpers/utils";
 import { ColorTheme } from "../helpers/types";
 import { getV3SpacesView } from "../helpers/dataFormatAdapters";
@@ -13,7 +13,7 @@ export function getBC() {
   return bc;
 }
 
-function saveState(appState: IAppState): void {
+function saveState(appState: AppState): void {
   const savingState: any = {};
   savingStateKeys.forEach((key) => {
     if (key === "version") {
@@ -50,21 +50,21 @@ export const savingStateKeys = Object.keys(
   savingStateDefaultValues,
 ) as SavingStateKeys[];
 
-export type ISavingAppState = {
-  [key in SavingStateKeys]: IAppState[key];
+export type SavingState = {
+  [key in SavingStateKeys]: AppState[key];
 } & {
   hiddenFeatureIsEnabled: boolean;
 };
 
 export function normalizeStateFromStorageResult(
-  res: Partial<ISavingAppState>,
-): ISavingAppState {
-  const result = {} as ISavingAppState;
+  res: Partial<SavingState>,
+): SavingState {
+  const result = {} as SavingState;
   const mutableResult = result as any;
 
   savingStateKeys.forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(res, key)) {
-      mutableResult[key] = res[key as keyof ISavingAppState];
+      mutableResult[key] = res[key as keyof SavingState];
     } else {
       mutableResult[key] = savingStateDefaultValues[key];
     }
@@ -78,7 +78,7 @@ export function normalizeStateFromStorageResult(
 }
 
 export function getStateFromLS(
-  callback: (state: ISavingAppState) => void,
+  callback: (state: SavingState) => void,
 ): void {
   chrome.storage.local.get(savingStateKeys, (res) => {
     const result = normalizeStateFromStorageResult(res);

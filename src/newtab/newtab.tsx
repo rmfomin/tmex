@@ -4,7 +4,7 @@ import { setInitAppState } from "./state/state";
 import {
   applyTheme,
   getStateFromLS,
-  ISavingAppState,
+  SavingState,
   saveStateThrottled,
 } from "./state/storage";
 import { apiGetDashboard, loadFromNetwork } from "../api/api";
@@ -49,7 +49,7 @@ function mountApp() {
   );
 }
 
-function preprocessLoadedState(state: ISavingAppState): void {
+function preprocessLoadedState(state: SavingState): void {
   ensureDefaultSpace(state);
 
   const selectedSpace = state.spaces.find((s) => s.id === state.currentSpaceId);
@@ -69,6 +69,6 @@ function preprocessLoadedState(state: ISavingAppState): void {
   saveStateThrottled(state);
 }
 
-function disableHideItemFunctionality(res: ISavingAppState) {
+function disableHideItemFunctionality(res: SavingState) {
   res.hiddenFeatureIsEnabled = hasArchivedItemsV3(res.spaces);
 }

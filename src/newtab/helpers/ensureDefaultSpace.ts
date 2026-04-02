@@ -1,8 +1,8 @@
-import { ISavingAppState } from "../state/storage";
+import { SavingState } from "../state/storage";
 
 const DEFAULT_SPACE_ID = 1;
 
-export function ensureDefaultSpace(state: ISavingAppState): void {
+export function ensureDefaultSpace(state: SavingState): void {
   if (state.spaces.length > 0) {
     return;
   }

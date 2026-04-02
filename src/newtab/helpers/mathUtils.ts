@@ -1,6 +1,6 @@
-import { IOffset, IRect } from "./MathTypes";
+import { Offset, Rect } from "./MathTypes";
 
-export function areRectsOverlapping(rect1: IRect, rect2: IRect): boolean {
+export function areRectsOverlapping(rect1: Rect, rect2: Rect): boolean {
   // Check if one rectangle is to the left of the other
   if (rect1.x + rect1.width <= rect2.x || rect2.x + rect2.width <= rect1.x) {
     return false;
@@ -15,7 +15,7 @@ export function areRectsOverlapping(rect1: IRect, rect2: IRect): boolean {
   return true;
 }
 
-export function normalizeRect(rect: IRect): IRect {
+export function normalizeRect(rect: Rect): Rect {
   let normalizedRect = { ...rect };
 
   // If width is negative, adjust the x coordinate and make width positive
@@ -33,7 +33,7 @@ export function normalizeRect(rect: IRect): IRect {
   return normalizedRect;
 }
 
-export function uniteRects(rects: IOffset[]): IOffset {
+export function uniteRects(rects: Offset[]): Offset {
   if (rects.length > 0) {
     const res = {
       left: rects[0].left,

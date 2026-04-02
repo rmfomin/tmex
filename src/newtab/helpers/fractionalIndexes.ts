@@ -8,7 +8,7 @@
 // instead. So "insertBetween('', positions[0])" inserts at the front and
 // "insertBetween(positions[positions.length - 1], '')" inserts at the back.
 
-import { IFolderItem, IFolderItemToCreate, IObject } from "./types";
+import { LegacyFolderItem, FolderItemToCreate, LegacyObject } from "./types";
 
 // VERY WIERD NAMING, it seems like "before" and "after" are mixed
 export function insertBetween(before: string, after: string): string {
@@ -125,10 +125,10 @@ export function getFirstSortedByPosition<T>(
 }
 
 export function addItemsToFolder(
-  insertingItems: IFolderItemToCreate[],
-  existingItems: IFolderItem[],
+  insertingItems: FolderItemToCreate[],
+  existingItems: LegacyFolderItem[],
   insertBeforeItemId?: number
-): IFolderItem[] {
+): LegacyFolderItem[] {
   const insertBeforeItemIndex = existingItems.findIndex(
     (item) => item.id === insertBeforeItemId
   );
@@ -141,7 +141,7 @@ export function addItemsToFolder(
   let insertAfterItem = existingItems[insertAfterItemIndex];
   let insertBeforeItem = existingItems[insertBeforeItemIndex];
 
-  const newItems: IFolderItem[] = [];
+  const newItems: LegacyFolderItem[] = [];
   insertingItems.forEach((insertingItem) => {
     const item = insertFolderItem(
       insertingItem,
@@ -156,10 +156,10 @@ export function addItemsToFolder(
 }
 
 function insertFolderItem(
-  newItem: IFolderItemToCreate,
-  insertAfterItem: IFolderItem | undefined,
-  insertBeforeItem: IFolderItem | undefined
-): IFolderItem {
+  newItem: FolderItemToCreate,
+  insertAfterItem: LegacyFolderItem | undefined,
+  insertBeforeItem: LegacyFolderItem | undefined
+): LegacyFolderItem {
   return {
     ...newItem,
     position: insertBetween(
@@ -169,8 +169,8 @@ function insertFolderItem(
   };
 }
 
-export function regeneratePositions<T extends IObject>(records: T[]): T[] {
-  let prevObject: IObject | undefined = undefined;
+export function regeneratePositions<T extends LegacyObject>(records: T[]): T[] {
+  let prevObject: LegacyObject | undefined = undefined;
 
   records.forEach((obj) => {
     obj.position = insertBetween(prevObject?.position ?? "", "");

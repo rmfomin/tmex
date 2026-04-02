@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { DispatchContext } from "../state/actions";
-import { IAppState } from "../state/state";
+import { AppState } from "../state/state";
 import { showMessage } from "../helpers/actionsHelpersWithDOM";
 import {
   BookmarksAsPlainList,
@@ -279,7 +279,7 @@ const BookmarkList = (p: {
 };
 
 export function BookmarkImporter(p: {
-  appState: IAppState;
+  appState: AppState;
   onClose: () => void;
   onBack?: () => void;
 }) {

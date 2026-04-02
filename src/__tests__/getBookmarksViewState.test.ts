@@ -1,7 +1,7 @@
 import { getBookmarksViewState } from "../newtab/components/getBookmarksViewState";
-import { IAppState } from "../newtab/state/state";
+import { AppState } from "../newtab/state/state";
 
-function createAppState(): IAppState {
+function createAppState(): AppState {
   return {
     version: 3,
     currentSpaceId: 1,

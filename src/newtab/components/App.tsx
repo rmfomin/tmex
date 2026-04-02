@@ -4,7 +4,7 @@ import { Sidebar } from "./Sidebar";
 import { Notification } from "./Notification";
 import { KeyboardAndMouseManager } from "./KeyboardAndMouseManager";
 import { ImportBookmarksFromSettings } from "./ImportBookmarksFromSettings";
-import { Action, getInitAppState, IAppState } from "../state/state";
+import { Action, getInitAppState, AppState } from "../state/state";
 import { DispatchContext, stateReducer } from "../state/actions";
 import { getBC, getStateFromLS } from "../state/storage";
 import { executeAPICall } from "../../api/serverCommands";
@@ -13,15 +13,15 @@ import { CL } from "../helpers/classNameHelper";
 import { getHistory, tryLoadMoreHistory } from "../helpers/recentHistoryUtils";
 
 let notificationTimeout: number | undefined;
-let globalAppState: IAppState;
+let globalAppState: AppState;
 
-export function getGlobalAppState(): IAppState {
+export function getGlobalAppState(): AppState {
   return globalAppState;
 }
 
 function invalidateStats(
-  newState: IAppState,
-  prevState: IAppState | undefined,
+  newState: AppState,
+  prevState: AppState | undefined,
 ) {
   if (newState.tabs !== prevState?.tabs) {
     const uniqWinIds: number[] = [];

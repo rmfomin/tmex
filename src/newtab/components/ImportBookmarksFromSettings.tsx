@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { BookmarkImporter } from "./BookmarksImporter";
-import { Action, IAppState } from "../state/state";
+import { Action, AppState } from "../state/state";
 import { DispatchContext } from "../state/actions";
 
-export function ImportBookmarksFromSettings(props: { appState: IAppState }) {
+export function ImportBookmarksFromSettings(props: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);
 
   const onClose = () => {

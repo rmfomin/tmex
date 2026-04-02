@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { handleSearchKeyDown } from "../helpers/handleBookmarksKeyDown";
-import { Action, IAppState } from "../state/state";
+import { Action, AppState } from "../state/state";
 import { DispatchContext } from "../state/actions";
 import { HelpOptions, SettingsOptions } from "./SettingsOptions";
 import { CL } from "../helpers/classNameHelper";
@@ -10,7 +10,7 @@ import IconSettings from "../icons/settings.svg";
 import IconFind from "../icons/find.svg";
 import { SpacesList } from "./SpacesList";
 
-export function TopBar(p: { appState: IAppState; isScrolled: boolean }) {
+export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const dispatch = useContext(DispatchContext);
   const [settingsMenuVisibility, setSettingsMenuVisibility] = useState<boolean>(
     false,

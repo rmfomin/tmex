@@ -5,15 +5,15 @@ import {
   APICommandPayload,
   APICommandPayloadFull,
   HistoryActionPayload,
-  IAppState,
+  AppState,
   UndoStep,
 } from "./state";
 import {
   BookmarkItemV3,
   ColorTheme,
   FolderV3,
-  ISpace,
-  IWidget,
+  LegacySpace,
+  Widget,
   SpaceV3,
 } from "../helpers/types";
 import { applyTheme, saveStateThrottled, savingStateKeys } from "./storage";
@@ -64,9 +64,9 @@ export const DispatchContext = createContext<ActionDispatcher>(null!);
 export type ActionDispatcher = (action: ActionPayload) => void;
 
 export function stateReducer(
-  state: IAppState,
+  state: AppState,
   action: ActionPayload
-): IAppState {
+): AppState {
   // unselectAll()
   const newState = stateReducer0(state, action);
   console.log("[action]:", action, " [new state]:", newState);
@@ -82,7 +82,7 @@ export function stateReducer(
   return newState;
 }
 
-function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
+function stateReducer0(state: AppState, action: ActionPayload): AppState {
   //todo add error icon prop
   const showNotificationReducer = (message: string) =>
     stateReducer0(state, {
@@ -98,7 +98,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
     });
 
   const getCommandsQueue = (
-    state: IAppState,
+    state: AppState,
     command: APICommandPayload
   ): APICommandPayloadFull[] => {
     return [
@@ -134,7 +134,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
     case Action.Undo: {
       const undoStep = state.undoSteps.at(-1);
       if (undoStep) {
-        const newState: IAppState = {
+        const newState: AppState = {
           ...state,
           undoSteps: state.undoSteps.filter((u) => u !== undoStep),
         };
@@ -863,7 +863,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
 
       let topWidget = currentSpace.widgets?.at(-1);
 
-      const newWidget: IWidget = {
+      const newWidget: Widget = {
         id: action.widgetId ?? genUniqLocalId(),
         widgetType: "Sticker",
         position:
@@ -950,7 +950,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       // Capture the deleted widgets along with their original space IDs
       const deletedWidgetsBySpace: Array<{
         spaceId: number;
-        widget: IWidget;
+        widget: Widget;
       }> = [];
       const updatedSpaces = state.spaces.map((space) => {
         const remainingWidgets = (space.widgets || []).filter((widget) => {
@@ -1090,7 +1090,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
             },
           };
         })
-        .filter(Boolean) as IWidget[];
+        .filter(Boolean) as Widget[];
 
       if (newWidgets.length === 0) {
         return showErrorReducer("No valid widgets found to duplicate");
@@ -1192,7 +1192,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
 //////////////////////////////////////////////////////////////////////
 
 export function canShowArchived(
-  appState: Pick<IAppState, "search" | "showArchived">
+  appState: Pick<AppState, "search" | "showArchived">
 ) {
   return appState.showArchived || appState.search.length > 0;
 }
@@ -1217,7 +1217,7 @@ export function mergeStepsInHistory(
 
 function getUndoSteps(
   currentAction: HistoryActionPayload,
-  state: IAppState,
+  state: AppState,
   callback: () => ActionPayload | ActionPayload[]
 ): UndoStep[] {
   const MAX_HISTORY_LENGTH = 50;

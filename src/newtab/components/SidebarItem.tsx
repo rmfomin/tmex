@@ -12,7 +12,7 @@ import { DispatchContext, mergeStepsInHistory } from "../state/actions";
 import {
   convertTabOrRecentToItem,
   isTabData,
-  ITabOrRecentItem,
+  TabOrRecentData,
 } from "../state/actionHelpers";
 import {
   createFolderWithStat,
@@ -25,7 +25,7 @@ import { getBrokenImgSVG } from "../helpers/faviconUtils";
 import { collectBookmarksV3 } from "../helpers/v3Traversal";
 
 export const TabOrRecentItem = (p: {
-  data: ITabOrRecentItem;
+  data: TabOrRecentData;
   lastActiveTabId: number;
   spaces: SpaceV3[];
   search: string;

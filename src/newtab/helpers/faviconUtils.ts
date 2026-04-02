@@ -1,4 +1,4 @@
-import { IFolderItem } from "./types";
+import { LegacyFolderItem } from "./types";
 import { convertToURL, getTempFavIconUrl } from "../state/actionHelpers";
 
 const STORAGE_KEY = "faviconsStorage";

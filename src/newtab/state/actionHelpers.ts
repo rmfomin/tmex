@@ -5,14 +5,14 @@ import {
   BookmarkItemV3,
   FolderV3,
   GroupV3,
-  IFolderItem,
-  IFolderItemToCreate,
-  IWidget,
+  LegacyFolderItem,
+  FolderItemToCreate,
+  Widget,
   ItemV3,
   SpaceV3,
 } from "../helpers/types"
 import { insertBetween, sortByPosition } from "../helpers/fractionalIndexes"
-import { type IAppState } from "./state"
+import { type AppState } from "./state"
 import { SECTION_ICON_BASE64 } from "../helpers/utils"
 import Tab = chrome.tabs.Tab
 import HistoryItem = chrome.history.HistoryItem
@@ -23,13 +23,13 @@ export function genUniqLocalId(): number {
 }
 
 
-export type ITabOrRecentItem = (Tab | RecentItem)
+export type TabOrRecentData = Tab | RecentItem
 
-export function isTabData(data: ITabOrRecentItem): data is Tab {
+export function isTabData(data: TabOrRecentData): data is Tab {
   return !(data as RecentItem).isRecent
 }
 
-export function convertTabToItem(item: Tab): IFolderItemToCreate {
+export function convertTabToItem(item: Tab): FolderItemToCreate {
   return {
     id: genUniqLocalId(),
     favIconUrl: item.favIconUrl || "",
@@ -38,7 +38,7 @@ export function convertTabToItem(item: Tab): IFolderItemToCreate {
   }
 }
 
-export function convertRecentToItem(item: RecentItem): IFolderItemToCreate {
+export function convertRecentToItem(item: RecentItem): FolderItemToCreate {
   return {
     id: genUniqLocalId(),
     favIconUrl: item.favIconUrl ?? getTempFavIconUrl(item.url),
@@ -47,7 +47,7 @@ export function convertRecentToItem(item: RecentItem): IFolderItemToCreate {
   }
 }
 
-export function convertTabOrRecentToItem(item: ITabOrRecentItem): IFolderItemToCreate {
+export function convertTabOrRecentToItem(item: TabOrRecentData): FolderItemToCreate {
   if (isTabData(item)) {
     return convertTabToItem(item)
   } else {
@@ -55,7 +55,7 @@ export function convertTabOrRecentToItem(item: ITabOrRecentItem): IFolderItemToC
   }
 }
 
-export function createNewSection(title = "Title"): IFolderItemToCreate {
+export function createNewSection(title = "Title"): FolderItemToCreate {
   return {
     id: genUniqLocalId(),
     favIconUrl: SECTION_ICON_BASE64,
@@ -142,7 +142,7 @@ export function findSpaceById(state: SpacesState, spaceId: number | undefined): 
   return state.spaces.find((space) => space.id === spaceId)
 }
 
-export function createNewFolderItem(url?: string, title?: string, favIconUrl?: string): IFolderItemToCreate {
+export function createNewFolderItem(url?: string, title?: string, favIconUrl?: string): FolderItemToCreate {
   return {
     id: genUniqLocalId(),
     favIconUrl: favIconUrl ?? getTempFavIconUrl(url),
@@ -195,7 +195,7 @@ export function findFolderByItemId(appState: SpacesState, itemId: number): Folde
   return res
 }
 
-export function toBookmarkItemV3(item: IFolderItemToCreate): BookmarkItemV3 {
+export function toBookmarkItemV3(item: FolderItemToCreate): BookmarkItemV3 {
   return {
     id: item.id,
     position: item.position ?? "",
@@ -209,7 +209,7 @@ export function toBookmarkItemV3(item: IFolderItemToCreate): BookmarkItemV3 {
 }
 
 export function addItemsToFolderV3(
-  insertingItems: IFolderItemToCreate[] | BookmarkItemV3[],
+  insertingItems: FolderItemToCreate[] | BookmarkItemV3[],
   existingItems: ItemV3[],
   insertBeforeItemId?: number,
 ): ItemV3[] {
@@ -267,8 +267,8 @@ export function removeItemFromFolderItems(
   })
 }
 
-export function findWidgetById(appState: SpacesState, widgetId: number): IWidget | undefined {
-  let res: IWidget | undefined = undefined
+export function findWidgetById(appState: SpacesState, widgetId: number): Widget | undefined {
+  let res: Widget | undefined = undefined
   appState.spaces.some((space) => {
     const widget = (space.widgets ?? []).find((currentWidget) => currentWidget.id === widgetId)
     res = widget
@@ -338,7 +338,7 @@ export function updateFolder(
 export function updateFolderItem(
   spaces: SpaceV3[],
   itemId: number,
-  newItemProps: Partial<IFolderItem> & { collapsed?: boolean },
+  newItemProps: Partial<LegacyFolderItem> & { collapsed?: boolean },
   folderId?: number //just optimization
 ): SpaceV3[] {
   if (!folderId) {

@@ -50,7 +50,7 @@ export function getCleanTitle(title: string): string {
   return title;
 }
 
-export type IFilter = {
+export type RecentFilter = {
   title: string;
   icon?: string;
   pattern: string;
@@ -71,7 +71,7 @@ export type RecentItem = {
 
 export function getFilteredRecentItems(
   historyItems: RecentItem[],
-  filters: IFilter[]
+  filters: RecentFilter[]
 ): RecentItem[] {
   const res: RecentItem[] = [];
   const deduplicatedHistoryItemsHashes = new Set<string>();

@@ -1,18 +1,18 @@
 import { ActionDispatcher } from "./actions";
 import {
   ColorTheme,
-  IFolderItemToCreate,
+  FolderItemToCreate,
   LegacyFolderApiPayload,
   LegacyFolderItemApiPayload,
   SpaceV3,
-  IWidgetContent,
-  IWidgetPos,
+  WidgetContent,
+  WidgetPos,
 } from "../helpers/types";
-import { ISavingAppState } from "./storage";
+import { SavingState } from "./storage";
 import { RecentItem } from "../helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 
-export type IAppAchievements = {
+export type AppAchievements = {
   // folders
   folderCreated: number;
   folderRenamed: number;
@@ -53,7 +53,7 @@ export type UndoStep = {
   subSteps: ActionPayload[];
 };
 
-export type IAppState = {
+export type AppState = {
   spaces: SpaceV3[]; // Stored in LS
   currentSpaceId: number; // Stored in LS
 
@@ -79,7 +79,7 @@ export type IAppState = {
   sidebarHovered: boolean; // for hover effects
   alphaMode: boolean;
   page: "default" | "import";
-  achievements: IAppAchievements; // Stored in LS
+  achievements: AppAchievements; // Stored in LS
   loaded: boolean;
 
   selectedWidgetIds: number[];
@@ -99,7 +99,7 @@ export type IAppState = {
   hiddenFeatureIsEnabled: boolean;
 };
 
-let initState: IAppState = {
+let initState: AppState = {
   version: 3,
   spaces: [],
   currentSpaceId: -1,
@@ -153,11 +153,11 @@ let initState: IAppState = {
   },
 };
 
-export function setInitAppState(savedState: ISavingAppState): void {
+export function setInitAppState(savedState: SavingState): void {
   initState = { ...initState, ...savedState };
 }
 
-export function getInitAppState(): IAppState {
+export function getInitAppState(): AppState {
   return initState;
 }
 
@@ -245,7 +245,7 @@ export type APICommandPayload =
 
 export type APICommandPayloadFull = APICommandPayload & {
   commandId: number;
-  rollbackState: IAppState;
+  rollbackState: AppState;
 };
 export type HistoryActionPayload = { byUndo?: boolean; historyStepId?: number };
 export type ActionPayload = (
@@ -275,7 +275,7 @@ export type ActionPayload = (
   | { type: Action.FixBrokenIcons }
   | { type: Action.SelectSpace; spaceId?: number; spaceIndex?: number } // !!! стоить ли очищать стикеры когда свайпишься?
   | { type: Action.SwipeSpace; direction: "left" | "right" } // !!! стоить ли очищать стикеры когда свайпишься?
-  | { type: Action.UpdateAppState; newState: Partial<IAppState> }
+  | { type: Action.UpdateAppState; newState: Partial<AppState> }
   | {
       type: Action.CreateSpace;
       spaceId: number;
@@ -300,7 +300,7 @@ export type ActionPayload = (
       title?: string;
       color?: string;
       position?: string;
-      items?: IFolderItemToCreate[];
+      items?: FolderItemToCreate[];
       spaceId?: number;
       folderType?: string;
     }
@@ -325,12 +325,12 @@ export type ActionPayload = (
       type: Action.CreateFolderItem;
       folderId: number;
       insertBeforeItemId: number | undefined;
-      item: IFolderItemToCreate;
+      item: FolderItemToCreate;
     }
   | {
       type: Action.CreateFolderItems;
       folderId: number;
-      items: IFolderItemToCreate[];
+      items: FolderItemToCreate[];
     }
   | { type: Action.DeleteFolderItems; itemIds: number[] }
   | {
@@ -354,15 +354,15 @@ export type ActionPayload = (
       spaceId?: number;
       widgetId: number;
       position?: string;
-      pos: IWidgetPos;
-      content?: Partial<IWidgetContent>;
+      pos: WidgetPos;
+      content?: Partial<WidgetContent>;
     }
   | {
       type: Action.UpdateWidget;
       widgetId: number;
       position?: string;
-      pos?: IWidgetPos;
-      content?: Partial<IWidgetContent>;
+      pos?: WidgetPos;
+      content?: Partial<WidgetContent>;
     }
   | { type: Action.DeleteWidgets; widgetIds: number[] }
   | { type: Action.SelectWidgets; widgetIds: number[] }

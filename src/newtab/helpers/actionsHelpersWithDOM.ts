@@ -1,6 +1,6 @@
-import { BookmarkItemV3, IFolderItemToCreate, SpaceV3 } from "./types";
+import { BookmarkItemV3, FolderItemToCreate, SpaceV3 } from "./types";
 import { ActionDispatcher, executeCustomAction } from "../state/actions";
-import { Action, IAppState } from "../state/state";
+import { Action, AppState } from "../state/state";
 import {
   findItemById,
   genUniqLocalId,
@@ -34,7 +34,7 @@ type CreateFolderProps = {
   title?: string;
   color?: string;
   position?: string;
-  items?: IFolderItemToCreate[];
+  items?: FolderItemToCreate[];
   spaceId?: number;
   historyStepId?: number;
 };
@@ -85,7 +85,7 @@ export function getCanDragChecker(
 
 export function clickFolderItem(
   targetId: number,
-  appState: { spaces: SpaceV3[]; tabs: IAppState["tabs"] },
+  appState: { spaces: SpaceV3[]; tabs: AppState["tabs"] },
   dispatch: ActionDispatcher,
   openInNewTab: boolean,
   openBookmarksInNewTab: boolean,

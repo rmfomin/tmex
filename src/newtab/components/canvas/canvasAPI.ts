@@ -13,9 +13,9 @@ import { createFolderWithStat } from "../../helpers/actionsHelpersWithDOM";
 import { findWidgetById, genUniqLocalId } from "../../state/actionHelpers";
 import {
   FolderV3,
-  IWidget,
-  IWidgetContent,
-  IWidgetPos,
+  Widget,
+  WidgetContent,
+  WidgetPos,
   WidgetType,
 } from "../../helpers/types";
 import { insertBetween } from "../../helpers/fractionalIndexes";
@@ -128,7 +128,7 @@ class CanvasAPI {
         );
       }
     } catch (e) {
-      const newSticker: IWidget = {
+      const newSticker: Widget = {
         id: 0,
         position: undefined!,
         widgetType: "Sticker",
@@ -145,7 +145,7 @@ class CanvasAPI {
   }
 
   private createWidgetsUnderTheCursor(
-    widgets: IWidget[],
+    widgets: Widget[],
     dispatch: ActionDispatcher,
     currentSpaceId: number,
   ) {
@@ -159,7 +159,7 @@ class CanvasAPI {
 
     const newWidgetIds: number[] = [];
 
-    widgets.forEach((originalWidget: IWidget, index: number) => {
+    widgets.forEach((originalWidget: Widget, index: number) => {
       let x = 0;
       let y = 0;
       if (index === 0) {

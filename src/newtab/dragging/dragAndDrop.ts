@@ -8,7 +8,7 @@ import {
   isTargetInputOrTextArea,
   isTargetSupportsDragAndDrop,
 } from "../helpers/utils";
-import { IPoint } from "../helpers/MathTypes";
+import { Point } from "../helpers/MathTypes";
 import { processMultiselection } from "./processMultiselection";
 import { processWidgetsDragAndDrop } from "./processWidgetsDragAndDrop";
 import { processFolderDragAndDrop } from "./processFolderDragAndDrop";
@@ -48,11 +48,11 @@ export type PConfigFolder = {
 export type PConfigWidgets = {
   canvasEl: HTMLCanvasElement;
   onWidgetsSelected: (widgetIds: number[]) => void;
-  onWidgetsMoved: (positions: { id: number; pos: IPoint }[]) => void;
+  onWidgetsMoved: (positions: { id: number; pos: Point }[]) => void;
   onSetEditingWidget: (widgetId: number | undefined) => void;
-  onCanvasDoubleClick: (pos: IPoint) => void;
-  onWidgetsRightClick: (pos: IPoint, widgetId: number) => void;
-  onCanvasRightClick: (pos: IPoint) => void;
+  onCanvasDoubleClick: (pos: Point) => void;
+  onWidgetsRightClick: (pos: Point, widgetId: number) => void;
+  onCanvasRightClick: (pos: Point) => void;
 };
 
 export type PConfigSpaces = {
@@ -297,7 +297,7 @@ export function getSpaceId(dropAreaElement: HTMLElement): number {
   return parseInt(dropAreaElement.dataset.spaceId!);
 }
 
-export function getPosFromElement(el: HTMLElement): IPoint {
+export function getPosFromElement(el: HTMLElement): Point {
   return {
     x: parseFloat(el.style.left),
     y: parseFloat(el.style.top),

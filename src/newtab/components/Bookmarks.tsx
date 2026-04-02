@@ -7,12 +7,12 @@ import {
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
 import { Folder } from "./Folder";
 import { handleBookmarksKeyDown } from "../helpers/handleBookmarksKeyDown";
-import { Action, IAppState } from "../state/state";
+import { Action, AppState } from "../state/state";
 import {
   DispatchContext,
   mergeStepsInHistory,
 } from "../state/actions";
-import { IWidget } from "../helpers/types";
+import { Widget } from "../helpers/types";
 import { genUniqLocalId } from "../state/actionHelpers";
 import {
   clickFolderItem,
@@ -20,7 +20,7 @@ import {
   getCanDragChecker,
 } from "../helpers/actionsHelpersWithDOM";
 import { Canvas } from "./Canvas";
-import { IPoint } from "../helpers/MathTypes";
+import { Point } from "../helpers/MathTypes";
 import { TopBar } from "./TopBar";
 import { Toolbar } from "./Toolbar";
 import { hideWidgetsContextMenu } from "./canvas/widgetsContextMenu";
@@ -36,13 +36,13 @@ import { getBookmarksViewState } from "./getBookmarksViewState";
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
 
-export function Bookmarks(p: { appState: IAppState }) {
+export function Bookmarks(p: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);
   const [mouseDownEvent, setMouseDownEvent] = useState<
     React.MouseEvent | undefined
   >(undefined);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [canvasMenuPos, setCanvasMenuPos] = useState<IPoint | undefined>(
+  const [canvasMenuPos, setCanvasMenuPos] = useState<Point | undefined>(
     undefined,
   );
   const [canvasMenuType, setCanvasMenuType] = useState<"canvas" | "widgets">(
@@ -172,7 +172,7 @@ export function Bookmarks(p: { appState: IAppState }) {
         });
       };
 
-      const onCanvasDoubleClick = (point: IPoint) => {
+      const onCanvasDoubleClick = (point: Point) => {
         const widgetId = genUniqLocalId();
         dispatch({
           type: Action.CreateWidget,
@@ -183,7 +183,7 @@ export function Bookmarks(p: { appState: IAppState }) {
         canvasAPI.setEditingWidget(dispatch, widgetId);
       };
 
-      const onWidgetsRightClick = (pos: IPoint, targetWidgetId: number) => {
+      const onWidgetsRightClick = (pos: Point, targetWidgetId: number) => {
         if (!p.appState.selectedWidgetIds.includes(targetWidgetId)) {
           canvasAPI.selectWidgets(dispatch, [targetWidgetId]);
         }
@@ -191,7 +191,7 @@ export function Bookmarks(p: { appState: IAppState }) {
         setCanvasMenuPos(pos);
       };
 
-      const onCanvasRightClick = (pos: IPoint) => {
+      const onCanvasRightClick = (pos: Point) => {
         setCanvasMenuType("canvas");
         setCanvasMenuPos(pos);
         canvasAPI.selectWidgets(dispatch, []);
@@ -219,7 +219,7 @@ export function Bookmarks(p: { appState: IAppState }) {
             // !!! TODO dont dispatch it if widgetIds has not changed
             dispatch({ type: Action.SelectWidgets, widgetIds });
           },
-          onWidgetsMoved: (positions: { id: number; pos: IPoint }[]) => {
+          onWidgetsMoved: (positions: { id: number; pos: Point }[]) => {
             mergeStepsInHistory((historyStepId) => {
               positions.forEach((p) => {
                 dispatch({

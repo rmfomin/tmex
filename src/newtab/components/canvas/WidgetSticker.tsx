@@ -1,11 +1,11 @@
-import { IWidget } from "../../helpers/types";
+import { Widget } from "../../helpers/types";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { DispatchContext } from "../../state/actions";
 import { Action } from "../../state/state";
 import { CL } from "../../helpers/classNameHelper";
 
 export function WidgetSticker(p: {
-  data: IWidget;
+  data: Widget;
   selected: boolean;
   inEdit: boolean;
 }) {

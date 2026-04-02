@@ -1,13 +1,13 @@
 import { OptionsConfig } from "../SettingsOptions";
 import { canvasAPI } from "./canvasAPI";
 import { ActionDispatcher } from "../../state/actions";
-import { IAppState } from "../../state/state";
+import { AppState } from "../../state/state";
 import { FolderV3 } from "../../helpers/types";
 
 export function getCanvasMenuOption(
   dispatch: ActionDispatcher,
   canvasMenuType: "canvas" | "widgets",
-  appState: Pick<IAppState, "currentSpaceId" | "selectedWidgetIds">,
+  appState: Pick<AppState, "currentSpaceId" | "selectedWidgetIds">,
   currentFolders: FolderV3[],
   onClose: () => void
 ): OptionsConfig {

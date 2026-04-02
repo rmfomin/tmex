@@ -1,4 +1,4 @@
-import { IOffset, IPoint } from "../../helpers/MathTypes";
+import { Offset, Point } from "../../helpers/MathTypes";
 import { getIdFromElement } from "../../dragging/dragAndDrop";
 import { uniteRects } from "../../helpers/mathUtils";
 
@@ -28,7 +28,7 @@ export function updateWidgetsSelectionFrame_RAF_NotPerformant() {
   });
 }
 
-export function renderWidgetsSelectionFrame(rectInScreen: IOffset) {
+export function renderWidgetsSelectionFrame(rectInScreen: Offset) {
   const canvasOffset = getCanvasScrolledOffset();
   const selectionEl = document.querySelector<HTMLElement>(
     ".widgets-selection-frame"
@@ -47,7 +47,7 @@ export function hideWidgetsSelectionFrame() {
   selectionEl.style.visibility = "hidden";
 }
 
-export function getCanvasScrolledOffset(): IPoint {
+export function getCanvasScrolledOffset(): Point {
   const bookmarks = document.querySelector<HTMLElement>(".bookmarks")!;
   return {
     x: -bookmarks.offsetLeft + bookmarks.scrollLeft,
