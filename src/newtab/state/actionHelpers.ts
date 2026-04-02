@@ -1,14 +1,24 @@
 /**
  * CAN NOT IMPORT REACT AS DEPENDENCY OR ANY DOM API
  */
-import { IFolder, IFolderItem, IFolderItemToCreate, ISpace, IWidget, SpaceV3 } from "../helpers/types"
-import { sortByPosition } from "../helpers/fractionalIndexes"
+import {
+  BookmarkItemV3,
+  FolderV3,
+  IFolder,
+  IFolderItem,
+  IFolderItemToCreate,
+  ISpace,
+  IWidget,
+  ItemV3,
+  SpaceV3,
+} from "../helpers/types"
+import { insertBetween, sortByPosition } from "../helpers/fractionalIndexes"
 import { type IAppState } from "./state"
 import { SECTION_ICON_BASE64 } from "../helpers/utils"
 import Tab = chrome.tabs.Tab
 import HistoryItem = chrome.history.HistoryItem
 import { RecentItem } from "../helpers/recentHistoryUtils"
-import { convertLegacySpacesToV3Backup, getLegacySpacesView } from "../helpers/dataFormatAdapters"
+import { getV3SpacesView } from "../helpers/dataFormatAdapters"
 
 export function genUniqLocalId(): number {
   return (new Date()).valueOf() + Math.round(Math.random() * 10000000)
@@ -59,45 +69,54 @@ export function createNewSection(title = "Title"): IFolderItemToCreate {
 
 type SpacesState = { spaces: SpaceV3[] | ISpace[] }
 
-function toLegacySpaces(spaces: SpaceV3[] | ISpace[]): ISpace[] {
-  return getLegacySpacesView(spaces)
-}
-
 function toV3Spaces(spaces: SpaceV3[] | ISpace[]): SpaceV3[] {
-  return convertLegacySpacesToV3Backup(toLegacySpaces(spaces)).spaces
+  return getV3SpacesView(spaces)
 }
 
-export function findItemById(appState: SpacesState, itemId: number): IFolderItem | undefined {
-  let res: IFolderItem | undefined = undefined
-  toLegacySpaces(appState.spaces).some(s => {
-    return s.folders.some(f => {
-      const item = f.items.find(i => i.id === itemId)
-      res = item
-      return !!item
+export function findItemById(appState: SpacesState, itemId: number): BookmarkItemV3 | undefined {
+  let res: BookmarkItemV3 | undefined = undefined
+  toV3Spaces(appState.spaces).some((space) => {
+    return space.folders.some((folder) => {
+      return folder.items.some((item) => {
+        if (item.type === "bookmark" && item.id === itemId) {
+          res = item
+          return true
+        }
+
+        if (item.type === "group") {
+          const groupItem = item.groupItems.find((groupItem) => groupItem.id === itemId)
+          if (groupItem) {
+            res = groupItem
+            return true
+          }
+        }
+
+        return false
+      })
     })
   })
 
   return res
 }
 
-export function findFolderById(state: SpacesState, folderId: number): IFolder | undefined {
-  let res: IFolder | undefined = undefined
-  toLegacySpaces(state.spaces).some(s => {
-    res = s.folders.find(f => f.id === folderId)
+export function findFolderById(state: SpacesState, folderId: number): FolderV3 | undefined {
+  let res: FolderV3 | undefined = undefined
+  toV3Spaces(state.spaces).some((space) => {
+    res = space.folders.find((folder) => folder.id === folderId)
     return !!res
   })
 
   return res
 }
 
-export function findSpaceByFolderId(state: SpacesState, folderId: number): ISpace | undefined {
-  return toLegacySpaces(state.spaces).find(s => {
-    return !!s.folders.find(f => f.id === folderId)
+export function findSpaceByFolderId(state: SpacesState, folderId: number): SpaceV3 | undefined {
+  return toV3Spaces(state.spaces).find((space) => {
+    return !!space.folders.find((folder) => folder.id === folderId)
   })
 }
 
-export function findSpaceById(state: SpacesState, spaceId: number | undefined): ISpace | undefined {
-  return toLegacySpaces(state.spaces).find(s => s.id === spaceId)
+export function findSpaceById(state: SpacesState, spaceId: number | undefined): SpaceV3 | undefined {
+  return toV3Spaces(state.spaces).find((space) => space.id === spaceId)
 }
 
 export function createNewFolderItem(url?: string, title?: string, favIconUrl?: string): IFolderItemToCreate {
@@ -130,11 +149,17 @@ export function getTempFavIconUrl(val?: string | URL): string {
   }
 }
 
-export function findFolderByItemId(appState: SpacesState, itemId: number): IFolder | undefined {
-  let res: IFolder | undefined = undefined
-  toLegacySpaces(appState.spaces).some(s => {
-    const folder = s.folders.find(f => {
-      return f.items.find(i => i.id === itemId)
+export function findFolderByItemId(appState: SpacesState, itemId: number): FolderV3 | undefined {
+  let res: FolderV3 | undefined = undefined
+  toV3Spaces(appState.spaces).some((space) => {
+    const folder = space.folders.find((currentFolder) => {
+      return currentFolder.items.some((item) => {
+        if (item.type === "bookmark") {
+          return item.id === itemId
+        }
+
+        return item.groupItems.some((groupItem) => groupItem.id === itemId)
+      })
     })
     res = folder
     return !!folder
@@ -143,10 +168,82 @@ export function findFolderByItemId(appState: SpacesState, itemId: number): IFold
   return res
 }
 
+export function toBookmarkItemV3(item: IFolderItemToCreate): BookmarkItemV3 {
+  return {
+    id: item.id,
+    position: item.position ?? "",
+    title: item.title,
+    type: "bookmark",
+    objectType: "bookmark",
+    url: item.url,
+    favIconUrl: item.favIconUrl,
+    isSection: item.isSection,
+  }
+}
+
+export function addItemsToFolderV3(
+  insertingItems: IFolderItemToCreate[] | BookmarkItemV3[],
+  existingItems: ItemV3[],
+  insertBeforeItemId?: number,
+): ItemV3[] {
+  const insertBeforeItemIndex = existingItems.findIndex((item) => item.id === insertBeforeItemId)
+  const insertAfterItemIndex =
+    insertBeforeItemIndex !== -1
+      ? insertBeforeItemIndex - 1
+      : existingItems.length - 1
+
+  let insertAfterItem = existingItems[insertAfterItemIndex]
+  let insertBeforeItem = existingItems[insertBeforeItemIndex]
+
+  const newItems: BookmarkItemV3[] = insertingItems.map((insertingItem) => {
+    const normalizedItem =
+      "type" in insertingItem
+        ? insertingItem
+        : toBookmarkItemV3(insertingItem)
+
+    const item = {
+      ...normalizedItem,
+      position: insertBetween(
+        insertAfterItem?.position ?? "",
+        insertBeforeItem?.position ?? ""
+      ),
+    }
+
+    insertAfterItem = item
+    return item
+  })
+
+  return sortByPosition([...existingItems, ...newItems])
+}
+
+export function removeItemFromFolderItems(
+  items: ItemV3[],
+  itemId: number,
+): ItemV3[] {
+  return items.flatMap<ItemV3>((item) => {
+    if (item.type === "bookmark") {
+      return item.id === itemId ? [] : [item]
+    }
+
+    if (item.id === itemId) {
+      return []
+    }
+
+    if (item.groupItems.some((groupItem) => groupItem.id === itemId)) {
+      return [{
+        ...item,
+        groupItems: item.groupItems.filter((groupItem) => groupItem.id !== itemId),
+      }]
+    }
+
+    return [item]
+  })
+}
+
 export function findWidgetById(appState: SpacesState, widgetId: number): IWidget | undefined {
   let res: IWidget | undefined = undefined
-  toLegacySpaces(appState.spaces).some(s => {
-    const widget = (s.widgets ?? []).find(w => w.id === widgetId)
+  toV3Spaces(appState.spaces).some((space) => {
+    const widget = (space.widgets ?? []).find((currentWidget) => currentWidget.id === widgetId)
     res = widget
     return !!widget
   })
@@ -157,44 +254,44 @@ export function findWidgetById(appState: SpacesState, widgetId: number): IWidget
 export function updateSpace(
   spaces: SpaceV3[] | ISpace[],
   spaceId: number,
-  newSpace: Partial<ISpace> | ((space: ISpace) => ISpace)
+  newSpace: Partial<SpaceV3> | ((space: SpaceV3) => SpaceV3)
 ): SpaceV3[] {
-  const updatedSpaces = sortByPosition(toLegacySpaces(spaces).map((s) => {
-    if (s.id === spaceId) {
+  const v3Spaces = toV3Spaces(spaces)
+  const updatedSpaces = sortByPosition(v3Spaces.map((space) => {
+    if (space.id === spaceId) {
       if (typeof newSpace === "function") {
-        return newSpace(s)
+        return newSpace(space)
       } else {
-        return { ...s, ...newSpace }
+        return { ...space, ...newSpace }
       }
     } else {
-      return s
+      return space
     }
   }))
 
-  return toV3Spaces(updatedSpaces)
+  return updatedSpaces
 }
 
 export function updateFolder(
   spaces: SpaceV3[] | ISpace[],
   folderId: number,
-  newFolder: Partial<IFolder> | ((folder: IFolder) => IFolder),
+  newFolder: Partial<FolderV3> | ((folder: FolderV3) => FolderV3),
   sortFolders = false
 ): SpaceV3[] {
-  const updatedSpaces = toLegacySpaces(spaces).map((space) => {
-    const hasTargetFolder = space.folders.find(f => f.id === folderId)
+  const updatedSpaces = toV3Spaces(spaces).map((space) => {
+    const hasTargetFolder = space.folders.find((folder) => folder.id === folderId)
     if (hasTargetFolder) {
-
-      const newFolders = space.folders.map((f) => {
-        if (f.id === folderId) {
+      const newFolders = space.folders.map((folder) => {
+        if (folder.id === folderId) {
           if (typeof newFolder === "function") {
-            return newFolder(f)
+            return newFolder(folder)
           } else {
-            return { ...f, ...newFolder }
+            return { ...folder, ...newFolder }
           }
         } else {
-          return f
+          return folder
         }
-      })
+      }) as FolderV3[]
 
       if (sortFolders) {
         sortByPosition(newFolders) // why dont always sort folders?
@@ -209,7 +306,7 @@ export function updateFolder(
     }
   })
 
-  return toV3Spaces(updatedSpaces)
+  return updatedSpaces
 }
 
 export function updateFolderItem(
@@ -228,12 +325,29 @@ export function updateFolderItem(
   }
   return updateFolder(spaces, folderId, (folder) => {
     const items = folder.items.map((item) => {
-      if (item.id === itemId) {
-        return { ...item, ...newItemProps }
-      } else {
+      if (item.type === "bookmark") {
+        if (item.id === itemId) {
+          return { ...item, ...newItemProps }
+        }
+
         return item
       }
-    })
+
+      if (item.groupItems.some((groupItem) => groupItem.id === itemId)) {
+        return {
+          ...item,
+          groupItems: item.groupItems.map((groupItem) => {
+            if (groupItem.id === itemId) {
+              return { ...groupItem, ...newItemProps }
+            }
+
+            return groupItem
+          }),
+        }
+      }
+
+      return item
+    }) as ItemV3[]
 
     return { ...folder, items }
   })

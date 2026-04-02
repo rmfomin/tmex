@@ -90,6 +90,7 @@ export interface DataBackupV3 {
 
 export interface SpaceV3 {
   id: number;
+  remoteId?: number;
   position: string;
   objectType: "space";
   title: string;
@@ -99,20 +100,26 @@ export interface SpaceV3 {
 
 export interface FolderV3 {
   id: number;
+  remoteId?: number;
   position: string;
   objectType: "folder";
   title: string;
   items: ItemV3[];
   color?: string;
   collapsed?: boolean;
+  twoColumn?: boolean;
+  archived?: boolean;
 }
 
 export interface ItemBaseV3 {
   id: number;
+  remoteId?: number;
   position: string;
   title: string;
   type: ItemTypeV3;
   objectType?: "bookmark" | "group";
+  archived?: boolean;
+  inEdit?: boolean;
 }
 
 export interface BookmarkItemV3 extends ItemBaseV3 {
@@ -120,6 +127,7 @@ export interface BookmarkItemV3 extends ItemBaseV3 {
   objectType?: "bookmark";
   url: string;
   favIconUrl: string;
+  isSection?: boolean;
 }
 
 export interface GroupV3 extends ItemBaseV3 {

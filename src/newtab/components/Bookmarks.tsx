@@ -282,12 +282,15 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
   let folders: IFolder[] = [];
   let widgets: IWidget[] = [];
   if (p.appState.search === "") {
-    const currentSpace = findSpaceById(p.appState, p.appState.currentSpaceId);
+    const currentSpace = findSpaceById(
+      p.appState,
+      p.appState.currentSpaceId,
+    ) as any;
     if (currentSpace) {
       folders = p.appState.showArchived
         ? currentSpace.folders ?? [] // just in case of broken data
         : currentSpace.folders.filter(
-            (f) => canShowArchived(p.appState) || !f.archived,
+            (f: IFolder) => canShowArchived(p.appState) || !f.archived,
           );
 
       widgets = currentSpace.widgets ?? [];

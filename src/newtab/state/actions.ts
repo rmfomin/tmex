@@ -9,7 +9,9 @@ import {
   UndoStep,
 } from "./state";
 import {
+  BookmarkItemV3,
   ColorTheme,
+  FolderV3,
   IFolder,
   IFolderItem,
   ISpace,
@@ -23,11 +25,11 @@ import {
   sortByPosition,
 } from "../helpers/fractionalIndexes";
 import {
-  convertLegacySpacesToV3Backup,
   getLegacySpacesView,
 } from "../helpers/dataFormatAdapters";
 import { loadFromNetwork } from "../../api/api";
 import {
+  addItemsToFolderV3,
   findFolderById,
   findFolderByItemId,
   findItemById,
@@ -35,6 +37,8 @@ import {
   findSpaceById,
   findWidgetById,
   genUniqLocalId,
+  removeItemFromFolderItems,
+  toBookmarkItemV3,
   updateFolder,
   updateFolderItem,
   updateSpace,
@@ -322,7 +326,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
 
     case Action.UpdateSpace: {
       // todo add network later !!!
-      const newProps: ISpace = {} as any;
+      const newProps: Partial<SpaceV3> = {};
       if (typeof action.title !== "undefined") {
         newProps.title = action.title;
       }
@@ -407,10 +411,11 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       }
 
       const lastFolder = currentSpace.folders.at(-1);
-      const newFolder: IFolder = {
+      const newFolder: FolderV3 = {
         id: action.newFolderId ?? genUniqLocalId(),
+        objectType: "folder",
         title: action.title ?? "New folder",
-        items: addItemsToFolder(action.items ?? [], []),
+        items: addItemsToFolderV3(action.items ?? [], []),
         color: action.color ?? getRandomHEXColor(),
         position:
           action.position ?? insertBetween(lastFolder?.position ?? "", ""),
@@ -420,7 +425,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       if (isNetworkAvailable()) {
         apiCommandsQueue = getCommandsQueue(state, {
           type: Action.CreateFolder,
-          body: { folder: newFolder },
+          body: { folder: newFolder as unknown as Partial<IFolder> },
         });
       }
 
@@ -460,8 +465,8 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
 
       //todo can be different when network supported
       const undoSteps = getUndoSteps(action, state, () => ({
-        type: Action.CreateFolder,
-        ...deletingFolder,
+        type: Action.InitDashboard,
+        spaces: state.spaces,
       }));
 
       return {
@@ -478,7 +483,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
     }
 
     case Action.UpdateFolder: {
-      const newProps: IFolder = {} as any;
+      const newProps: Partial<FolderV3> = {};
       if (typeof action.title !== "undefined") {
         newProps.title = action.title;
       }
@@ -507,7 +512,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           type: Action.UpdateFolder,
           body: {
             folderId: targetFolder.remoteId,
-            folder: newProps,
+            folder: newProps as Partial<IFolder>,
           },
         });
       }
@@ -565,17 +570,17 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           true
         );
       } else {
-        const movedSpaces = getLegacySpacesView(state.spaces).map((s) => {
-          if (s.id === prevFolderSpace.id) {
+        spaces = state.spaces.map((space) => {
+          if (space.id === prevFolderSpace.id) {
             return {
-              ...s,
-              folders: s.folders.filter((f) => f.id !== action.folderId),
+              ...space,
+              folders: space.folders.filter((folder) => folder.id !== action.folderId),
             };
-          } else if (s.id === targetFolderSpace.id) {
+          } else if (space.id === targetFolderSpace.id) {
             return {
-              ...s,
+              ...space,
               folders: sortByPosition([
-                ...s.folders,
+                ...space.folders,
                 {
                   ...movingFolder,
                   position,
@@ -583,10 +588,9 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
               ]),
             };
           } else {
-            return s;
+            return space;
           }
         });
-        spaces = convertLegacySpacesToV3Backup(movedSpaces).spaces;
       }
 
       let apiCommandsQueue = state.apiCommandsQueue;
@@ -614,7 +618,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
 
     case Action.CreateFolderItem: {
       const spaces = updateFolder(state.spaces, action.folderId, (folder) => {
-        const items = addItemsToFolder(
+        const items = addItemsToFolderV3(
           [action.item],
           folder.items,
           action.insertBeforeItemId
@@ -625,7 +629,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
         };
       });
 
-      let createdItem: IFolderItem = findItemById({ spaces }, action.item.id)!;
+      let createdItem: BookmarkItemV3 = findItemById({ spaces }, action.item.id)!;
       const targetFolder = findFolderById(state, action.folderId);
       let apiCommandsQueue = state.apiCommandsQueue;
       if (isNetworkAvailable(targetFolder)) {
@@ -684,7 +688,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           return updateFolder(spaces, folder.id, (folder) => {
             return {
               ...folder,
-              items: folder.items.filter((i) => i.id !== itemId),
+              items: removeItemFromFolderItems(folder.items, itemId),
             };
           });
         } else {
@@ -701,7 +705,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
     }
 
     case Action.UpdateFolderItem: {
-      const newProps: IFolderItem = {} as any;
+      const newProps: Partial<BookmarkItemV3> = {};
       if (typeof action.title !== "undefined") {
         newProps.title = action.title;
       }
@@ -740,7 +744,10 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.UpdateFolderItem,
         itemId: originalItem.id,
-        ...originalItem,
+        title: originalItem.title,
+        archived: originalItem.archived,
+        url: originalItem.url,
+        favIconUrl: originalItem.favIconUrl,
       }));
 
       return {
@@ -774,7 +781,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
           const folder = findFolderByItemId({ spaces }, movingItem.id)!;
           return updateFolder(spaces, folder.id, (folder) => ({
             ...folder,
-            items: folder.items.filter((i) => i.id !== movingItem.id),
+            items: removeItemFromFolderItems(folder.items, movingItem.id),
           }));
         },
         state.spaces
@@ -785,7 +792,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
         action.targetFolderId,
         (folder) => ({
           ...folder,
-          items: addItemsToFolder(
+          items: addItemsToFolderV3(
             movingItems,
             folder.items,
             action.insertBeforeItemId
