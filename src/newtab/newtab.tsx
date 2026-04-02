@@ -16,12 +16,7 @@ import { getAvailableWhatsNew } from "./helpers/whats-new";
 import { ensureDefaultSpace } from "./helpers/ensureDefaultSpace";
 import { collectBookmarksV3, hasArchivedItemsV3 } from "./helpers/v3Traversal";
 
-console.log("---newtab-1-start---");
-
 if (loadFromNetwork()) {
-  console.log("---newtab-2-loadFromNetwork---");
-  // todo: Always start from LS. rendering should happen without loaded cloud data
-  // todo: and load last data async (optional). Maybe in background thread
   getStateFromLS((res) => {
     apiGetDashboard()
       .then((dashboard) => {
@@ -31,18 +26,14 @@ if (loadFromNetwork()) {
       })
       .catch((error) => {
         console.error(error);
-        // alert("Failed to load from the cloud. Fallback to local version")
         runLocally();
       });
   });
 } else {
-  console.log("---newtab-3-runLocally---");
   runLocally();
 }
 
 async function runLocally() {
-  // await initStats();
-  // loading state from LS
   getStateFromLS((res) => {
     preprocessLoadedState(res);
     disableHideItemFunctionality(res);
