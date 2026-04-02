@@ -102,7 +102,6 @@ function createState(): IAppState {
     loaded: true,
     selectedWidgetIds: [],
     editingWidgetId: undefined,
-    currentWhatsNew: undefined,
     page: "default",
     hiddenFeatureIsEnabled: false,
     apiCommandsQueue: [],

@@ -10,7 +10,6 @@ import {
 } from "../helpers/types";
 import { ISavingAppState } from "./storage";
 import { RecentItem } from "../helpers/recentHistoryUtils";
-import { WhatsNew } from "../helpers/whats-new";
 import Tab = chrome.tabs.Tab;
 
 export type IAppAchievements = {
@@ -86,8 +85,6 @@ export type IAppState = {
   selectedWidgetIds: number[];
   editingWidgetId: number | undefined;
 
-  currentWhatsNew: WhatsNew | undefined;
-
   // API
   apiCommandsQueue: APICommandPayloadFull[];
   apiCommandId?: number;
@@ -124,8 +121,6 @@ let initState: IAppState = {
 
   selectedWidgetIds: [],
   editingWidgetId: undefined,
-
-  currentWhatsNew: undefined,
 
   page: "default",
   hiddenFeatureIsEnabled: false,

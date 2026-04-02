@@ -172,4 +172,5 @@ test("normalizeStateFromStorageResult falls back to defaults for empty storage",
   expect(result.sidebarCollapsed).toBe(false);
   expect(result.openBookmarksInNewTab).toBe(true);
   expect(result.colorTheme).toBe("light");
+  expect("currentWhatsNew" in result).toBe(false);
 });

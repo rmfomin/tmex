@@ -113,7 +113,6 @@ function createAppState(): IAppState {
     loaded: true,
     selectedWidgetIds: [],
     editingWidgetId: undefined,
-    currentWhatsNew: undefined,
     apiCommandsQueue: [],
     apiCommandId: undefined,
     apiLastError: undefined,

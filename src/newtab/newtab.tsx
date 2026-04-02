@@ -11,7 +11,6 @@ import { apiGetDashboard, loadFromNetwork } from "../api/api";
 import { createRoot } from "react-dom/client";
 import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
 import { faviconsStorage } from "./helpers/faviconUtils";
-import { getAvailableWhatsNew } from "./helpers/whats-new";
 import { ensureDefaultSpace } from "./helpers/ensureDefaultSpace";
 import { collectBookmarksV3, hasArchivedItemsV3 } from "./helpers/v3Traversal";
 
@@ -71,11 +70,6 @@ function preprocessLoadedState(state: ISavingAppState): void {
   collectBookmarksV3(state.spaces).forEach((item) => {
     faviconsStorage.registerInCache(item.favIconUrl, item.url);
   });
-
-  ////////////////////////////////////////////////////////////
-  // Init available "Whats new"
-  ////////////////////////////////////////////////////////////
-  state.currentWhatsNew = getAvailableWhatsNew();
 
   ////////////////////////////////////////////////////////////
   // Apply Dark Light Themes

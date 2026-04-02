@@ -1,7 +1,6 @@
 import { IAppState } from "./state";
 import { throttle } from "../helpers/utils";
 import { ColorTheme } from "../helpers/types";
-import { WhatsNew } from "../helpers/whats-new";
 import { getV3SpacesView } from "../helpers/dataFormatAdapters";
 
 /**
@@ -55,7 +54,6 @@ export type ISavingAppState = {
   [key in SavingStateKeys]: IAppState[key];
 } & {
   hiddenFeatureIsEnabled: boolean;
-  currentWhatsNew: WhatsNew | undefined;
 };
 
 export function normalizeStateFromStorageResult(
@@ -75,7 +73,6 @@ export function normalizeStateFromStorageResult(
   result.spaces = Array.isArray(res.spaces) ? getV3SpacesView(res.spaces as any) : [];
   result.version = 3;
   result.hiddenFeatureIsEnabled = res.hiddenFeatureIsEnabled ?? false;
-  result.currentWhatsNew = res.currentWhatsNew;
 
   return result;
 }
