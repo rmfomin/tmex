@@ -41,7 +41,6 @@ const savingStateDefaultValues = {
   sidebarCollapsed: false,
   openBookmarksInNewTab: !__OVERRIDE_NEWTAB,
   colorTheme: "light", // todo I don't use system because it's not ready to used by default
-  stat: undefined,
   showRecent: false,
   showArchived: false,
   showNotUsed: false,

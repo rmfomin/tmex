@@ -66,7 +66,7 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
         const loadedFolders = res as IFolder[];
         loadedFolders.forEach((loadedFolder) => {
           dispatch({
-            type: Action.CreateFolder, // intentionally does not send additional stat here
+            type: Action.CreateFolder,
             title: loadedFolder.title,
             items: loadedFolder.items,
             color: loadedFolder.color,
@@ -165,7 +165,7 @@ export function onImportFromToby(
         let count = 0;
         tobyData.lists.forEach((tobyFolder) => {
           dispatch({
-            type: Action.CreateFolder, // intentionally does not send additional stat here
+            type: Action.CreateFolder,
             title: tobyFolder.title,
             items: tobyFolder.cards.map((card) => ({
               id: genUniqLocalId(),
@@ -322,7 +322,7 @@ export function importBrowserBookmarks(
         newFolderId,
         title: rec.folder.title,
         items,
-      }); // intentionally does not send additional stat here
+      });
     }
   });
 }

@@ -94,7 +94,6 @@ function createAppState(): IAppState {
     alphaMode: false,
     betaMode: false,
     page: "default",
-    stat: undefined,
     achievements: {
       folderCreated: 0,
       folderRenamed: 0,

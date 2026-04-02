@@ -13,12 +13,6 @@ import { RecentItem } from "../helpers/recentHistoryUtils";
 import { WhatsNew } from "../helpers/whats-new";
 import Tab = chrome.tabs.Tab;
 
-export type IAppStats = {
-  sessionNumber: number;
-  firstSessionDate: number;
-  lastVersion: string; // need to update
-};
-
 export type IAppAchievements = {
   // folders
   folderCreated: number;
@@ -87,7 +81,6 @@ export type IAppState = {
   alphaMode: boolean;
   betaMode: boolean;
   page: "default" | "import";
-  stat: IAppStats | undefined; // Stored in LS
   achievements: IAppAchievements; // Stored in LS
   loaded: boolean;
 
@@ -137,11 +130,6 @@ let initState: IAppState = {
   currentWhatsNew: undefined,
 
   page: "default",
-  stat: {
-    sessionNumber: 0,
-    firstSessionDate: 0,
-    lastVersion: "",
-  },
   hiddenFeatureIsEnabled: false,
   apiCommandsQueue: [],
   undoSteps: [],

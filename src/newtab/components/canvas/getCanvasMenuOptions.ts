@@ -11,7 +11,7 @@ export function getCanvasMenuOption(
   currentFolders: FolderV3[],
   onClose: () => void
 ): OptionsConfig {
-  // todo add stat for each action + move onClose in a single place
+  // todo centralize per-action bookkeeping + move onClose in a single place
 
   if (canvasMenuType === "canvas") {
     return [
