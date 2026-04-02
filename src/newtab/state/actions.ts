@@ -778,7 +778,7 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
     case Action.MoveFolderItems: {
       const targetFolder = findFolderById(state, action.targetFolderId);
       const movingItems = action.itemIds.map(
-        (itemId) => findItemById(state, itemId)!
+        (itemId) => findAnyItemById(state, itemId)!
       );
 
       // Store the original folder IDs and positions for undo purposes
@@ -827,7 +827,7 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
           body: {
             folderId: targetFolder.remoteId,
             items: action.itemIds.map((itemId) => {
-              const item = findItemById({ spaces }, itemId)!;
+              const item = findAnyItemById({ spaces }, itemId)!;
               return {
                 folderItemId: item.remoteId!,
                 position: item.position,

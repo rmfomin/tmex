@@ -209,7 +209,7 @@ export function toBookmarkItemV3(item: FolderItemToCreate): BookmarkItemV3 {
 }
 
 export function addItemsToFolderV3(
-  insertingItems: FolderItemToCreate[] | BookmarkItemV3[],
+  insertingItems: FolderItemToCreate[] | ItemV3[],
   existingItems: ItemV3[],
   insertBeforeItemId?: number,
 ): ItemV3[] {
@@ -222,7 +222,7 @@ export function addItemsToFolderV3(
   let insertAfterItem = existingItems[insertAfterItemIndex]
   let insertBeforeItem = existingItems[insertBeforeItemIndex]
 
-  const newItems: BookmarkItemV3[] = insertingItems.map((insertingItem) => {
+  const newItems: ItemV3[] = insertingItems.map((insertingItem) => {
     const normalizedItem =
       "type" in insertingItem
         ? insertingItem

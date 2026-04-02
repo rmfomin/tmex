@@ -1,11 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BookmarkItemV3, GroupV3, SpaceV3 } from "../helpers/types";
 import { RecentItem } from "../helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 import { FolderItem } from "./FolderItem";
-import { hlSearch } from "../helpers/utils";
+import { EditableTitle } from "./EditableTitle";
 import { DispatchContext } from "../state/actions";
 import { Action } from "../state/state";
+import { CL } from "../helpers/classNameHelper";
+import ChevronIcon from "../icons/shevron.svg";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];
@@ -19,6 +21,11 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   hiddenFeatureIsEnabled: boolean;
 }) {
   const dispatch = useContext(DispatchContext);
+  const [localTitle, setLocalTitle] = useState(p.group.title);
+
+  useEffect(() => {
+    setLocalTitle(p.group.title);
+  }, [p.group.title]);
 
   function onToggleCollapsed(e: React.MouseEvent) {
     e.preventDefault();
@@ -30,20 +37,52 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
     });
   }
 
+  function setEditing(value: boolean) {
+    dispatch({
+      type: Action.UpdateAppState,
+      newState: { itemInEdit: value ? p.group.id : undefined },
+    });
+  }
+
+  function saveGroupTitle(title: string) {
+    if (title !== p.group.title) {
+      dispatch({
+        type: Action.UpdateFolderItem,
+        itemId: p.group.id,
+        title,
+      });
+    }
+    setEditing(false);
+  }
+
   return (
     <div className="folder-group" data-group-id={p.group.id}>
-      <div className="folder-group__header">
+      <div
+        className="folder-group__header draggable-item"
+        data-id={p.group.id}
+        onDragStart={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <EditableTitle
+          className="folder-group__title"
+          inEdit={p.group.id === p.itemInEdit}
+          setEditing={setEditing}
+          localTitle={localTitle}
+          setLocalTitle={setLocalTitle}
+          onSaveTitle={saveGroupTitle}
+          search={p.search}
+          onClick={() => setEditing(true)}
+        />
         <button
-          className="folder-group__toggle"
+          className={CL("folder-group__toggle", {
+            "folder-group__toggle--collapsed": p.group.collapsed,
+          })}
           onClick={onToggleCollapsed}
           title={p.group.collapsed ? "Expand group" : "Collapse group"}
         >
-          {p.group.collapsed ? "▸" : "▾"}
+          <ChevronIcon />
         </button>
-        <div
-          className="folder-group__title"
-          dangerouslySetInnerHTML={hlSearch(p.group.title, p.search)}
-        />
       </div>
       <div className="folder-group__items">
         {p.items.map((item) => (

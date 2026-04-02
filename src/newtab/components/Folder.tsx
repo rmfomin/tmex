@@ -14,6 +14,7 @@ import { Action } from "../state/state";
 import { canShowArchived, DispatchContext } from "../state/actions";
 import { Color } from "../helpers/Color";
 import MenuIcon from "../icons/menu.svg";
+import ChevronIcon from "../icons/shevron.svg";
 import { getSpacesList } from "./dropdown/moveToHelpers";
 import HistoryItem = chrome.history.HistoryItem;
 import Tab = chrome.tabs.Tab;
@@ -267,11 +268,13 @@ export const Folder = React.memo(function Folder(p: {
       >
         {
           <button
-            className="folder-collapse-toggle"
+            className={CL("folder-collapse-toggle", {
+              "folder-collapse-toggle--collapsed": p.folder.collapsed,
+            })}
             onClick={onToggleCollapsed}
             title={p.folder.collapsed ? "Expand folder" : "Collapse folder"}
           >
-            {p.folder.collapsed ? "▸" : "▾"}
+            <ChevronIcon />
           </button>
         }
         {
