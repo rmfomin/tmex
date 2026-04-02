@@ -7,20 +7,6 @@ import { hlSearch } from "../helpers/utils";
 import { DispatchContext } from "../state/actions";
 import { Action } from "../state/state";
 
-function toLegacyDisplayItem(item: BookmarkItemV3) {
-  return {
-    id: item.id,
-    remoteId: item.remoteId,
-    position: item.position,
-    title: item.title,
-    url: item.url,
-    favIconUrl: item.favIconUrl,
-    archived: item.archived,
-    isSection: item.isSection,
-    inEdit: item.inEdit,
-  };
-}
-
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];
   group: GroupV3;
@@ -64,7 +50,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           <FolderItem
             key={item.id}
             spaces={p.spaces}
-            item={toLegacyDisplayItem(item)}
+            item={item}
             inEdit={item.id === p.itemInEdit}
             tabs={p.tabs}
             recentItems={p.recentItems}

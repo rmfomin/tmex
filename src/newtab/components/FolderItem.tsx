@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { IFolderItem, SpaceV3 } from "../helpers/types";
+import { BookmarkItemV3, SpaceV3 } from "../helpers/types";
 import { findTabsByURL, isFolderItemNotUsed } from "../helpers/utils";
 import { EditableTitle } from "./EditableTitle";
 import { Action } from "../state/state";
@@ -15,7 +15,7 @@ import Tab = chrome.tabs.Tab;
 export const FolderItem = React.memo(
   (p: {
     spaces: SpaceV3[];
-    item: IFolderItem;
+    item: BookmarkItemV3;
     inEdit: boolean;
     tabs: Tab[];
     recentItems: RecentItem[];

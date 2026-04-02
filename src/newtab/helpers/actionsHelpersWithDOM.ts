@@ -1,4 +1,4 @@
-import { IFolderItem, IFolderItemToCreate, ISpace, SpaceV3 } from "./types";
+import { BookmarkItemV3, IFolderItemToCreate, ISpace, SpaceV3 } from "./types";
 import { ActionDispatcher, executeCustomAction } from "../state/actions";
 import { Action, IAppState } from "../state/state";
 import {
@@ -123,7 +123,7 @@ export function clickFolderItem(
     }
   }
 
-  function onRenameSection(targetItem: IFolderItem) {
+  function onRenameSection(targetItem: BookmarkItemV3) {
     dispatch({
       type: Action.UpdateAppState,
       newState: { itemInEdit: targetItem.id },

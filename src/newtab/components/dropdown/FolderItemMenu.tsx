@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { IFolderItem, SpaceV3 } from "../../helpers/types";
+import { BookmarkItemV3, SpaceV3 } from "../../helpers/types";
 import { DropdownMenu, DropdownSubMenu } from "./DropdownMenu";
 import { getSelectedItems } from "../../helpers/selectionUtils";
 import { Action } from "../../state/state";
@@ -20,11 +20,11 @@ export const FolderItemMenu = React.memo(
     setLocalTitle: (val: string) => void;
     onSave: (title: string, url: string) => void;
     onClose: () => void;
-    item: IFolderItem;
+    item: BookmarkItemV3;
     hiddenFeatureIsEnabled: boolean;
   }) => {
     const dispatch = useContext(DispatchContext);
-    const [selectedItems, setSelectedItems] = useState<Array<{ id: number; url: string; archived?: boolean }>>([]);
+    const [selectedItems, setSelectedItems] = useState<BookmarkItemV3[]>([]);
     const [localURL, setLocalURL] = useState<string>(p.item.url);
 
     useEffect(() => {

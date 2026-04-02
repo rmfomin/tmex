@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookmarkItemV3, FolderV3, IFolderItem, SpaceV3 } from "../helpers/types";
+import { FolderV3, SpaceV3 } from "../helpers/types";
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
@@ -27,20 +27,6 @@ import { RecentItem } from "../helpers/recentHistoryUtils";
 import {
   getVisibleFolderDisplayItems,
 } from "./getFolderDisplayItems";
-
-function toLegacyDisplayItem(item: BookmarkItemV3): IFolderItem {
-  return {
-    id: item.id,
-    remoteId: item.remoteId,
-    position: item.position,
-    title: item.title,
-    url: item.url,
-    favIconUrl: item.favIconUrl,
-    archived: item.archived,
-    isSection: item.isSection,
-    inEdit: item.inEdit,
-  };
-}
 
 export const Folder = React.memo(function Folder(p: {
   spaces: SpaceV3[];
@@ -211,10 +197,10 @@ export const Folder = React.memo(function Folder(p: {
   );
   const flatFolderDisplayItems = visibleFolderDisplayItems.flatMap((item) => {
     if (item.type === "bookmark") {
-      return [toLegacyDisplayItem(item.item)];
+      return [item.item];
     }
 
-    return item.items.map(toLegacyDisplayItem);
+    return item.items;
   });
 
   const folderItems = flatFolderDisplayItems.filter(
@@ -432,17 +418,16 @@ export const Folder = React.memo(function Folder(p: {
       >
         {visibleFolderDisplayItems.map((item) => {
           if (item.type === "bookmark") {
-            const legacyItem = toLegacyDisplayItem(item.item);
-            if (!canShowArchived(p) && legacyItem.archived) {
+            if (!canShowArchived(p) && item.item.archived) {
               return null;
             }
 
             return (
               <FolderItem
-                key={legacyItem.id}
+                key={item.item.id}
                 spaces={p.spaces}
-                item={legacyItem}
-                inEdit={legacyItem.id === p.itemInEdit}
+                item={item.item}
+                inEdit={item.item.id === p.itemInEdit}
                 tabs={p.tabs}
                 recentItems={p.recentItems}
                 showNotUsed={p.showNotUsed}

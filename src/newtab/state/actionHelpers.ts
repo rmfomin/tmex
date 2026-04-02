@@ -391,6 +391,6 @@ export function updateFolderItem(
   })
 }
 
-export function isCustomActionItem(item: IFolderItem | undefined): boolean {
+export function isCustomActionItem(item: BookmarkItemV3 | undefined): boolean {
   return item?.url.includes("tabme://") ?? false
 }

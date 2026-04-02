@@ -1,6 +1,6 @@
 import Tab = chrome.tabs.Tab;
 import HistoryItem = chrome.history.HistoryItem;
-import { IFolderItem, ISpace, SpaceV3 } from "./types";
+import { BookmarkItemV3, IFolderItem, ISpace, SpaceV3 } from "./types";
 import type React from "react";
 import { isTabmeTab } from "./isTabmeTab";
 import { RecentItem } from "./recentHistoryUtils";
@@ -252,7 +252,7 @@ export function findTabsByURL(url: string | undefined, tabs: Tab[]): Tab[] {
 }
 
 export function isFolderItemNotUsed(
-  item: IFolderItem,
+  item: IFolderItem | BookmarkItemV3,
   historyItems: RecentItem[]
 ): boolean {
   if (item.isSection) {
