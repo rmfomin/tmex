@@ -17,6 +17,7 @@ test("returns true when current space has no folders and widgets", () => {
         {
           id: 1,
           position: "a",
+          objectType: "space",
           title: "Space",
           folders: [],
           widgets: [],
@@ -35,11 +36,13 @@ test("returns false when current space has folders", () => {
         {
           id: 1,
           position: "a",
+          objectType: "space",
           title: "Space",
           folders: [
             {
               id: 2,
               position: "a",
+              objectType: "folder",
               title: "Folder",
               items: [],
             },

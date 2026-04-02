@@ -7,14 +7,13 @@ import {
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
 import { Folder } from "./Folder";
 import { handleBookmarksKeyDown } from "../helpers/handleBookmarksKeyDown";
-import { Action, AppStateLegacyView } from "../state/state";
+import { Action, IAppState } from "../state/state";
 import {
-  canShowArchived,
   DispatchContext,
   mergeStepsInHistory,
 } from "../state/actions";
 import { IFolder, IWidget } from "../helpers/types";
-import { findSpaceById, genUniqLocalId } from "../state/actionHelpers";
+import { genUniqLocalId } from "../state/actionHelpers";
 import {
   clickFolderItem,
   createFolderWithStat,
@@ -32,12 +31,15 @@ import { Options } from "./SettingsOptions";
 import { getCanvasMenuOption } from "./canvas/getCanvasMenuOptions";
 import { importFromJson } from "../helpers/importExportHelpers";
 import { isEmptyDashboard } from "./isEmptyDashboard";
+import { getLegacyAppStateView } from "../helpers/legacyAppStateView";
+import { getBookmarksViewState } from "./getBookmarksViewState";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
 
-export function Bookmarks(p: { appState: AppStateLegacyView }) {
+export function Bookmarks(p: { appState: IAppState }) {
   const dispatch = useContext(DispatchContext);
+  const legacyAppState = getLegacyAppStateView(p.appState);
   const [mouseDownEvent, setMouseDownEvent] = useState<
     React.MouseEvent | undefined
   >(undefined);
@@ -150,7 +152,7 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
           mouseDownEvent.button === 1;
         clickFolderItem(
           targetId,
-          p.appState,
+          legacyAppState,
           dispatch,
           meta,
           p.appState.openBookmarksInNewTab,
@@ -257,8 +259,8 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
     return getCanvasMenuOption(
       dispatch,
       canvasMenuType,
-      p.appState,
-      folders,
+      legacyAppState,
+      folders as unknown as IFolder[],
       () => setCanvasMenuPos(undefined),
     );
   };
@@ -279,45 +281,17 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
     importInputRef.current?.click();
   }
 
-  let folders: IFolder[] = [];
-  let widgets: IWidget[] = [];
-  if (p.appState.search === "") {
-    const currentSpace = findSpaceById(
-      p.appState,
-      p.appState.currentSpaceId,
-    ) as any;
-    if (currentSpace) {
-      folders = p.appState.showArchived
-        ? currentSpace.folders ?? [] // just in case of broken data
-        : currentSpace.folders.filter(
-            (f: IFolder) => canShowArchived(p.appState) || !f.archived,
-          );
-
-      widgets = currentSpace.widgets ?? [];
-    }
-  } else {
-    const searchValueLC = p.appState.search.toLowerCase();
-    p.appState.spaces.forEach((s) => {
-      s.folders.forEach((f) => {
-        if (
-          isContainsSearch(f, searchValueLC) ||
-          f.items.some((i) => isContainsSearch(i, searchValueLC))
-        ) {
-          folders.push(f);
-        }
-      });
-    });
-  }
+  const { folders, widgets } = getBookmarksViewState(p.appState);
 
   const showEmptyImport = isEmptyDashboard(p.appState);
 
   return (
     <div className="bookmarks-box" onMouseDown={onMouseDown}>
-      <TopBar appState={p.appState} isScrolled={isScrolled} />
+      <TopBar appState={legacyAppState} isScrolled={isScrolled} />
       <div
         className="bookmarks"
         ref={bookmarksRef}
-        onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
+        onKeyDown={(e) => handleBookmarksKeyDown(e, legacyAppState, dispatch)}
       >
         <Canvas
           selectedWidgetIds={p.appState.selectedWidgetIds}
@@ -336,8 +310,8 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
         {folders.map((folder) => (
           <Folder
             key={folder.id}
-            spaces={p.appState.spaces}
-            folder={folder}
+            spaces={legacyAppState.spaces}
+            folder={folder as unknown as IFolder}
             tabs={p.appState.tabs}
             recentItems={p.appState.recentItems}
             showNotUsed={p.appState.showNotUsed}
@@ -381,7 +355,10 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
       )}
 
       {p.appState.search === "" && !showEmptyImport && (
-        <Toolbar folders={folders} currentSpaceId={p.appState.currentSpaceId} />
+        <Toolbar
+          folders={folders as unknown as IFolder[]}
+          currentSpaceId={p.appState.currentSpaceId}
+        />
       )}
     </div>
   );

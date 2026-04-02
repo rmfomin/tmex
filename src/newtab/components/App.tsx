@@ -204,7 +204,7 @@ export function App() {
           {appState.page === "default" && (
             <>
               <Sidebar appState={legacyAppState} />
-              <Bookmarks appState={legacyAppState} />
+              <Bookmarks appState={appState} />
               <KeyboardAndMouseManager
                 search={appState.search}
                 selectedWidgetIds={appState.selectedWidgetIds}
