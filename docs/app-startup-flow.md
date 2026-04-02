@@ -19,35 +19,11 @@
 
 Файл: [background.ts](../src/background.ts)
 
-Что делает:
-
-- запускается как service worker расширения
-- по клику на иконку расширения открывает `newtab.html`
-- хранит список последних активных вкладок
-- шлёт их в UI через `BroadcastChannel`
-- отвечает на `chrome.runtime.sendMessage` с типом `get-last-active-tabs`
-- задаёт URL для uninstall feedback
-
-Итог:
-
-- background не рисует UI
-- он обслуживает фоновые события браузера и связь с вкладкой `newtab`
-
 ## 3. HTML-оболочка новой вкладки
 
 Файл: [newtab.html](../public/newtab.html)
 
-Что делает:
-
-- подключает стили
-- подключает `vendor.js`
-- подключает `js/newtab.js`
-- создаёт DOM-контейнер `#root` для React
-
-Итог:
-
-- браузер открывает страницу новой вкладки
-- React получает точку монтирования
+- подключает стили, `vendor.js`, `js/newtab.js`, `#root`
 
 ## 4. Вход в React-приложение
 
