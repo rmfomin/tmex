@@ -87,7 +87,7 @@ export type IAppState = {
   sidebarHovered: boolean; // for hover effects
   alphaMode: boolean;
   betaMode: boolean;
-  page: "default" | "import" | "welcome";
+  page: "default" | "import";
   stat: IAppStats | undefined; // Stored in LS
   achievements: IAppAchievements; // Stored in LS
   loaded: boolean;

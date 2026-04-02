@@ -14,6 +14,7 @@ import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
 import { faviconsStorage } from "./helpers/faviconUtils";
 import { getAvailableWhatsNew } from "./helpers/whats-new";
 import { getLegacySpacesView } from "./helpers/dataFormatAdapters";
+import { ensureDefaultSpace } from "./helpers/ensureDefaultSpace";
 
 console.log("---newtab-1-start---");
 
@@ -60,6 +61,7 @@ function mountApp() {
 }
 
 function preprocessLoadedState(state: ISavingAppState): void {
+  ensureDefaultSpace(state);
   const legacySpaces = getLegacySpacesView(state.spaces);
   ////////////////////////////////////////////////////////////
   // initialize app.stat

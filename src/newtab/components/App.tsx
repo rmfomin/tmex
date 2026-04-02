@@ -4,7 +4,6 @@ import { Sidebar } from "./Sidebar";
 import { Notification } from "./Notification";
 import { KeyboardAndMouseManager } from "./KeyboardAndMouseManager";
 import { ImportBookmarksFromSettings } from "./ImportBookmarksFromSettings";
-import { createWelcomeFolder } from "../helpers/welcomeLogic";
 import { Action, getInitAppState, IAppState } from "../state/state";
 import { DispatchContext, stateReducer } from "../state/actions";
 import { getBC, getStateFromLS } from "../state/storage";
@@ -12,7 +11,6 @@ import { executeAPICall } from "../../api/serverCommands";
 import Tab = chrome.tabs.Tab;
 import { apiGetToken } from "../../api/api";
 import { CL } from "../helpers/classNameHelper";
-import { Welcome } from "./Welcome";
 import { getHistory, tryLoadMoreHistory } from "../helpers/recentHistoryUtils";
 import { getLegacyAppStateView } from "../helpers/legacyAppStateView";
 
@@ -85,14 +83,6 @@ export function App() {
         }, 2000);
       });
 
-      // first open time
-      if (appState.stat?.sessionNumber === 1) {
-        dispatch({
-          type: Action.UpdateAppState,
-          newState: { page: "welcome" },
-        });
-        createWelcomeFolder(dispatch);
-      }
     });
 
     function onTabUpdated(tabId: number, info: Partial<Tab>, tab: Tab) {
@@ -208,7 +198,6 @@ export function App() {
           })}
         >
           <Notification notification={appState.notification} />
-          {appState.page === "welcome" && <Welcome appState={appState} />}
           {appState.page === "import" && (
             <ImportBookmarksFromSettings appState={appState} />
           )}

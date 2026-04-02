@@ -241,6 +241,28 @@ input.search {
   flex-grow: 1;
 }
 
+.empty-dashboard {
+  height: calc(100dvh - 100px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-dashboard__button {
+  height: 34px;
+  width: 300px;
+  padding: 8px 8px 8px 32px;
+  font-size: 16px;
+  border-radius: 8px;
+  margin: 0;
+  text-align: center;
+
+  color: var(--notification-text-color);
+  border: 1px solid var(--input-border-color);
+  background-color: var(--colors-blue-600);
+}
+
 .collapsible-sidebar .bookmarks-box {
   padding-left: 24px;
 }

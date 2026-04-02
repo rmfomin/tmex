@@ -30,6 +30,8 @@ import { canvasAPI } from "./canvas/canvasAPI";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { Options } from "./SettingsOptions";
 import { getCanvasMenuOption } from "./canvas/getCanvasMenuOptions";
+import { importFromJson } from "../helpers/importExportHelpers";
+import { isEmptyDashboard } from "./isEmptyDashboard";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
@@ -49,6 +51,7 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bookmarksRef = useRef<HTMLDivElement>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   // useSwipeAnimation(bookmarksRef, p.appState.currentSpaceId, p.appState.spaces.length)
 
@@ -272,6 +275,10 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
     });
   }
 
+  function onOpenJsonImport() {
+    importInputRef.current?.click();
+  }
+
   let folders: IFolder[] = [];
   let widgets: IWidget[] = [];
   if (p.appState.search === "") {
@@ -299,6 +306,8 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
     });
   }
 
+  const showEmptyImport = isEmptyDashboard(p.appState);
+
   return (
     <div className="bookmarks-box" onMouseDown={onMouseDown}>
       <TopBar appState={p.appState} isScrolled={isScrolled} />
@@ -313,6 +322,13 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
           widgets={widgets}
         />
         <canvas id="canvas-selection" ref={canvasRef}></canvas>
+        <input
+          ref={importInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: "none" }}
+          onChange={(e) => importFromJson(e, dispatch)}
+        />
 
         {folders.map((folder) => (
           <Folder
@@ -329,7 +345,16 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
           />
         ))}
 
-        {p.appState.search === "" ? (
+        {showEmptyImport ? (
+          <div className="empty-dashboard">
+            <button
+              className="welcome-button empty-dashboard__button"
+              onClick={onOpenJsonImport}
+            >
+              Import from JSON
+            </button>
+          </div>
+        ) : p.appState.search === "" ? (
           <div className="folder folder--new">
             <h2 onClick={onCreateFolder}>
               New folder <span>+ Click to add</span>
@@ -352,7 +377,7 @@ export function Bookmarks(p: { appState: AppStateLegacyView }) {
         </DropdownMenu>
       )}
 
-      {p.appState.search === "" && (
+      {p.appState.search === "" && !showEmptyImport && (
         <Toolbar folders={folders} currentSpaceId={p.appState.currentSpaceId} />
       )}
     </div>
