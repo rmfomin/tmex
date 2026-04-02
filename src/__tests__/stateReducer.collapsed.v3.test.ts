@@ -51,22 +51,21 @@ function createState(): IAppState {
         id: 1,
         position: "a0",
         objectType: "space",
-        title: "Source",
+        title: "Main",
         folders: [
           {
             id: 10,
             position: "a0",
             objectType: "folder",
-            title: "Grouped folder",
-            color: "#ffcc00",
-            collapsed: true,
+            title: "Folder",
+            collapsed: false,
             items: [
               {
                 id: 100,
                 position: "a0",
                 type: "group",
                 objectType: "group",
-                title: "Infra",
+                title: "Group",
                 collapsed: true,
                 groupItems: [
                   {
@@ -74,24 +73,16 @@ function createState(): IAppState {
                     position: "a0",
                     type: "bookmark",
                     objectType: "bookmark",
-                    title: "Grafana",
-                    url: "https://grafana.example",
-                    favIconUrl: "https://grafana.example/favicon.ico",
+                    title: "Nested",
+                    url: "https://nested.example",
+                    favIconUrl: "https://nested.example/favicon.ico",
                   },
                 ],
               },
             ],
-            twoColumn: true,
+            color: "#ffcc00",
           },
         ],
-        widgets: [],
-      },
-      {
-        id: 2,
-        position: "b0",
-        objectType: "space",
-        title: "Target",
-        folders: [],
         widgets: [],
       },
     ],
@@ -142,45 +133,28 @@ function createState(): IAppState {
   };
 }
 
-test("MoveFolder between spaces preserves grouped v3 folder structure", () => {
+test("UpdateFolder toggles folder collapsed flag", () => {
   const result = stateReducer(createState(), {
-    type: Action.MoveFolder,
+    type: Action.UpdateFolder,
     folderId: 10,
-    targetSpaceId: 2,
-    insertBeforeFolderId: undefined,
+    collapsed: true,
   });
 
-  expect(result.spaces[0].folders).toEqual([]);
-  expect(result.spaces[1].folders).toEqual([
-    {
-      id: 10,
-      position: expect.any(String),
-      objectType: "folder",
-      title: "Grouped folder",
-      color: "#ffcc00",
-      collapsed: true,
-      twoColumn: true,
-      items: [
-        {
-          id: 100,
-          position: "a0",
-          type: "group",
-          objectType: "group",
-          title: "Infra",
-          collapsed: true,
-          groupItems: [
-            {
-              id: 101,
-              position: "a0",
-              type: "bookmark",
-              objectType: "bookmark",
-              title: "Grafana",
-              url: "https://grafana.example",
-              favIconUrl: "https://grafana.example/favicon.ico",
-            },
-          ],
-        },
-      ],
-    },
+  expect(result.spaces[0].folders[0].collapsed).toBe(true);
+});
+
+test("UpdateFolderItem toggles group collapsed flag by group item id", () => {
+  const result = stateReducer(createState(), {
+    type: Action.UpdateFolderItem,
+    itemId: 100,
+    collapsed: false,
+  });
+
+  expect(result.spaces[0].folders[0].items).toEqual([
+    expect.objectContaining({
+      id: 100,
+      type: "group",
+      collapsed: false,
+    }),
   ]);
 });

@@ -330,6 +330,7 @@ export type ActionPayload = (
       title?: string;
       color?: string;
       archived?: boolean;
+      collapsed?: boolean;
       twoColumn?: boolean;
       position?: string;
     }
@@ -356,6 +357,7 @@ export type ActionPayload = (
       itemId: number;
       title?: string;
       archived?: boolean;
+      collapsed?: boolean;
       url?: string;
       favIconUrl?: string;
     }

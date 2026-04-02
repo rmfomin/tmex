@@ -134,3 +134,40 @@ test("updateFolderItem updates bookmark inside groupItems without flattening fol
     },
   ]);
 });
+
+test("updateFolderItem updates group itself without flattening nested structure", () => {
+  const result = updateFolderItem(createSpacesFixture(), 100, {
+    collapsed: false,
+  } as any);
+
+  expect(result[0].folders[0].items).toEqual([
+    {
+      id: 100,
+      position: "a0",
+      type: "group",
+      objectType: "group",
+      title: "Group",
+      collapsed: false,
+      groupItems: [
+        {
+          id: 101,
+          position: "a0",
+          type: "bookmark",
+          objectType: "bookmark",
+          title: "Item A",
+          url: "https://a.example",
+          favIconUrl: "https://a.example/favicon.ico",
+        },
+        {
+          id: 102,
+          position: "a1",
+          type: "bookmark",
+          objectType: "bookmark",
+          title: "Item B",
+          url: "https://b.example",
+          favIconUrl: "https://b.example/favicon.ico",
+        },
+      ],
+    },
+  ]);
+});

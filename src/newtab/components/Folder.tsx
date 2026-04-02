@@ -188,6 +188,16 @@ export const Folder = React.memo(function Folder(p: {
     setShowMenu(false);
   }
 
+  function onToggleCollapsed(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch({
+      type: Action.UpdateFolder,
+      folderId: p.folder.id,
+      collapsed: !p.folder.collapsed,
+    });
+  }
+
   function setEditing(val: boolean) {
     dispatch({
       type: Action.UpdateAppState,
@@ -269,6 +279,15 @@ export const Folder = React.memo(function Folder(p: {
         className="draggable-folder"
         onContextMenu={onHeaderContextMenu}
       >
+        {
+          <button
+            className="folder-collapse-toggle"
+            onClick={onToggleCollapsed}
+            title={p.folder.collapsed ? "Expand folder" : "Collapse folder"}
+          >
+            {p.folder.collapsed ? "▸" : "▾"}
+          </button>
+        }
         {
           <EditableTitle
             className="folder-title__text"
@@ -400,13 +419,17 @@ export const Folder = React.memo(function Folder(p: {
         ) : null}
       </h2>
 
-      {folderItems.length === 0 && !folderIsEmptyDuringSearch ? (
+      {folderItems.length === 0 && !folderIsEmptyDuringSearch && !p.folder.collapsed ? (
         <div className="folder-empty-tip">
           To add bookmark, drop an item form the sidebar
         </div>
       ) : null}
 
-      <div className="folder-items-box" data-folder-id={p.folder.id}>
+      <div
+        className="folder-items-box"
+        data-folder-id={p.folder.id}
+        style={p.folder.collapsed ? { display: "none" } : undefined}
+      >
         {visibleFolderDisplayItems.map((item) => {
           if (item.type === "bookmark") {
             const legacyItem = toLegacyDisplayItem(item.item);

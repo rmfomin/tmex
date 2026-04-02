@@ -1092,6 +1092,20 @@ input.search {
   color: var(--colors-gray-600);
 }
 
+.folder-collapse-toggle {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-right: 2px;
+  font-size: 14px;
+  vertical-align: top;
+}
+
 .folder-items-box {
   position: relative;
   flex-grow: 1;
@@ -1104,11 +1118,29 @@ input.search {
   border-left: 2px solid var(--border-color);
 }
 
+.folder-group__header {
+  display: flex;
+  align-items: center;
+}
+
+.folder-group__toggle {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--section-text-color);
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin-right: 4px;
+  font-size: 13px;
+}
+
 .folder-group__title {
   color: var(--section-text-color);
   font-size: 13px;
   font-weight: 600;
-  margin: 0 0 4px 12px;
+  margin: 0 0 4px 0;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }

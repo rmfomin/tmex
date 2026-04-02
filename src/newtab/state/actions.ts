@@ -29,6 +29,7 @@ import {
 import { loadFromNetwork } from "../../api/api";
 import {
   addItemsToFolderV3,
+  findAnyItemById,
   findFolderById,
   findFolderByItemId,
   findItemById,
@@ -492,6 +493,9 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       if (typeof action.color !== "undefined") {
         newProps.color = action.color;
       }
+      if (typeof action.collapsed !== "undefined") {
+        newProps.collapsed = action.collapsed;
+      }
       if (typeof action.twoColumn !== "undefined") {
         newProps.twoColumn = action.twoColumn;
       }
@@ -521,6 +525,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
         folderId: action.folderId,
         title: targetFolder.title,
         archived: targetFolder.archived,
+        collapsed: targetFolder.collapsed,
         color: targetFolder.color,
         position: targetFolder.position,
       }));
@@ -704,12 +709,15 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
     }
 
     case Action.UpdateFolderItem: {
-      const newProps: Partial<BookmarkItemV3> = {};
+      const newProps: Partial<BookmarkItemV3> & { collapsed?: boolean } = {};
       if (typeof action.title !== "undefined") {
         newProps.title = action.title;
       }
       if (typeof action.archived !== "undefined") {
         newProps.archived = action.archived;
+      }
+      if (typeof action.collapsed !== "undefined") {
+        newProps.collapsed = action.collapsed;
       }
       if (typeof action.url !== "undefined") {
         newProps.url = action.url;
@@ -718,7 +726,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
         newProps.favIconUrl = action.favIconUrl;
       }
 
-      const originalItem = findItemById(state, action.itemId);
+      const originalItem = findAnyItemById(state, action.itemId);
       if (!originalItem) {
         console.error("Item was not found for item:", action.itemId);
         return showErrorReducer("Item was not found");
@@ -730,7 +738,7 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
       }
 
       let apiCommandsQueue = state.apiCommandsQueue;
-      if (isNetworkAvailable(originalItem)) {
+      if (originalItem.type === "bookmark" && isNetworkAvailable(originalItem)) {
         apiCommandsQueue = getCommandsQueue(state, {
           type: Action.UpdateFolderItem,
           body: {
@@ -745,8 +753,11 @@ function stateReducer0(state: IAppState, action: ActionPayload): IAppState {
         itemId: originalItem.id,
         title: originalItem.title,
         archived: originalItem.archived,
-        url: originalItem.url,
-        favIconUrl: originalItem.favIconUrl,
+        collapsed:
+          originalItem.type === "group" ? originalItem.collapsed : undefined,
+        url: originalItem.type === "bookmark" ? originalItem.url : undefined,
+        favIconUrl:
+          originalItem.type === "bookmark" ? originalItem.favIconUrl : undefined,
       }));
 
       return {

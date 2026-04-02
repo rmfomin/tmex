@@ -4,6 +4,7 @@
 import {
   BookmarkItemV3,
   FolderV3,
+  GroupV3,
   IFolder,
   IFolderItem,
   IFolderItemToCreate,
@@ -99,6 +100,35 @@ export function findItemById(appState: SpacesState, itemId: number): BookmarkIte
   return res
 }
 
+export function findAnyItemById(
+  appState: SpacesState,
+  itemId: number,
+): BookmarkItemV3 | GroupV3 | undefined {
+  let res: BookmarkItemV3 | GroupV3 | undefined = undefined
+  toV3Spaces(appState.spaces).some((space) => {
+    return space.folders.some((folder) => {
+      return folder.items.some((item) => {
+        if (item.id === itemId) {
+          res = item
+          return true
+        }
+
+        if (item.type === "group") {
+          const groupItem = item.groupItems.find((groupItem) => groupItem.id === itemId)
+          if (groupItem) {
+            res = groupItem
+            return true
+          }
+        }
+
+        return false
+      })
+    })
+  })
+
+  return res
+}
+
 export function findFolderById(state: SpacesState, folderId: number): FolderV3 | undefined {
   let res: FolderV3 | undefined = undefined
   toV3Spaces(state.spaces).some((space) => {
@@ -154,6 +184,10 @@ export function findFolderByItemId(appState: SpacesState, itemId: number): Folde
   toV3Spaces(appState.spaces).some((space) => {
     const folder = space.folders.find((currentFolder) => {
       return currentFolder.items.some((item) => {
+        if (item.id === itemId) {
+          return true
+        }
+
         if (item.type === "bookmark") {
           return item.id === itemId
         }
@@ -312,7 +346,7 @@ export function updateFolder(
 export function updateFolderItem(
   spaces: SpaceV3[] | ISpace[],
   itemId: number,
-  newItemProps: Partial<IFolderItem>,
+  newItemProps: Partial<IFolderItem> & { collapsed?: boolean },
   folderId?: number //just optimization
 ): SpaceV3[] {
   if (!folderId) {
@@ -325,6 +359,10 @@ export function updateFolderItem(
   }
   return updateFolder(spaces, folderId, (folder) => {
     const items = folder.items.map((item) => {
+      if (item.type === "group" && item.id === itemId) {
+        return { ...item, ...newItemProps }
+      }
+
       if (item.type === "bookmark") {
         if (item.id === itemId) {
           return { ...item, ...newItemProps }
