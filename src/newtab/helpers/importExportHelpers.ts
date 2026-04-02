@@ -2,6 +2,7 @@ import {
   DataBackupV3,
   IFolder,
   ISpace,
+  SpaceV3,
 } from "./types";
 import { Action } from "../state/state";
 import { ActionDispatcher } from "../state/actions";
@@ -16,7 +17,7 @@ import HistoryItem = chrome.history.HistoryItem;
 import { RecentItem } from "./recentHistoryUtils";
 import {
   convertLegacySpacesToV3Backup,
-  convertV3BackupToLegacySpaces,
+  getV3SpacesView,
   normalizeBackupV3,
 } from "./dataFormatAdapters";
 
@@ -125,7 +126,17 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
   fr.readAsText(file);
 }
 
-export function onExportJson(spaces: ISpace[]) {
+export function createExportBackupV3(
+  spaces: SpaceV3[] | ISpace[],
+): DataBackupV3 {
+  return normalizeBackupV3({
+    isTabme: true,
+    version: 3,
+    spaces: getV3SpacesView(spaces),
+  });
+}
+
+export function onExportJson(spaces: SpaceV3[] | ISpace[]) {
   function downloadObjectAsJson(exportObj: any, exportName: string) {
     const dataStr =
       "data:text/json;charset=utf-8," +
@@ -138,7 +149,7 @@ export function onExportJson(spaces: ISpace[]) {
     downloadAnchorNode.remove();
   }
 
-  const backup = convertLegacySpacesToV3Backup(spaces);
+  const backup = createExportBackupV3(spaces);
   downloadObjectAsJson(backup, "tabme_backup");
 }
 
