@@ -10,7 +10,6 @@ import IconMore from "../icons/more.svg";
 import { FolderItemMenu } from "./dropdown/FolderItemMenu";
 import { getBrokenImgSVG, loadFaviconUrl } from "../helpers/faviconUtils";
 import { RecentItem } from "../helpers/recentHistoryUtils";
-import { getLegacySpacesView } from "../helpers/dataFormatAdapters";
 import Tab = chrome.tabs.Tab;
 
 export const FolderItem = React.memo(
@@ -25,7 +24,6 @@ export const FolderItem = React.memo(
     hiddenFeatureIsEnabled: boolean;
   }) => {
     const dispatch = useContext(DispatchContext);
-    const legacySpaces = getLegacySpacesView(p.spaces);
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const [localTitle, setLocalTitle] = useState<string>(p.item.title);
 
@@ -95,7 +93,7 @@ export const FolderItem = React.memo(
       >
         {showMenu ? (
           <FolderItemMenu
-            spaces={legacySpaces}
+            spaces={p.spaces}
             item={p.item}
             hiddenFeatureIsEnabled={p.hiddenFeatureIsEnabled}
             localTitle={localTitle}

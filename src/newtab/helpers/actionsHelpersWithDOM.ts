@@ -1,6 +1,6 @@
-import { IFolderItem, IFolderItemToCreate } from "./types";
+import { IFolderItem, IFolderItemToCreate, ISpace, SpaceV3 } from "./types";
 import { ActionDispatcher, executeCustomAction } from "../state/actions";
-import { Action, AppStateLegacyView } from "../state/state";
+import { Action, IAppState } from "../state/state";
 import {
   findItemById,
   genUniqLocalId,
@@ -85,7 +85,7 @@ export function getCanDragChecker(
 
 export function clickFolderItem(
   targetId: number,
-  appState: AppStateLegacyView,
+  appState: { spaces: SpaceV3[] | ISpace[]; tabs: IAppState["tabs"] },
   dispatch: ActionDispatcher,
   openInNewTab: boolean,
   openBookmarksInNewTab: boolean,

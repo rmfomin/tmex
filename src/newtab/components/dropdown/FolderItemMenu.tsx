@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { IFolderItem, ISpace } from "../../helpers/types";
+import { IFolderItem, SpaceV3 } from "../../helpers/types";
 import { DropdownMenu, DropdownSubMenu } from "./DropdownMenu";
 import { getSelectedItems } from "../../helpers/selectionUtils";
 import { Action } from "../../state/state";
@@ -12,10 +12,11 @@ import {
 } from "../../helpers/actionsHelpersWithDOM";
 import { findFolderByItemId } from "../../state/actionHelpers";
 import { scrollElementIntoView } from "../../helpers/utils";
+import { getLegacySpacesView } from "../../helpers/dataFormatAdapters";
 
 export const FolderItemMenu = React.memo(
   (p: {
-    spaces: ISpace[];
+    spaces: SpaceV3[];
     localTitle: string;
     setLocalTitle: (val: string) => void;
     onSave: (title: string, url: string) => void;
@@ -26,6 +27,7 @@ export const FolderItemMenu = React.memo(
     const dispatch = useContext(DispatchContext);
     const [selectedItems, setSelectedItems] = useState<IFolderItem[]>([]);
     const [localURL, setLocalURL] = useState<string>(p.item.url);
+    const legacySpaces = getLegacySpacesView(p.spaces);
 
     useEffect(() => {
       const items = getSelectedItems();
@@ -171,7 +173,7 @@ export const FolderItemMenu = React.memo(
               menuId={1}
               title={"Move to"}
               submenuContent={getSpacesWithNestedFoldersList(
-                p.spaces,
+                legacySpaces,
                 moveToFolder,
                 moveToNewFolder,
                 findFolderByItemId(p, p.item.id)?.id,
@@ -287,7 +289,7 @@ export const FolderItemMenu = React.memo(
                   menuId={1}
                   title={"Move to"}
                   submenuContent={getSpacesWithNestedFoldersList(
-                    p.spaces,
+                    legacySpaces,
                     moveToFolder,
                     moveToNewFolder,
                     findFolderByItemId(p, p.item.id)?.id,
