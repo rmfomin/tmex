@@ -2,6 +2,7 @@ import { IAppState } from "./state";
 import { throttle } from "../helpers/utils";
 import { ColorTheme } from "../helpers/types";
 import { WhatsNew } from "../helpers/whats-new";
+import { getV3SpacesView } from "../helpers/dataFormatAdapters";
 
 /**
  * SAVING STATE AND BROADCASTING CHANGES
@@ -59,20 +60,34 @@ export type ISavingAppState = {
   currentWhatsNew: WhatsNew | undefined;
 };
 
+export function normalizeStateFromStorageResult(
+  res: Partial<ISavingAppState>,
+): ISavingAppState {
+  const result = {} as ISavingAppState;
+  const mutableResult = result as any;
+
+  savingStateKeys.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(res, key)) {
+      mutableResult[key] = res[key as keyof ISavingAppState];
+    } else {
+      mutableResult[key] = savingStateDefaultValues[key];
+    }
+  });
+
+  result.spaces = Array.isArray(res.spaces) ? getV3SpacesView(res.spaces as any) : [];
+  result.version = 3;
+  result.hiddenFeatureIsEnabled = res.hiddenFeatureIsEnabled ?? false;
+  result.betaMode = res.betaMode ?? false;
+  result.currentWhatsNew = res.currentWhatsNew;
+
+  return result;
+}
+
 export function getStateFromLS(
   callback: (state: ISavingAppState) => void,
 ): void {
   chrome.storage.local.get(savingStateKeys, (res) => {
-    const result = {} as ISavingAppState;
-    savingStateKeys.forEach((key) => {
-      if (res.hasOwnProperty(key)) {
-        // @ts-ignore
-        result[key] = res[key];
-      } else {
-        // @ts-ignore
-        result[key] = savingStateDefaultValues[key as SavingStateKeys];
-      }
-    });
+    const result = normalizeStateFromStorageResult(res);
     console.log("getStateFromLS", res, result);
     callback(result);
   });
