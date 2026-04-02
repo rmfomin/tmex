@@ -2,13 +2,13 @@ import React, { useContext, useState } from "react";
 import IconFolder from "../icons/folder.svg";
 import IconSticky from "../icons/sticky.svg";
 import { DispatchContext } from "../state/actions";
-import { IFolder } from "../helpers/types";
+import { FolderV3 } from "../helpers/types";
 import { canvasAPI } from "./canvas/canvasAPI";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 
 export const Toolbar = React.memo(function Toolbar(p: {
   currentSpaceId: number;
-  folders: IFolder[];
+  folders: FolderV3[];
 }) {
   const dispatch = useContext(DispatchContext);
   const [createFolderMenuVisible, setCreateFolderMenuVisible] = useState(false);

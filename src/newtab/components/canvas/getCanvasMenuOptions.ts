@@ -1,15 +1,14 @@
 import { OptionsConfig } from "../SettingsOptions";
 import { canvasAPI } from "./canvasAPI";
 import { ActionDispatcher } from "../../state/actions";
-import { AppStateLegacyView } from "../../state/state";
-import { IPoint } from "../../helpers/MathTypes";
-import { IFolder } from "../../helpers/types";
+import { IAppState } from "../../state/state";
+import { FolderV3 } from "../../helpers/types";
 
 export function getCanvasMenuOption(
   dispatch: ActionDispatcher,
   canvasMenuType: "canvas" | "widgets",
-  appState: AppStateLegacyView,
-  currentFolders: IFolder[],
+  appState: Pick<IAppState, "currentSpaceId" | "selectedWidgetIds">,
+  currentFolders: FolderV3[],
   onClose: () => void
 ): OptionsConfig {
   // todo add stat for each action + move onClose in a single place

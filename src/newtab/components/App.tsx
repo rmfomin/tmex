@@ -12,7 +12,6 @@ import Tab = chrome.tabs.Tab;
 import { apiGetToken } from "../../api/api";
 import { CL } from "../helpers/classNameHelper";
 import { getHistory, tryLoadMoreHistory } from "../helpers/recentHistoryUtils";
-import { getLegacyAppStateView } from "../helpers/legacyAppStateView";
 
 let notificationTimeout: number | undefined;
 let globalAppState: IAppState;
@@ -37,7 +36,6 @@ function invalidateStats(
 
 export function App() {
   const [appState, dispatch] = useReducer(stateReducer, getInitAppState());
-  const legacyAppState = getLegacyAppStateView(appState);
 
   useEffect(() => {
     invalidateStats(appState, globalAppState);
@@ -203,7 +201,7 @@ export function App() {
           )}
           {appState.page === "default" && (
             <>
-              <Sidebar appState={legacyAppState} />
+              <Sidebar appState={appState} />
               <Bookmarks appState={appState} />
               <KeyboardAndMouseManager
                 search={appState.search}

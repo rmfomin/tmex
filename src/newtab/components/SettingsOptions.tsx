@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { hasItemsToHighlight } from "../helpers/utils";
-import { Action, AppStateLegacyView } from "../state/state";
+import { Action, IAppState } from "../state/state";
 import { DispatchContext } from "../state/actions";
 import Switch from "react-switch";
 import {
@@ -15,8 +15,9 @@ import {
 import { ImportConfirmationModal } from "./modals/ImportConfirmationModal";
 import { loadFaviconUrl } from "../helpers/faviconUtils";
 import { ShortcutsModal } from "./modals/ShortcutsModal";
-import { IFolderItem } from "../helpers/types";
+import { BookmarkItemV3 } from "../helpers/types";
 import { CL } from "../helpers/classNameHelper";
+import { collectBookmarksV3 } from "../helpers/v3Traversal";
 
 type OnClickOption = {
   onClick: (e: any) => void;
@@ -37,7 +38,7 @@ export type OptionsConfig = Array<
   OnClickOption | OnToggleOption | { separator: true }
 >;
 
-export const HelpOptions = (p: { appState: AppStateLegacyView }) => {
+export const HelpOptions = (p: { appState: IAppState }) => {
   const dispatch = useContext(DispatchContext);
   // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
   const [isShortcutsModalOpen, setShortcutsModalOpen] = useState(false);
@@ -53,7 +54,7 @@ export const HelpOptions = (p: { appState: AppStateLegacyView }) => {
     setShortcutsModalOpen(true);
   }
 
-  function invalidateFavicon(folderItem: IFolderItem): Promise<void> {
+  function invalidateFavicon(folderItem: BookmarkItemV3): Promise<void> {
     if (folderItem.url) {
       return loadFaviconUrl(folderItem.url, false).then((newFaviconUrl) => {
         if (newFaviconUrl !== folderItem.favIconUrl) {
@@ -79,9 +80,7 @@ export const HelpOptions = (p: { appState: AppStateLegacyView }) => {
       (s) => s.id === p.appState.currentSpaceId,
     );
     if (currentSpace) {
-      currentSpace.folders.forEach((f) => {
-        promises.push(...f.items.map(invalidateFavicon));
-      });
+      promises.push(...collectBookmarksV3([currentSpace]).map(invalidateFavicon));
     }
 
     showMessage("updating...", dispatch, true);
@@ -142,7 +141,7 @@ export const HelpOptions = (p: { appState: AppStateLegacyView }) => {
   );
 };
 
-export const SettingsOptions = (p: { appState: AppStateLegacyView }) => {
+export const SettingsOptions = (p: { appState: IAppState }) => {
   const [importConfirmationOpen, setImportConfirmationOpen] = useState(false);
   const fileEvent = useRef(null);
   const dispatch = useContext(DispatchContext);

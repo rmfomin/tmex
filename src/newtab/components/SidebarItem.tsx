@@ -18,15 +18,16 @@ import {
   createFolderWithStat,
   showMessage,
 } from "../helpers/actionsHelpersWithDOM";
-import { IFolderItem, ISpace } from "../helpers/types";
+import { SpaceV3 } from "../helpers/types";
 import IconSaved from "../icons/saved.svg";
 import { getFoldersList } from "./dropdown/moveToHelpers";
 import { getBrokenImgSVG } from "../helpers/faviconUtils";
+import { collectBookmarksV3 } from "../helpers/v3Traversal";
 
 export const TabOrRecentItem = (p: {
   data: ITabOrRecentItem;
   lastActiveTabId: number;
-  spaces: ISpace[];
+  spaces: SpaceV3[];
   search: string;
   onCloseTab?: (tabId: number) => void;
 }) => {
@@ -213,13 +214,15 @@ export const TabOrRecentItem = (p: {
 
 function findFoldersTitlesWhereTabSaved(
   curTab: { url?: string },
-  spaces: ISpace[]
+  spaces: SpaceV3[]
 ): string {
   let res: string[] = [];
   spaces.forEach((space) => {
     const titles = space.folders
       .filter((folder) =>
-        folder.items.some((item: IFolderItem) => item.url === curTab.url)
+        collectBookmarksV3([{ ...space, folders: [folder] }]).some(
+          (item) => item.url === curTab.url,
+        ),
       )
       .map((folder) => `«${folder.title}»`);
     res.push(...titles);

@@ -1,69 +1,60 @@
 # Техдолг по миграции newtab на v3
 
-## Контекст
+## Статус
 
-В проекте начата миграция `newtab` с legacy-модели `ISpace[]` на `SpaceV3[]`.
+Основная миграция завершена.
 
-Что уже сделано:
+Сейчас `newtab` работает с `SpaceV3[]` как с основным runtime-форматом:
 
-- `spaces` в runtime/state теперь считаются `SpaceV3[]`
-- storage сохраняет `spaces` как `v3`
-- вынесены адаптеры в `src/newtab/helpers/dataFormatAdapters.ts`
-- для старого UI добавлен legacy-view через `src/newtab/helpers/legacyAppStateView.ts`
+- state и reducer работают с `SpaceV3[]`
+- storage читает старые данные через явную нормализацию и сохраняет только `v3`
+- export строится из реального `v3`
+- preload, sidebar, topbar, settings, bookmarks, folder и item UI-path больше не используют global legacy-view
+- `legacyAppStateView` удалён из runtime
 
-Это промежуточный этап. Миграция не завершена.
+## Что было закрыто
 
-## Текущее состояние
-
-Сейчас код работает в смешанном режиме:
-
-- state и storage уже `v3`
-- часть UI и helper-логики всё ещё ожидает legacy-структуры
-- для совместимости используются адаптеры между `v3` и legacy
-
-Такой подход позволил сдвинуть хранение данных на `v3`, но оставил опасные места в runtime-логике.
-
-## Проблемы
-
-- В `src/newtab/state/actionHelpers.ts` есть конвертация `v3 -> legacy -> v3`.
-
-Это происходит в `updateSpace`, `updateFolder` и `updateFolderItem`.
-
-Проблема в том, что такая конвертация lossy:
-
-- `group` разворачивается в обычные bookmark-элементы
-- теряются `collapsed` и другие `v3`-поля
-- часть legacy/network полей сохраняется неявно или нестабильно
-
-Следствие:
-
-- любое обновление `spaces`, папки или элемента может повредить реальные `v3`-данные
-
-Отдельная проблема в `src/newtab/state/storage.ts`:
-
-- в storage всегда пишется `version = 3`
-- но старые данные из local storage явно не мигрируются при чтении
-- фактически формат определяется по shape данных, а не по `version`
-
-Это значит, что переход старых пользователей на новый формат пока не оформлен явно.
-
-## Что нужно сделать
-
-1. Перевести reducer и helper-обновления на работу с `SpaceV3[]` без round-trip через legacy-адаптеры.
-2. Описать и реализовать явную миграцию старых данных из local storage в `v3`.
-3. Оставить legacy-адаптеры только для временного read-only слоя совместимости в UI.
-4. Постепенно переписать UI и helper-код так, чтобы они работали напрямую с `v3`.
-5. Добавить проверки или тесты на `v3`-структуры:
-   - `group`
+1. Убран lossy round-trip `v3 -> legacy -> v3` из mutation path в `src/newtab/state/actionHelpers.ts`.
+2. Починен cross-space `MoveFolder`, чтобы перенос папок не повреждал `group` и `collapsed`.
+3. Добавлена явная миграция/нормализация storage-load в `src/newtab/state/storage.ts`.
+4. Export переведён на реальный `DataBackupV3` в `src/newtab/helpers/importExportHelpers.ts`.
+5. Preload и runtime read-path переведены на `v3`-traversal helper-ы.
+6. UI-слой переведён с `AppStateLegacyView` на `IAppState`/`SpaceV3[]`.
+7. Добавлены тесты на:
+   - lossy legacy round-trip
+   - `group` / `groupItems`
    - `collapsed`
-   - загрузка старых данных
-   - обновление без потери структуры
+   - storage migration
+   - export без потери `v3`-структуры
+   - cross-space move folder
 
-## Цель
+## Что осталось как совместимость
 
-Итоговое состояние должно быть таким:
+Legacy-адаптеры сохраняются только для совместимости со старыми форматами данных:
 
-- один основной runtime-формат: `SpaceV3[]`
-- storage хранит только реальный `v3`
-- legacy-адаптеры не участвуют в изменении данных
-- старые данные мигрируются один раз и дальше не требуют специальных обходов
+- `src/newtab/helpers/dataFormatAdapters.ts`
+- import-path, который умеет читать старые backup-форматы
+- отдельные union-типизации в helper-ах, где это ещё нужно для мягкого перехода API/undo/network payload
+
+Это уже не runtime source of truth и не mutation path.
+
+## Итоговая цель
+
+Поддерживаемый end-to-end формат: `DataBackupV3`.
+
+Практический эталон: `docs/tech-debt/0204-1.json`.
+
+Он должен:
+
+- импортироваться без потери структуры
+- корректно жить в runtime и storage
+- экспортироваться обратно как `version: 3`
+- сохранять `group`, `groupItems`, folder/group `collapsed` и `objectType`
+
+## Оставшийся техдолг
+
+Небольшой остаточный техдолг ещё есть:
+
+- часть helper/API типов всё ещё допускает `ISpace[] | SpaceV3[]` для совместимости
+- network payload типы исторически описаны через legacy-формы и могут быть упрощены отдельной задачей
+- legacy-конвертеры стоит удалить полностью после окончания периода поддержки старых backup-форматов

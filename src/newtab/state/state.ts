@@ -4,7 +4,6 @@ import {
   IFolder,
   IFolderItem,
   IFolderItemToCreate,
-  ISpace,
   SpaceV3,
   IWidgetContent,
   IWidgetPos,
@@ -268,9 +267,6 @@ export type APICommandPayloadFull = APICommandPayload & {
   rollbackState: IAppState;
 };
 export type HistoryActionPayload = { byUndo?: boolean; historyStepId?: number };
-export type AppStateLegacyView = Omit<IAppState, "spaces"> & {
-  spaces: ISpace[];
-};
 export type ActionPayload = (
   | { type: Action.Undo; dispatch: ActionDispatcher }
   | {

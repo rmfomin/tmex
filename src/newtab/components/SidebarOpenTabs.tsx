@@ -1,6 +1,6 @@
 import React, { memo, useContext } from "react";
 import { filterTabsBySearch } from "../helpers/utils";
-import { ISpace } from "../helpers/types";
+import { SpaceV3 } from "../helpers/types";
 import { DispatchContext } from "../state/actions";
 import { Action } from "../state/state";
 import { showMessage } from "../helpers/actionsHelpersWithDOM";
@@ -11,7 +11,7 @@ export const SidebarOpenTabs = memo(
   (p: {
     search: string;
     tabs: Tab[];
-    spaces: ISpace[];
+    spaces: SpaceV3[];
     lastActiveTabIds: number[];
     currentWindowId: number | undefined;
   }) => {

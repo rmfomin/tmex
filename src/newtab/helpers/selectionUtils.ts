@@ -1,4 +1,4 @@
-import { IFolderItem } from "./types";
+import { BookmarkItemV3 } from "./types";
 import { getGlobalAppState } from "../components/App";
 import { findItemById } from "../state/actionHelpers";
 
@@ -52,7 +52,7 @@ export function getSelectedItemsIds(): number[] {
   return selectedItemsElements.map((el) => getId(el));
 }
 
-export function getSelectedItems(): IFolderItem[] {
+export function getSelectedItems(): BookmarkItemV3[] {
   const state = getGlobalAppState();
   return selectedItemsElements.map((el) => findItemById(state, getId(el))!);
 }

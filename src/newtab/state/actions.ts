@@ -25,7 +25,6 @@ import {
   sortByPosition,
 } from "../helpers/fractionalIndexes";
 import {
-  getLegacySpacesView,
 } from "../helpers/dataFormatAdapters";
 import { loadFromNetwork } from "../../api/api";
 import {

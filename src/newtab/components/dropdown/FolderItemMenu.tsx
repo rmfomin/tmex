@@ -12,7 +12,6 @@ import {
 } from "../../helpers/actionsHelpersWithDOM";
 import { findFolderByItemId } from "../../state/actionHelpers";
 import { scrollElementIntoView } from "../../helpers/utils";
-import { getLegacySpacesView } from "../../helpers/dataFormatAdapters";
 
 export const FolderItemMenu = React.memo(
   (p: {
@@ -25,9 +24,8 @@ export const FolderItemMenu = React.memo(
     hiddenFeatureIsEnabled: boolean;
   }) => {
     const dispatch = useContext(DispatchContext);
-    const [selectedItems, setSelectedItems] = useState<IFolderItem[]>([]);
+    const [selectedItems, setSelectedItems] = useState<Array<{ id: number; url: string; archived?: boolean }>>([]);
     const [localURL, setLocalURL] = useState<string>(p.item.url);
-    const legacySpaces = getLegacySpacesView(p.spaces);
 
     useEffect(() => {
       const items = getSelectedItems();
@@ -173,7 +171,7 @@ export const FolderItemMenu = React.memo(
               menuId={1}
               title={"Move to"}
               submenuContent={getSpacesWithNestedFoldersList(
-                legacySpaces,
+                p.spaces,
                 moveToFolder,
                 moveToNewFolder,
                 findFolderByItemId(p, p.item.id)?.id,
@@ -289,7 +287,7 @@ export const FolderItemMenu = React.memo(
                   menuId={1}
                   title={"Move to"}
                   submenuContent={getSpacesWithNestedFoldersList(
-                    legacySpaces,
+                    p.spaces,
                     moveToFolder,
                     moveToNewFolder,
                     findFolderByItemId(p, p.item.id)?.id,

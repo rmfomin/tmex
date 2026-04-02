@@ -1,10 +1,12 @@
 import Tab = chrome.tabs.Tab;
 import HistoryItem = chrome.history.HistoryItem;
-import { IFolderItem, ISpace } from "./types";
+import { IFolderItem, ISpace, SpaceV3 } from "./types";
 import type React from "react";
 import { isTabmeTab } from "./isTabmeTab";
 import { RecentItem } from "./recentHistoryUtils";
 import { getTempFavIconUrl } from "../state/actionHelpers";
+import { getV3SpacesView } from "./dataFormatAdapters";
+import { collectBookmarksV3, hasArchivedItemsV3 } from "./v3Traversal";
 
 export const SECTION_ICON_BASE64 = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIgLz4KPC9zdmc+Cg==`;
 
@@ -89,21 +91,17 @@ export function filterRecentItemsBySearch(
   });
 }
 
-export function hasArchivedItems(spaces: ISpace[]): boolean {
-  return spaces.some((s) => {
-    return s.folders.some((f) => f.archived || f.items.some((i) => i.archived));
-  });
+export function hasArchivedItems(spaces: SpaceV3[] | ISpace[]): boolean {
+  return hasArchivedItemsV3(getV3SpacesView(spaces));
 }
 
 export function hasItemsToHighlight(
-  spaces: ISpace[],
+  spaces: SpaceV3[] | ISpace[],
   recentItems: RecentItem[]
 ): boolean {
-  return spaces.some((s) => {
-    return s.folders.some((f) =>
-      f.items.some((i) => isFolderItemNotUsed(i, recentItems))
-    );
-  });
+  return collectBookmarksV3(getV3SpacesView(spaces)).some((item) =>
+    isFolderItemNotUsed(item, recentItems),
+  );
 }
 
 export function filterItemsBySearch<T extends { title?: string; url?: string }>(

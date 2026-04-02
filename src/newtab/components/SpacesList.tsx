@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import PlusIcon from "../icons/plus.svg";
 import DeleteIcon from "../icons/delete.svg";
-import { ISpace } from "../helpers/types";
+import { SpaceV3 } from "../helpers/types";
 import { CL } from "../helpers/classNameHelper";
 import { DispatchContext } from "../state/actions";
 import { Action } from "../state/state";
@@ -9,10 +9,11 @@ import { SimpleEditableTitle } from "./EditableTitle";
 import { DropdownMenu } from "./dropdown/DropdownMenu";
 import { genUniqLocalId } from "../state/actionHelpers";
 import { insertBetween } from "../helpers/fractionalIndexes";
+import { collectBookmarksV3 } from "../helpers/v3Traversal";
 
 export function SpacesList(p: {
   betaMode: boolean;
-  spaces: ISpace[];
+  spaces: SpaceV3[];
   currentSpaceId: number;
   itemInEdit: number | undefined;
 }) {
@@ -57,11 +58,8 @@ export function SpacesList(p: {
     setEditingSpaceId(spaceId);
   };
 
-  const deleteSpace = (space: ISpace) => {
-    const bookmarksCount = space.folders.reduce(
-      (count, f) => count + f.items.length,
-      0,
-    );
+  const deleteSpace = (space: SpaceV3) => {
+    const bookmarksCount = collectBookmarksV3([space]).length;
     const stickersCount = space.widgets?.length ?? 0;
     const totalCount = bookmarksCount + stickersCount;
     let res = true;

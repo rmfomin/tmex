@@ -1,10 +1,10 @@
 import React from "react";
-import { ISpace } from "../../helpers/types";
+import { FolderV3, SpaceV3 } from "../../helpers/types";
 import { DropdownSubMenu } from "./DropdownMenu";
 import IconSaved from "../../icons/saved.svg";
 
 export function getFoldersList(
-  space: ISpace,
+  space: Pick<SpaceV3, "id" | "folders">,
   onFolderClick: (folderId: number, spaceId: number) => void,
   onCreateFolderClick: (spaceId: number) => void,
   currentFolderId?: number
@@ -41,7 +41,7 @@ export function getFoldersList(
 }
 
 export function getSpacesList(
-  spaces: ISpace[],
+  spaces: Pick<SpaceV3, "id" | "title">[],
   onSpaceClick: (spaceId: number) => void,
   currentSpaceId?: number
 ) {
@@ -67,7 +67,7 @@ export function getSpacesList(
 }
 
 export function getSpacesWithNestedFoldersList(
-  spaces: ISpace[],
+  spaces: Pick<SpaceV3, "id" | "title" | "folders">[],
   onFolderClick: (folderId: number) => void,
   onCreateFolderClick: (spaceId: number) => void,
   currentFolderId?: number

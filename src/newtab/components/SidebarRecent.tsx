@@ -36,12 +36,12 @@ import { getTempFavIconUrl } from "../state/actionHelpers";
 import { DispatchContext } from "../state/actions";
 import { getBrokenImgSVG } from "../helpers/faviconUtils";
 import { TabOrRecentItem } from "./SidebarItem";
-import { ISpace } from "../helpers/types";
+import { SpaceV3 } from "../helpers/types";
 
 const PAGE_SIZE = 100;
 
 const RecentList = React.memo(
-  (p: { items: RecentItem[]; spaces: ISpace[]; search: string }) => {
+  (p: { items: RecentItem[]; spaces: SpaceV3[]; search: string }) => {
     const dispatch = useContext(DispatchContext);
     const [displayedItems, setDisplayedItems] = useState<RecentItem[]>([]);
     const [page, setPage] = useState<number>(1);
@@ -108,7 +108,7 @@ export const SidebarRecent = React.memo(
     recentItems: RecentItem[];
     alphaMode: boolean;
     search: string;
-    spaces: ISpace[];
+    spaces: SpaceV3[];
   }) => {
     const dispatch = useContext(DispatchContext);
     const [filterByDomainEnabled, setFilterByDomainEnabled] = React.useState(

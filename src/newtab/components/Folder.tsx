@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FolderV3, ISpace, SpaceV3 } from "../helpers/types";
+import { FolderV3, SpaceV3 } from "../helpers/types";
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
@@ -24,7 +24,6 @@ import {
   findSpaceByFolderId,
 } from "../state/actionHelpers";
 import { RecentItem } from "../helpers/recentHistoryUtils";
-import { getLegacySpacesView } from "../helpers/dataFormatAdapters";
 import { getFolderDisplayItems } from "./getFolderDisplayItems";
 
 export const Folder = React.memo(function Folder(p: {
@@ -180,7 +179,6 @@ export const Folder = React.memo(function Folder(p: {
     });
   }
 
-  const legacySpaces = getLegacySpacesView(p.spaces);
   const folderDisplayItems = getFolderDisplayItems(p.folder.items);
 
   const folderItems = filterItemsBySearch(folderDisplayItems, p.search).filter(
@@ -353,7 +351,7 @@ export const Folder = React.memo(function Folder(p: {
                 menuId={1}
                 title={"Move to space"}
                 submenuContent={getSpacesList(
-                  legacySpaces,
+                  p.spaces,
                   moveFolderToSpace,
                   findSpaceByFolderId(p, p.folder.id)?.id,
                 )}

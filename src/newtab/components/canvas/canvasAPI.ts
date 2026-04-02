@@ -12,7 +12,7 @@ import {
 import { createFolderWithStat } from "../../helpers/actionsHelpersWithDOM";
 import { findWidgetById, genUniqLocalId } from "../../state/actionHelpers";
 import {
-  IFolder,
+  FolderV3,
   IWidget,
   IWidgetContent,
   IWidgetPos,
@@ -194,7 +194,7 @@ class CanvasAPI {
 
   createFolderInCurrentViewport(
     dispatch: ActionDispatcher,
-    folders: IFolder[],
+    folders: Pick<FolderV3, "id" | "position">[],
   ) {
     const folderId = createFolderWithStat(
       dispatch,
@@ -258,7 +258,9 @@ class CanvasAPI {
 
 export const canvasAPI = new CanvasAPI();
 
-function findPositionForNewFolder(folders: IFolder[]): string {
+function findPositionForNewFolder(
+  folders: Pick<FolderV3, "id" | "position">[],
+): string {
   const MIN_TOP = 70;
   const screenHeight = document.body.clientHeight - 40;
   const folderH2Elements = Array.from(

@@ -12,7 +12,7 @@ import {
   DispatchContext,
   mergeStepsInHistory,
 } from "../state/actions";
-import { IFolder, IWidget } from "../helpers/types";
+import { IWidget } from "../helpers/types";
 import { genUniqLocalId } from "../state/actionHelpers";
 import {
   clickFolderItem,
@@ -31,7 +31,6 @@ import { Options } from "./SettingsOptions";
 import { getCanvasMenuOption } from "./canvas/getCanvasMenuOptions";
 import { importFromJson } from "../helpers/importExportHelpers";
 import { isEmptyDashboard } from "./isEmptyDashboard";
-import { getLegacyAppStateView } from "../helpers/legacyAppStateView";
 import { getBookmarksViewState } from "./getBookmarksViewState";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
@@ -39,7 +38,6 @@ let __prevSearch: string | undefined = undefined;
 
 export function Bookmarks(p: { appState: IAppState }) {
   const dispatch = useContext(DispatchContext);
-  const legacyAppState = getLegacyAppStateView(p.appState);
   const [mouseDownEvent, setMouseDownEvent] = useState<
     React.MouseEvent | undefined
   >(undefined);
@@ -152,7 +150,7 @@ export function Bookmarks(p: { appState: IAppState }) {
           mouseDownEvent.button === 1;
         clickFolderItem(
           targetId,
-          legacyAppState,
+          p.appState,
           dispatch,
           meta,
           p.appState.openBookmarksInNewTab,
@@ -259,8 +257,8 @@ export function Bookmarks(p: { appState: IAppState }) {
     return getCanvasMenuOption(
       dispatch,
       canvasMenuType,
-      legacyAppState,
-      folders as unknown as IFolder[],
+      p.appState,
+      folders,
       () => setCanvasMenuPos(undefined),
     );
   };
@@ -287,11 +285,11 @@ export function Bookmarks(p: { appState: IAppState }) {
 
   return (
     <div className="bookmarks-box" onMouseDown={onMouseDown}>
-      <TopBar appState={legacyAppState} isScrolled={isScrolled} />
+      <TopBar appState={p.appState} isScrolled={isScrolled} />
       <div
         className="bookmarks"
         ref={bookmarksRef}
-        onKeyDown={(e) => handleBookmarksKeyDown(e, legacyAppState, dispatch)}
+        onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
       >
         <Canvas
           selectedWidgetIds={p.appState.selectedWidgetIds}
@@ -356,7 +354,7 @@ export function Bookmarks(p: { appState: IAppState }) {
 
       {p.appState.search === "" && !showEmptyImport && (
         <Toolbar
-          folders={folders as unknown as IFolder[]}
+          folders={folders}
           currentSpaceId={p.appState.currentSpaceId}
         />
       )}
