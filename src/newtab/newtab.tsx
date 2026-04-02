@@ -43,18 +43,15 @@ async function runLocally() {
 function mountApp() {
   const root = createRoot(document.getElementById("root")!);
   root.render(
-    // <React.StrictMode>
-    <App />,
-    // </React.StrictMode>
+    <React.StrictMode>
+      <App />,
+    </React.StrictMode>,
   );
 }
 
 function preprocessLoadedState(state: ISavingAppState): void {
   ensureDefaultSpace(state);
 
-  ////////////////////////////////////////////////////////////
-  // Making sure that selected space exists
-  ////////////////////////////////////////////////////////////
   const selectedSpace = state.spaces.find((s) => s.id === state.currentSpaceId);
   if (!selectedSpace) {
     const firstSortedSpace = getFirstSortedByPosition(state.spaces);
@@ -63,22 +60,12 @@ function preprocessLoadedState(state: ISavingAppState): void {
     }
   }
 
-  ////////////////////////////////////////////////////////////
-  // Process FavIcons
-  ////////////////////////////////////////////////////////////
-
   collectBookmarksV3(state.spaces).forEach((item) => {
     faviconsStorage.registerInCache(item.favIconUrl, item.url);
   });
 
-  ////////////////////////////////////////////////////////////
-  // Apply Dark Light Themes
-  ////////////////////////////////////////////////////////////
   applyTheme(state.colorTheme);
 
-  ////////////////////////////////////////////////////////////
-  // save normalized startup state
-  ////////////////////////////////////////////////////////////
   saveStateThrottled(state);
 }
 
