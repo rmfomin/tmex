@@ -310,8 +310,8 @@ export function Bookmarks(p: { appState: IAppState }) {
         {folders.map((folder) => (
           <Folder
             key={folder.id}
-            spaces={legacyAppState.spaces}
-            folder={folder as unknown as IFolder}
+            spaces={p.appState.spaces}
+            folder={folder}
             tabs={p.appState.tabs}
             recentItems={p.appState.recentItems}
             showNotUsed={p.appState.showNotUsed}

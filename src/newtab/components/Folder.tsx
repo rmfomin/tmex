@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { IFolder, ISpace } from "../helpers/types";
+import { FolderV3, ISpace, SpaceV3 } from "../helpers/types";
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
@@ -24,10 +24,12 @@ import {
   findSpaceByFolderId,
 } from "../state/actionHelpers";
 import { RecentItem } from "../helpers/recentHistoryUtils";
+import { getLegacySpacesView } from "../helpers/dataFormatAdapters";
+import { getFolderDisplayItems } from "./getFolderDisplayItems";
 
 export const Folder = React.memo(function Folder(p: {
-  spaces: ISpace[];
-  folder: IFolder;
+  spaces: SpaceV3[];
+  folder: FolderV3;
   tabs: Tab[];
   recentItems: RecentItem[];
   showNotUsed: boolean;
@@ -157,7 +159,7 @@ export const Folder = React.memo(function Folder(p: {
   }
 
   function onOpenAll() {
-    p.folder.items.forEach((item) => {
+    folderDisplayItems.forEach((item) => {
       if (!item.archived && !item.isSection) {
         chrome.tabs.create({ url: item.url, active: false });
       }
@@ -178,7 +180,10 @@ export const Folder = React.memo(function Folder(p: {
     });
   }
 
-  const folderItems = filterItemsBySearch(p.folder.items, p.search).filter(
+  const legacySpaces = getLegacySpacesView(p.spaces);
+  const folderDisplayItems = getFolderDisplayItems(p.folder.items);
+
+  const folderItems = filterItemsBySearch(folderDisplayItems, p.search).filter(
     (i) => canShowArchived(p) || !i.archived,
   );
 
@@ -348,7 +353,7 @@ export const Folder = React.memo(function Folder(p: {
                 menuId={1}
                 title={"Move to space"}
                 submenuContent={getSpacesList(
-                  p.spaces,
+                  legacySpaces,
                   moveFolderToSpace,
                   findSpaceByFolderId(p, p.folder.id)?.id,
                 )}
