@@ -32,6 +32,21 @@ module.exports.getCommonConfig = (env) => {
     module: {
       rules: [
         {
+          test: /\.module\.scss$/,
+          use: [
+            "style-loader",
+            {
+              loader: "css-loader",
+              options: {
+                modules: {
+                  localIdentName: "[name]__[local]__[hash:base64:5]",
+                },
+              },
+            },
+            "sass-loader",
+          ],
+        },
+        {
           test: /\.tsx?$/,
           use: "ts-loader",
           exclude: /node_modules/,

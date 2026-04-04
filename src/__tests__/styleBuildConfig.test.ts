@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { getCommonConfig } = require("../../webpack/webpack.common");
 
 export {};
 
@@ -17,5 +18,14 @@ describe("style build configuration", () => {
 
     expect(fs.existsSync(scssPath)).toBe(true);
     expect(fs.existsSync(legacyCssPath)).toBe(false);
+  });
+
+  test("webpack supports component scss modules", () => {
+    const config = getCommonConfig({});
+    const moduleRule = config.module.rules.find((rule: { test?: RegExp }) =>
+      String(rule.test).includes("module"),
+    );
+
+    expect(moduleRule).toBeDefined();
   });
 });
