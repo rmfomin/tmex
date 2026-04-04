@@ -1,13 +1,13 @@
 import React from "react";
-import { FolderV3, SpaceV3 } from "../../helpers/types";
-import { DropdownSubMenu } from "./DropdownMenu";
+import { SpaceV3 } from "../../helpers/types";
+import { DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
 import IconSaved from "../../icons/saved.svg";
 
 export function getFoldersList(
   space: Pick<SpaceV3, "id" | "folders">,
   onFolderClick: (folderId: number, spaceId: number) => void,
   onCreateFolderClick: (spaceId: number) => void,
-  currentFolderId?: number
+  currentFolderId?: number,
 ) {
   return (
     <>
@@ -43,7 +43,7 @@ export function getFoldersList(
 export function getSpacesList(
   spaces: Pick<SpaceV3, "id" | "title">[],
   onSpaceClick: (spaceId: number) => void,
-  currentSpaceId?: number
+  currentSpaceId?: number,
 ) {
   return (
     <>
@@ -70,7 +70,7 @@ export function getSpacesWithNestedFoldersList(
   spaces: Pick<SpaceV3, "id" | "title" | "folders">[],
   onFolderClick: (folderId: number) => void,
   onCreateFolderClick: (spaceId: number) => void,
-  currentFolderId?: number
+  currentFolderId?: number,
 ) {
   return (
     <>
@@ -79,7 +79,7 @@ export function getSpacesWithNestedFoldersList(
           spaces[0],
           onFolderClick,
           onCreateFolderClick,
-          currentFolderId
+          currentFolderId,
         )
       ) : (
         <>
@@ -94,7 +94,7 @@ export function getSpacesWithNestedFoldersList(
                 space,
                 onFolderClick,
                 onCreateFolderClick,
-                currentFolderId
+                currentFolderId,
               )}
             ></DropdownSubMenu>
           ))}

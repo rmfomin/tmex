@@ -257,6 +257,67 @@ describe("style build configuration", () => {
     expect(fs.existsSync(sharedComponentPath)).toBe(true);
   });
 
+  test("dropdown menu uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/DropdownMenu/DropdownMenu.tsx",
+    );
+    const legacyDirPath = path.join(
+      __dirname,
+      "../../src/newtab/components/dropdown",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(legacyDirPath)).toBe(false);
+  });
+
+  test("folder item menu uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/FolderItemMenu/FolderItemMenu.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+  });
+
+  test("modal components use the folder-based component structure", () => {
+    const modalPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Modal/Modal.tsx",
+    );
+    const importConfirmationPath = path.join(
+      __dirname,
+      "../../src/newtab/components/ImportConfirmationModal/ImportConfirmationModal.tsx",
+    );
+    const shortcutsPath = path.join(
+      __dirname,
+      "../../src/newtab/components/ShortcutsModal/ShortcutsModal.tsx",
+    );
+    const legacyDirPath = path.join(
+      __dirname,
+      "../../src/newtab/components/modals",
+    );
+
+    expect(fs.existsSync(modalPath)).toBe(true);
+    expect(fs.existsSync(importConfirmationPath)).toBe(true);
+    expect(fs.existsSync(shortcutsPath)).toBe(true);
+    expect(fs.existsSync(legacyDirPath)).toBe(false);
+  });
+
+  test("move helpers stay shared with PascalCase naming", () => {
+    const sharedHelperPath = path.join(
+      __dirname,
+      "../../src/newtab/components/shared/MoveToHelpers.tsx",
+    );
+    const legacyHelperPath = path.join(
+      __dirname,
+      "../../src/newtab/components/dropdown/moveToHelpers.tsx",
+    );
+
+    expect(fs.existsSync(sharedHelperPath)).toBe(true);
+    expect(fs.existsSync(legacyHelperPath)).toBe(false);
+  });
+
   test("toolbar component was removed", () => {
     const folderComponentPath = path.join(
       __dirname,

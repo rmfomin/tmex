@@ -8,7 +8,7 @@ import {
   isTargetSupportsDragAndDrop,
   scrollElementIntoView,
 } from "../../helpers/utils";
-import { DropdownMenu } from "../dropdown/DropdownMenu";
+import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
 import { CL } from "../../helpers/classNameHelper";
 import { Action, AppState } from "../../state/state";
 import { DispatchContext } from "../../state/actions";

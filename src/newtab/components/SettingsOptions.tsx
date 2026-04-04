@@ -12,9 +12,9 @@ import {
   onExportJson,
   onImportFromToby,
 } from "../helpers/importExportHelpers";
-import { ImportConfirmationModal } from "./modals/ImportConfirmationModal";
+import { ImportConfirmationModal } from "./ImportConfirmationModal/ImportConfirmationModal";
 import { loadFaviconUrl } from "../helpers/faviconUtils";
-import { ShortcutsModal } from "./modals/ShortcutsModal";
+import { ShortcutsModal } from "./ShortcutsModal/ShortcutsModal";
 import { BookmarkItemV3 } from "../helpers/types";
 import { CL } from "../helpers/classNameHelper";
 import { collectBookmarksV3 } from "../helpers/v3Traversal";

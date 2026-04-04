@@ -5,7 +5,7 @@ import {
   DEFAULT_FOLDER_COLOR,
   scrollElementIntoView,
 } from "../../helpers/utils";
-import { DropdownMenu, DropdownSubMenu } from "../dropdown/DropdownMenu";
+import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
 import { FolderItem } from "../FolderItem/FolderItem";
 import { FolderGroup } from "../FolderGroup/FolderGroup";
 import { EditableTitle } from "../EditableTitle/EditableTitle";
@@ -15,7 +15,7 @@ import { canShowArchived, DispatchContext } from "../../state/actions";
 import { Color } from "../../helpers/Color";
 import MenuIcon from "../../icons/menu.svg";
 import ChevronIcon from "../../icons/shevron.svg";
-import { getSpacesList } from "../dropdown/moveToHelpers";
+import { getSpacesList } from "../shared/MoveToHelpers";
 import Tab = chrome.tabs.Tab;
 import { showMessageWithUndo } from "../../helpers/actionsHelpersWithDOM";
 import {

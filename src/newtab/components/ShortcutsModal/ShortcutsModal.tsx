@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal } from "./Modal";
+import { Modal } from "../Modal/Modal";
 import { IS_MAC_DEVICE } from "../../helpers/utils";
 
 export const ShortcutsModal = ({

@@ -7,7 +7,7 @@ import { DispatchContext } from "../../state/actions";
 import { CL } from "../../helpers/classNameHelper";
 import IconClose from "../../icons/close.svg";
 import IconMore from "../../icons/more.svg";
-import { FolderItemMenu } from "../dropdown/FolderItemMenu";
+import { FolderItemMenu } from "../FolderItemMenu/FolderItemMenu";
 import { getBrokenImgSVG, loadFaviconUrl } from "../../helpers/faviconUtils";
 import { RecentItem } from "../../helpers/recentHistoryUtils";
 import "./FolderItem.module.scss";

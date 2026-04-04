@@ -5,7 +5,7 @@ import {
   removeUselessProductName,
   scrollElementIntoView,
 } from "../../helpers/utils";
-import { DropdownMenu, DropdownSubMenu } from "../dropdown/DropdownMenu";
+import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
 import { CL } from "../../helpers/classNameHelper";
 import { Action } from "../../state/state";
 import { DispatchContext, mergeStepsInHistory } from "../../state/actions";
@@ -20,7 +20,7 @@ import {
 } from "../../helpers/actionsHelpersWithDOM";
 import { SpaceV3 } from "../../helpers/types";
 import IconSaved from "../../icons/saved.svg";
-import { getFoldersList } from "../dropdown/moveToHelpers";
+import { getFoldersList } from "../shared/MoveToHelpers";
 import { getBrokenImgSVG } from "../../helpers/faviconUtils";
 import { collectBookmarksV3 } from "../../helpers/v3Traversal";
 import styles from "./SidebarItem.module.scss";

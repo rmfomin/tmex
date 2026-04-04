@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BookmarkItemV3, SpaceV3 } from "../../helpers/types";
-import { DropdownMenu, DropdownSubMenu } from "./DropdownMenu";
+import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
 import { getSelectedItems } from "../../helpers/selectionUtils";
 import { Action } from "../../state/state";
 import { DispatchContext, mergeStepsInHistory } from "../../state/actions";
-import { getSpacesWithNestedFoldersList } from "./moveToHelpers";
+import { getSpacesWithNestedFoldersList } from "../shared/MoveToHelpers";
 import {
   createFolderWithStat,
   showMessage,
@@ -264,7 +264,7 @@ export const FolderItemMenu = React.memo(
                   className="dropdown-menu__button focusable"
                   onClick={onCopyUrl}
                 >
-                  Copy url
+                  Copy URL
                 </button>
                 {p.hiddenFeatureIsEnabled ? (
                   p.item.archived ? (

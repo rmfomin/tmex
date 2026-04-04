@@ -6,7 +6,7 @@ import {
 import { DispatchContext } from "../state/actions";
 import { Action } from "../state/state";
 import { showMessageWithUndo } from "../helpers/actionsHelpersWithDOM";
-import { isSomeModalOpened } from "./modals/Modal";
+import { isSomeModalOpened } from "./Modal/Modal";
 import { isTargetInputOrTextArea } from "../helpers/utils";
 
 export const KeyboardAndMouseManager = React.memo(

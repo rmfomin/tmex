@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { DropdownMenu } from "../dropdown/DropdownMenu";
+import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
 import { handleSearchKeyDown } from "../../helpers/handleBookmarksKeyDown";
 import { Action, AppState } from "../../state/state";
 import { DispatchContext } from "../../state/actions";
