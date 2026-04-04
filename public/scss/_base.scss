@@ -79,13 +79,6 @@ input.search {
   user-select: none;
 }
 
-.search-icon {
-  position: absolute;
-  margin-top: 13px;
-  margin-left: 8px;
-  opacity: 0.5;
-}
-
 .searched {
   background-color: #f0f000;
 }
@@ -93,4 +86,3 @@ input.search {
 .dark-theme .searched {
   color: var(--background-color);
 }
-

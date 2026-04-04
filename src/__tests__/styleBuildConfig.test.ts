@@ -56,4 +56,32 @@ describe("style build configuration", () => {
     expect(fs.existsSync(folderComponentPath)).toBe(true);
     expect(fs.existsSync(flatComponentPath)).toBe(false);
   });
+
+  test("top bar uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/TopBar/TopBar.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/TopBar.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("toolbar uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Toolbar/Toolbar.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Toolbar.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
 });

@@ -1,21 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import { DropdownMenu } from "./dropdown/DropdownMenu";
-import { handleSearchKeyDown } from "../helpers/handleBookmarksKeyDown";
-import { Action, AppState } from "../state/state";
-import { DispatchContext } from "../state/actions";
-import { HelpOptions, SettingsOptions } from "./SettingsOptions";
-import { CL } from "../helpers/classNameHelper";
-import IconHelp from "../icons/help.svg";
-import IconSettings from "../icons/settings.svg";
-import IconFind from "../icons/find.svg";
-import { SpacesList } from "./SpacesList/SpacesList";
+import React, { useContext, useState } from "react";
+import { DropdownMenu } from "../dropdown/DropdownMenu";
+import { handleSearchKeyDown } from "../../helpers/handleBookmarksKeyDown";
+import { Action, AppState } from "../../state/state";
+import { DispatchContext } from "../../state/actions";
+import { HelpOptions, SettingsOptions } from "../SettingsOptions";
+import { CL } from "../../helpers/classNameHelper";
+import IconHelp from "../../icons/help.svg";
+import IconSettings from "../../icons/settings.svg";
+import IconFind from "../../icons/find.svg";
+import { SpacesList } from "../SpacesList/SpacesList";
+import styles from "./TopBar.module.scss";
 
 export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const dispatch = useContext(DispatchContext);
-  const [settingsMenuVisibility, setSettingsMenuVisibility] = useState<boolean>(
-    false,
-  );
-  const [helpMenuVisibility, setHelpMenuVisibility] = useState<boolean>(false);
+  const [settingsMenuVisibility, setSettingsMenuVisibility] = useState(false);
+  const [helpMenuVisibility, setHelpMenuVisibility] = useState(false);
 
   function onToggleHelpSettings() {
     setHelpMenuVisibility(!helpMenuVisibility);
@@ -35,12 +34,12 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
 
   return (
     <div
-      className={CL("bookmarks-menu", {
-        "bookmarks-menu--scrolled": p.isScrolled,
+      className={CL(styles.root, {
+        [styles.scrolled]: p.isScrolled,
       })}
     >
       {p.appState.search && (
-        <div className="search-results-header">Search results:</div>
+        <div className={styles.searchResultsHeader}>Search results:</div>
       )}
 
       {!p.appState.search && (
@@ -51,12 +50,10 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
         />
       )}
 
-      <div className="menu-stretching-space"></div>
+      <div className={styles.stretchingSpace}></div>
 
-      <div
-        style={{ display: "flex", marginRight: "12px", position: "relative" }}
-      >
-        <IconFind className="search-icon" />
+      <div className={styles.searchWrapper}>
+        <IconFind className={styles.searchIcon} />
         <input
           tabIndex={1}
           className="search"
@@ -69,8 +66,7 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
         {p.appState.search !== "" ? (
           <button
             tabIndex={1}
-            className={"btn__clear-search"}
-            style={{ left: "155px", top: "9px" }}
+            className={styles.clearSearchButton}
             onClick={onClearSearch}
           >
             ✕
@@ -78,7 +74,7 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
         ) : null}
       </div>
 
-      <div className="menu-buttons">
+      <div className={styles.menuButtons}>
         <button
           className={`btn__icon ${helpMenuVisibility ? "active" : ""}`}
           onClick={onToggleHelpSettings}

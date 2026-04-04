@@ -21,8 +21,8 @@ import {
 } from "../helpers/actionsHelpersWithDOM";
 import { Canvas } from "./Canvas";
 import { Point } from "../helpers/MathTypes";
-import { TopBar } from "./TopBar";
-import { Toolbar } from "./Toolbar";
+import { TopBar } from "./TopBar/TopBar";
+import { Toolbar } from "./Toolbar/Toolbar";
 import { hideWidgetsContextMenu } from "./canvas/widgetsContextMenu";
 import { hideWidgetsSelectionFrame } from "./canvas/widgetsSelectionFrame";
 import { canvasAPI } from "./canvas/canvasAPI";

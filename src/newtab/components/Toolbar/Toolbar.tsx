@@ -1,10 +1,11 @@
 import React, { useContext, useState } from "react";
-import IconFolder from "../icons/folder.svg";
-import IconSticky from "../icons/sticky.svg";
-import { DispatchContext } from "../state/actions";
-import { FolderV3 } from "../helpers/types";
-import { canvasAPI } from "./canvas/canvasAPI";
-import { DropdownMenu } from "./dropdown/DropdownMenu";
+import IconFolder from "../../icons/folder.svg";
+import IconSticky from "../../icons/sticky.svg";
+import { DispatchContext } from "../../state/actions";
+import { FolderV3 } from "../../helpers/types";
+import { canvasAPI } from "../canvas/canvasAPI";
+import { DropdownMenu } from "../dropdown/DropdownMenu";
+import styles from "./Toolbar.module.scss";
 
 export const Toolbar = React.memo(function Toolbar(p: {
   currentSpaceId: number;
@@ -25,8 +26,8 @@ export const Toolbar = React.memo(function Toolbar(p: {
   };
 
   return (
-    <div className="toolbar-wrapper">
-      <div className="toolbar">
+    <div className={styles.wrapper}>
+      <div className={styles.toolbar}>
         {createFolderMenuVisible && (
           <DropdownMenu
             onClose={() => {
@@ -44,14 +45,14 @@ export const Toolbar = React.memo(function Toolbar(p: {
         )}
 
         <button
-          className="toolbar-button"
+          className={styles.button}
           onClick={onFolderCreate}
           title="Add Folder"
         >
           <IconFolder />
         </button>
         <button
-          className="toolbar-button"
+          className={styles.button}
           onClick={onStickerCreate}
           title="Add Sticky Note"
         >
