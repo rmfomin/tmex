@@ -1,37 +1,36 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import styles from "./Bookmarks.module.scss";
 import {
   blurSearch,
-  isContainsSearch,
   isTargetSupportsDragAndDrop,
-} from "../helpers/utils";
-import { bindDADItemEffect } from "../dragging/dragAndDrop";
-import { Folder } from "./Folder/Folder";
-import { handleBookmarksKeyDown } from "../helpers/handleBookmarksKeyDown";
-import { Action, AppState } from "../state/state";
+} from "../../helpers/utils";
+import { bindDADItemEffect } from "../../dragging/dragAndDrop";
+import { Folder } from "../Folder/Folder";
+import { handleBookmarksKeyDown } from "../../helpers/handleBookmarksKeyDown";
+import { Action, AppState } from "../../state/state";
 import {
   DispatchContext,
   mergeStepsInHistory,
-} from "../state/actions";
-import { Widget } from "../helpers/types";
-import { genUniqLocalId } from "../state/actionHelpers";
+} from "../../state/actions";
+import { genUniqLocalId } from "../../state/actionHelpers";
 import {
   clickFolderItem,
   createFolderWithStat,
   getCanDragChecker,
-} from "../helpers/actionsHelpersWithDOM";
-import { Canvas } from "./Canvas";
-import { Point } from "../helpers/MathTypes";
-import { TopBar } from "./TopBar/TopBar";
-import { Toolbar } from "./Toolbar/Toolbar";
-import { hideWidgetsContextMenu } from "./canvas/widgetsContextMenu";
-import { hideWidgetsSelectionFrame } from "./canvas/widgetsSelectionFrame";
-import { canvasAPI } from "./canvas/canvasAPI";
-import { DropdownMenu } from "./dropdown/DropdownMenu";
-import { Options } from "./SettingsOptions";
-import { getCanvasMenuOption } from "./canvas/getCanvasMenuOptions";
-import { importFromJson } from "../helpers/importExportHelpers";
-import { isEmptyDashboard } from "./isEmptyDashboard";
-import { getBookmarksViewState } from "./getBookmarksViewState";
+} from "../../helpers/actionsHelpersWithDOM";
+import { Canvas } from "../Canvas";
+import { Point } from "../../helpers/MathTypes";
+import { TopBar } from "../TopBar/TopBar";
+import { Toolbar } from "../Toolbar/Toolbar";
+import { hideWidgetsContextMenu } from "../canvas/widgetsContextMenu";
+import { hideWidgetsSelectionFrame } from "../canvas/widgetsSelectionFrame";
+import { canvasAPI } from "../canvas/canvasAPI";
+import { DropdownMenu } from "../dropdown/DropdownMenu";
+import { Options } from "../SettingsOptions";
+import { getCanvasMenuOption } from "../canvas/getCanvasMenuOptions";
+import { importFromJson } from "../../helpers/importExportHelpers";
+import { isEmptyDashboard } from "../isEmptyDashboard";
+import { getBookmarksViewState } from "../getBookmarksViewState";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
@@ -53,10 +52,7 @@ export function Bookmarks(p: { appState: AppState }) {
   const bookmarksRef = useRef<HTMLDivElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
 
-  // useSwipeAnimation(bookmarksRef, p.appState.currentSpaceId, p.appState.spaces.length)
-
   useEffect(() => {
-    // This condition help to not dispatch Action.SelectWidgets when it is not nessesary, for example when load app
     if (
       __prevCurrentSpaceId !== p.appState.currentSpaceId ||
       __prevSearch !== p.appState.search
@@ -106,7 +102,6 @@ export function Bookmarks(p: { appState: AppState }) {
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
-            // we need to create new folder first
             folderId = createFolderWithStat(
               dispatch,
               { historyStepId },
@@ -114,7 +109,6 @@ export function Bookmarks(p: { appState: AppState }) {
             );
           }
 
-          // todo !!! support switching spaces like for folders
           dispatch({
             type: Action.MoveFolderItems,
             itemIds: targetsIds,
@@ -216,7 +210,6 @@ export function Bookmarks(p: { appState: AppState }) {
         {
           canvasEl: canvasRef.current!,
           onWidgetsSelected: (widgetIds: number[]) => {
-            // !!! TODO dont dispatch it if widgetIds has not changed
             dispatch({ type: Action.SelectWidgets, widgetIds });
           },
           onWidgetsMoved: (positions: { id: number; pos: Point }[]) => {
@@ -254,6 +247,7 @@ export function Bookmarks(p: { appState: AppState }) {
   }
 
   const getCanvasMenuOptionWrapper = () => {
+    const { folders } = getBookmarksViewState(p.appState);
     return getCanvasMenuOption(
       dispatch,
       canvasMenuType,
@@ -280,7 +274,6 @@ export function Bookmarks(p: { appState: AppState }) {
   }
 
   const { folders, widgets } = getBookmarksViewState(p.appState);
-
   const showEmptyImport = isEmptyDashboard(p.appState);
 
   return (
@@ -337,7 +330,7 @@ export function Bookmarks(p: { appState: AppState }) {
             <div className="folder-items-box" data-folder-id="-1" />
           </div>
         ) : folders.length === 0 ? (
-          <div style={{ marginLeft: "58px" }}>No bookmarks found</div>
+          <div className={styles.noBookmarksFound}>No bookmarks found</div>
         ) : null}
       </div>
 

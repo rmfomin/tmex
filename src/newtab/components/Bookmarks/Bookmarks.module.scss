@@ -1,0 +1,45 @@
+:global(.bookmarks-box) {
+  flex-grow: 1;
+}
+
+:global(.collapsible-sidebar) :global(.bookmarks-box) {
+  padding-left: 24px;
+}
+
+:global(.bookmarks) {
+  position: relative;
+  padding-left: 20px;
+  flex-grow: 1;
+  height: calc(100% - 68px);
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding-bottom: 150px;
+  box-sizing: border-box;
+}
+
+:global(.empty-dashboard) {
+  height: calc(100dvh - 100px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:global(.empty-dashboard__button) {
+  height: 34px;
+  width: 300px;
+  padding: 8px 8px 8px 32px;
+  font-size: 16px;
+  border-radius: 8px;
+  margin: 0;
+  text-align: center;
+  color: var(--notification-text-color);
+  border: 1px solid var(--input-border-color);
+  background-color: var(--colors-blue-600);
+}
+
+.noBookmarksFound {
+  margin-left: 58px;
+}

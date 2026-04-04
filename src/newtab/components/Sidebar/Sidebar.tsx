@@ -1,31 +1,32 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { SidebarOpenTabs } from "./SidebarOpenTabs/SidebarOpenTabs";
-import { isTabmeTab } from "../helpers/isTabmeTab";
+import "./Sidebar.module.scss";
+import { SidebarOpenTabs } from "../SidebarOpenTabs/SidebarOpenTabs";
+import { isTabmeTab } from "../../helpers/isTabmeTab";
 import {
   blurSearch,
   getCurrentData,
   isTargetSupportsDragAndDrop,
   scrollElementIntoView,
-} from "../helpers/utils";
-import { DropdownMenu } from "./dropdown/DropdownMenu";
-import { CL } from "../helpers/classNameHelper";
-import { Action, AppState } from "../state/state";
-import { DispatchContext } from "../state/actions";
-import IconClean from "../icons/clean.svg";
-import IconStash from "../icons/stash.svg";
-import IconPin from "../icons/pin.svg";
+} from "../../helpers/utils";
+import { DropdownMenu } from "../dropdown/DropdownMenu";
+import { CL } from "../../helpers/classNameHelper";
+import { Action, AppState } from "../../state/state";
+import { DispatchContext } from "../../state/actions";
+import IconClean from "../../icons/clean.svg";
+import IconStash from "../../icons/stash.svg";
+import IconPin from "../../icons/pin.svg";
 import Tab = chrome.tabs.Tab;
 import {
   convertTabOrRecentToItem,
   convertTabToItem,
-} from "../state/actionHelpers";
+} from "../../state/actionHelpers";
 import {
   createFolderWithStat,
   showMessage,
-} from "../helpers/actionsHelpersWithDOM";
-import { SidebarRecent } from "./SidebarRecent/SidebarRecent";
-import { bindDADItemEffect } from "../dragging/dragAndDrop";
-import { RecentItem } from "../helpers/recentHistoryUtils";
+} from "../../helpers/actionsHelpersWithDOM";
+import { SidebarRecent } from "../SidebarRecent/SidebarRecent";
+import { bindDADItemEffect } from "../../dragging/dragAndDrop";
+import { RecentItem } from "../../helpers/recentHistoryUtils";
 
 export function Sidebar(p: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);

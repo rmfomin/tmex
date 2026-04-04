@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
-import { Bookmarks } from "./Bookmarks";
-import { Sidebar } from "./Sidebar";
+import { Bookmarks } from "./Bookmarks/Bookmarks";
+import { Sidebar } from "./Sidebar/Sidebar";
 import { Notification } from "./Notification/Notification";
 import { KeyboardAndMouseManager } from "./KeyboardAndMouseManager";
 import { ImportBookmarksFromSettings } from "./ImportBookmarksFromSettings";
