@@ -1,5 +1,6 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const sass = require("sass");
 const srcDir = path.join(__dirname, "..", "src");
 const webpack = require("webpack");
 const Dotenv = require("dotenv-webpack");
@@ -51,7 +52,24 @@ module.exports.getCommonConfig = (env) => {
     plugins: [
       new CopyPlugin({
         patterns: [
-          { from: ".", to: "../", context: "public" },
+          {
+            from: ".",
+            to: "../",
+            context: "public",
+            globOptions: {
+              ignore: ["**/style.scss", "**/scss/**"],
+            },
+          },
+          {
+            from: "./public/style.scss",
+            to: "../style.css",
+            transform(_, absoluteFrom) {
+              return sass.compile(absoluteFrom, {
+                silenceDeprecations: ["import"],
+                style: "expanded",
+              }).css;
+            },
+          },
           {
             from: `./public/${manifestFrom}`,
             to() {
