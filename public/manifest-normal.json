@@ -3,7 +3,6 @@
   "short_name": "Tmex",
   "name": "Tmex",
   "description": "Tmex",
-  "default_locale": "ru",
   "version": "1.37.0",
   "author": "tmex@gmail.com",
   "icons": {
