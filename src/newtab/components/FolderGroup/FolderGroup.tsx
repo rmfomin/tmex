@@ -3,7 +3,7 @@ import { BookmarkItemV3, GroupV3, SpaceV3 } from "../../helpers/types";
 import { RecentItem } from "../../helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 import { FolderItem } from "../FolderItem/FolderItem";
-import { EditableTitle } from "../EditableTitle";
+import { EditableTitle } from "../EditableTitle/EditableTitle";
 import { DispatchContext } from "../../state/actions";
 import { Action } from "../../state/state";
 import { CL } from "../../helpers/classNameHelper";

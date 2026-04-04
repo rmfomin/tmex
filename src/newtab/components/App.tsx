@@ -3,7 +3,7 @@ import { Bookmarks } from "./Bookmarks/Bookmarks";
 import { Sidebar } from "./Sidebar/Sidebar";
 import { Notification } from "./Notification/Notification";
 import { KeyboardAndMouseManager } from "./KeyboardAndMouseManager";
-import { ImportBookmarksFromSettings } from "./ImportBookmarksFromSettings";
+import { ImportBookmarksFromSettings } from "./ImportBookmarksFromSettings/ImportBookmarksFromSettings";
 import { Action, getInitAppState, AppState } from "../state/state";
 import { DispatchContext, stateReducer } from "../state/actions";
 import { getBC, getStateFromLS } from "../state/storage";

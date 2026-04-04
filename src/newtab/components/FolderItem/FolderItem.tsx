@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BookmarkItemV3, SpaceV3 } from "../../helpers/types";
 import { findTabsByURL, isFolderItemNotUsed } from "../../helpers/utils";
-import { EditableTitle } from "../EditableTitle";
+import { EditableTitle } from "../EditableTitle/EditableTitle";
 import { Action } from "../../state/state";
 import { DispatchContext } from "../../state/actions";
 import { CL } from "../../helpers/classNameHelper";

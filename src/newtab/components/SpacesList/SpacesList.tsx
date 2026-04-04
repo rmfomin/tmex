@@ -5,7 +5,7 @@ import { SpaceV3 } from "../../helpers/types";
 import { CL } from "../../helpers/classNameHelper";
 import { DispatchContext } from "../../state/actions";
 import { Action } from "../../state/state";
-import { SimpleEditableTitle } from "../EditableTitle";
+import { SimpleEditableTitle } from "../EditableTitle/EditableTitle";
 import { DropdownMenu } from "../dropdown/DropdownMenu";
 import { genUniqLocalId } from "../../state/actionHelpers";
 import { insertBetween } from "../../helpers/fractionalIndexes";

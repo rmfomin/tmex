@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { hlSearch } from "../helpers/utils";
+import { hlSearch } from "../../helpers/utils";
 
 export function EditableTitle(p: {
   className?: string;
@@ -14,7 +14,6 @@ export function EditableTitle(p: {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    // Select all text when entering edit mode
     if (p.inEdit && textareaRef.current) {
       textareaRef.current.focus();
       textareaRef.current.select();
@@ -23,7 +22,7 @@ export function EditableTitle(p: {
 
   useEffect(() => {
     if (p.inEdit && textareaRef.current) {
-      textareaRef.current.style.height = "0px"; // Reset height to recalculate
+      textareaRef.current.style.height = "0px";
       textareaRef.current.style.height = `${
         textareaRef.current.scrollHeight + 2
       }px`;
@@ -52,7 +51,7 @@ export function EditableTitle(p: {
         p.setEditing(false);
       }
     } else if (isEnter || isCmdEnter || isCtrlEnter) {
-      event.preventDefault(); // Prevent the default action to avoid inserting a newline
+      event.preventDefault();
       trySaveChange();
     }
   };
@@ -94,7 +93,6 @@ export function SimpleEditableTitle(p: {
 
   useEffect(() => {
     return () => {
-      // because onBlur from deleted input is not dispatched -> we dont set itemInEdit undefined -> "new space" button is not visible
       p.onUnmount && p.onUnmount();
     };
   }, []);
@@ -104,7 +102,6 @@ export function SimpleEditableTitle(p: {
   }, [p.value]);
 
   useEffect(() => {
-    // Select all text when entering edit mode
     if (p.inEdit && inputRef.current) {
       inputRef.current.focus();
       inputRef.current.select();
@@ -114,7 +111,7 @@ export function SimpleEditableTitle(p: {
   useEffect(() => {
     if (p.inEdit && inputRef.current) {
       inputRef.current.style.width = `${getTextWidthWithSpan(
-        inputRef.current
+        inputRef.current,
       )}px`;
     }
   }, [p.inEdit, p.value, localValue, inputRef]);
@@ -139,7 +136,7 @@ export function SimpleEditableTitle(p: {
         p.onSave(p.value);
       }
     } else if (isEnter || isCmdEnter || isCtrlEnter) {
-      event.preventDefault(); // Prevent the default action to avoid inserting a newline
+      event.preventDefault();
       saveChange();
     }
   };

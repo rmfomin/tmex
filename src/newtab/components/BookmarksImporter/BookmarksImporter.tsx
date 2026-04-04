@@ -1,16 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { DispatchContext } from "../state/actions";
-import { AppState } from "../state/state";
-import { showMessage } from "../helpers/actionsHelpersWithDOM";
+import { DispatchContext } from "../../state/actions";
+import { AppState } from "../../state/state";
+import { showMessage } from "../../helpers/actionsHelpersWithDOM";
 import {
   BookmarksAsPlainList,
   CustomBookmarkTreeNode,
   getBrowserBookmarks,
   importBrowserBookmarks,
   PlainListRecord,
-} from "../helpers/importExportHelpers";
-import HistoryItem = chrome.history.HistoryItem;
-import { RecentItem } from "../helpers/recentHistoryUtils";
+} from "../../helpers/importExportHelpers";
+import { RecentItem } from "../../helpers/recentHistoryUtils";
 
 const recordToTitle = (rec: PlainListRecord) => {
   const res = rec.breadcrumbs.map((r) => r.title).join(" / ");
@@ -23,9 +22,7 @@ const BookmarkList = (p: {
   onBack?: () => void;
 }) => {
   const dispatch = useContext(DispatchContext);
-  // Refs for folder checkboxes to manipulate the DOM for indeterminate state
   const recordsRefs = useRef<HTMLInputElement[]>([]);
-
   const [records, setPlainRecords] = useState<BookmarksAsPlainList>([]);
 
   useEffect(() => {
@@ -34,7 +31,7 @@ const BookmarkList = (p: {
         setPlainRecords(plain);
       },
       p.recentItems,
-      dispatch
+      dispatch,
     );
   }, []);
 
@@ -56,7 +53,7 @@ const BookmarkList = (p: {
         } else {
           return rec;
         }
-      }
+      },
     );
 
     setPlainRecords(updatedRecords);
@@ -65,7 +62,7 @@ const BookmarkList = (p: {
   const handleItemCheckChange = (
     recIndex: number,
     itemIndex: number,
-    isChecked: boolean
+    isChecked: boolean,
   ) => {
     const updatedRecords = records.map<PlainListRecord>((rec, rIndex) => {
       if (rIndex === recIndex) {
@@ -94,7 +91,6 @@ const BookmarkList = (p: {
   };
 
   useEffect(() => {
-    // Adjust the indeterminate state based on each folder's items checked state
     records.forEach((rec, index) => {
       const allChecked =
         rec.folder.children?.every((item) => item.checked) ?? false;
@@ -106,11 +102,10 @@ const BookmarkList = (p: {
         folderCheckbox.indeterminate = someChecked && !allChecked;
       }
     });
-  }, [records]); // Re-run this effect when 'records' state changes
+  }, [records]);
 
-  // Initialize or clear refs dynamically based on folders length
   recordsRefs.current = records.map(
-    (_, i) => recordsRefs.current[i] ?? React.createRef()
+    (_, i) => recordsRefs.current[i] ?? React.createRef(),
   );
 
   let selectedBookmarksCount = 0;
@@ -118,7 +113,7 @@ const BookmarkList = (p: {
     selectedBookmarksCount +=
       rec.folder.children?.reduce<number>(
         (acc, item) => (item.checked ? acc + 1 : acc),
-        0
+        0,
       ) ?? 0;
   });
 
@@ -230,7 +225,7 @@ const BookmarkList = (p: {
                         handleItemCheckChange(
                           recIndex,
                           itemIndex,
-                          e.target.checked
+                          e.target.checked,
                         )
                       }
                     />
@@ -243,7 +238,7 @@ const BookmarkList = (p: {
                       </span>
                     ) : null}
                   </label>
-                )
+                ),
               )}
             </div>
           </div>
@@ -259,6 +254,20 @@ const BookmarkList = (p: {
             Select some bookmarks to import
           </button>
         )}
+        <button
+          className="btn__setting"
+          style={{ marginLeft: "8px" }}
+          onClick={onImportAll}
+        >
+          Import all
+        </button>
+        <button
+          className="btn__setting"
+          style={{ marginLeft: "8px" }}
+          onClick={onImportRecent}
+        >
+          Import recent only
+        </button>
         <button
           className="btn__setting"
           style={{ marginLeft: "8px" }}

@@ -196,4 +196,73 @@ describe("style build configuration", () => {
     expect(fs.existsSync(folderComponentPath)).toBe(true);
     expect(fs.existsSync(flatComponentPath)).toBe(false);
   });
+
+  test("editable title uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/EditableTitle/EditableTitle.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/EditableTitle.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("bookmarks importer uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/BookmarksImporter/BookmarksImporter.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/BookmarksImporter.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("import bookmarks from settings uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/ImportBookmarksFromSettings/ImportBookmarksFromSettings.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/ImportBookmarksFromSettings.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("keyboard and mouse manager stays shared in the flat structure", () => {
+    const sharedComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/KeyboardAndMouseManager.tsx",
+    );
+
+    expect(fs.existsSync(sharedComponentPath)).toBe(true);
+  });
+
+  test("canvas stays flat because the repo already has components/canvas", () => {
+    const sharedComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Canvas.tsx",
+    );
+
+    expect(fs.existsSync(sharedComponentPath)).toBe(true);
+  });
+
+  test("settings options stays shared in the flat structure", () => {
+    const sharedComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SettingsOptions.tsx",
+    );
+
+    expect(fs.existsSync(sharedComponentPath)).toBe(true);
+  });
 });

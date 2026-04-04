@@ -8,7 +8,7 @@ import {
 import { DropdownMenu, DropdownSubMenu } from "../dropdown/DropdownMenu";
 import { FolderItem } from "../FolderItem/FolderItem";
 import { FolderGroup } from "../FolderGroup/FolderGroup";
-import { EditableTitle } from "../EditableTitle";
+import { EditableTitle } from "../EditableTitle/EditableTitle";
 import { CL } from "../../helpers/classNameHelper";
 import { Action } from "../../state/state";
 import { canShowArchived, DispatchContext } from "../../state/actions";
