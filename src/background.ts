@@ -1,7 +1,6 @@
 // Клик по иконке расширения
 const chromeAny: any = chrome; // hotfix for "chrome.action"
 chromeAny.action.onClicked.addListener(async function () {
-  console.log("---2---");
   const viewTabUrl = chrome.runtime.getURL("newtab.html");
   chrome.tabs.create({ url: viewTabUrl });
 });
