@@ -265,4 +265,42 @@ describe("style build configuration", () => {
 
     expect(fs.existsSync(sharedComponentPath)).toBe(true);
   });
+
+  test("bookmarks local helpers are colocated with bookmarks", () => {
+    const colocatedViewStatePath = path.join(
+      __dirname,
+      "../../src/newtab/components/Bookmarks/getBookmarksViewState.ts",
+    );
+    const legacyViewStatePath = path.join(
+      __dirname,
+      "../../src/newtab/components/getBookmarksViewState.ts",
+    );
+    const colocatedEmptyStatePath = path.join(
+      __dirname,
+      "../../src/newtab/components/Bookmarks/isEmptyDashboard.ts",
+    );
+    const legacyEmptyStatePath = path.join(
+      __dirname,
+      "../../src/newtab/components/isEmptyDashboard.ts",
+    );
+
+    expect(fs.existsSync(colocatedViewStatePath)).toBe(true);
+    expect(fs.existsSync(legacyViewStatePath)).toBe(false);
+    expect(fs.existsSync(colocatedEmptyStatePath)).toBe(true);
+    expect(fs.existsSync(legacyEmptyStatePath)).toBe(false);
+  });
+
+  test("folder local helpers are colocated with folder", () => {
+    const colocatedHelperPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Folder/getFolderDisplayItems.ts",
+    );
+    const legacyHelperPath = path.join(
+      __dirname,
+      "../../src/newtab/components/getFolderDisplayItems.ts",
+    );
+
+    expect(fs.existsSync(colocatedHelperPath)).toBe(true);
+    expect(fs.existsSync(legacyHelperPath)).toBe(false);
+  });
 });

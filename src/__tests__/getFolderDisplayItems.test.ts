@@ -1,7 +1,7 @@
 import {
   getFolderDisplayItems,
   getVisibleFolderDisplayItems,
-} from "../newtab/components/getFolderDisplayItems";
+} from "../newtab/components/Folder/getFolderDisplayItems";
 import { FolderV3 } from "../newtab/helpers/types";
 
 function createFolder(

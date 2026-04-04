@@ -1,7 +1,7 @@
-import { isContainsSearch } from "../helpers/utils";
-import { Widget, SpaceV3, FolderV3 } from "../helpers/types";
-import type { AppState } from "../state/state";
-import { findSpaceById } from "../state/actionHelpers";
+import { isContainsSearch } from "../../helpers/utils";
+import { Widget, SpaceV3, FolderV3 } from "../../helpers/types";
+import type { AppState } from "../../state/state";
+import { findSpaceById } from "../../state/actionHelpers";
 
 export function getBookmarksViewState(
   appState: Pick<

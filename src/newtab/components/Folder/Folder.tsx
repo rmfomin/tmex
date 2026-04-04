@@ -24,7 +24,7 @@ import {
   findSpaceByFolderId,
 } from "../../state/actionHelpers";
 import { RecentItem } from "../../helpers/recentHistoryUtils";
-import { getVisibleFolderDisplayItems } from "../getFolderDisplayItems";
+import { getVisibleFolderDisplayItems } from "./getFolderDisplayItems";
 import "./Folder.module.scss";
 
 export const Folder = React.memo(function Folder(p: {

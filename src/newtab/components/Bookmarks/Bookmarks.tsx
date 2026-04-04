@@ -29,8 +29,8 @@ import { DropdownMenu } from "../dropdown/DropdownMenu";
 import { Options } from "../SettingsOptions";
 import { getCanvasMenuOption } from "../canvas/getCanvasMenuOptions";
 import { importFromJson } from "../../helpers/importExportHelpers";
-import { isEmptyDashboard } from "../isEmptyDashboard";
-import { getBookmarksViewState } from "../getBookmarksViewState";
+import { isEmptyDashboard } from "./isEmptyDashboard";
+import { getBookmarksViewState } from "./getBookmarksViewState";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
