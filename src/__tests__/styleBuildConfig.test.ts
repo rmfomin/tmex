@@ -71,20 +71,6 @@ describe("style build configuration", () => {
     expect(fs.existsSync(flatComponentPath)).toBe(false);
   });
 
-  test("toolbar uses the folder-based component structure", () => {
-    const folderComponentPath = path.join(
-      __dirname,
-      "../../src/newtab/components/Toolbar/Toolbar.tsx",
-    );
-    const flatComponentPath = path.join(
-      __dirname,
-      "../../src/newtab/components/Toolbar.tsx",
-    );
-
-    expect(fs.existsSync(folderComponentPath)).toBe(true);
-    expect(fs.existsSync(flatComponentPath)).toBe(false);
-  });
-
   test("sidebar item uses the folder-based component structure", () => {
     const folderComponentPath = path.join(
       __dirname,
@@ -264,6 +250,20 @@ describe("style build configuration", () => {
     );
 
     expect(fs.existsSync(sharedComponentPath)).toBe(true);
+  });
+
+  test("toolbar component was removed", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Toolbar/Toolbar.tsx",
+    );
+    const stylesheetPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Toolbar/Toolbar.module.scss",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(false);
+    expect(fs.existsSync(stylesheetPath)).toBe(false);
   });
 
   test("bookmarks local helpers are colocated with bookmarks", () => {

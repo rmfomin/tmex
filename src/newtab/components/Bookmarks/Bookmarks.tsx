@@ -12,7 +12,6 @@ import {
   DispatchContext,
   mergeStepsInHistory,
 } from "../../state/actions";
-import { genUniqLocalId } from "../../state/actionHelpers";
 import {
   clickFolderItem,
   createFolderWithStat,
@@ -21,7 +20,6 @@ import {
 import { Canvas } from "../Canvas";
 import { Point } from "../../helpers/MathTypes";
 import { TopBar } from "../TopBar/TopBar";
-import { Toolbar } from "../Toolbar/Toolbar";
 import { hideWidgetsContextMenu } from "../canvas/widgetsContextMenu";
 import { hideWidgetsSelectionFrame } from "../canvas/widgetsSelectionFrame";
 import { canvasAPI } from "../canvas/canvasAPI";
@@ -166,17 +164,6 @@ export function Bookmarks(p: { appState: AppState }) {
         });
       };
 
-      const onCanvasDoubleClick = (point: Point) => {
-        const widgetId = genUniqLocalId();
-        dispatch({
-          type: Action.CreateWidget,
-          spaceId: p.appState.currentSpaceId,
-          widgetId,
-          pos: { point: point },
-        });
-        canvasAPI.setEditingWidget(dispatch, widgetId);
-      };
-
       const onWidgetsRightClick = (pos: Point, targetWidgetId: number) => {
         if (!p.appState.selectedWidgetIds.includes(targetWidgetId)) {
           canvasAPI.selectWidgets(dispatch, [targetWidgetId]);
@@ -229,7 +216,6 @@ export function Bookmarks(p: { appState: AppState }) {
           },
           onWidgetsRightClick,
           onCanvasRightClick,
-          onCanvasDoubleClick,
         },
         {
           onChangeSpacePosition,
@@ -343,13 +329,6 @@ export function Bookmarks(p: { appState: AppState }) {
         >
           <Options optionsConfig={getCanvasMenuOptionWrapper} />
         </DropdownMenu>
-      )}
-
-      {p.appState.search === "" && !showEmptyImport && (
-        <Toolbar
-          folders={folders}
-          currentSpaceId={p.appState.currentSpaceId}
-        />
       )}
     </div>
   );

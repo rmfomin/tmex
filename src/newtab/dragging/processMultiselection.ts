@@ -3,7 +3,6 @@ import {
   updateWidgetsContextMenu,
 } from "../components/canvas/widgetsContextMenu";
 import {
-  getCanvasScrolledOffset,
   hideWidgetsSelectionFrame,
   renderWidgetsSelectionFrame,
   WidgetInfo,
@@ -16,10 +15,6 @@ import {
 import { selectItems, unselectAllItems } from "../helpers/selectionUtils";
 import { subscribeMouseEvents } from "./dragAndDropUtils";
 import { PConfigWidgets, getIdFromElement } from "./dragAndDrop";
-import { sticker_size_half } from "../components/canvas/const";
-
-const DOUBLE_CLICK_THRESHOLD_MS = 200;
-let prevClickTime: number | undefined;
 
 export function processMultiselection(
   mouseDownEvent: React.MouseEvent,
@@ -138,16 +133,6 @@ export function processMultiselection(
         unselectAllItems();
         config.onWidgetsSelected([]);
         hideWidgetsSelectionFrame();
-
-        if (Date.now() - (prevClickTime ?? 0) < DOUBLE_CLICK_THRESHOLD_MS) {
-          const canvasOffset = getCanvasScrolledOffset();
-
-          config.onCanvasDoubleClick({
-            x: e.clientX + canvasOffset.x - sticker_size_half,
-            y: e.clientY + canvasOffset.y - sticker_size_half,
-          });
-        }
-        prevClickTime = Date.now();
       }
     }
     updateWidgetsContextMenu();

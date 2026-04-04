@@ -24,14 +24,6 @@ export function getCanvasMenuOption(
         },
       },
       {
-        text: "Add Sticky Note",
-        title: "Create Sticky Note",
-        onClick: () => {
-          canvasAPI.createStickerUnderCursor(dispatch, appState.currentSpaceId);
-          onClose();
-        },
-      },
-      {
         text: "Add Folder",
         title: "Create new Folder in the current viewport",
         onClick: () => {

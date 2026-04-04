@@ -20,12 +20,9 @@ import {
 } from "../../helpers/types";
 import { insertBetween } from "../../helpers/fractionalIndexes";
 import { getMouseX, getMouseY } from "../KeyboardAndMouseManager";
-import { sticker_size_half } from "./const";
 import { round10 } from "../../helpers/mathUtils";
 import { getGlobalAppState } from "../App";
 import { defaultStickerColor, stickerSizeS } from "./WidgetsHorMenu";
-
-let newStickerShift = 0;
 
 class CanvasAPI {
   deleteWidgets(dispatch: ActionDispatcher, widgetIds: number[]) {
@@ -201,58 +198,13 @@ class CanvasAPI {
       {
         position: findPositionForNewFolder(folders),
       },
-      "toolbar",
+      "canvas-menu",
     );
 
     dispatch({
       type: Action.UpdateAppState,
       newState: { itemInEdit: folderId },
     });
-  }
-
-  createStickerInCurrentViewport(
-    dispatch: ActionDispatcher,
-    currentSpaceId: number,
-  ) {
-    const canvasOffset = getCanvasScrolledOffset();
-    newStickerShift += 6;
-    if (newStickerShift > 60) {
-      newStickerShift = 0;
-    }
-    const x = round10(
-      document.body.clientWidth / 2 - 200 + canvasOffset.x + newStickerShift,
-    );
-    const y = round10(
-      document.body.clientHeight / 2 - 200 + canvasOffset.y + newStickerShift,
-    );
-    const widgetId = genUniqLocalId();
-    dispatch({
-      type: Action.CreateWidget,
-      spaceId: currentSpaceId,
-      widgetId,
-      pos: { point: { x, y } },
-    });
-    canvasAPI.selectWidgets(dispatch, [widgetId]);
-  }
-
-  createStickerUnderCursor(dispatch: ActionDispatcher, spaceId: number) {
-    const canvasOffset = getCanvasScrolledOffset();
-    const mouseX = getMouseX();
-    const mouseY = getMouseY();
-    const widgetId = genUniqLocalId();
-    dispatch({
-      type: Action.CreateWidget,
-      spaceId,
-      widgetId,
-      pos: {
-        point: {
-          x: round10(mouseX + canvasOffset.x - sticker_size_half),
-          y: round10(mouseY + canvasOffset.y - sticker_size_half),
-        },
-      },
-    });
-    canvasAPI.selectWidgets(dispatch, [widgetId]);
-    canvasAPI.setEditingWidget(dispatch, widgetId);
   }
 }
 

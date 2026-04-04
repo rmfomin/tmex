@@ -50,7 +50,6 @@ export type PConfigWidgets = {
   onWidgetsSelected: (widgetIds: number[]) => void;
   onWidgetsMoved: (positions: { id: number; pos: Point }[]) => void;
   onSetEditingWidget: (widgetId: number | undefined) => void;
-  onCanvasDoubleClick: (pos: Point) => void;
   onWidgetsRightClick: (pos: Point, widgetId: number) => void;
   onCanvasRightClick: (pos: Point) => void;
 };
@@ -73,7 +72,6 @@ export function bindDADItemEffect(
     "widgets-hor-menu",
     "dropdown-menu",
     "modal-wrapper",
-    "toolbar",
   ]);
   const targetFolderHeader = findRootOfDraggableFolder(target);
 
