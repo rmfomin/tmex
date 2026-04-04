@@ -126,4 +126,46 @@ describe("style build configuration", () => {
     expect(fs.existsSync(folderComponentPath)).toBe(true);
     expect(fs.existsSync(flatComponentPath)).toBe(false);
   });
+
+  test("folder item uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/FolderItem/FolderItem.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/FolderItem.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("folder group uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/FolderGroup/FolderGroup.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/FolderGroup.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("folder uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Folder/Folder.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Folder.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
 });

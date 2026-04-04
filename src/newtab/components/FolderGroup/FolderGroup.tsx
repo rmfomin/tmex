@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookmarkItemV3, GroupV3, SpaceV3 } from "../helpers/types";
-import { RecentItem } from "../helpers/recentHistoryUtils";
+import { BookmarkItemV3, GroupV3, SpaceV3 } from "../../helpers/types";
+import { RecentItem } from "../../helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
-import { FolderItem } from "./FolderItem";
-import { EditableTitle } from "./EditableTitle";
-import { DispatchContext } from "../state/actions";
-import { Action } from "../state/state";
-import { CL } from "../helpers/classNameHelper";
-import ChevronIcon from "../icons/shevron.svg";
+import { FolderItem } from "../FolderItem/FolderItem";
+import { EditableTitle } from "../EditableTitle";
+import { DispatchContext } from "../../state/actions";
+import { Action } from "../../state/state";
+import { CL } from "../../helpers/classNameHelper";
+import ChevronIcon from "../../icons/shevron.svg";
+import "./FolderGroup.module.scss";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];

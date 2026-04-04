@@ -5,7 +5,7 @@ import {
   isTargetSupportsDragAndDrop,
 } from "../helpers/utils";
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
-import { Folder } from "./Folder";
+import { Folder } from "./Folder/Folder";
 import { handleBookmarksKeyDown } from "../helpers/handleBookmarksKeyDown";
 import { Action, AppState } from "../state/state";
 import {

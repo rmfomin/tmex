@@ -1,33 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FolderV3, SpaceV3 } from "../helpers/types";
+import { FolderV3, SpaceV3 } from "../../helpers/types";
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
   scrollElementIntoView,
-} from "../helpers/utils";
-import { DropdownMenu, DropdownSubMenu } from "./dropdown/DropdownMenu";
-import { FolderItem } from "./FolderItem";
-import { FolderGroup } from "./FolderGroup";
-import { EditableTitle } from "./EditableTitle";
-import { CL } from "../helpers/classNameHelper";
-import { Action } from "../state/state";
-import { canShowArchived, DispatchContext } from "../state/actions";
-import { Color } from "../helpers/Color";
-import MenuIcon from "../icons/menu.svg";
-import ChevronIcon from "../icons/shevron.svg";
-import { getSpacesList } from "./dropdown/moveToHelpers";
-import HistoryItem = chrome.history.HistoryItem;
+} from "../../helpers/utils";
+import { DropdownMenu, DropdownSubMenu } from "../dropdown/DropdownMenu";
+import { FolderItem } from "../FolderItem/FolderItem";
+import { FolderGroup } from "../FolderGroup/FolderGroup";
+import { EditableTitle } from "../EditableTitle";
+import { CL } from "../../helpers/classNameHelper";
+import { Action } from "../../state/state";
+import { canShowArchived, DispatchContext } from "../../state/actions";
+import { Color } from "../../helpers/Color";
+import MenuIcon from "../../icons/menu.svg";
+import ChevronIcon from "../../icons/shevron.svg";
+import { getSpacesList } from "../dropdown/moveToHelpers";
 import Tab = chrome.tabs.Tab;
-import { showMessageWithUndo } from "../helpers/actionsHelpersWithDOM";
+import { showMessageWithUndo } from "../../helpers/actionsHelpersWithDOM";
 import {
   createNewFolderItem,
   createNewSection,
   findSpaceByFolderId,
-} from "../state/actionHelpers";
-import { RecentItem } from "../helpers/recentHistoryUtils";
-import {
-  getVisibleFolderDisplayItems,
-} from "./getFolderDisplayItems";
+} from "../../state/actionHelpers";
+import { RecentItem } from "../../helpers/recentHistoryUtils";
+import { getVisibleFolderDisplayItems } from "../getFolderDisplayItems";
+import "./Folder.module.scss";
 
 export const Folder = React.memo(function Folder(p: {
   spaces: SpaceV3[];
@@ -46,7 +44,6 @@ export const Folder = React.memo(function Folder(p: {
   const [localTitle, setLocalTitle] = useState<string>(p.folder.title);
 
   useEffect(() => {
-    // to support UNDO operation
     setLocalTitle(p.folder.title);
   }, [p.folder.title]);
 
@@ -215,7 +212,6 @@ export const Folder = React.memo(function Folder(p: {
   ${folderIsEmptyDuringSearch ? "folder--empty" : ""}
   ${p.folder.archived ? "archived" : ""}
   `;
-  // const folderColor = folderIsEmptyDuringSearch ? EMPTY_FOLDER_COLOR : props.folder.color || DEFAULT_FOLDER_COLOR
   const folderColor = localColor ?? p.folder.color;
   const color = new Color();
   const color2 = new Color();
@@ -224,8 +220,6 @@ export const Folder = React.memo(function Folder(p: {
   color2.value = { ...color.value };
   color2.setSaturation(color2.value.s + 0.1);
   color2.value.h = color2.value.h + 0.05;
-  // console.log(color2.value)
-  // const folderColorWithOpacity = color.getRGBA()
   const folderGradientColor = `linear-gradient(45deg, ${color.getRGBA()}, ${color2.getRGBA()})`;
 
   const onHeaderContextMenu = (e: React.MouseEvent) => {
@@ -266,28 +260,24 @@ export const Folder = React.memo(function Folder(p: {
         className="draggable-folder"
         onContextMenu={onHeaderContextMenu}
       >
-        {
-          <button
-            className={CL("folder-collapse-toggle", {
-              "folder-collapse-toggle--collapsed": p.folder.collapsed,
-            })}
-            onClick={onToggleCollapsed}
-            title={p.folder.collapsed ? "Expand folder" : "Collapse folder"}
-          >
-            <ChevronIcon />
-          </button>
-        }
-        {
-          <EditableTitle
-            className="folder-title__text"
-            inEdit={p.folder.id === p.itemInEdit}
-            localTitle={localTitle}
-            setLocalTitle={setLocalTitle}
-            onSaveTitle={saveFolderTitle}
-            search={p.search}
-            onClick={() => setEditing(true)}
-          />
-        }
+        <button
+          className={CL("folder-collapse-toggle", {
+            "folder-collapse-toggle--collapsed": p.folder.collapsed,
+          })}
+          onClick={onToggleCollapsed}
+          title={p.folder.collapsed ? "Expand folder" : "Collapse folder"}
+        >
+          <ChevronIcon />
+        </button>
+        <EditableTitle
+          className="folder-title__text"
+          inEdit={p.folder.id === p.itemInEdit}
+          localTitle={localTitle}
+          setLocalTitle={setLocalTitle}
+          onSaveTitle={saveFolderTitle}
+          search={p.search}
+          onClick={() => setEditing(true)}
+        />
         {p.folder.archived ? <span> [hidden]</span> : ""}
         <span
           className={CL("folder-title__button", {
@@ -408,7 +398,9 @@ export const Folder = React.memo(function Folder(p: {
         ) : null}
       </h2>
 
-      {folderItems.length === 0 && !folderIsEmptyDuringSearch && !p.folder.collapsed ? (
+      {folderItems.length === 0 &&
+      !folderIsEmptyDuringSearch &&
+      !p.folder.collapsed ? (
         <div className="folder-empty-tip">
           To add bookmark, drop an item form the sidebar
         </div>

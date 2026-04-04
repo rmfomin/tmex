@@ -1,0 +1,164 @@
+:global(.folder--empty) {
+  .draggable-folder {
+    color: #bbbbbb !important;
+    background-color: transparent !important;
+  }
+}
+
+:global(.folder h2) {
+  color: rgb(5, 0, 56);
+  margin-left: 24px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 18px;
+  height: 36px;
+  box-sizing: border-box;
+
+  .folder-title__text {
+    display: inline-block;
+    cursor: text;
+    max-width: calc(100% - 32px);
+    font-weight: 600;
+  }
+
+  textarea {
+    color: rgb(5, 0, 56);
+    font-weight: 600;
+    background: none;
+    flex-grow: 1;
+    height: 0;
+    width: calc(100% - 28px);
+    box-sizing: border-box;
+    resize: none;
+    border: 1px solid var(--colors-blue-300);
+    font-size: 18px;
+    padding: 2px;
+    margin: -3px;
+    margin-bottom: -9px;
+  }
+
+  .searched {
+    color: rgb(5, 0, 56);
+  }
+}
+
+:global(.folder-empty-tip) {
+  padding: 0 0 0 32px;
+  color: var(--colors-gray-600);
+}
+
+:global(.folder-collapse-toggle) {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin-right: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: top;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.18s ease;
+  }
+}
+
+:global(.folder-collapse-toggle--collapsed) {
+  svg {
+    transform: rotate(-90deg);
+  }
+}
+
+:global(.folder-items-box) {
+  position: relative;
+  flex-grow: 1;
+  padding-bottom: 40px;
+}
+
+:global(.folder-item-new) {
+  span {
+    font-size: 14px;
+    display: inline-block;
+    margin: 10px 0 0 54px;
+    color: #999;
+    visibility: hidden;
+  }
+}
+
+:global(.folder:hover) {
+  .folder-item-new {
+    span {
+      visibility: visible;
+    }
+  }
+}
+
+:global(.folder.two-column) {
+  width: 720px;
+}
+
+:global(.folder.two-column .folder-items-box) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-flow: row;
+}
+
+:global(.folder.folder--new h2) {
+  background-color: var(--input-background-color);
+  color: var(--colors-gray-600);
+  cursor: pointer;
+}
+
+:global(.folder.folder--new h2 span) {
+  display: inline-block;
+  vertical-align: top;
+  font-weight: 200;
+  margin-left: 76px;
+}
+
+:global(.draggable-folder) {
+  cursor: grab;
+}
+
+:global(.draggable-folder:active) {
+  cursor: grabbing;
+}
+
+:global(.folder .folder-title) {
+  cursor: pointer;
+}
+
+:global(.folder .folder-title__button) {
+  cursor: pointer;
+  padding: 0 6px;
+  float: right;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  svg {
+    color: #000;
+    opacity: 0.7;
+  }
+}
+
+:global(.folder .folder-title__button--visible) {
+  visibility: visible;
+}
+
+:global(.folder:hover .folder-title__button) {
+  visibility: visible;
+}
+
+:global(.folder.folder--empty .folder-title__button) {
+  visibility: hidden;
+}

@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookmarkItemV3, SpaceV3 } from "../helpers/types";
-import { findTabsByURL, isFolderItemNotUsed } from "../helpers/utils";
-import { EditableTitle } from "./EditableTitle";
-import { Action } from "../state/state";
-import { DispatchContext } from "../state/actions";
-import { CL } from "../helpers/classNameHelper";
-import IconClose from "../icons/close.svg";
-import IconMore from "../icons/more.svg";
-import { FolderItemMenu } from "./dropdown/FolderItemMenu";
-import { getBrokenImgSVG, loadFaviconUrl } from "../helpers/faviconUtils";
-import { RecentItem } from "../helpers/recentHistoryUtils";
+import { BookmarkItemV3, SpaceV3 } from "../../helpers/types";
+import { findTabsByURL, isFolderItemNotUsed } from "../../helpers/utils";
+import { EditableTitle } from "../EditableTitle";
+import { Action } from "../../state/state";
+import { DispatchContext } from "../../state/actions";
+import { CL } from "../../helpers/classNameHelper";
+import IconClose from "../../icons/close.svg";
+import IconMore from "../../icons/more.svg";
+import { FolderItemMenu } from "../dropdown/FolderItemMenu";
+import { getBrokenImgSVG, loadFaviconUrl } from "../../helpers/faviconUtils";
+import { RecentItem } from "../../helpers/recentHistoryUtils";
+import "./FolderItem.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const FolderItem = React.memo(
@@ -28,7 +29,6 @@ export const FolderItem = React.memo(
     const [localTitle, setLocalTitle] = useState<string>(p.item.title);
 
     useEffect(() => {
-      // to support UNDO operation
       setLocalTitle(p.item.title);
     }, [p.item.title]);
 
@@ -117,7 +117,7 @@ export const FolderItem = React.memo(
           })}
           onDragStart={(e) => {
             e.preventDefault();
-          }} // to prevent text drag-and-drop in the textarea
+          }}
           tabIndex={2}
           data-id={p.item.id}
           onClick={(e) => e.preventDefault()}
