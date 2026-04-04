@@ -1,10 +1,11 @@
 import React, { memo, useContext } from "react";
-import { filterTabsBySearch } from "../helpers/utils";
-import { SpaceV3 } from "../helpers/types";
-import { DispatchContext } from "../state/actions";
-import { Action } from "../state/state";
-import { showMessage } from "../helpers/actionsHelpersWithDOM";
-import { TabOrRecentItem } from "./SidebarItem";
+import { filterTabsBySearch } from "../../helpers/utils";
+import { SpaceV3 } from "../../helpers/types";
+import { DispatchContext } from "../../state/actions";
+import { Action } from "../../state/state";
+import { showMessage } from "../../helpers/actionsHelpersWithDOM";
+import { TabOrRecentItem } from "../SidebarItem/SidebarItem";
+import styles from "./SidebarOpenTabs.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const SidebarOpenTabs = memo(
@@ -43,7 +44,7 @@ export const SidebarOpenTabs = memo(
     );
 
     return (
-      <div className="inbox-box">
+      <div className={styles.inboxBox}>
         {sortedWindowsWithTabs.length === 1
           ? sortedWindowsWithTabs[0].tabs.map((t) => (
               <TabOrRecentItem
@@ -58,7 +59,7 @@ export const SidebarOpenTabs = memo(
           : sortedWindowsWithTabs.map((window, index) => {
               return (
                 <div key={window.windowId}>
-                  <div className="window-name">
+                  <div className={styles.windowName}>
                     {index === 0 ? "current window" : "window"}
                   </div>
                   {window.tabs.map((t) => (
@@ -80,8 +81,6 @@ export const SidebarOpenTabs = memo(
             <br /> Pinned tabs are filtered out.
           </p>
         ) : null}
-        {/* disabled it because it looks wierd with several Windows */
-        /*{props.search === "" ? SectionItem : null}*/}
       </div>
     );
   },
@@ -91,10 +90,9 @@ function getSortedWindowsWithTabs(
   map: Map<number, Tab[]>,
   currentWindowId: number | undefined,
 ): { windowId: number; tabs: Tab[] }[] {
-  const res = Array.from(map.entries()); // Get entries to maintain access to the window ID
+  const res = Array.from(map.entries());
   let allWindows: { windowId: number; tabs: Tab[] }[] = [];
 
-  // Filter out the current window tabs and store them separately
   res.forEach(([windowId, tabs]) => {
     if (windowId === currentWindowId) {
       allWindows.splice(0, 0, { windowId, tabs });

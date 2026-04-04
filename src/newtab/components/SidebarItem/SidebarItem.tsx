@@ -4,25 +4,26 @@ import {
   hlSearch,
   removeUselessProductName,
   scrollElementIntoView,
-} from "../helpers/utils";
-import { DropdownMenu, DropdownSubMenu } from "./dropdown/DropdownMenu";
-import { CL } from "../helpers/classNameHelper";
-import { Action } from "../state/state";
-import { DispatchContext, mergeStepsInHistory } from "../state/actions";
+} from "../../helpers/utils";
+import { DropdownMenu, DropdownSubMenu } from "../dropdown/DropdownMenu";
+import { CL } from "../../helpers/classNameHelper";
+import { Action } from "../../state/state";
+import { DispatchContext, mergeStepsInHistory } from "../../state/actions";
 import {
   convertTabOrRecentToItem,
   isTabData,
   TabOrRecentData,
-} from "../state/actionHelpers";
+} from "../../state/actionHelpers";
 import {
   createFolderWithStat,
   showMessage,
-} from "../helpers/actionsHelpersWithDOM";
-import { SpaceV3 } from "../helpers/types";
-import IconSaved from "../icons/saved.svg";
-import { getFoldersList } from "./dropdown/moveToHelpers";
-import { getBrokenImgSVG } from "../helpers/faviconUtils";
-import { collectBookmarksV3 } from "../helpers/v3Traversal";
+} from "../../helpers/actionsHelpersWithDOM";
+import { SpaceV3 } from "../../helpers/types";
+import IconSaved from "../../icons/saved.svg";
+import { getFoldersList } from "../dropdown/moveToHelpers";
+import { getBrokenImgSVG } from "../../helpers/faviconUtils";
+import { collectBookmarksV3 } from "../../helpers/v3Traversal";
+import styles from "./SidebarItem.module.scss";
 
 export const TabOrRecentItem = (p: {
   data: TabOrRecentData;
@@ -53,16 +54,16 @@ export const TabOrRecentItem = (p: {
     setShowMenu(true);
   };
 
-  const onMenuCloseClicked = (e: React.MouseEvent) => {
+  const onMenuCloseClicked = () => {
     if (p.onCloseTab) {
       p.onCloseTab(p.data.id!);
     }
     hideMenu();
   };
 
-  const onMenuCopyClicked = (e: React.MouseEvent) => {
+  const onMenuCopyClicked = () => {
     navigator.clipboard.writeText(p.data.url ?? "");
-    showMessage("URL has been copied", dispatch); // !!! place all texts in a single file
+    showMessage("URL has been copied", dispatch);
     hideMenu();
   };
 
@@ -103,62 +104,62 @@ export const TabOrRecentItem = (p: {
       const folderId = createFolderWithStat(
         dispatch,
         { historyStepId, spaceId },
-        "by-save-to-new-folder"
-      ); // TODO
+        "by-save-to-new-folder",
+      );
       moveToFolder(folderId, spaceId);
     });
   };
 
-  let shortenedTitle = removeUselessProductName(p.data.title);
-  let domain = isTabData(p.data)
+  const shortenedTitle = removeUselessProductName(p.data.title);
+  const domain = isTabData(p.data)
     ? extractHostname(p.data.url)
-    : extractHostname(p.data.url) +
-      ", " +
-      formatDate(new Date(p.data.lastVisitTime || 0));
+    : `${extractHostname(p.data.url)}, ${formatDate(
+        new Date(p.data.lastVisitTime || 0),
+      )}`;
   const savedInFolders = findFoldersTitlesWhereTabSaved(p.data, p.spaces);
 
   return (
     <div
       key={p.data.id}
       style={{ backgroundColor: getBgColor(p.data.id) }}
-      className={CL("inbox-item draggable-item", {
-        active: showMenu,
-        "recent-item": !isTab,
+      className={CL(styles.item, {
+        [styles.active]: showMenu,
+        [styles.recentItem]: !isTab,
+        "draggable-item": true,
       })}
       data-id={p.data.id}
       onContextMenu={onTabContextMenu}
     >
-      <img src={p.data.favIconUrl} alt="" onError={handleImageError} />
-      <div className="inbox-item__text">
+      <img className={styles.icon} src={p.data.favIconUrl} alt="" onError={handleImageError} />
+      <div className={styles.text}>
         <div
-          className="inbox-item__title"
+          className={styles.title}
           title={p.data.title}
           dangerouslySetInnerHTML={hlSearch(shortenedTitle, p.search)}
         />
         <div
-          className="inbox-item__url"
+          className={styles.url}
           title={p.data.url}
           dangerouslySetInnerHTML={hlSearch(domain, p.search)}
         />
         {savedInFolders ? (
-          <div className="inbox-item__already-saved">
-            Already saved in {savedInFolders}
-          </div>
+          <div className={styles.alreadySaved}>Already saved in {savedInFolders}</div>
         ) : null}
       </div>
       {p.onCloseTab && (
         <div
           onClick={() => p.onCloseTab!(p.data.id!)}
-          className="inbox-item__close stop-click-propagation2 stop-dad-propagation"
+          className={CL(styles.close, {
+            "stop-click-propagation2": true,
+            "stop-dad-propagation": true,
+          })}
           title="Close tab"
         >
           ⨉
         </div>
       )}
 
-      {savedInFolders ? (
-        <IconSaved className="saved-tab-icon"></IconSaved>
-      ) : null}
+      {savedInFolders ? <IconSaved className={styles.savedTabIcon} /> : null}
 
       {showMenu ? (
         <DropdownMenu
@@ -179,19 +180,20 @@ export const TabOrRecentItem = (p: {
               submenuContent={getFoldersList(
                 p.spaces[0],
                 moveToFolder,
-                moveToNewFolder
+                moveToNewFolder,
               )}
             />
           ) : (
             p.spaces.map((s) => {
               return (
                 <DropdownSubMenu
+                  key={s.id}
                   menuId={s.id}
                   title={`Save to "${s.title}"`}
                   submenuContent={getFoldersList(
                     s,
                     moveToFolder,
-                    moveToNewFolder
+                    moveToNewFolder,
                   )}
                 />
               );
@@ -214,7 +216,7 @@ export const TabOrRecentItem = (p: {
 
 function findFoldersTitlesWhereTabSaved(
   curTab: { url?: string },
-  spaces: SpaceV3[]
+  spaces: SpaceV3[],
 ): string {
   let res: string[] = [];
   spaces.forEach((space) => {
@@ -232,43 +234,19 @@ function findFoldersTitlesWhereTabSaved(
 
 function formatDate(d: Date): string {
   const today = new Date();
-  // Strip out the time part by creating new dates at midnight.
   const inputDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const todayDate = new Date(
     today.getFullYear(),
     today.getMonth(),
-    today.getDate()
-  );
-  const yesterdayDate = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() - 1
+    today.getDate(),
   );
 
-  if (inputDate.getTime() === todayDate.getTime()) {
-    return "Today";
-  } else if (inputDate.getTime() === yesterdayDate.getTime()) {
-    return "Yesterday";
-  } else {
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    let formatted = d.getDate() + " " + months[d.getMonth()];
-    // Optionally, include the year if it is not the current year:
-    if (d.getFullYear() !== today.getFullYear()) {
-      formatted += " " + d.getFullYear();
-    }
-    return formatted;
-  }
+  const diffTime = todayDate.getTime() - inputDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return "today";
+  if (diffDays === 1) return "yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+
+  return d.toLocaleDateString();
 }

@@ -1,11 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import {
-  extractHostname,
-  filterRecentItemsBySearch,
-  hlSearch,
-  removeUselessProductName,
-} from "../helpers/utils";
-import { CL } from "../helpers/classNameHelper";
+import { filterRecentItemsBySearch } from "../../helpers/utils";
+import { CL } from "../../helpers/classNameHelper";
 import {
   confluenceHashRegExp,
   figmaBoardRegExp,
@@ -28,15 +23,14 @@ import {
   miroHashRegExp,
   tryLoadMoreHistory,
   youtubeHashRegExp,
-} from "../helpers/recentHistoryUtils";
-import IconFilter from "../icons/filter.svg";
-import IconNonFilter from "../icons/no-filter-thin.svg";
-import HistoryItem = chrome.history.HistoryItem;
-import { getTempFavIconUrl } from "../state/actionHelpers";
-import { DispatchContext } from "../state/actions";
-import { getBrokenImgSVG } from "../helpers/faviconUtils";
-import { TabOrRecentItem } from "./SidebarItem";
-import { SpaceV3 } from "../helpers/types";
+} from "../../helpers/recentHistoryUtils";
+import IconFilter from "../../icons/filter.svg";
+import IconNonFilter from "../../icons/no-filter-thin.svg";
+import { getTempFavIconUrl } from "../../state/actionHelpers";
+import { DispatchContext } from "../../state/actions";
+import { TabOrRecentItem } from "../SidebarItem/SidebarItem";
+import { SpaceV3 } from "../../helpers/types";
+import styles from "./SidebarRecent.module.scss";
 
 const PAGE_SIZE = 100;
 
@@ -46,13 +40,11 @@ const RecentList = React.memo(
     const [displayedItems, setDisplayedItems] = useState<RecentItem[]>([]);
     const [page, setPage] = useState<number>(1);
 
-    // Load initial page whenever the filteredHistoryItems change.
     useEffect(() => {
       setDisplayedItems(p.items.slice(0, PAGE_SIZE));
       setPage(1);
     }, [p.items]);
 
-    // Function to load more items when scrolling near the bottom.
     const loadMore = useCallback(() => {
       const nextPage = page + 1;
       const nextItems = p.items.slice(0, nextPage * PAGE_SIZE);
@@ -61,7 +53,7 @@ const RecentList = React.memo(
         setPage(nextPage);
       }
       tryLoadMoreHistory(dispatch);
-    }, [page, p.items, displayedItems]);
+    }, [page, p.items, displayedItems, dispatch]);
 
     const handleScroll = useCallback(() => {
       const sidebar = document.querySelector(".app-sidebar")!;
@@ -165,14 +157,14 @@ export const SidebarRecent = React.memo(
         enabledFilers.map((f) => {
           return {
             ...f,
-            enabled: false, //enabledFiltersCount === 0
+            enabled: false,
           };
         }),
       );
     };
 
     return (
-      <div className="recent-list">
+      <div className={styles.recentList}>
         <div
           className={CL("app-sidebar__header app-sidebar__header--recent", {
             "filters-opened": filterByDomainEnabled,
@@ -193,10 +185,10 @@ export const SidebarRecent = React.memo(
           </div>
 
           {filterByDomainEnabled && (
-            <div className="recent-filter-panel">
+            <div className={styles.recentFilterPanel}>
               <button
-                className={CL("recent-list-panel__btn", {
-                  active: enabledFiltersCount === 0,
+                className={CL(styles.recentListPanelBtn, {
+                  [styles.active]: enabledFiltersCount === 0,
                 })}
                 title="Toggle filters"
                 onClick={onClearFilters}
@@ -207,8 +199,8 @@ export const SidebarRecent = React.memo(
                 return (
                   <button
                     key={filter.pattern}
-                    className={CL("recent-list-panel__btn", {
-                      active: filter.enabled,
+                    className={CL(styles.recentListPanelBtn, {
+                      [styles.active]: filter.enabled,
                     })}
                     title={filter.title}
                     onClick={() => onFilterClick(filter)}
@@ -228,7 +220,7 @@ export const SidebarRecent = React.memo(
           items={itemsFilteredBySearchAndFilter}
           search={p.search}
           spaces={p.spaces}
-        ></RecentList>
+        />
         {Boolean(moreSearchResultsCount) ? (
           <div className="sidebar-message">
             <span>

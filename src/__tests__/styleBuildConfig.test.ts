@@ -84,4 +84,46 @@ describe("style build configuration", () => {
     expect(fs.existsSync(folderComponentPath)).toBe(true);
     expect(fs.existsSync(flatComponentPath)).toBe(false);
   });
+
+  test("sidebar item uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SidebarItem/SidebarItem.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SidebarItem.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("sidebar open tabs uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SidebarOpenTabs/SidebarOpenTabs.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SidebarOpenTabs.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
+
+  test("sidebar recent uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SidebarRecent/SidebarRecent.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/SidebarRecent.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
 });

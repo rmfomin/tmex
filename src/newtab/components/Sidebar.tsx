@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { SidebarOpenTabs } from "./SidebarOpenTabs";
+import { SidebarOpenTabs } from "./SidebarOpenTabs/SidebarOpenTabs";
 import { isTabmeTab } from "../helpers/isTabmeTab";
 import {
   blurSearch,
@@ -23,7 +23,7 @@ import {
   createFolderWithStat,
   showMessage,
 } from "../helpers/actionsHelpersWithDOM";
-import { SidebarRecent } from "./SidebarRecent";
+import { SidebarRecent } from "./SidebarRecent/SidebarRecent";
 import { bindDADItemEffect } from "../dragging/dragAndDrop";
 import { RecentItem } from "../helpers/recentHistoryUtils";
 
