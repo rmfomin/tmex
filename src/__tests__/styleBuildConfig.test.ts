@@ -28,4 +28,18 @@ describe("style build configuration", () => {
 
     expect(moduleRule).toBeDefined();
   });
+
+  test("notification uses the folder-based component structure", () => {
+    const folderComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Notification/Notification.tsx",
+    );
+    const flatComponentPath = path.join(
+      __dirname,
+      "../../src/newtab/components/Notification.tsx",
+    );
+
+    expect(fs.existsSync(folderComponentPath)).toBe(true);
+    expect(fs.existsSync(flatComponentPath)).toBe(false);
+  });
 });

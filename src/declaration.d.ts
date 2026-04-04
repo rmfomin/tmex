@@ -6,6 +6,11 @@ declare module "*.svg" {
   export default ReactComponent;
 }
 
+declare module "*.module.scss" {
+  const classes: { [key: string]: string };
+  export default classes;
+}
+
 declare const __OVERRIDE_NEWTAB: boolean;
 declare const MIXPANEL_TOKEN: string;
 

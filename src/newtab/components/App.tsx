@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import { Bookmarks } from "./Bookmarks";
 import { Sidebar } from "./Sidebar";
-import { Notification } from "./Notification";
+import { Notification } from "./Notification/Notification";
 import { KeyboardAndMouseManager } from "./KeyboardAndMouseManager";
 import { ImportBookmarksFromSettings } from "./ImportBookmarksFromSettings";
 import { Action, getInitAppState, AppState } from "../state/state";

@@ -38,6 +38,7 @@ module.exports.getCommonConfig = (env) => {
             {
               loader: "css-loader",
               options: {
+                esModule: false,
                 modules: {
                   localIdentName: "[name]__[local]__[hash:base64:5]",
                 },
