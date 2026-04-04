@@ -13,8 +13,5 @@ export function isEmptyDashboard(
     return true;
   }
 
-  return (
-    currentSpace.folders.length === 0 &&
-    (currentSpace.widgets?.length ?? 0) === 0
-  );
+  return currentSpace.folders.length === 0;
 }

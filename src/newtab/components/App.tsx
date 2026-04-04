@@ -185,10 +185,7 @@ export function App() {
             <>
               <Sidebar appState={appState} />
               <Bookmarks appState={appState} />
-              <KeyboardAndMouseManager
-                search={appState.search}
-                selectedWidgetIds={appState.selectedWidgetIds}
-              />
+              <KeyboardAndMouseManager search={appState.search} />
             </>
           )}
         </div>

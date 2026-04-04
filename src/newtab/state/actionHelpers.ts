@@ -7,7 +7,6 @@ import {
   GroupV3,
   LegacyFolderItem,
   FolderItemToCreate,
-  Widget,
   ItemV3,
   SpaceV3,
 } from "../helpers/types"
@@ -265,17 +264,6 @@ export function removeItemFromFolderItems(
 
     return [item]
   })
-}
-
-export function findWidgetById(appState: SpacesState, widgetId: number): Widget | undefined {
-  let res: Widget | undefined = undefined
-  appState.spaces.some((space) => {
-    const widget = (space.widgets ?? []).find((currentWidget) => currentWidget.id === widgetId)
-    res = widget
-    return !!widget
-  })
-
-  return res
 }
 
 export function updateSpace(

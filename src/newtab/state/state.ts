@@ -5,8 +5,6 @@ import {
   LegacyFolderApiPayload,
   LegacyFolderItemApiPayload,
   SpaceV3,
-  WidgetContent,
-  WidgetPos,
 } from "../helpers/types";
 import { SavingState } from "./storage";
 import { RecentItem } from "../helpers/recentHistoryUtils";
@@ -82,9 +80,6 @@ export type AppState = {
   achievements: AppAchievements; // Stored in LS
   loaded: boolean;
 
-  selectedWidgetIds: number[];
-  editingWidgetId: number | undefined;
-
   // API
   apiCommandsQueue: APICommandPayloadFull[];
   apiCommandId?: number;
@@ -118,9 +113,6 @@ let initState: AppState = {
   sidebarHovered: false,
   alphaMode: !!localStorage.getItem("betaStickers"),
   loaded: false,
-
-  selectedWidgetIds: [],
-  editingWidgetId: undefined,
 
   page: "default",
   hiddenFeatureIsEnabled: false,
@@ -199,19 +191,6 @@ export enum Action {
   MoveFolderItems = "move-folder-items",
 
   SaveBookmarksToCloud = "save-bookmarks-to-cloud",
-
-  CreateWidget = "create-widget",
-  DeleteWidgets = "delete-widgets",
-  UpdateWidget = "update-widget",
-
-  // CanvasAPI
-
-  SelectWidgets = "select-widgets",
-  SetEditingWidget = "set-editing-widget",
-  DuplicateWidgets = "duplicate-widgets",
-  BringToFront = "bring-to-front",
-  SendToBack = "send-to-back",
-  RestoreWidgetOrder = "restore-widget-order",
 
   // API HELPERS
   APICommandResolved = "api-command-resolved",
@@ -349,31 +328,6 @@ export type ActionPayload = (
       insertBeforeItemId: number | undefined;
     }
   | { type: Action.SaveBookmarksToCloud }
-  | {
-      type: Action.CreateWidget;
-      spaceId?: number;
-      widgetId: number;
-      position?: string;
-      pos: WidgetPos;
-      content?: Partial<WidgetContent>;
-    }
-  | {
-      type: Action.UpdateWidget;
-      widgetId: number;
-      position?: string;
-      pos?: WidgetPos;
-      content?: Partial<WidgetContent>;
-    }
-  | { type: Action.DeleteWidgets; widgetIds: number[] }
-  | { type: Action.SelectWidgets; widgetIds: number[] }
-  | { type: Action.SetEditingWidget; widgetId: number | undefined }
-  | { type: Action.DuplicateWidgets; widgetIds: number[] }
-  | { type: Action.BringToFront; widgetIds: number[] }
-  | { type: Action.SendToBack; widgetIds: number[] }
-  | {
-      type: Action.RestoreWidgetOrder;
-      data: { spaceId: number; orderedWidgetIds: number[] }[];
-    }
   | { type: Action.APICommandResolved; commandId: number }
   | {
       type: Action.APIConfirmEntityCreated;

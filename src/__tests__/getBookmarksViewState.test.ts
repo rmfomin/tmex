@@ -111,8 +111,6 @@ function createAppState(): AppState {
       archivedItemsShowed: 0,
     },
     loaded: true,
-    selectedWidgetIds: [],
-    editingWidgetId: undefined,
     apiCommandsQueue: [],
     apiCommandId: undefined,
     apiLastError: undefined,
@@ -132,20 +130,6 @@ test("getBookmarksViewState uses current v3 space when search is empty", () => {
         objectType: "folder",
         title: "Visible folder",
         items: [],
-      },
-    ],
-    widgets: [
-      {
-        id: 1000,
-        position: "a0",
-        widgetType: "Sticker",
-        pos: { point: { x: 10, y: 20 } },
-        content: {
-          contentType: "Sticker",
-          text: "Hello",
-          color: "#fff59d",
-          fontSize: 16,
-        },
       },
     ],
   });
@@ -182,6 +166,5 @@ test("getBookmarksViewState searches through v3 folders across spaces", () => {
         ],
       },
     ],
-    widgets: [],
   });
 });

@@ -3,14 +3,11 @@ import {
   unselectAllItems,
 } from "../helpers/selectionUtils";
 import {
-  findParentWithClass,
   isSomeParentHaveClass,
   isTargetInputOrTextArea,
   isTargetSupportsDragAndDrop,
 } from "../helpers/utils";
 import { Point } from "../helpers/MathTypes";
-import { processMultiselection } from "./processMultiselection";
-import { processWidgetsDragAndDrop } from "./processWidgetsDragAndDrop";
 import { processFolderDragAndDrop } from "./processFolderDragAndDrop";
 import { processItemDragAndDrop } from "./processItemDragAndDrop";
 import { processSpacesDragAndDrop } from "./processSpacesDragAndDrop";
@@ -45,15 +42,6 @@ export type PConfigFolder = {
   onDragStarted: () => boolean; // return false to prevent action. Previously was named canDrag()
 };
 
-export type PConfigWidgets = {
-  canvasEl: HTMLCanvasElement;
-  onWidgetsSelected: (widgetIds: number[]) => void;
-  onWidgetsMoved: (positions: { id: number; pos: Point }[]) => void;
-  onSetEditingWidget: (widgetId: number | undefined) => void;
-  onWidgetsRightClick: (pos: Point, widgetId: number) => void;
-  onCanvasRightClick: (pos: Point) => void;
-};
-
 export type PConfigSpaces = {
   onChangeSpacePosition: (spaceId: number, newPosition: string) => void;
   canSortSpaces: () => boolean;
@@ -63,13 +51,11 @@ export function bindDADItemEffect(
   mouseDownEvent: React.MouseEvent,
   itemConfig: PConfigItem,
   folderConfig?: PConfigFolder,
-  widgetsConfig?: PConfigWidgets,
   spacesConfig?: PConfigSpaces
 ) {
   const target = mouseDownEvent.target as HTMLElement;
   const targetRoot = findRootOfDraggableItem(target);
   const clickOnUIElement = isSomeParentHaveClass(target, [
-    "widgets-hor-menu",
     "dropdown-menu",
     "modal-wrapper",
   ]);
@@ -105,52 +91,6 @@ export function bindDADItemEffect(
       ) {
         processSpacesDragAndDrop(mouseDownEvent, spacesConfig);
       }
-    } else if (widgetsConfig) {
-      if (isSomeParentHaveClass(target, "widget")) {
-        return processWidgetsDragAndDrop(mouseDownEvent, widgetsConfig);
-      } else {
-        // click empty canvas
-        return processMultiselection(mouseDownEvent, widgetsConfig);
-      }
-    }
-  } else if (widgetsConfig && mouseDownEvent.button === 2) {
-    // RIGHT_CLICK
-    //todo subscribe mouse up
-    const IGNORE_ELEMENTS = ["draggable-folder", "folder-item"];
-    if (
-      isSomeParentHaveClass(target, "bookmarks") &&
-      !isSomeParentHaveClass(target, IGNORE_ELEMENTS)
-    ) {
-      const onContextMenu = (e: MouseEvent) => {
-        const targetWidget = findParentWithClass(
-          mouseDownEvent.target,
-          "widget"
-        );
-        if (targetWidget) {
-          const targetWidgetId = getIdFromElement(targetWidget);
-          widgetsConfig.onWidgetsRightClick(
-            {
-              x: mouseDownEvent.clientX,
-              y: mouseDownEvent.clientY,
-            },
-            targetWidgetId
-          );
-          mouseDownEvent.preventDefault();
-          e.preventDefault();
-        } else {
-          widgetsConfig.onCanvasRightClick({
-            x: mouseDownEvent.clientX,
-            y: mouseDownEvent.clientY,
-          });
-          mouseDownEvent.preventDefault();
-          e.preventDefault();
-        }
-      };
-      document.addEventListener("contextmenu", onContextMenu);
-
-      return () => {
-        document.removeEventListener("contextmenu", onContextMenu);
-      };
     }
   }
 }

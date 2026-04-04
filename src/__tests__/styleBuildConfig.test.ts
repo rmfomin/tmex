@@ -234,13 +234,18 @@ describe("style build configuration", () => {
     expect(fs.existsSync(sharedComponentPath)).toBe(true);
   });
 
-  test("canvas stays flat because the repo already has components/canvas", () => {
+  test("canvas widget runtime was removed", () => {
     const sharedComponentPath = path.join(
       __dirname,
       "../../src/newtab/components/Canvas.tsx",
     );
+    const canvasDirPath = path.join(
+      __dirname,
+      "../../src/newtab/components/canvas",
+    );
 
-    expect(fs.existsSync(sharedComponentPath)).toBe(true);
+    expect(fs.existsSync(sharedComponentPath)).toBe(false);
+    expect(fs.existsSync(canvasDirPath)).toBe(false);
   });
 
   test("settings options stays shared in the flat structure", () => {

@@ -20,11 +20,6 @@ jest.mock("../api/api", () => ({
   loadFromNetwork: jest.fn(() => false),
 }));
 
-jest.mock("../newtab/components/canvas/WidgetsHorMenu", () => ({
-  defaultStickerColor: "#fff59d",
-  stickerSizeM: 16,
-}));
-
 const localStorageMock = {
   getItem: jest.fn(() => null),
   setItem: jest.fn(),
@@ -100,8 +95,6 @@ function createState(): AppState {
     sidebarHovered: false,
     alphaMode: false,
     loaded: true,
-    selectedWidgetIds: [],
-    editingWidgetId: undefined,
     page: "default",
     hiddenFeatureIsEnabled: false,
     apiCommandsQueue: [],

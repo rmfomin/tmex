@@ -17,15 +17,7 @@ import {
   createFolderWithStat,
   getCanDragChecker,
 } from "../../helpers/actionsHelpersWithDOM";
-import { Canvas } from "../Canvas";
-import { Point } from "../../helpers/MathTypes";
 import { TopBar } from "../TopBar/TopBar";
-import { hideWidgetsContextMenu } from "../canvas/widgetsContextMenu";
-import { hideWidgetsSelectionFrame } from "../canvas/widgetsSelectionFrame";
-import { canvasAPI } from "../canvas/canvasAPI";
-import { DropdownMenu } from "../dropdown/DropdownMenu";
-import { Options } from "../SettingsOptions";
-import { getCanvasMenuOption } from "../canvas/getCanvasMenuOptions";
 import { importFromJson } from "../../helpers/importExportHelpers";
 import { isEmptyDashboard } from "./isEmptyDashboard";
 import { getBookmarksViewState } from "./getBookmarksViewState";
@@ -39,14 +31,7 @@ export function Bookmarks(p: { appState: AppState }) {
     React.MouseEvent | undefined
   >(undefined);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [canvasMenuPos, setCanvasMenuPos] = useState<Point | undefined>(
-    undefined,
-  );
-  const [canvasMenuType, setCanvasMenuType] = useState<"canvas" | "widgets">(
-    "canvas",
-  );
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const bookmarksRef = useRef<HTMLDivElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,20 +42,8 @@ export function Bookmarks(p: { appState: AppState }) {
     ) {
       __prevCurrentSpaceId = p.appState.currentSpaceId;
       __prevSearch = p.appState.search;
-      if (p.appState.selectedWidgetIds.length > 0) {
-        dispatch({
-          type: Action.SelectWidgets,
-          widgetIds: [],
-        });
-      }
-      hideWidgetsContextMenu();
-      hideWidgetsSelectionFrame();
     }
-  }, [
-    p.appState.currentSpaceId,
-    p.appState.search,
-    p.appState.selectedWidgetIds,
-  ]);
+  }, [p.appState.currentSpaceId, p.appState.search]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -164,20 +137,6 @@ export function Bookmarks(p: { appState: AppState }) {
         });
       };
 
-      const onWidgetsRightClick = (pos: Point, targetWidgetId: number) => {
-        if (!p.appState.selectedWidgetIds.includes(targetWidgetId)) {
-          canvasAPI.selectWidgets(dispatch, [targetWidgetId]);
-        }
-        setCanvasMenuType("widgets");
-        setCanvasMenuPos(pos);
-      };
-
-      const onCanvasRightClick = (pos: Point) => {
-        setCanvasMenuType("canvas");
-        setCanvasMenuPos(pos);
-        canvasAPI.selectWidgets(dispatch, []);
-      };
-
       const canDrag = getCanDragChecker(p.appState.search, dispatch);
       return bindDADItemEffect(
         mouseDownEvent,
@@ -195,29 +154,6 @@ export function Bookmarks(p: { appState: AppState }) {
           onDragStarted: canDrag,
         },
         {
-          canvasEl: canvasRef.current!,
-          onWidgetsSelected: (widgetIds: number[]) => {
-            dispatch({ type: Action.SelectWidgets, widgetIds });
-          },
-          onWidgetsMoved: (positions: { id: number; pos: Point }[]) => {
-            mergeStepsInHistory((historyStepId) => {
-              positions.forEach((p) => {
-                dispatch({
-                  type: Action.UpdateWidget,
-                  widgetId: p.id,
-                  pos: { point: p.pos },
-                  historyStepId,
-                });
-              });
-            });
-          },
-          onSetEditingWidget: (widgetId: number | undefined) => {
-            dispatch({ type: Action.SetEditingWidget, widgetId });
-          },
-          onWidgetsRightClick,
-          onCanvasRightClick,
-        },
-        {
           onChangeSpacePosition,
           canSortSpaces: () => p.appState.spaces.length > 1,
         },
@@ -231,17 +167,6 @@ export function Bookmarks(p: { appState: AppState }) {
       setMouseDownEvent(e);
     }
   }
-
-  const getCanvasMenuOptionWrapper = () => {
-    const { folders } = getBookmarksViewState(p.appState);
-    return getCanvasMenuOption(
-      dispatch,
-      canvasMenuType,
-      p.appState,
-      folders,
-      () => setCanvasMenuPos(undefined),
-    );
-  };
 
   function onCreateFolder() {
     const folderId = createFolderWithStat(
@@ -259,7 +184,7 @@ export function Bookmarks(p: { appState: AppState }) {
     importInputRef.current?.click();
   }
 
-  const { folders, widgets } = getBookmarksViewState(p.appState);
+  const { folders } = getBookmarksViewState(p.appState);
   const showEmptyImport = isEmptyDashboard(p.appState);
 
   return (
@@ -270,12 +195,6 @@ export function Bookmarks(p: { appState: AppState }) {
         ref={bookmarksRef}
         onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
       >
-        <Canvas
-          selectedWidgetIds={p.appState.selectedWidgetIds}
-          editingWidgetId={p.appState.editingWidgetId}
-          widgets={widgets}
-        />
-        <canvas id="canvas-selection" ref={canvasRef}></canvas>
         <input
           ref={importInputRef}
           type="file"
@@ -319,17 +238,6 @@ export function Bookmarks(p: { appState: AppState }) {
           <div className={styles.noBookmarksFound}>No bookmarks found</div>
         ) : null}
       </div>
-
-      {canvasMenuPos && p.appState.search === "" && (
-        <DropdownMenu
-          onClose={() => {
-            setCanvasMenuPos(undefined);
-          }}
-          absPosition={canvasMenuPos}
-        >
-          <Options optionsConfig={getCanvasMenuOptionWrapper} />
-        </DropdownMenu>
-      )}
     </div>
   );
 }

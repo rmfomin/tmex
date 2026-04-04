@@ -1,5 +1,5 @@
 import { isContainsSearch } from "../../helpers/utils";
-import { Widget, SpaceV3, FolderV3 } from "../../helpers/types";
+import { SpaceV3, FolderV3 } from "../../helpers/types";
 import type { AppState } from "../../state/state";
 import { findSpaceById } from "../../state/actionHelpers";
 
@@ -10,11 +10,9 @@ export function getBookmarksViewState(
   >,
 ): {
   folders: FolderV3[];
-  widgets: Widget[];
 } {
   const canShowArchived = appState.showArchived || appState.search.length > 0;
   let folders: FolderV3[] = [];
-  let widgets: Widget[] = [];
 
   if (appState.search === "") {
     const currentSpace = findSpaceById(
@@ -28,8 +26,6 @@ export function getBookmarksViewState(
         : currentSpace.folders.filter(
             (folder) => canShowArchived || !folder.archived,
           );
-
-      widgets = currentSpace.widgets ?? [];
     }
   } else {
     const searchValueLC = appState.search.toLowerCase();
@@ -57,5 +53,5 @@ export function getBookmarksViewState(
     });
   }
 
-  return { folders, widgets };
+  return { folders };
 }
