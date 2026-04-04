@@ -79,7 +79,6 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
           ],
         },
       ],
-      widgets: [],
     },
   ];
 
@@ -123,7 +122,6 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
             ],
           },
         ],
-        widgets: [],
       },
     ],
   });

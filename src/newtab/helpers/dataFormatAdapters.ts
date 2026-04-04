@@ -105,7 +105,6 @@ function convertSpaceV3ToLegacy(space: SpaceV3): LegacySpace {
     id: space.id,
     position: space.position,
     title: space.title,
-    widgets: space.widgets,
     folders: space.folders.map(convertFolderV3ToLegacy),
   };
 }
@@ -155,7 +154,6 @@ function convertLegacySpaceToV3(space: LegacySpace): SpaceV3 {
     objectType: "space",
     title: space.title,
     folders: space.folders.map(convertLegacyFolderToV3),
-    widgets: space.widgets,
   };
 }
 

@@ -61,7 +61,6 @@ test("normalizeStateFromStorageResult migrates legacy v2 spaces to v3", () => {
             ],
           },
         ],
-        widgets: [],
       },
     ],
     version: 2,
@@ -96,7 +95,6 @@ test("normalizeStateFromStorageResult migrates legacy v2 spaces to v3", () => {
           ],
         },
       ],
-      widgets: [],
     },
   ]);
 });
@@ -137,7 +135,6 @@ test("normalizeStateFromStorageResult normalizes v3 spaces with missing objectTy
             ],
           },
         ],
-        widgets: [],
       } satisfies SpaceV3,
     ],
     version: 3,

@@ -48,7 +48,6 @@ function createSpacesFixture(): SpaceV3[] {
           ],
         },
       ],
-      widgets: [],
     },
   ];
 }

@@ -98,7 +98,6 @@ const RecentList = React.memo(
 export const SidebarRecent = React.memo(
   (p: {
     recentItems: RecentItem[];
-    alphaMode: boolean;
     search: string;
     spaces: SpaceV3[];
   }) => {
@@ -125,7 +124,7 @@ export const SidebarRecent = React.memo(
         : getBaseFilteredRecentItems(itemsFilteredBySearch);
 
     const moreSearchResultsCount =
-      p.search !== "" && p.alphaMode && enabledFiltersCount > 0
+      p.search !== "" && enabledFiltersCount > 0
         ? itemsFilteredBySearch.length - itemsFilteredBySearchAndFilter.length
         : 0;
 
@@ -172,16 +171,14 @@ export const SidebarRecent = React.memo(
         >
           <div className="inner-header">
             <span className="app-sidebar__header__text">Recent</span>
-            {p.alphaMode && (
-              <button
-                className={CL("btn__icon", { active: filterByDomainEnabled })}
-                style={{ position: "relative" }}
-                title="Filter recent by domain"
-                onClick={onFiltersPanelClick}
-              >
-                <IconFilter />
-              </button>
-            )}
+            <button
+              className={CL("btn__icon", { active: filterByDomainEnabled })}
+              style={{ position: "relative" }}
+              title="Filter recent by domain"
+              onClick={onFiltersPanelClick}
+            >
+              <IconFilter />
+            </button>
           </div>
 
           {filterByDomainEnabled && (

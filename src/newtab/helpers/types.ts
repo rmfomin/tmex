@@ -15,7 +15,6 @@ export interface LegacyObject {
 export interface LegacySpace extends LegacyObject {
   title: string;
   folders: LegacyFolder[];
-  widgets?: Widget[];
 }
 
 /**
@@ -41,29 +40,6 @@ export interface LegacyFolderItem extends LegacyObject {
   archived?: boolean;
   isSection?: boolean; // todo - replace on "type later". not store bool on server
   inEdit?: boolean;
-}
-
-export type WidgetType = "Sticker";
-
-export type WidgetPos = {
-  point: {
-    x: number;
-    y: number;
-  };
-};
-
-export type WidgetContent = {
-  contentType: "Sticker";
-  text: string;
-  color: string;
-  fontSize: number;
-  strikethrough?: boolean;
-};
-
-export interface Widget extends LegacyObject {
-  widgetType: WidgetType;
-  pos: WidgetPos; // this is actual {x,y} position for widgets
-  content: WidgetContent;
 }
 
 /**
@@ -113,7 +89,6 @@ export interface SpaceV3 {
   objectType: "space";
   title: string;
   folders: FolderV3[];
-  widgets?: Widget[];
 }
 
 export interface FolderV3 {

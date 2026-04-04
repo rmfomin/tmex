@@ -118,7 +118,6 @@ export const HelpOptions = (p: { appState: AppState }) => {
       title:
         "Sometimes favicons are not showing, this option may help to fix it. Applied only for bookmarks in the current space.",
       text: "Reload favicons",
-      // hidden: !p.appState.alphaMode,
     },
     {
       separator: true,

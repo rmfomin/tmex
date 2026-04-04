@@ -78,7 +78,6 @@ function createState(): AppState {
             twoColumn: true,
           },
         ],
-        widgets: [],
       },
       {
         id: 2,
@@ -86,7 +85,6 @@ function createState(): AppState {
         objectType: "space",
         title: "Target",
         folders: [],
-        widgets: [],
       },
     ],
     recentItems: [],
@@ -102,7 +100,6 @@ function createState(): AppState {
     openBookmarksInNewTab: false,
     sidebarCollapsed: false,
     sidebarHovered: false,
-    alphaMode: false,
     loaded: true,
     page: "default",
     hiddenFeatureIsEnabled: false,

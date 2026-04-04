@@ -15,7 +15,6 @@ test("creates default Bookmarks space when spaces are empty", () => {
       objectType: "space",
       title: "Bookmarks",
       folders: [],
-      widgets: [],
     },
   ]);
   expect(state.currentSpaceId).toBe(1);

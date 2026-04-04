@@ -98,10 +98,6 @@ export function processSpacesDragAndDrop(
     if (dummy) {
       document.body.classList.remove("dragging");
       dummy.clonedSpacesList.remove();
-      console.log(
-        dummy.draggingItem.dataset.spaceId!,
-        dummy.draggingItem.dataset.position!
-      );
       config.onChangeSpacePosition(
         parseInt(dummy.draggingItem.dataset.spaceId!, 10),
         dummy.draggingItem.dataset.position!
@@ -138,7 +134,6 @@ function createClonedSpacesList(target: HTMLElement): InitRes {
   origItems.forEach((item) => {
     const clonedItem = item.cloneNode(true) as HTMLElement;
     const itemRect = item.getBoundingClientRect();
-    console.log(itemRect);
     clonedItem.style.position = "absolute";
     clonedItem.style.width = `${itemRect.width}px`;
     clonedItem.style.top = `${itemRect.top - listRect.top}px`;

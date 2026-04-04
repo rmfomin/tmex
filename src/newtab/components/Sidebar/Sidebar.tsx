@@ -200,7 +200,6 @@ export function Sidebar(p: { appState: AppState }) {
       {(p.appState.showRecent || p.appState.search) && (
         <SidebarRecent
           search={p.appState.search}
-          alphaMode={p.appState.alphaMode}
           recentItems={p.appState.recentItems}
           spaces={p.appState.spaces}
         ></SidebarRecent>

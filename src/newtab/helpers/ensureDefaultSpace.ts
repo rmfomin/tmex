@@ -14,7 +14,6 @@ export function ensureDefaultSpace(state: SavingState): void {
       objectType: "space",
       title: "Bookmarks",
       folders: [],
-      widgets: [],
     },
   ];
 

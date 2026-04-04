@@ -28,20 +28,6 @@ function createAppState(): AppState {
             items: [],
           },
         ],
-        widgets: [
-          {
-            id: 1000,
-            position: "a0",
-            widgetType: "Sticker",
-            pos: { point: { x: 10, y: 20 } },
-            content: {
-              contentType: "Sticker",
-              text: "Hello",
-              color: "#fff59d",
-              fontSize: 16,
-            },
-          },
-        ],
       },
       {
         id: 2,
@@ -74,7 +60,6 @@ function createAppState(): AppState {
             ],
           },
         ],
-        widgets: [],
       },
     ],
     recentItems: [],
@@ -91,7 +76,6 @@ function createAppState(): AppState {
     sidebarCollapsed: false,
     colorTheme: "light",
     sidebarHovered: false,
-    alphaMode: false,
     page: "default",
     achievements: {
       folderCreated: 0,

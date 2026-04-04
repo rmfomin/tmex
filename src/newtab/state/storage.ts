@@ -26,7 +26,6 @@ function saveState(appState: AppState): void {
   chrome.storage.local.set(savingState, () => {
     // TODO. store in LS only when last transaction confirmed by server
     // if last transaction was not confirmed, reload app and use prev state from LS
-    console.log("SAVED", savingState);
     bc.postMessage({ type: "folders-updated" });
   });
 }
@@ -82,7 +81,6 @@ export function getStateFromLS(
 ): void {
   chrome.storage.local.get(savingStateKeys, (res) => {
     const result = normalizeStateFromStorageResult(res);
-    console.log("getStateFromLS", res, result);
     callback(result);
   });
 }
@@ -125,31 +123,3 @@ function setThemeStyle(useDarkMode: boolean) {
     document.documentElement.classList.remove("dark-theme");
   }
 }
-
-////////////////////////////////////////////////////////
-// DEBUG COMMANDS
-////////////////////////////////////////////////////////
-const cmd: any = {};
-(window as any).cmd = cmd;
-
-cmd.clearChromeStorage = () => {
-  chrome.storage.local.clear();
-};
-cmd.clearLocalStorage = () => {
-  localStorage.clear();
-};
-
-cmd.clearChromeAndLocalStorages = () => {
-  chrome.storage.local.clear();
-  localStorage.clear();
-};
-
-cmd.startAlpha = () => {
-  localStorage.setItem("betaStickers", "true");
-  location.reload();
-};
-
-cmd.stopAlpha = () => {
-  localStorage.removeItem("betaStickers");
-  location.reload();
-};

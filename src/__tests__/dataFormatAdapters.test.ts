@@ -48,7 +48,6 @@ test("legacy round-trip is lossy for groups and collapsed flags", () => {
             ],
           },
         ],
-        widgets: [],
       },
     ],
   };

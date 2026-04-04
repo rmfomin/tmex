@@ -10,7 +10,7 @@ test("returns true when there is no current space", () => {
   ).toBe(true);
 });
 
-test("returns true when current space has no folders and widgets", () => {
+test("returns true when current space has no folders", () => {
   expect(
     isEmptyDashboard({
       spaces: [
@@ -20,7 +20,6 @@ test("returns true when current space has no folders and widgets", () => {
           objectType: "space",
           title: "Space",
           folders: [],
-          widgets: [],
         },
       ],
       currentSpaceId: 1,

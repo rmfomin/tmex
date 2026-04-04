@@ -59,10 +59,8 @@ export function SpacesList(p: {
 
   const deleteSpace = (space: SpaceV3) => {
     const bookmarksCount = collectBookmarksV3([space]).length;
-    const stickersCount = space.widgets?.length ?? 0;
-    const totalCount = bookmarksCount + stickersCount;
     let res = true;
-    if (totalCount > 0) {
+    if (bookmarksCount > 0) {
       res = confirm(`Delete the space '${space.title}'?`);
     }
     if (res) {

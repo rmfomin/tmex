@@ -63,7 +63,6 @@ export function stateReducer(
 ): AppState {
   // unselectAll()
   const newState = stateReducer0(state, action);
-  console.log("[action]:", action, " [new state]:", newState);
 
   const haveSomethingToSave = savingStateKeys.some(
     (key) => state[key] !== newState[key]
