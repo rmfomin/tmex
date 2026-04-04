@@ -1,20 +1,10 @@
-import { APIResponseDashboard } from "./api-types";
-
-export async function apiGetDashboard(): Promise<APIResponseDashboard> {
-  return fetchGET(`${BASE_URL}/api/dashboard`);
-}
-
-////////////////////////////////////////////////////////////
-// BASE
-////////////////////////////////////////////////////////////
-
 export const BASE_URL =
   localStorage.getItem("BASE_URL") ?? "http://localhost:8080/my-app-name";
 
 export async function fetchPOST<T>(
   url: string,
   body: Object,
-  useToken = true
+  useToken = true,
 ): Promise<T> {
   console.log("API_POST:: ", url, body);
   let headers: any = {

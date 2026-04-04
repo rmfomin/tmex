@@ -2,7 +2,7 @@ import { BASE_URL, fetchPOST } from "./api";
 import {
   APIResponseEntityCreated,
   APIResponseEntityUpdatedOrDeleted,
-} from "./api-types";
+} from "../types/api";
 import { ActionDispatcher } from "../newtab/state/actions";
 import { Action, APICommandPayloadFull } from "../newtab/state/state";
 

@@ -7,7 +7,7 @@ import {
   SavingState,
   saveStateThrottled,
 } from "./state/storage";
-import { apiGetDashboard, loadFromNetwork } from "../api/api";
+import { loadFromNetwork } from "../api/api";
 import { createRoot } from "react-dom/client";
 import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
 import { faviconsStorage } from "./helpers/faviconUtils";
@@ -16,16 +16,8 @@ import { collectBookmarksV3, hasArchivedItemsV3 } from "./helpers/v3Traversal";
 
 if (loadFromNetwork()) {
   getStateFromLS((res) => {
-    apiGetDashboard()
-      .then((dashboard) => {
-        console.log(dashboard.spaces);
-        setInitAppState(res);
-        mountApp();
-      })
-      .catch((error) => {
-        console.error(error);
-        runLocally();
-      });
+    setInitAppState(res);
+    mountApp();
   });
 } else {
   runLocally();
