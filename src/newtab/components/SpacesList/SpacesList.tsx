@@ -1,15 +1,16 @@
 import React, { useContext, useState } from "react";
-import PlusIcon from "../icons/plus.svg";
-import DeleteIcon from "../icons/delete.svg";
-import { SpaceV3 } from "../helpers/types";
-import { CL } from "../helpers/classNameHelper";
-import { DispatchContext } from "../state/actions";
-import { Action } from "../state/state";
-import { SimpleEditableTitle } from "./EditableTitle";
-import { DropdownMenu } from "./dropdown/DropdownMenu";
-import { genUniqLocalId } from "../state/actionHelpers";
-import { insertBetween } from "../helpers/fractionalIndexes";
-import { collectBookmarksV3 } from "../helpers/v3Traversal";
+import PlusIcon from "../../icons/plus.svg";
+import DeleteIcon from "../../icons/delete.svg";
+import { SpaceV3 } from "../../helpers/types";
+import { CL } from "../../helpers/classNameHelper";
+import { DispatchContext } from "../../state/actions";
+import { Action } from "../../state/state";
+import { SimpleEditableTitle } from "../EditableTitle";
+import { DropdownMenu } from "../dropdown/DropdownMenu";
+import { genUniqLocalId } from "../../state/actionHelpers";
+import { insertBetween } from "../../helpers/fractionalIndexes";
+import { collectBookmarksV3 } from "../../helpers/v3Traversal";
+import styles from "./SpacesList.module.scss";
 
 export function SpacesList(p: {
   spaces: SpaceV3[];
@@ -19,7 +20,6 @@ export function SpacesList(p: {
   const dispatch = useContext(DispatchContext);
 
   const [menuSpaceId, setMenuSpaceId] = useState(-1);
-  // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
 
   const setEditingSpaceId = (spaceId: number | undefined) => {
     dispatch({
@@ -92,7 +92,7 @@ export function SpacesList(p: {
   };
 
   return (
-    <div className="spaces-list">
+    <div className={styles.spacesList}>
       {p.spaces.length === 0 && (
         <span style={{ padding: "8px" }}>no spaces</span>
       )}
@@ -100,8 +100,8 @@ export function SpacesList(p: {
         return (
           <span
             key={space.id}
-            className={CL("spaces-list__item", {
-              active: space.id === p.currentSpaceId,
+            className={CL(styles.item, {
+              [styles.active]: space.id === p.currentSpaceId,
             })}
             onClick={() => onSpaceClick(space.id)}
             data-position={space.position}
@@ -116,7 +116,7 @@ export function SpacesList(p: {
             />
             {space.id === p.itemInEdit && p.spaces.length > 1 && (
               <button
-                className="spaces-list__delete-button"
+                className={styles.deleteButton}
                 title="Delete space"
                 onMouseDown={() => deleteSpace(space)}
               >
@@ -152,17 +152,13 @@ export function SpacesList(p: {
       })}
       {!p.itemInEdit && (
         <div
-          className="spaces-list__new"
+          className={styles.newButton}
           onClick={onAddSpace}
           title="Add new space"
         >
           <PlusIcon />
         </div>
       )}
-
-      {/* {isJoinBetaModalOpen && (
-        <JoinBetaModal onClose={() => setJoinBetaModalOpen(false)} />
-      )} */}
     </div>
   );
 }

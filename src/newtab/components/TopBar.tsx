@@ -8,7 +8,7 @@ import { CL } from "../helpers/classNameHelper";
 import IconHelp from "../icons/help.svg";
 import IconSettings from "../icons/settings.svg";
 import IconFind from "../icons/find.svg";
-import { SpacesList } from "./SpacesList";
+import { SpacesList } from "./SpacesList/SpacesList";
 
 export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const dispatch = useContext(DispatchContext);
