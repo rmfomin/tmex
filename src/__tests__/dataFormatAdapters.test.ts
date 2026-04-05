@@ -4,6 +4,7 @@ import {
   convertFolderPatchV3ToLegacy,
   convertFolderV3ToLegacy,
   convertV3BackupToLegacySpaces,
+  normalizeBackupV3,
 } from "../newtab/helpers/dataFormatAdapters";
 import { DataBackupV3, FolderV3 } from "../newtab/helpers/types";
 
@@ -145,4 +146,119 @@ test("legacy compatibility patch serializers strip v3-only fields", () => {
     url: undefined,
     favIconUrl: "https://icon.example/favicon.ico",
   });
+});
+
+test("normalizeBackupV3 sorts all nested collections by position", () => {
+  const backup: DataBackupV3 = {
+    isTabme: true,
+    version: 3,
+    spaces: [
+      {
+        id: 2,
+        position: "z0",
+        objectType: "space",
+        title: "Later",
+        folders: [
+          {
+            id: 20,
+            position: "z0",
+            objectType: "folder",
+            title: "Later folder",
+            items: [
+              {
+                id: 200,
+                position: "z0",
+                type: "bookmark",
+                title: "Later item",
+                url: "https://later.example",
+                favIconUrl: "",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 1,
+        position: "a0",
+        objectType: "space",
+        title: "Earlier",
+        folders: [
+          {
+            id: 11,
+            position: "z0",
+            objectType: "folder",
+            title: "Second folder",
+            items: [
+              {
+                id: 111,
+                position: "z0",
+                type: "bookmark",
+                title: "Second item",
+                url: "https://second.example",
+                favIconUrl: "",
+              },
+            ],
+          },
+          {
+            id: 10,
+            position: "a0",
+            objectType: "folder",
+            title: "First folder",
+            items: [
+              {
+                id: 101,
+                position: "z0",
+                type: "group",
+                title: "Grouped",
+                groupItems: [
+                  {
+                    id: 1012,
+                    position: "z0",
+                    type: "bookmark",
+                    title: "Second grouped item",
+                    url: "https://group-second.example",
+                    favIconUrl: "",
+                  },
+                  {
+                    id: 1011,
+                    position: "a0",
+                    type: "bookmark",
+                    title: "First grouped item",
+                    url: "https://group-first.example",
+                    favIconUrl: "",
+                  },
+                ],
+              },
+              {
+                id: 100,
+                position: "a0",
+                type: "bookmark",
+                title: "First item",
+                url: "https://first.example",
+                favIconUrl: "",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  const result = normalizeBackupV3(backup);
+
+  expect(result.spaces.map((space) => space.title)).toEqual(["Earlier", "Later"]);
+  expect(result.spaces[0].folders.map((folder) => folder.title)).toEqual([
+    "First folder",
+    "Second folder",
+  ]);
+  expect(result.spaces[0].folders[0].items.map((item) => item.title)).toEqual([
+    "First item",
+    "Grouped",
+  ]);
+  const groupedItem = result.spaces[0].folders[0].items[1];
+  expect(groupedItem.type).toBe("group");
+  expect(groupedItem.type === "group" ? groupedItem.groupItems.map((item) => item.title) : []).toEqual([
+    "First grouped item",
+    "Second grouped item",
+  ]);
 });

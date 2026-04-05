@@ -42,6 +42,8 @@ Object.defineProperty(global, "window", {
 });
 
 const { createExportBackupV3 } = require("../newtab/helpers/importExportHelpers");
+const { normalizeBackupV3 } = require("../newtab/helpers/dataFormatAdapters");
+const legacyExportFixture = require("../../docs/tech-debt/0204-1.json");
 
 test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => {
   const spaces: SpaceV3[] = [
@@ -125,4 +127,10 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
       },
     ],
   });
+});
+
+test("createExportBackupV3 is compatible with the committed v3 backup fixture", () => {
+  expect(createExportBackupV3(legacyExportFixture.spaces)).toEqual(
+    normalizeBackupV3(legacyExportFixture),
+  );
 });

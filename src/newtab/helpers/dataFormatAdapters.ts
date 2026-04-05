@@ -9,6 +9,7 @@ import {
   LegacyFolderItemApiPayload,
   SpaceV3,
 } from "./types";
+import { sortByPosition } from "./fractionalIndexes";
 
 function normalizeBookmarkItemV3(item: BookmarkItemV3): BookmarkItemV3 {
   return {
@@ -21,7 +22,7 @@ function normalizeGroupV3(item: GroupV3): GroupV3 {
   return {
     ...item,
     objectType: "group",
-    groupItems: item.groupItems.map(normalizeBookmarkItemV3),
+    groupItems: sortByPosition(item.groupItems.map(normalizeBookmarkItemV3)),
   };
 }
 
@@ -37,7 +38,7 @@ function normalizeFolderV3(folder: FolderV3): FolderV3 {
   return {
     ...folder,
     objectType: "folder",
-    items: folder.items.map(normalizeItemV3),
+    items: sortByPosition(folder.items.map(normalizeItemV3)),
   };
 }
 
@@ -45,14 +46,14 @@ function normalizeSpaceV3(space: SpaceV3): SpaceV3 {
   return {
     ...space,
     objectType: "space",
-    folders: space.folders.map(normalizeFolderV3),
+    folders: sortByPosition(space.folders.map(normalizeFolderV3)),
   };
 }
 
 export function normalizeBackupV3(data: DataBackupV3): DataBackupV3 {
   return {
     ...data,
-    spaces: data.spaces.map(normalizeSpaceV3),
+    spaces: sortByPosition(data.spaces.map(normalizeSpaceV3)),
   };
 }
 
