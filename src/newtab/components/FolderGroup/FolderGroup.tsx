@@ -7,6 +7,7 @@ import { EditableTitle } from "../EditableTitle/EditableTitle";
 import { DispatchContext } from "../../state/actions";
 import { Action } from "../../state/state";
 import { CL } from "../../helpers/classNameHelper";
+import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
 import ChevronIcon from "../../icons/shevron.svg";
 import "./FolderGroup.module.scss";
 
@@ -22,6 +23,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   hiddenFeatureIsEnabled: boolean;
 }) {
   const dispatch = useContext(DispatchContext);
+  const [showMenu, setShowMenu] = useState(false);
   const [localTitle, setLocalTitle] = useState(p.group.title);
 
   useEffect(() => {
@@ -56,11 +58,26 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
     setEditing(false);
   }
 
+  function onRename() {
+    setEditing(true);
+    setShowMenu(false);
+  }
+
+  function onOpenAllTabs() {
+    setShowMenu(false);
+  }
+
+  function onHeaderContextMenu(e: React.MouseEvent) {
+    e.preventDefault();
+    setShowMenu(true);
+  }
+
   return (
     <div className="folder-group" data-group-id={p.group.id}>
       <div
         className="folder-group__header draggable-item"
         data-id={p.group.id}
+        onContextMenu={onHeaderContextMenu}
         onDragStart={(e) => {
           e.preventDefault();
         }}
@@ -73,7 +90,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           setLocalTitle={setLocalTitle}
           onSaveTitle={saveGroupTitle}
           search={p.search}
-          onClick={() => setEditing(true)}
+          onDoubleClick={() => setEditing(true)}
         />
         <button
           className={CL("folder-group__toggle", {
@@ -84,6 +101,26 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
         >
           <ChevronIcon />
         </button>
+        {showMenu ? (
+          <DropdownMenu
+            onClose={() => setShowMenu(false)}
+            className="dropdown-menu--folder-group"
+            offset={{ top: 4, left: 24, bottom: 20 }}
+          >
+            <button
+              className="dropdown-menu__button focusable"
+              onClick={onRename}
+            >
+              Rename
+            </button>
+            <button
+              className="dropdown-menu__button focusable"
+              onClick={onOpenAllTabs}
+            >
+              Open all tabs
+            </button>
+          </DropdownMenu>
+        ) : null}
       </div>
       <div className="folder-group__items">
         {p.items.map((item) => (

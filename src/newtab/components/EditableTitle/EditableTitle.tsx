@@ -4,6 +4,7 @@ import { hlSearch } from "../../helpers/utils";
 export function EditableTitle(p: {
   className?: string;
   onClick?: () => void;
+  onDoubleClick?: () => void;
   inEdit: boolean;
   setEditing?: (value: boolean) => void; //todo seems like it can be simplified and setEditing() can be removed at all
   localTitle: string;
@@ -70,6 +71,7 @@ export function EditableTitle(p: {
       ) : (
         <span
           onClick={p.onClick}
+          onDoubleClick={p.onDoubleClick}
           className={p.className}
           dangerouslySetInnerHTML={hlSearch(p.localTitle, p.search)}
         />

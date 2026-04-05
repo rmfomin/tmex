@@ -276,7 +276,7 @@ export const Folder = React.memo(function Folder(p: {
           setLocalTitle={setLocalTitle}
           onSaveTitle={saveFolderTitle}
           search={p.search}
-          onClick={() => setEditing(true)}
+          onDoubleClick={() => setEditing(true)}
         />
         {p.folder.archived ? <span> [hidden]</span> : ""}
         <span
