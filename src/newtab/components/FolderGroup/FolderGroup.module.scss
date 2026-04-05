@@ -1,8 +1,26 @@
 :global(.folder-group) {
-  margin: 8px 0 12px 0;
-  padding: 6px 8px 8px 0;
-  border: 1px solid color-mix(in srgb, var(--border-color) 65%, white 35%);
+  position: relative;
+  margin: 8px 0 8px 0;
+  padding: 4px 8px 6px 0;
   border-radius: 10px;
+  background: transparent;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+:global(.folder-group::before) {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 10px;
+  z-index: 0;
+  border-radius: 10px;
+  background: transparent;
+  pointer-events: none;
+  transition: background-color 0.16s ease;
+}
+
+:global(.folder-group:hover::before) {
   background: color-mix(
     in srgb,
     var(--popup-background-color) 45%,
@@ -11,9 +29,13 @@
 }
 
 :global(.folder-group__header) {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   min-height: 28px;
+  gap: 4px;
+  padding-left: 22px;
 }
 
 :global(.folder-group__toggle) {
@@ -25,10 +47,10 @@
   width: 24px;
   height: 24px;
   padding: 0;
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 
   svg {
     width: 16px;
@@ -48,12 +70,12 @@
   font-size: 13px;
   font-weight: 600;
   margin: 0;
-  padding-left: 28px;
   flex: 1;
   cursor: grab;
 }
 
 :global(.folder-group__items) {
   position: relative;
+  z-index: 1;
   padding-top: 2px;
 }

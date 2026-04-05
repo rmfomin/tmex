@@ -82,6 +82,15 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           e.preventDefault();
         }}
       >
+        <button
+          className={CL("folder-group__toggle", {
+            "folder-group__toggle--collapsed": p.group.collapsed,
+          })}
+          onClick={onToggleCollapsed}
+          title={p.group.collapsed ? "Expand group" : "Collapse group"}
+        >
+          <ChevronIcon />
+        </button>
         <EditableTitle
           className="folder-group__title"
           inEdit={p.group.id === p.itemInEdit}
@@ -92,15 +101,6 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           search={p.search}
           onDoubleClick={() => setEditing(true)}
         />
-        <button
-          className={CL("folder-group__toggle", {
-            "folder-group__toggle--collapsed": p.group.collapsed,
-          })}
-          onClick={onToggleCollapsed}
-          title={p.group.collapsed ? "Expand group" : "Collapse group"}
-        >
-          <ChevronIcon />
-        </button>
         {showMenu ? (
           <DropdownMenu
             onClose={() => setShowMenu(false)}
