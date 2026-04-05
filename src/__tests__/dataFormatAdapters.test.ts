@@ -10,7 +10,7 @@ import { DataBackupV3, FolderV3 } from "../newtab/helpers/types";
 
 test("legacy round-trip is lossy for groups and collapsed flags", () => {
   const backup: DataBackupV3 = {
-    isTabme: true,
+    isTabowski: true,
     version: 3,
     spaces: [
       {
@@ -150,7 +150,7 @@ test("legacy compatibility patch serializers strip v3-only fields", () => {
 
 test("normalizeBackupV3 sorts all nested collections by position", () => {
   const backup: DataBackupV3 = {
-    isTabme: true,
+    isTabowski: true,
     version: 3,
     spaces: [
       {

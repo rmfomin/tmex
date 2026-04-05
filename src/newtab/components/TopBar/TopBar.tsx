@@ -58,7 +58,7 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
           tabIndex={1}
           className="search"
           type="text"
-          placeholder="Search in Tabme"
+          placeholder="Search in Tabowski"
           value={p.appState.search}
           onChange={onSearchChange}
           onKeyDown={(e) => handleSearchKeyDown(e, onClearSearch)}

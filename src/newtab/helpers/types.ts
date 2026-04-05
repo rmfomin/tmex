@@ -74,13 +74,22 @@ export type ColorTheme = "light" | "dark" | undefined;
 
 export type ItemTypeV3 = "bookmark" | "group";
 
+export type BackupBrandMarker =
+  | {
+      isTabowski: true;
+      isTabme?: never;
+    }
+  | {
+      isTabowski?: never;
+      isTabme: true;
+    };
+
 // v3 data
 
-export interface DataBackupV3 {
-  isTabme: true;
+export type DataBackupV3 = BackupBrandMarker & {
   version: 3;
   spaces: SpaceV3[];
-}
+};
 
 export interface SpaceV3 {
   id: number;

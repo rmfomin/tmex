@@ -165,7 +165,7 @@ export function convertToURL(val?: string | URL): URL | undefined {
 export function getTempFavIconUrl(val?: string | URL): string {
   const url = convertToURL(val)
   if (url) {
-    return url.origin + "/favicon.ico#by-tabme"
+    return url.origin + "/favicon.ico#by-tabowski"
   } else {
     return ""
   }
@@ -372,5 +372,5 @@ export function updateFolderItem(
 }
 
 export function isCustomActionItem(item: BookmarkItemV3 | undefined): boolean {
-  return item?.url.includes("tabme://") ?? false
+  return item?.url.includes("tabowski://") ?? false
 }

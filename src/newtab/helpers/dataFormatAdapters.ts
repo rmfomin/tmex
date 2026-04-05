@@ -160,7 +160,7 @@ function convertLegacySpaceToV3(space: LegacySpace): SpaceV3 {
 
 export function convertLegacySpacesToV3Backup(spaces: LegacySpace[]): DataBackupV3 {
   return {
-    isTabme: true,
+    isTabowski: true,
     version: 3,
     spaces: spaces.map(convertLegacySpaceToV3),
   };
@@ -174,7 +174,7 @@ export function getLegacySpacesView(spaces: SpaceV3[] | LegacySpace[]): LegacySp
 
   if ("objectType" in firstSpace && firstSpace.objectType === "space") {
     return convertV3BackupToLegacySpaces({
-      isTabme: true,
+      isTabowski: true,
       version: 3,
       spaces: spaces as SpaceV3[],
     });
@@ -191,7 +191,7 @@ export function getV3SpacesView(spaces: SpaceV3[] | LegacySpace[]): SpaceV3[] {
 
   if ("objectType" in firstSpace && firstSpace.objectType === "space") {
     return normalizeBackupV3({
-      isTabme: true,
+      isTabowski: true,
       version: 3,
       spaces: spaces as SpaceV3[],
     }).spaces;

@@ -42,8 +42,9 @@ Object.defineProperty(global, "window", {
 });
 
 const { createExportBackupV3 } = require("../newtab/helpers/importExportHelpers");
+const { importFromJson } = require("../newtab/helpers/importExportHelpers");
 const { normalizeBackupV3 } = require("../newtab/helpers/dataFormatAdapters");
-const legacyExportFixture = require("../../docs/tech-debt/0204-1.json");
+const legacyExportFixture = require("../../docs/tech-debt/02apr.json");
 
 test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => {
   const spaces: SpaceV3[] = [
@@ -85,7 +86,7 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
   ];
 
   expect(createExportBackupV3(spaces)).toEqual({
-    isTabme: true,
+    isTabowski: true,
     version: 3,
     spaces: [
       {
@@ -133,4 +134,59 @@ test("createExportBackupV3 is compatible with the committed v3 backup fixture", 
   expect(createExportBackupV3(legacyExportFixture.spaces)).toEqual(
     normalizeBackupV3(legacyExportFixture),
   );
+});
+
+test("importFromJson accepts legacy tabme-branded v3 backups", () => {
+  const dispatch = jest.fn();
+  const fileContents = JSON.stringify({
+    isTabme: true,
+    version: 3,
+    spaces: [
+      {
+        id: 1,
+        position: "a0",
+        objectType: "space",
+        title: "Main",
+        folders: [],
+      },
+    ],
+  });
+
+  Object.defineProperty(global, "FileReader", {
+    value: class {
+      onload: ((event: { target: { result: string } }) => void) | null = null;
+
+      readAsText() {
+        this.onload?.({ target: { result: fileContents } });
+      }
+    },
+    configurable: true,
+  });
+
+  importFromJson(
+    {
+      target: {
+        files: [{}],
+      },
+    },
+    dispatch,
+  );
+
+  expect(dispatch).toHaveBeenCalledWith({
+    type: "init-dashboard",
+    spaces: [
+      {
+        id: 1,
+        position: "a0",
+        objectType: "space",
+        title: "Main",
+        folders: [],
+      },
+    ],
+    saveToLS: true,
+  });
+  expect(dispatch).toHaveBeenCalledWith({
+    type: "select-space",
+    spaceId: -1,
+  });
 });

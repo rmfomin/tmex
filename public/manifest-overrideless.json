@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "short_name": "Tmex",
-  "name": "Tmex",
-  "description": "Tmex",
+  "short_name": "Tabowski",
+  "name": "Tabowski",
+  "description": "Tabowski",
   "version": "0.4",
   "author": "tmex@gmail.com",
   "icons": {
@@ -17,7 +17,7 @@
   },
   "action": {
     "default_icon": "icon_48.png",
-    "default_title": "Tmex"
+    "default_title": "Tabowski"
   },
   "permissions": ["bookmarks", "storage", "history", "tabs"],
   "optional_host_permissions": ["<all_urls>"]

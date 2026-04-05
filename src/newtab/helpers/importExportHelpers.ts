@@ -22,10 +22,18 @@ import {
 } from "./dataFormatAdapters";
 
 type LegacyBackup = {
-  isTabme: true;
+  isTabowski?: true;
+  isTabme?: true;
   version: number;
   spaces: LegacySpace[];
 };
+
+function hasSupportedBackupMarker(data: {
+  isTabowski?: true;
+  isTabme?: true;
+}) {
+  return data.isTabowski === true || data.isTabme === true;
+}
 
 // TODO(v3-migration): delete after legacy import formats are dropped.
 function isLegacyImportJson(data: LegacyFolder[]) {
@@ -34,11 +42,11 @@ function isLegacyImportJson(data: LegacyFolder[]) {
 
 // TODO(v3-migration): delete after version 2 backups are no longer supported.
 function isImportJsonV2(data: LegacyBackup) {
-  return data.isTabme && Array.isArray(data.spaces) && data.version === 2;
+  return hasSupportedBackupMarker(data) && Array.isArray(data.spaces) && data.version === 2;
 }
 
 function isImportJsonV3(data: DataBackupV3) {
-  return data.isTabme && Array.isArray(data.spaces) && data.version === 3;
+  return hasSupportedBackupMarker(data) && Array.isArray(data.spaces) && data.version === 3;
 }
 
 export function importFromJson(event: any, dispatch: ActionDispatcher) {
@@ -128,7 +136,7 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
 
 export function createExportBackupV3(spaces: SpaceV3[]): DataBackupV3 {
   return normalizeBackupV3({
-    isTabme: true,
+    isTabowski: true,
     version: 3,
     spaces,
   });
@@ -148,7 +156,7 @@ export function onExportJson(spaces: SpaceV3[]) {
   }
 
   const backup = createExportBackupV3(spaces);
-  downloadObjectAsJson(backup, "tabme_backup");
+  downloadObjectAsJson(backup, "tabowski_backup");
 }
 
 export function onImportFromToby(

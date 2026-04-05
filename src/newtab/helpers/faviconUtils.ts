@@ -129,14 +129,14 @@ export async function loadFaviconUrl(
   //
   // try {
   //   const encodedUrl = encodeURIComponent(bookmarkUrl)
-  //   const response = await fetch(`https://gettabme.com/app/?url=${encodedUrl}`)
+  //   const response = await fetch(`https://gettabowski.com/app/?url=${encodedUrl}`)
   //   const data = await response.json()
   //   if (data?.favicon) {
   //     registerInCache(data.favicon, bookmarkUrl)
   //     return data.favicon
   //   }
   // } catch (error) {
-  //   console.error("Error fetching favicon from gettabme.com:", error)
+  //   console.error("Error fetching favicon from gettabowski.com:", error)
   // }
   //
   // return getTempFavIconUrl(bookmarkUrl)

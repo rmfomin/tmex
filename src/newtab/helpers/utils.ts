@@ -2,7 +2,7 @@ import Tab = chrome.tabs.Tab;
 import HistoryItem = chrome.history.HistoryItem;
 import { BookmarkItemV3, LegacyFolderItem, SpaceV3 } from "./types";
 import type React from "react";
-import { isTabmeTab } from "./isTabmeTab";
+import { isTabowskiTab } from "./isTabowskiTab";
 import { RecentItem } from "./recentHistoryUtils";
 import { getTempFavIconUrl } from "../state/actionHelpers";
 import { collectBookmarksV3, hasArchivedItemsV3 } from "./v3Traversal";
@@ -240,7 +240,7 @@ export function filterOpenedTabsFromHistory(
 }
 
 export function canDisplayTabInSidebar(t: Tab): boolean {
-  return !isTabmeTab(t) && !t.pinned;
+  return !isTabowskiTab(t) && !t.pinned;
 }
 
 export function findTabsByURL(url: string | undefined, tabs: Tab[]): Tab[] {

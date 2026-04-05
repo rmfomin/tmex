@@ -32,7 +32,7 @@
               "url": "https://mail.bps-iss.ru/owa/#path=/mail"
             },
             {
-              "favIconUrl": "https://awx-k8s.rbsdev.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://awx-k8s.rbsdev.com/favicon.ico#by-tabowski",
               "id": 1745502939064,
               "position": "v;M",
               "title": "awx",
@@ -66,7 +66,7 @@
               "url": "https://sentry.yacloud.rbs.ac/organizations/rbs/issues/?project=27"
             },
             {
-              "favIconUrl": "https://sentry-dev.yacloud.rbs.ac/favicon.ico#by-tabme",
+              "favIconUrl": "https://sentry-dev.yacloud.rbs.ac/favicon.ico#by-tabowski",
               "id": 1745497966712,
               "position": "z]WJ",
               "title": "Sentry Ya dev",
@@ -90,7 +90,7 @@
               "url": "https://sandbox.rbsuat.com/sandbox/ru/integration/api/scripts.html#two-phase-payments"
             },
             {
-              "favIconUrl": "https://common03.tst.rbstest.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://common03.tst.rbstest.ru/favicon.ico#by-tabowski",
               "id": 1745494341721,
               "position": "zwWE",
               "title": "Barrel",
@@ -717,7 +717,7 @@
               "url": "https://enterly.ru/link/23JVDNf6Dn1N/interview"
             },
             {
-              "favIconUrl": "https://www.debuggex.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://www.debuggex.com/favicon.ico#by-tabowski",
               "id": 1745500841135,
               "position": "zyJH",
               "title": "Debuggex - Regex MAP",
@@ -884,7 +884,7 @@
           "id": 1772054413327,
           "items": [
             {
-              "favIconUrl": "https://allure.rbsdev.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://allure.rbsdev.com/favicon.ico#by-tabowski",
               "id": 1745501983042,
               "position": "Ul@",
               "title": "Allure",
@@ -900,7 +900,7 @@
               "url": "https://rbs-develop.paymentgate.ru/bamboo/allPlans.action"
             },
             {
-              "favIconUrl": "https://portal.bpcbt.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://portal.bpcbt.com/favicon.ico#by-tabowski",
               "id": 1745502213519,
               "position": "qcX",
               "title": "bpc",
@@ -924,7 +924,7 @@
               "url": "https://jfrog.rbsdev.com/ui/repos/tree/General/frontend"
             },
             {
-              "favIconUrl": "https://accounts.lambdatest.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://accounts.lambdatest.com/favicon.ico#by-tabowski",
               "id": 1745503711923,
               "position": "yS;",
               "title": "LambdaTest",
@@ -940,7 +940,7 @@
               "url": "https://mrbin.io/api.html"
             },
             {
-              "favIconUrl": "https://confluence.theteamsoft.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://confluence.theteamsoft.com/favicon.ico#by-tabowski",
               "id": 1745498549139,
               "position": "zuNR",
               "title": "План установки",
@@ -1073,7 +1073,7 @@
               "url": "https://github.com/sonic1200/PimpMyJira?tab=readme-ov-file"
             },
             {
-              "favIconUrl": "https://ulbitv.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://ulbitv.ru/favicon.ico#by-tabowski",
               "id": 1745498033509,
               "position": "zzwl:",
               "title": "24 React Testing Library. Тесты на компоненты 27:06",
@@ -1609,7 +1609,7 @@
           "id": 1772057441305,
           "items": [
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745501821723,
               "position": "UaZ",
               "title": "gispay uat FQR Register 1",
@@ -1617,7 +1617,7 @@
               "url": "https://vbrr.rbsuat.com/payment/rest/register.do?userName=EPR_GIS_ZKH-1705_1-api&orderNumber=WB-04-0000002379&password=EPR_GIS_ZKH-1705_1&currency=643&returnUrl=https%3A%2F%2Fya.ru&amount=10000&description=%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%93%D0%B8%D1%81%D0%9F%D0%B5%D0%B5%D0%BC%20%D1%82%D0%B5%D1%81%D1%82&clientId=123456&email=fqr0ph%40inbox.ru&orderBundle=%7B%22cartItems%22%3A%7B%22items%22%3A%5B%7B%22name%22%3A%22%D0%9E%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%BF%D0%BE%20%D0%9B%D0%A1%22%2C%22itemCode%22%3A%220768809457%22%2C%22quantity%22%3A%7B%22value%22%3A%201%2C%22measure%22%3A%22%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B0%22%7D%2C%22itemPrice%22%3A10000%2C%22positionId%22%3A%221%22%2C%22itemAttributes%22%3A%7B%22attributes%22%3A%5B%7B%22name%22%3A%22supplier_info.payerName%22%2C%22value%22%3A%22%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%20%D0%98%D0%B2%D0%B0%D0%BD%20%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%22%7D%2C%7B%22name%22%3A%22supplier_info.name%22%2C%22value%22%3A%22%D0%9F%D1%81%D1%82%D0%B2%D1%89%D0%BA2%22%7D%2C%7B%22name%22%3A%22supplier_info.documentId%22%2C%22value%22%3A%222234567%22%7D%2C%7B%22name%22%3A%22supplier_info.payerLs%22%2C%22value%22%3A%227775553333222222%22%7D%2C%7B%22name%22%3A%22supplier_info.payerKpp%22%2C%22value%22%3A%22152000006%22%7D%2C%7B%22name%22%3A%22supplier_info.budgetCode%22%2C%22value%22%3A%2215200000000000000000%22%7D%2C%7B%22name%22%3A%22supplier_info.ls%22%2C%22value%22%3A%22%D0%90%D0%92%D0%A41234562%22%7D%2C%7B%22name%22%3A%22supplier_info.bankBic%22%2C%22value%22%3A%22444455555%22%7D%2C%7B%22name%22%3A%22supplier_info.bankName%22%2C%22value%22%3A%22%D0%A2%D0%B5%D1%81%D1%82%20%D0%B1%D0%B0%D0%BD%D0%BA%22%7D%2C%7B%22name%22%3A%22supplier_info.kpp%22%2C%22value%22%3A%22773643001%22%7D%2C%7B%22name%22%3A%22supplier_info.commission%22%2C%22value%22%3A%220000000100%22%7D%2C%7B%22name%22%3A%22supplier_info.rs%22%2C%22value%22%3A%2203134000000500000001%22%7D%2C%7B%22name%22%3A%22supplier_info.inn%22%2C%22value%22%3A%227017467598%22%7D%5D%7D%7D%5D%7D%2C%22customerDetails%22%3A%7B%22email%22%3A%22fqr0ph%40inbox.ru%22%2C%22phone%22%3A%2279373636372%22%7D%2C%22orderCreationDate%22%3A%222022-10-21T11%3A30%3A37%22%7D"
             },
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745497567979,
               "position": "hHc",
               "title": "gispay uat FQR Register 2",
@@ -1625,7 +1625,7 @@
               "url": "https://vbrr.rbsuat.com/payment/rest/register.do?userName=EPR_GIS_ZKH-1705_1-api&orderNumber=WB-04-0000009351&password=EPR_GIS_ZKH-1705_1&currency=643&returnUrl=https%3A%2F%2Fya.ru&amount=10000&description=%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%93%D0%B8%D1%81%D0%9F%D0%B5%D0%B5%D0%BC%20%D1%82%D0%B5%D1%81%D1%82&clientId=123444&orderBundle=%7B%22cartItems%22%3A%7B%22items%22%3A%5B%7B%22name%22%3A%22%D0%9E%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%BF%D0%BE%20%D0%9B%D0%A1%22%2C%22itemCode%22%3A%220768809457%22%2C%22quantity%22%3A%7B%22value%22%3A%201%2C%22measure%22%3A%22%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B0%22%7D%2C%22itemPrice%22%3A10000%2C%22positionId%22%3A%221%22%2C%22itemAttributes%22%3A%7B%22attributes%22%3A%5B%7B%22name%22%3A%22supplier_info.payerName%22%2C%22value%22%3A%22%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%20%D0%98%D0%B2%D0%B0%D0%BD%20%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%22%7D%2C%7B%22name%22%3A%22supplier_info.name%22%2C%22value%22%3A%22%D0%9F%D1%81%D1%82%D0%B2%D1%89%D0%BA2%22%7D%2C%7B%22name%22%3A%22supplier_info.documentId%22%2C%22value%22%3A%222234567%22%7D%2C%7B%22name%22%3A%22supplier_info.payerLs%22%2C%22value%22%3A%227775553333222222%22%7D%2C%7B%22name%22%3A%22supplier_info.payerKpp%22%2C%22value%22%3A%22152000006%22%7D%2C%7B%22name%22%3A%22supplier_info.budgetCode%22%2C%22value%22%3A%2215200000000000000000%22%7D%2C%7B%22name%22%3A%22supplier_info.ls%22%2C%22value%22%3A%22%D0%90%D0%92%D0%A41234562%22%7D%2C%7B%22name%22%3A%22supplier_info.bankBic%22%2C%22value%22%3A%22444455555%22%7D%2C%7B%22name%22%3A%22supplier_info.bankName%22%2C%22value%22%3A%22%D0%A2%D0%B5%D1%81%D1%82%20%D0%B1%D0%B0%D0%BD%D0%BA%22%7D%2C%7B%22name%22%3A%22supplier_info.kpp%22%2C%22value%22%3A%22773643001%22%7D%2C%7B%22name%22%3A%22supplier_info.commission%22%2C%22value%22%3A%220000000100%22%7D%2C%7B%22name%22%3A%22supplier_info.rs%22%2C%22value%22%3A%2203134000000500000001%22%7D%2C%7B%22name%22%3A%22supplier_info.inn%22%2C%22value%22%3A%227017467598%22%7D%5D%7D%7D%5D%7D%2C%22customerDetails%22%3A%7B%22email%22%3A%22fqr0ph%40inbox.ru%22%2C%22phone%22%3A%2279373636372%22%7D%2C%22orderCreationDate%22%3A%222022-10-21T11%3A30%3A37%22%7D&email=fqr0ph%40inbox.ru"
             },
             {
-              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabowski",
               "id": 1745495350694,
               "position": "q16",
               "title": "vbrr ALL",
@@ -1633,7 +1633,7 @@
               "url": "https://vbrr01.tst.rbstest.ru/payment/rest/register.do?userName=zhkh-api&password=testPwd&clientId=123456&amount=12345&returnUrl=https%3A%2F%2Fexample.com&sessionTimeoutSecs=7776000&description=Gispay%20Test%20Payment&language=ru&email=test%40gispay.ru"
             },
             {
-              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabowski",
               "id": 1745495276257,
               "position": "viK",
               "title": "vbrr ALL phone",
@@ -1641,7 +1641,7 @@
               "url": "https://vbrr01.tst.rbstest.ru/payment/rest/register.do?userName=zhkh-api&password=testPwd&amount=12345&returnUrl=https%3A%2F%2Fexample.com&sessionTimeoutSecs=7776000&description=Gispay%20Test%20Payment&language=ru&email=test%40gispay.ru&phone=79936129230&clientId=775"
             },
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745500814086,
               "position": "x^C",
               "title": "vbrr UAT - gp ACTIVE",
@@ -1649,7 +1649,7 @@
               "url": "https://vbrr.rbsuat.com/payment/rest/register.do?userName=EPR_GIS_ZKH-1705_1-api&orderNumber=WB-04-0000000010&password=EPR_GIS_ZKH-1705_1&currency=643&returnUrl=https%3A%2F%2Fya.ru&amount=10000&description=%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%93%D0%B8%D1%81%D0%9F%D0%B5%D0%B5%D0%BC%20%D1%82%D0%B5%D1%81%D1%82&clientId=123444&orderBundle=%7B%22cartItems%22%3A%7B%22items%22%3A%5B%7B%22name%22%3A%22%D0%9E%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%BF%D0%BE%20%D0%9B%D0%A1%22%2C%22itemCode%22%3A%220768809457%22%2C%22quantity%22%3A%7B%22value%22%3A%201%2C%22measure%22%3A%22%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B0%22%7D%2C%22itemPrice%22%3A10000%2C%22positionId%22%3A%221%22%2C%22itemAttributes%22%3A%7B%22attributes%22%3A%5B%7B%22name%22%3A%22supplier_info.payerName%22%2C%22value%22%3A%22%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%20%D0%98%D0%B2%D0%B0%D0%BD%20%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%22%7D%2C%7B%22name%22%3A%22supplier_info.name%22%2C%22value%22%3A%22%D0%9F%D1%81%D1%82%D0%B2%D1%89%D0%BA2%22%7D%2C%7B%22name%22%3A%22supplier_info.documentId%22%2C%22value%22%3A%222234567%22%7D%2C%7B%22name%22%3A%22supplier_info.payerLs%22%2C%22value%22%3A%227775553333222222%22%7D%2C%7B%22name%22%3A%22supplier_info.payerKpp%22%2C%22value%22%3A%22152000006%22%7D%2C%7B%22name%22%3A%22supplier_info.budgetCode%22%2C%22value%22%3A%2215200000000000000000%22%7D%2C%7B%22name%22%3A%22supplier_info.ls%22%2C%22value%22%3A%22%D0%90%D0%92%D0%A41234562%22%7D%2C%7B%22name%22%3A%22supplier_info.bankBic%22%2C%22value%22%3A%22444455555%22%7D%2C%7B%22name%22%3A%22supplier_info.bankName%22%2C%22value%22%3A%22%D0%A2%D0%B5%D1%81%D1%82%20%D0%B1%D0%B0%D0%BD%D0%BA%22%7D%2C%7B%22name%22%3A%22supplier_info.kpp%22%2C%22value%22%3A%22773643001%22%7D%2C%7B%22name%22%3A%22supplier_info.commission%22%2C%22value%22%3A%220000000100%22%7D%2C%7B%22name%22%3A%22supplier_info.rs%22%2C%22value%22%3A%2203134000000500000001%22%7D%2C%7B%22name%22%3A%22supplier_info.inn%22%2C%22value%22%3A%227017467598%22%7D%5D%7D%7D%5D%7D%2C%22customerDetails%22%3A%7B%22email%22%3A%22n.pavlov%40bpcbt.com%22%2C%22phone%22%3A%2279373636372%22%7D%2C%22orderCreationDate%22%3A%222022-10-21T11%3A30%3A37%22%7D"
             },
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745494468742,
               "position": "yP1",
               "title": "vbrr UAT - gp NOT active",
@@ -1665,7 +1665,7 @@
               "url": "https://vbrr.rbsuat.com/payment/rest/register.do?userName=EPR_GIS_ZKH-1705_1-api&orderNumber=WB-04-0000000241&password=EPR_GIS_ZKH-1705_1&currency=643&returnUrl=https%3A%2F%2Fya.ru&amount=10000&description=%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%93%D0%B8%D1%81%D0%9F%D0%B5%D0%B5%D0%BC%20%D1%82%D0%B5%D1%81%D1%82&clientId=1234562&orderBundle=%7B%22cartItems%22%3A%7B%22items%22%3A%5B%7B%22name%22%3A%22%D0%9E%D0%BF%D0%BB%D0%B0%D1%82%D0%B0%20%D0%BF%D0%BE%20%D0%9B%D0%A1%22%2C%22itemCode%22%3A%220768809457%22%2C%22quantity%22%3A%7B%22value%22%3A%201%2C%22measure%22%3A%22%D1%83%D1%81%D0%BB%D1%83%D0%B3%D0%B0%22%7D%2C%22itemPrice%22%3A10000%2C%22positionId%22%3A%221%22%2C%22itemAttributes%22%3A%7B%22attributes%22%3A%5B%7B%22name%22%3A%22supplier_info.payerName%22%2C%22value%22%3A%22%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%20%D0%98%D0%B2%D0%B0%D0%BD%20%D0%98%D0%B2%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%87%22%7D%2C%7B%22name%22%3A%22supplier_info.name%22%2C%22value%22%3A%22%D0%9F%D1%81%D1%82%D0%B2%D1%89%D0%BA2%22%7D%2C%7B%22name%22%3A%22supplier_info.documentId%22%2C%22value%22%3A%222234567%22%7D%2C%7B%22name%22%3A%22supplier_info.payerLs%22%2C%22value%22%3A%227775553333222222%22%7D%2C%7B%22name%22%3A%22supplier_info.payerKpp%22%2C%22value%22%3A%22152000006%22%7D%2C%7B%22name%22%3A%22supplier_info.budgetCode%22%2C%22value%22%3A%2215200000000000000000%22%7D%2C%7B%22name%22%3A%22supplier_info.ls%22%2C%22value%22%3A%22%D0%90%D0%92%D0%A41234562%22%7D%2C%7B%22name%22%3A%22supplier_info.bankBic%22%2C%22value%22%3A%22444455555%22%7D%2C%7B%22name%22%3A%22supplier_info.bankName%22%2C%22value%22%3A%22%D0%A2%D0%B5%D1%81%D1%82%20%D0%B1%D0%B0%D0%BD%D0%BA%22%7D%2C%7B%22name%22%3A%22supplier_info.kpp%22%2C%22value%22%3A%22773643001%22%7D%2C%7B%22name%22%3A%22supplier_info.commission%22%2C%22value%22%3A%220000000100%22%7D%2C%7B%22name%22%3A%22supplier_info.rs%22%2C%22value%22%3A%2203134000000500000001%22%7D%2C%7B%22name%22%3A%22supplier_info.inn%22%2C%22value%22%3A%227017467598%22%7D%5D%7D%7D%5D%7D%2C%22customerDetails%22%3A%7B%22email%22%3A%22test%40gispay.ru%22%2C%22phone%22%3A%2279373636372%22%7D%2C%22orderCreationDate%22%3A%222022-10-21T11%3A30%3A37%22%7D"
             },
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1745498349480,
               "position": "zyI]",
               "title": "скрипт Gispay prod",
@@ -1673,7 +1673,7 @@
               "url": "https://pay.vbrr.ru/gispay/gispay.js"
             },
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745495521612,
               "position": "zzu;",
               "title": "скрипт Gispay uat",
@@ -1737,7 +1737,7 @@
           "id": 1772054600279,
           "items": [
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1745499284439,
               "position": "UaK",
               "title": "Barrel prod gis",
@@ -1745,7 +1745,7 @@
               "url": "https://pay.vbrr.ru/barrel/?key=gosuslugi-gis-zkh"
             },
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1745500638950,
               "position": "hYK",
               "title": "Barrel prod gispay",
@@ -1753,7 +1753,7 @@
               "url": "https://pay.vbrr.ru/barrel/?key=general__gispay"
             },
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745503059825,
               "position": "q_6",
               "title": "Barrel uat gis",
@@ -1761,7 +1761,7 @@
               "url": "https://vbrr.rbsuat.com/barrel/?key=gosuslugi-gis-zkh"
             },
             {
-              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
               "id": 1745498698312,
               "position": "vCV",
               "title": "Barrel uat gispay",
@@ -1795,7 +1795,7 @@
           "id": 1772062753128,
           "items": [
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1764252173938,
               "objectType": "bookmark",
               "position": "U@S",
@@ -1804,7 +1804,7 @@
               "url": "https://pay.vbrr.ru/mes/mos_obl_eirc/register.html"
             },
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1764253681901,
               "objectType": "bookmark",
               "position": "hq9",
@@ -1848,7 +1848,7 @@
             {
               "groupItems": [
                 {
-                  "favIconUrl": "https://rbs-develop.paymentgate.ru/favicon.ico#by-tabme",
+                  "favIconUrl": "https://rbs-develop.paymentgate.ru/favicon.ico#by-tabowski",
                   "id": 1745503672980,
                   "position": "vQO",
                   "title": "[VBRR-1078] Интеграция с Уралэнергосбыт",
@@ -1856,7 +1856,7 @@
                   "url": "https://rbs-develop.paymentgate.ru/bugs/browse/VBRR-1078"
                 },
                 {
-                  "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabme",
+                  "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabowski",
                   "id": 1745499529615,
                   "position": "xkS",
                   "title": "01",
@@ -1864,7 +1864,7 @@
                   "url": "https://vbrr01.tst.rbstest.ru/ues/register.html"
                 },
                 {
-                  "favIconUrl": "https://vbrr02.tst.rbstest.ru/favicon.ico#by-tabme",
+                  "favIconUrl": "https://vbrr02.tst.rbstest.ru/favicon.ico#by-tabowski",
                   "id": 1745497197113,
                   "position": "y8f",
                   "title": "02",
@@ -1872,7 +1872,7 @@
                   "url": "https://vbrr02.tst.rbstest.ru/ues/register.html"
                 },
                 {
-                  "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+                  "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
                   "id": 1745495101378,
                   "position": "zV8",
                   "title": "prod 7400150130",
@@ -1880,7 +1880,7 @@
                   "url": "https://pay.vbrr.ru/ues/register.html?ls=7400150130"
                 },
                 {
-                  "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabme",
+                  "favIconUrl": "https://vbrr.rbsuat.com/favicon.ico#by-tabowski",
                   "id": 1745497400515,
                   "position": "zh>Z",
                   "title": "uat",
@@ -1928,7 +1928,7 @@
           "id": 1772061594398,
           "items": [
             {
-              "favIconUrl": "https://rbs-develop.paymentgate.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://rbs-develop.paymentgate.ru/favicon.ico#by-tabowski",
               "id": 1745500079200,
               "position": "Ud=",
               "title": "Confl ues2",
@@ -1936,7 +1936,7 @@
               "url": "https://rbs-develop.paymentgate.ru/wiki/pages/viewpage.action?pageId=157978879"
             },
             {
-              "favIconUrl": "https://rbs-develop.paymentgate.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://rbs-develop.paymentgate.ru/favicon.ico#by-tabowski",
               "id": 1745501528650,
               "position": "hC6",
               "title": "1. multi-gate02 - шлюз - QA - Confluence RBS",
@@ -1944,7 +1944,7 @@
               "url": "https://rbs-develop.paymentgate.ru/wiki/pages/viewpage.action?pageId=99583834"
             },
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1745501272429,
               "position": "q<R",
               "title": "Barrel VBRR Prod",
@@ -1952,7 +1952,7 @@
               "url": "https://pay.vbrr.ru/barrel/?key=general__xfer"
             },
             {
-              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabowski",
               "id": 1745498425105,
               "position": "vVC",
               "title": "salebox rega",
@@ -1960,7 +1960,7 @@
               "url": "https://vbrr01.tst.rbstest.ru/payment/rest/register.do?amount=300&clientId=777&currency=643&jsonParams={%22isSalesBoxx%22:+%22true%22}&language=ru&orderNumber=1231234&password=testPwd&returnUrl=https://example.com&sessionTimeoutSecs=86400&userName=salesbox1-api"
             },
             {
-              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabowski",
               "id": 1745499172170,
               "position": "x5W",
               "title": "vbrr01.tst.rbstest.ru/mportal",
@@ -1968,7 +1968,7 @@
               "url": "https://vbrr01.tst.rbstest.ru/mportal#login"
             },
             {
-              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://pay.vbrr.ru/favicon.ico#by-tabowski",
               "id": 1745494353017,
               "position": "yYM",
               "title": "Xfer PROD",
@@ -1976,7 +1976,7 @@
               "url": "https://pay.vbrr.ru/xfer/"
             },
             {
-              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabme",
+              "favIconUrl": "https://vbrr01.tst.rbstest.ru/favicon.ico#by-tabowski",
               "id": 1745498728406,
               "position": "zF1",
               "title": "ВБРР P2P",
@@ -2248,18 +2248,18 @@
               "id": 1771927337145,
               "objectType": "bookmark",
               "position": "U;[",
-              "title": "tuucan/tabme: Tabme – Chrome Extension for organizing Bookmarks and Tabs, Done Right",
+              "title": "tuucan/tabowski: Tabowski – Chrome Extension for organizing Bookmarks and Tabs, Done Right",
               "type": "bookmark",
-              "url": "https://github.com/tuucan/tabme"
+              "url": "https://github.com/tuucan/tabowski"
             },
             {
               "favIconUrl": "https://github.githubassets.com/favicons/favicon.svg",
               "id": 1771920573228,
               "objectType": "bookmark",
               "position": "hc:",
-              "title": "aldolipani/TABME",
+              "title": "aldolipani/TABOWSKI",
               "type": "bookmark",
-              "url": "https://github.com/aldolipani/TABME"
+              "url": "https://github.com/aldolipani/TABOWSKI"
             },
             {
               "favIconUrl": "https://github.githubassets.com/favicons/favicon.svg",
@@ -2275,9 +2275,9 @@
               "id": 1771920408937,
               "objectType": "bookmark",
               "position": "vS4",
-              "title": "nicolay-i/tabme: Tabme – Chrome Extension for organizing Bookmarks and Tabs, Done Right",
+              "title": "nicolay-i/tabowski: Tabowski – Chrome Extension for organizing Bookmarks and Tabs, Done Right",
               "type": "bookmark",
-              "url": "https://github.com/nicolay-i/tabme"
+              "url": "https://github.com/nicolay-i/tabowski"
             },
             {
               "favIconUrl": "https://github.githubassets.com/favicons/favicon.svg",
@@ -2286,7 +2286,7 @@
               "position": "xzF",
               "title": "Page not found · GitHub",
               "type": "bookmark",
-              "url": "https://github.com/pltnkv/tabme"
+              "url": "https://github.com/pltnkv/tabowski"
             }
           ],
           "objectType": "folder",
@@ -2329,6 +2329,6 @@
       "widgets": []
     }
   ],
-  "isTabme": true,
+  "isTabowski": true,
   "version": 3
 }

@@ -18,7 +18,7 @@
 - Cross-space folder move still mutates through legacy objects in [src/newtab/state/actions.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/state/actions.ts).
 - UI still relies on legacy compatibility views in [src/newtab/components/App.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/App.tsx) and preload helpers in [src/newtab/newtab.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/newtab.tsx).
 - Reference backup [docs/tech-debt/0204-1.json](/Users/romanfomin/rmfomin-projects/tmex/docs/tech-debt/0204-1.json) is already a real `v3` file:
-- `version: 3`, `isTabme: true`
+- `version: 3`, `isTabowski: true`
 - 1 space, 24 folders, 22 groups, 133 top-level bookmarks
 - folder-level `collapsed` exists on all folders
 - group-level `collapsed` exists at least once
@@ -28,7 +28,7 @@
 
 The supported persisted/exported file after migration should match the `DataBackupV3` contract from [src/newtab/helpers/types.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/types.ts):
 
-- Top level: `{ isTabme: true, version: 3, spaces: SpaceV3[] }`
+- Top level: `{ isTabowski: true, version: 3, spaces: SpaceV3[] }`
 - Each space must include `id`, `position`, `objectType: "space"`, `title`, `folders`, optional `widgets`
 - Each folder must include `id`, `position`, `objectType: "folder"`, `title`, `items`, optional `color`, optional `collapsed`
 - Each item must preserve `type`

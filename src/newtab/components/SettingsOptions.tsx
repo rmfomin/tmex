@@ -252,7 +252,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     },
     {
       onClick: onImportExistingBookmarks,
-      title: "Import existing Chrome bookmarks into Tabme",
+      title: "Import existing Chrome bookmarks into Tabowski",
       text: "Import from browser bookmarks",
     },
     {
@@ -271,7 +271,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     },
     {
       onClick: (e) => onImportClick(e),
-      title: "Open exported Tabme JSON file",
+      title: "Open exported Tabowski JSON file",
       text: "Import from JSON",
       isFile: true,
     },
