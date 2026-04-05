@@ -1,5 +1,6 @@
 import React from "react";
 import { App } from "./components/App";
+import "../styles/style.scss";
 import { setInitAppState } from "./state/state";
 import {
   applyTheme,

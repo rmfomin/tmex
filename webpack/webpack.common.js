@@ -1,9 +1,9 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
-const sass = require("sass");
 const srcDir = path.join(__dirname, "..", "src");
 const webpack = require("webpack");
 const Dotenv = require("dotenv-webpack");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports.getCommonConfig = (env) => {
   const override_newtab = env.BUILD_TYPE !== "overrideless";
@@ -22,6 +22,7 @@ module.exports.getCommonConfig = (env) => {
     output: {
       path: path.join(__dirname, "../dist/js"),
       filename: "[name].js",
+      clean: true,
     },
     optimization: {
       splitChunks: {
@@ -44,6 +45,14 @@ module.exports.getCommonConfig = (env) => {
                 },
               },
             },
+            "sass-loader",
+          ],
+        },
+        {
+          test: /src\/styles\/.*\.scss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            "css-loader",
             "sass-loader",
           ],
         },
@@ -73,17 +82,7 @@ module.exports.getCommonConfig = (env) => {
             to: "../",
             context: "public",
             globOptions: {
-              ignore: ["**/style.scss", "**/scss/**"],
-            },
-          },
-          {
-            from: "./public/style.scss",
-            to: "../style.css",
-            transform(_, absoluteFrom) {
-              return sass.compile(absoluteFrom, {
-                silenceDeprecations: ["import"],
-                style: "expanded",
-              }).css;
+              ignore: ["**/scss/**"],
             },
           },
           {
@@ -99,6 +98,9 @@ module.exports.getCommonConfig = (env) => {
       new Dotenv(), // Load .env variables
       new webpack.DefinePlugin({
         __OVERRIDE_NEWTAB: JSON.stringify(override_newtab),
+      }),
+      new MiniCssExtractPlugin({
+        filename: "../style.css",
       }),
     ],
   };

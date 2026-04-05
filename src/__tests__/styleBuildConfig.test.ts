@@ -13,10 +13,14 @@ describe("style build configuration", () => {
   });
 
   test("scss is the only source stylesheet for the compiled asset", () => {
-    const scssPath = path.join(__dirname, "../../public/style.scss");
+    const scssPath = path.join(__dirname, "../../src/styles/style.scss");
+    const legacyPublicScssPath = path.join(__dirname, "../../public/style.scss");
+    const legacyScssDirPath = path.join(__dirname, "../../public/scss");
     const legacyCssPath = path.join(__dirname, "../../public/style.css");
 
     expect(fs.existsSync(scssPath)).toBe(true);
+    expect(fs.existsSync(legacyPublicScssPath)).toBe(false);
+    expect(fs.existsSync(legacyScssDirPath)).toBe(false);
     expect(fs.existsSync(legacyCssPath)).toBe(false);
   });
 

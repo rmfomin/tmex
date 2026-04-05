@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 /* Importing bookmarks styles */
 .welcome {
   display: flex;
@@ -259,4 +261,3 @@
     background-color: var(--colors-blue-100);
   }
 }
-

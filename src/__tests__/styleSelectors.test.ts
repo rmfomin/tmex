@@ -21,8 +21,8 @@ describe("compiled style selectors", () => {
     const css = fs.readFileSync(cssPath, "utf8");
 
     expect(css).toContain(".app");
-    expect(css).toContain(".bookmarks-menu");
-    expect(css).toContain(".app-sidebar");
+    expect(css).toContain(".btn__setting");
+    expect(css).toContain(".dropdown-menu");
     expect(css).toContain(".modal-wrapper");
   });
 });
