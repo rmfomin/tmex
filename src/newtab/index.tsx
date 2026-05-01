@@ -17,8 +17,11 @@ import { collectBookmarksV3 } from "./helpers/v3Traversal";
 runLocally();
 
 async function runLocally() {
+  // Читает сохраненное состояние из chrome.storage.local.
   getStateFromLS((res) => {
+    // Подготавливает состояние перед запуском React.
     preprocessLoadedState(res);
+    // Кладет загруженное состояние в стартовое состояние reducer.
     setInitAppState(res);
     mountApp();
   });
@@ -44,11 +47,12 @@ function preprocessLoadedState(state: SavingState): void {
     }
   }
 
+  // Собирает все закладки из spaces, включая закладки внутри групп.
   collectBookmarksV3(state.spaces).forEach((item) => {
     faviconsStorage.registerInCache(item.favIconUrl, item.url);
   });
 
   applyTheme(state.colorTheme);
-
+  // Сохраняет подготовленное состояние с задержкой, чтобы не писать слишком часто.
   saveStateThrottled(state);
 }
