@@ -131,7 +131,7 @@ export function DropdownMenu(p: {
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
-    function onMouseDown(e: MouseEvent) {
+    function onOutsideClick(e: MouseEvent) {
       // ignore submenu clicks
       const target = e.target as HTMLElement;
       if (
@@ -175,11 +175,14 @@ export function DropdownMenu(p: {
       }
     }
 
-    document.addEventListener("mousedown", onMouseDown);
+    const outsideClickListenerTimerId = window.setTimeout(() => {
+      document.addEventListener("click", onOutsideClick);
+    }, 0);
     document.addEventListener("keydown", onKeydown);
 
     return () => {
-      document.removeEventListener("mousedown", onMouseDown);
+      window.clearTimeout(outsideClickListenerTimerId);
+      document.removeEventListener("click", onOutsideClick);
       document.removeEventListener("keydown", onKeydown);
     };
   }, [p.onClose]);
