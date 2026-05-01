@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookmarkItemV3, SpaceV3 } from "../../helpers/types";
-import { findTabsByURL, isFolderItemNotUsed } from "../../helpers/utils";
-import { EditableTitle } from "../EditableTitle/EditableTitle";
-import { Action } from "../../state/state";
-import { DispatchContext } from "../../state/actions";
-import { CL } from "../../helpers/classNameHelper";
-import IconClose from "./icons/close.svg";
-import IconMore from "./icons/more.svg";
-import { FolderItemMenu } from "../FolderItemMenu/FolderItemMenu";
-import { getBrokenImgSVG, loadFaviconUrl } from "../../helpers/faviconUtils";
-import { RecentItem } from "../../helpers/recentHistoryUtils";
-import "./FolderItem.module.scss";
+import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
+import { findTabsByURL, isFolderItemNotUsed } from "@/newtab/helpers/utils";
+import { EditableTitle } from "@/newtab/components/EditableTitle/EditableTitle";
+import { Action } from "@/newtab/state/state";
+import { DispatchContext } from "@/newtab/state/actions";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import IconClose from "@/newtab/components/FolderItem/icons/close.svg";
+import IconMore from "@/newtab/components/FolderItem/icons/more.svg";
+import { FolderItemMenu } from "@/newtab/components/FolderItemMenu/FolderItemMenu";
+import { getBrokenImgSVG, loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
+import "@/newtab/components/FolderItem/FolderItem.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const FolderItem = React.memo(

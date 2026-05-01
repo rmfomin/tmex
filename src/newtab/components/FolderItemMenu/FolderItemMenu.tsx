@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookmarkItemV3, SpaceV3 } from "../../helpers/types";
-import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
-import { getSelectedItems } from "../../helpers/selectionUtils";
-import { Action } from "../../state/state";
-import { DispatchContext, mergeStepsInHistory } from "../../state/actions";
-import { getSpacesWithNestedFoldersList } from "../../helpers/MoveToHelpers";
+import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
+import { DropdownMenu, DropdownSubMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { getSelectedItems } from "@/newtab/helpers/selectionUtils";
+import { Action } from "@/newtab/state/state";
+import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
+import { getSpacesWithNestedFoldersList } from "@/newtab/helpers/MoveToHelpers";
 import {
   createFolderWithStat,
   showMessage,
   showMessageWithUndo,
-} from "../../helpers/actionsHelpersWithDOM";
-import { findFolderByItemId } from "../../state/actionHelpers";
-import { scrollElementIntoView } from "../../helpers/utils";
+} from "@/newtab/helpers/actionsHelpersWithDOM";
+import { findFolderByItemId } from "@/newtab/state/actionHelpers";
+import { scrollElementIntoView } from "@/newtab/helpers/utils";
 
 export const FolderItemMenu = React.memo(
   (p: {

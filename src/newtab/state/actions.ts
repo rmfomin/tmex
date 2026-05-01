@@ -7,27 +7,27 @@ import {
   HistoryActionPayload,
   AppState,
   UndoStep,
-} from "./state";
+} from "@/newtab/state/state";
 import {
   BookmarkItemV3,
   ColorTheme,
   FolderV3,
   LegacySpace,
   SpaceV3,
-} from "../helpers/types";
-import { applyTheme, saveStateThrottled, savingStateKeys } from "./storage";
+} from "@/newtab/helpers/types";
+import { applyTheme, saveStateThrottled, savingStateKeys } from "@/newtab/state/storage";
 import {
   addItemsToFolder,
   insertBetween,
   sortByPosition,
-} from "../helpers/fractionalIndexes";
+} from "@/newtab/helpers/fractionalIndexes";
 import {
   convertBookmarkItemV3ToLegacy,
   convertBookmarkPatchV3ToLegacy,
   convertFolderPatchV3ToLegacy,
   convertFolderV3ToLegacy,
-} from "../helpers/dataFormatAdapters";
-import { loadFromNetwork } from "../../api/api";
+} from "@/newtab/helpers/dataFormatAdapters";
+import { loadFromNetwork } from "@/api/api";
 import {
   addItemsToFolderV3,
   findAnyItemById,
@@ -42,12 +42,12 @@ import {
   updateFolder,
   updateFolderItem,
   updateSpace,
-} from "./actionHelpers";
+} from "@/newtab/state/actionHelpers";
 import {
   genNextRuntimeId,
   getRandomHEXColor,
   isArraysEqual,
-} from "../helpers/utils";
+} from "@/newtab/helpers/utils";
 
 type ObjectWithRemoteId = {
   remoteId: number;

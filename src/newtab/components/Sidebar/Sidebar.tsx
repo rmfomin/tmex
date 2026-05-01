@@ -1,32 +1,32 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import "./Sidebar.module.scss";
-import { SidebarOpenTabs } from "../SidebarOpenTabs/SidebarOpenTabs";
-import { isTabowskiTab } from "../../helpers/isTabowskiTab";
+import "@/newtab/components/Sidebar/Sidebar.module.scss";
+import { SidebarOpenTabs } from "@/newtab/components/SidebarOpenTabs/SidebarOpenTabs";
+import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
 import {
   blurSearch,
   getCurrentData,
   isTargetSupportsDragAndDrop,
   scrollElementIntoView,
-} from "../../helpers/utils";
-import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
-import { CL } from "../../helpers/classNameHelper";
-import { Action, AppState } from "../../state/state";
-import { DispatchContext } from "../../state/actions";
-import IconClean from "./icons/clean.svg";
-import IconStash from "./icons/stash.svg";
-import IconPin from "./icons/pin.svg";
+} from "@/newtab/helpers/utils";
+import { DropdownMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import { Action, AppState } from "@/newtab/state/state";
+import { DispatchContext } from "@/newtab/state/actions";
+import IconClean from "@/newtab/components/Sidebar/icons/clean.svg";
+import IconStash from "@/newtab/components/Sidebar/icons/stash.svg";
+import IconPin from "@/newtab/components/Sidebar/icons/pin.svg";
 import Tab = chrome.tabs.Tab;
 import {
   convertTabOrRecentToItem,
   convertTabToItem,
-} from "../../state/actionHelpers";
+} from "@/newtab/state/actionHelpers";
 import {
   createFolderWithStat,
   showMessage,
-} from "../../helpers/actionsHelpersWithDOM";
-import { SidebarRecent } from "../SidebarRecent/SidebarRecent";
-import { bindDADItemEffect } from "../../dragging/dragAndDrop";
-import { RecentItem } from "../../helpers/recentHistoryUtils";
+} from "@/newtab/helpers/actionsHelpersWithDOM";
+import { SidebarRecent } from "@/newtab/components/SidebarRecent/SidebarRecent";
+import { bindDADItemEffect } from "@/newtab/dragging/dragAndDrop";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 
 export function Sidebar(p: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);

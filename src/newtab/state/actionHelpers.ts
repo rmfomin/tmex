@@ -9,13 +9,13 @@ import {
   FolderItemToCreate,
   ItemV3,
   SpaceV3,
-} from "../helpers/types"
-import { insertBetween, sortByPosition } from "../helpers/fractionalIndexes"
-import { type AppState } from "./state"
-import { SECTION_ICON_BASE64 } from "../helpers/utils"
+} from "@/newtab/helpers/types"
+import { insertBetween, sortByPosition } from "@/newtab/helpers/fractionalIndexes"
+import { type AppState } from "@/newtab/state/state"
+import { SECTION_ICON_BASE64 } from "@/newtab/helpers/utils"
 import Tab = chrome.tabs.Tab
 import HistoryItem = chrome.history.HistoryItem
-import { RecentItem } from "../helpers/recentHistoryUtils"
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils"
 
 export function genUniqLocalId(): number {
   return (new Date()).valueOf() + Math.round(Math.random() * 10000000)

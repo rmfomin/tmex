@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal } from "../Modal/Modal";
-import { IS_MAC_DEVICE } from "../../helpers/utils";
+import { Modal } from "@/newtab/components/Modal/Modal";
+import { IS_MAC_DEVICE } from "@/newtab/helpers/utils";
 
 export const ShortcutsModal = ({
   setOpen,

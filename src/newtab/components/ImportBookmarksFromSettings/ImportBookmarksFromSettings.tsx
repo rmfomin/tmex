@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import { BookmarkImporter } from "../BookmarksImporter/BookmarksImporter";
-import { Action, AppState } from "../../state/state";
-import { DispatchContext } from "../../state/actions";
+import { BookmarkImporter } from "@/newtab/components/BookmarksImporter/BookmarksImporter";
+import { Action, AppState } from "@/newtab/state/state";
+import { DispatchContext } from "@/newtab/state/actions";
 
 export function ImportBookmarksFromSettings(props: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);

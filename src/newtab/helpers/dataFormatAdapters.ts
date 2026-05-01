@@ -8,8 +8,8 @@ import {
   LegacyFolderApiPayload,
   LegacyFolderItemApiPayload,
   SpaceV3,
-} from "./types";
-import { sortByPosition } from "./fractionalIndexes";
+} from "@/newtab/helpers/types";
+import { sortByPosition } from "@/newtab/helpers/fractionalIndexes";
 
 function normalizeBookmarkItemV3(item: BookmarkItemV3): BookmarkItemV3 {
   return {

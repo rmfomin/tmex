@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
-import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
-import { handleSearchKeyDown } from "../../helpers/handleBookmarksKeyDown";
-import { Action, AppState } from "../../state/state";
-import { DispatchContext } from "../../state/actions";
-import { HelpOptions, SettingsOptions } from "../../helpers/SettingsOptions";
-import { CL } from "../../helpers/classNameHelper";
-import IconHelp from "./icons/help.svg";
-import IconSettings from "./icons/settings.svg";
-import IconFind from "./icons/find.svg";
-import { SpacesList } from "../SpacesList/SpacesList";
-import styles from "./TopBar.module.scss";
+import { DropdownMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { handleSearchKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
+import { Action, AppState } from "@/newtab/state/state";
+import { DispatchContext } from "@/newtab/state/actions";
+import { HelpOptions, SettingsOptions } from "@/newtab/helpers/SettingsOptions";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import IconHelp from "@/newtab/components/TopBar/icons/help.svg";
+import IconSettings from "@/newtab/components/TopBar/icons/settings.svg";
+import IconFind from "@/newtab/components/TopBar/icons/find.svg";
+import { SpacesList } from "@/newtab/components/SpacesList/SpacesList";
+import styles from "@/newtab/components/TopBar/TopBar.module.scss";
 
 export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const dispatch = useContext(DispatchContext);

@@ -1,19 +1,19 @@
 import React, { useEffect, useReducer } from "react";
-import { Bookmarks } from "../Bookmarks/Bookmarks";
-import { Sidebar } from "../Sidebar/Sidebar";
-import { Notification } from "../Notification/Notification";
-import { KeyboardAndMouseManager } from "../../helpers/KeyboardAndMouseManager";
-import { ImportBookmarksFromSettings } from "../ImportBookmarksFromSettings/ImportBookmarksFromSettings";
-import { Action, getInitAppState, AppState } from "../../state/state";
-import { DispatchContext, stateReducer } from "../../state/actions";
-import { getBC, getStateFromLS } from "../../state/storage";
-import { executeAPICall } from "../../../api/serverCommands";
+import { Bookmarks } from "@/newtab/components/Bookmarks/Bookmarks";
+import { Sidebar } from "@/newtab/components/Sidebar/Sidebar";
+import { Notification } from "@/newtab/components/Notification/Notification";
+import { KeyboardAndMouseManager } from "@/newtab/helpers/KeyboardAndMouseManager";
+import { ImportBookmarksFromSettings } from "@/newtab/components/ImportBookmarksFromSettings/ImportBookmarksFromSettings";
+import { Action, getInitAppState, AppState } from "@/newtab/state/state";
+import { DispatchContext, stateReducer } from "@/newtab/state/actions";
+import { getBC, getStateFromLS } from "@/newtab/state/storage";
+import { executeAPICall } from "@/api/serverCommands";
 import Tab = chrome.tabs.Tab;
-import { CL } from "../../helpers/classNameHelper";
+import { CL } from "@/newtab/helpers/classNameHelper";
 import {
   getHistory,
   tryLoadMoreHistory,
-} from "../../helpers/recentHistoryUtils";
+} from "@/newtab/helpers/recentHistoryUtils";
 
 let notificationTimeout: number | undefined;
 let globalAppState: AppState;

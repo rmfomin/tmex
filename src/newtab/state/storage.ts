@@ -1,7 +1,7 @@
-import { AppState } from "./state";
-import { throttle } from "../helpers/utils";
-import { ColorTheme } from "../helpers/types";
-import { getV3SpacesView } from "../helpers/dataFormatAdapters";
+import { AppState } from "@/newtab/state/state";
+import { throttle } from "@/newtab/helpers/utils";
+import { ColorTheme } from "@/newtab/helpers/types";
+import { getV3SpacesView } from "@/newtab/helpers/dataFormatAdapters";
 
 /**
  * SAVING STATE AND BROADCASTING CHANGES

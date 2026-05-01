@@ -1,5 +1,5 @@
-import { AppState } from "../../state/state";
-import { findSpaceById } from "../../state/actionHelpers";
+import { AppState } from "@/newtab/state/state";
+import { findSpaceById } from "@/newtab/state/actionHelpers";
 
 export function isEmptyDashboard(
   appState: Pick<AppState, "spaces" | "currentSpaceId" | "search">,

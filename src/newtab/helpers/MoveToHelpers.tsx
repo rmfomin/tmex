@@ -1,7 +1,7 @@
 import React from "react";
-import { SpaceV3 } from "./types";
-import { DropdownSubMenu } from "../components/DropdownMenu/DropdownMenu";
-import IconSaved from "./MoveToHelpers.icons/saved.svg";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import { DropdownSubMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import IconSaved from "@/newtab/helpers/MoveToHelpers.icons/saved.svg";
 
 export function getFoldersList(
   space: Pick<SpaceV3, "id" | "folders">,

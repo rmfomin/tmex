@@ -34,8 +34,8 @@ Object.defineProperty(global, "window", {
   configurable: true,
 });
 
-import { SpaceV3 } from "../newtab/helpers/types";
-import { normalizeStateFromStorageResult } from "../newtab/state/storage";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import { normalizeStateFromStorageResult } from "@/newtab/state/storage";
 
 test("normalizeStateFromStorageResult migrates legacy v2 spaces to v3", () => {
   const result = normalizeStateFromStorageResult({

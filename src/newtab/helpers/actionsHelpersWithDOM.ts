@@ -1,11 +1,11 @@
-import { BookmarkItemV3, FolderItemToCreate, SpaceV3 } from "./types";
-import { ActionDispatcher, executeCustomAction } from "../state/actions";
-import { Action, AppState } from "../state/state";
+import { BookmarkItemV3, FolderItemToCreate, SpaceV3 } from "@/newtab/helpers/types";
+import { ActionDispatcher, executeCustomAction } from "@/newtab/state/actions";
+import { Action, AppState } from "@/newtab/state/state";
 import {
   findItemById,
   genUniqLocalId,
   isCustomActionItem,
-} from "../state/actionHelpers";
+} from "@/newtab/state/actionHelpers";
 
 export function showMessage(
   message: string,

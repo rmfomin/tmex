@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { filterRecentItemsBySearch } from "../../helpers/utils";
-import { CL } from "../../helpers/classNameHelper";
+import { filterRecentItemsBySearch } from "@/newtab/helpers/utils";
+import { CL } from "@/newtab/helpers/classNameHelper";
 import {
   confluenceHashRegExp,
   figmaBoardRegExp,
@@ -23,14 +23,14 @@ import {
   miroHashRegExp,
   tryLoadMoreHistory,
   youtubeHashRegExp,
-} from "../../helpers/recentHistoryUtils";
-import IconFilter from "./icons/filter.svg";
-import IconNonFilter from "./icons/no-filter-thin.svg";
-import { getTempFavIconUrl } from "../../state/actionHelpers";
-import { DispatchContext } from "../../state/actions";
-import { TabOrRecentItem } from "../SidebarItem/SidebarItem";
-import { SpaceV3 } from "../../helpers/types";
-import styles from "./SidebarRecent.module.scss";
+} from "@/newtab/helpers/recentHistoryUtils";
+import IconFilter from "@/newtab/components/SidebarRecent/icons/filter.svg";
+import IconNonFilter from "@/newtab/components/SidebarRecent/icons/no-filter-thin.svg";
+import { getTempFavIconUrl } from "@/newtab/state/actionHelpers";
+import { DispatchContext } from "@/newtab/state/actions";
+import { TabOrRecentItem } from "@/newtab/components/SidebarItem/SidebarItem";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import styles from "@/newtab/components/SidebarRecent/SidebarRecent.module.scss";
 
 const PAGE_SIZE = 100;
 

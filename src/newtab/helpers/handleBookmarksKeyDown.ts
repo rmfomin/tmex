@@ -1,8 +1,8 @@
 import React from "react";
-import { AppState } from "../state/state";
-import { ActionDispatcher } from "../state/actions";
-import { clickFolderItem } from "./actionsHelpersWithDOM";
-import { findFolderByItemId } from "../state/actionHelpers";
+import { AppState } from "@/newtab/state/state";
+import { ActionDispatcher } from "@/newtab/state/actions";
+import { clickFolderItem } from "@/newtab/helpers/actionsHelpersWithDOM";
+import { findFolderByItemId } from "@/newtab/state/actionHelpers";
 
 const FOLDER_ITEM_SELECTOR = "a.folder-item__inner";
 

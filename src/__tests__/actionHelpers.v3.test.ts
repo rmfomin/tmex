@@ -1,5 +1,5 @@
-import { updateFolder, updateFolderItem } from "../newtab/state/actionHelpers";
-import { SpaceV3 } from "../newtab/helpers/types";
+import { updateFolder, updateFolderItem } from "@/newtab/state/actionHelpers";
+import { SpaceV3 } from "@/newtab/helpers/types";
 
 function createSpacesFixture(): SpaceV3[] {
   return [

@@ -1,6 +1,6 @@
 export {};
 
-jest.mock("../newtab/state/storage", () => ({
+jest.mock("@/newtab/state/storage", () => ({
   applyTheme: jest.fn(),
   saveStateThrottled: jest.fn(),
   savingStateKeys: [
@@ -16,7 +16,7 @@ jest.mock("../newtab/state/storage", () => ({
   ],
 }));
 
-jest.mock("../api/api", () => ({
+jest.mock("@/api/api", () => ({
   loadFromNetwork: jest.fn(() => false),
 }));
 

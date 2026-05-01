@@ -1,16 +1,16 @@
 import React, { useContext, useState } from "react";
-import PlusIcon from "./icons/plus.svg";
-import DeleteIcon from "./icons/delete.svg";
-import { SpaceV3 } from "../../helpers/types";
-import { CL } from "../../helpers/classNameHelper";
-import { DispatchContext } from "../../state/actions";
-import { Action } from "../../state/state";
-import { SimpleEditableTitle } from "../EditableTitle/EditableTitle";
-import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
-import { genUniqLocalId } from "../../state/actionHelpers";
-import { insertBetween } from "../../helpers/fractionalIndexes";
-import { collectBookmarksV3 } from "../../helpers/v3Traversal";
-import styles from "./SpacesList.module.scss";
+import PlusIcon from "@/newtab/components/SpacesList/icons/plus.svg";
+import DeleteIcon from "@/newtab/components/SpacesList/icons/delete.svg";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import { DispatchContext } from "@/newtab/state/actions";
+import { Action } from "@/newtab/state/state";
+import { SimpleEditableTitle } from "@/newtab/components/EditableTitle/EditableTitle";
+import { DropdownMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { genUniqLocalId } from "@/newtab/state/actionHelpers";
+import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
+import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
+import styles from "@/newtab/components/SpacesList/SpacesList.module.scss";
 
 export function SpacesList(p: {
   spaces: SpaceV3[];

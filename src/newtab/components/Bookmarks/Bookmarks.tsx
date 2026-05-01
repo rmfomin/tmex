@@ -1,26 +1,26 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import styles from "./Bookmarks.module.scss";
+import styles from "@/newtab/components/Bookmarks/Bookmarks.module.scss";
 import {
   blurSearch,
   isTargetSupportsDragAndDrop,
-} from "../../helpers/utils";
-import { bindDADItemEffect } from "../../dragging/dragAndDrop";
-import { Folder } from "../Folder/Folder";
-import { handleBookmarksKeyDown } from "../../helpers/handleBookmarksKeyDown";
-import { Action, AppState } from "../../state/state";
+} from "@/newtab/helpers/utils";
+import { bindDADItemEffect } from "@/newtab/dragging/dragAndDrop";
+import { Folder } from "@/newtab/components/Folder/Folder";
+import { handleBookmarksKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
+import { Action, AppState } from "@/newtab/state/state";
 import {
   DispatchContext,
   mergeStepsInHistory,
-} from "../../state/actions";
+} from "@/newtab/state/actions";
 import {
   clickFolderItem,
   createFolderWithStat,
   getCanDragChecker,
-} from "../../helpers/actionsHelpersWithDOM";
-import { TopBar } from "../TopBar/TopBar";
-import { importFromJson } from "../../helpers/importExportHelpers";
-import { isEmptyDashboard } from "./isEmptyDashboard";
-import { getBookmarksViewState } from "./getBookmarksViewState";
+} from "@/newtab/helpers/actionsHelpersWithDOM";
+import { TopBar } from "@/newtab/components/TopBar/TopBar";
+import { importFromJson } from "@/newtab/helpers/importExportHelpers";
+import { isEmptyDashboard } from "@/newtab/components/Bookmarks/isEmptyDashboard";
+import { getBookmarksViewState } from "@/newtab/components/Bookmarks/getBookmarksViewState";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;

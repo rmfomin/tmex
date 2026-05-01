@@ -1,11 +1,11 @@
 import React, { memo, useContext } from "react";
-import { filterTabsBySearch } from "../../helpers/utils";
-import { SpaceV3 } from "../../helpers/types";
-import { DispatchContext } from "../../state/actions";
-import { Action } from "../../state/state";
-import { showMessage } from "../../helpers/actionsHelpersWithDOM";
-import { TabOrRecentItem } from "../SidebarItem/SidebarItem";
-import styles from "./SidebarOpenTabs.module.scss";
+import { filterTabsBySearch } from "@/newtab/helpers/utils";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import { DispatchContext } from "@/newtab/state/actions";
+import { Action } from "@/newtab/state/state";
+import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
+import { TabOrRecentItem } from "@/newtab/components/SidebarItem/SidebarItem";
+import styles from "@/newtab/components/SidebarOpenTabs/SidebarOpenTabs.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const SidebarOpenTabs = memo(

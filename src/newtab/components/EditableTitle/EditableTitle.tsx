@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { hlSearch } from "../../helpers/utils";
+import { hlSearch } from "@/newtab/helpers/utils";
 
 export function EditableTitle(p: {
   className?: string;

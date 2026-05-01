@@ -9,11 +9,11 @@ import {
   getOverlappedDropArea,
   getOverlappedSpaceDropArea,
   PConfigFolder,
-} from "./dragAndDrop";
+} from "@/newtab/dragging/dragAndDrop";
 import {
   setScrollByDummyClientY,
   subscribeMouseEvents,
-} from "./dragAndDropUtils";
+} from "@/newtab/dragging/dragAndDropUtils";
 
 export function processFolderDragAndDrop(
   mouseDownEvent: React.MouseEvent,

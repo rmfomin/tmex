@@ -1,4 +1,4 @@
-import { BookmarkItemV3, SpaceV3 } from "./types";
+import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
 
 export function collectBookmarksV3(spaces: SpaceV3[]): BookmarkItemV3[] {
   return spaces.flatMap((space) =>

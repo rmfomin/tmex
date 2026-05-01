@@ -1,8 +1,8 @@
-import { PConfigSpaces } from "./dragAndDrop";
-import { subscribeMouseEvents } from "./dragAndDropUtils";
-import { findParentWithClass } from "../helpers/utils";
-import { insertBetween } from "../helpers/fractionalIndexes";
-import { unselectAllItems } from "../helpers/selectionUtils";
+import { PConfigSpaces } from "@/newtab/dragging/dragAndDrop";
+import { subscribeMouseEvents } from "@/newtab/dragging/dragAndDropUtils";
+import { findParentWithClass } from "@/newtab/helpers/utils";
+import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
+import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
 
 type InitRes = {
   clonedSpacesList: HTMLElement;

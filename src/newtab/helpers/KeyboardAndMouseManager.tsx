@@ -2,12 +2,12 @@ import React, { useContext, useEffect } from "react";
 import {
   getSelectedItemsElements,
   getSelectedItemsIds,
-} from "./selectionUtils";
-import { DispatchContext } from "../state/actions";
-import { Action } from "../state/state";
-import { showMessageWithUndo } from "./actionsHelpersWithDOM";
-import { isSomeModalOpened } from "../components/Modal/Modal";
-import { isTargetInputOrTextArea } from "./utils";
+} from "@/newtab/helpers/selectionUtils";
+import { DispatchContext } from "@/newtab/state/actions";
+import { Action } from "@/newtab/state/state";
+import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
+import { isSomeModalOpened } from "@/newtab/components/Modal/Modal";
+import { isTargetInputOrTextArea } from "@/newtab/helpers/utils";
 
 export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
   const dispatch = useContext(DispatchContext);

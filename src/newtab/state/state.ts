@@ -1,13 +1,13 @@
-import { ActionDispatcher } from "./actions";
+import { ActionDispatcher } from "@/newtab/state/actions";
 import {
   ColorTheme,
   FolderItemToCreate,
   LegacyFolderApiPayload,
   LegacyFolderItemApiPayload,
   SpaceV3,
-} from "../helpers/types";
-import { SavingState } from "./storage";
-import { RecentItem } from "../helpers/recentHistoryUtils";
+} from "@/newtab/helpers/types";
+import { SavingState } from "@/newtab/state/storage";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 
 export type AppAchievements = {

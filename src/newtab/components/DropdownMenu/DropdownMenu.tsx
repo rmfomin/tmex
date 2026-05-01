@@ -6,10 +6,10 @@ import React, {
   useState,
 } from "react";
 import { createContext } from "react";
-import { CL } from "../../helpers/classNameHelper";
+import { CL } from "@/newtab/helpers/classNameHelper";
 import ReactDOM from "react-dom";
-import { isSomeParentHaveClass } from "../../helpers/utils";
-import { Offset, Point } from "../../helpers/MathTypes";
+import { isSomeParentHaveClass } from "@/newtab/helpers/utils";
+import { Offset, Point } from "@/newtab/helpers/MathTypes";
 
 export const DropdownSetMenuIdContext = createContext((id: number) => {});
 export const DropdownMenuIdContext = createContext(-1);

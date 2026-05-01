@@ -1,16 +1,16 @@
 import {
   getSelectedItemsElements,
   unselectAllItems,
-} from "../helpers/selectionUtils";
+} from "@/newtab/helpers/selectionUtils";
 import {
   isSomeParentHaveClass,
   isTargetInputOrTextArea,
   isTargetSupportsDragAndDrop,
-} from "../helpers/utils";
-import { Point } from "../helpers/MathTypes";
-import { processFolderDragAndDrop } from "./processFolderDragAndDrop";
-import { processItemDragAndDrop } from "./processItemDragAndDrop";
-import { processSpacesDragAndDrop } from "./processSpacesDragAndDrop";
+} from "@/newtab/helpers/utils";
+import { Point } from "@/newtab/helpers/MathTypes";
+import { processFolderDragAndDrop } from "@/newtab/dragging/processFolderDragAndDrop";
+import { processItemDragAndDrop } from "@/newtab/dragging/processItemDragAndDrop";
+import { processSpacesDragAndDrop } from "@/newtab/dragging/processSpacesDragAndDrop";
 
 export type DropArea = {
   objectId: number;

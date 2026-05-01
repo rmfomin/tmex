@@ -8,7 +8,7 @@
 // instead. So "insertBetween('', positions[0])" inserts at the front and
 // "insertBetween(positions[positions.length - 1], '')" inserts at the back.
 
-import { LegacyFolderItem, FolderItemToCreate, LegacyObject } from "./types";
+import { LegacyFolderItem, FolderItemToCreate, LegacyObject } from "@/newtab/helpers/types";
 
 // VERY WIERD NAMING, it seems like "before" and "after" are mixed
 export function insertBetween(before: string, after: string): string {

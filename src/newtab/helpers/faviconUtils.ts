@@ -1,5 +1,5 @@
-import { LegacyFolderItem } from "./types";
-import { convertToURL, getTempFavIconUrl } from "../state/actionHelpers";
+import { LegacyFolderItem } from "@/newtab/helpers/types";
+import { convertToURL, getTempFavIconUrl } from "@/newtab/state/actionHelpers";
 
 const STORAGE_KEY = "faviconsStorage";
 

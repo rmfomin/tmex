@@ -5,8 +5,8 @@ import {
   convertFolderV3ToLegacy,
   convertV3BackupToLegacySpaces,
   normalizeBackupV3,
-} from "../newtab/helpers/dataFormatAdapters";
-import { DataBackupV3, FolderV3 } from "../newtab/helpers/types";
+} from "@/newtab/helpers/dataFormatAdapters";
+import { DataBackupV3, FolderV3 } from "@/newtab/helpers/types";
 
 test("legacy round-trip is lossy for groups and collapsed flags", () => {
   const backup: DataBackupV3 = {

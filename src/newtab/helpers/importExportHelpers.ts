@@ -3,23 +3,23 @@ import {
   LegacyFolder,
   LegacySpace,
   SpaceV3,
-} from "./types";
-import { Action } from "../state/state";
-import { ActionDispatcher } from "../state/actions";
+} from "@/newtab/helpers/types";
+import { Action } from "@/newtab/state/state";
+import { ActionDispatcher } from "@/newtab/state/actions";
 import {
   createNewFolderItem,
   genUniqLocalId,
   getTempFavIconUrl,
-} from "../state/actionHelpers";
-import { showMessage } from "./actionsHelpersWithDOM";
-import { getTopVisitedFromHistory } from "./utils";
+} from "@/newtab/state/actionHelpers";
+import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
+import { getTopVisitedFromHistory } from "@/newtab/helpers/utils";
 import HistoryItem = chrome.history.HistoryItem;
-import { RecentItem } from "./recentHistoryUtils";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import {
   convertLegacySpacesToV3Backup,
   getV3SpacesView,
   normalizeBackupV3,
-} from "./dataFormatAdapters";
+} from "@/newtab/helpers/dataFormatAdapters";
 
 type LegacyBackup = {
   isTabowski?: true;

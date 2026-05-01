@@ -1,18 +1,18 @@
 import React from "react";
-import { App } from "./components/root/App";
-import "../styles/index.scss";
-import { setInitAppState } from "./state/state";
+import { App } from "@/newtab/components/root/App";
+import "@/styles/index.scss";
+import { setInitAppState } from "@/newtab/state/state";
 import {
   applyTheme,
   getStateFromLS,
   SavingState,
   saveStateThrottled,
-} from "./state/storage";
+} from "@/newtab/state/storage";
 import { createRoot } from "react-dom/client";
-import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
-import { faviconsStorage } from "./helpers/faviconUtils";
-import { ensureDefaultSpace } from "./helpers/ensureDefaultSpace";
-import { collectBookmarksV3 } from "./helpers/v3Traversal";
+import { getFirstSortedByPosition } from "@/newtab/helpers/fractionalIndexes";
+import { faviconsStorage } from "@/newtab/helpers/faviconUtils";
+import { ensureDefaultSpace } from "@/newtab/helpers/ensureDefaultSpace";
+import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 
 runLocally();
 

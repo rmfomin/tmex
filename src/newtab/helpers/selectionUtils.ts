@@ -1,6 +1,6 @@
-import { BookmarkItemV3 } from "./types";
-import { getGlobalAppState } from "../components/root/App";
-import { findItemById } from "../state/actionHelpers";
+import { BookmarkItemV3 } from "@/newtab/helpers/types";
+import { getGlobalAppState } from "@/newtab/components/root/App";
+import { findItemById } from "@/newtab/state/actionHelpers";
 
 let selectedItemsElements: HTMLElement[] = [];
 const SELECTOR = `folder-item--selected`;

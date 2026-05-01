@@ -1,4 +1,4 @@
-import { SavingState } from "../state/storage";
+import { SavingState } from "@/newtab/state/storage";
 
 const DEFAULT_SPACE_ID = 1;
 

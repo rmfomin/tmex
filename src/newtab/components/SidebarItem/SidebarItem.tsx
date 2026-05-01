@@ -4,26 +4,26 @@ import {
   hlSearch,
   removeUselessProductName,
   scrollElementIntoView,
-} from "../../helpers/utils";
-import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
-import { CL } from "../../helpers/classNameHelper";
-import { Action } from "../../state/state";
-import { DispatchContext, mergeStepsInHistory } from "../../state/actions";
+} from "@/newtab/helpers/utils";
+import { DropdownMenu, DropdownSubMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import { Action } from "@/newtab/state/state";
+import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
 import {
   convertTabOrRecentToItem,
   isTabData,
   TabOrRecentData,
-} from "../../state/actionHelpers";
+} from "@/newtab/state/actionHelpers";
 import {
   createFolderWithStat,
   showMessage,
-} from "../../helpers/actionsHelpersWithDOM";
-import { SpaceV3 } from "../../helpers/types";
-import IconSaved from "./icons/saved.svg";
-import { getFoldersList } from "../../helpers/MoveToHelpers";
-import { getBrokenImgSVG } from "../../helpers/faviconUtils";
-import { collectBookmarksV3 } from "../../helpers/v3Traversal";
-import styles from "./SidebarItem.module.scss";
+} from "@/newtab/helpers/actionsHelpersWithDOM";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import IconSaved from "@/newtab/components/SidebarItem/icons/saved.svg";
+import { getFoldersList } from "@/newtab/helpers/MoveToHelpers";
+import { getBrokenImgSVG } from "@/newtab/helpers/faviconUtils";
+import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
+import styles from "@/newtab/components/SidebarItem/SidebarItem.module.scss";
 
 export const TabOrRecentItem = (p: {
   data: TabOrRecentData;

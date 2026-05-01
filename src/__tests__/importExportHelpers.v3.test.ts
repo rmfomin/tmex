@@ -1,7 +1,7 @@
-import { SpaceV3 } from "../newtab/helpers/types";
+import { SpaceV3 } from "@/newtab/helpers/types";
 
-jest.mock("../newtab/state/actions", () => ({}));
-jest.mock("../newtab/helpers/actionsHelpersWithDOM", () => ({
+jest.mock("@/newtab/state/actions", () => ({}));
+jest.mock("@/newtab/helpers/actionsHelpersWithDOM", () => ({
   showMessage: jest.fn(),
 }));
 

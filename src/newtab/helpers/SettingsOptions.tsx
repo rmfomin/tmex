@@ -1,20 +1,20 @@
 import React, { useContext, useRef, useState } from "react";
-import { hasItemsToHighlight } from "./utils";
-import { Action, AppState } from "../state/state";
-import { DispatchContext } from "../state/actions";
+import { hasItemsToHighlight } from "@/newtab/helpers/utils";
+import { Action, AppState } from "@/newtab/state/state";
+import { DispatchContext } from "@/newtab/state/actions";
 import Switch from "react-switch";
-import { showErrorMessage, showMessage } from "./actionsHelpersWithDOM";
+import { showErrorMessage, showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
 import {
   importFromJson,
   onExportJson,
   onImportFromToby,
-} from "./importExportHelpers";
-import { ImportConfirmationModal } from "../components/ImportConfirmationModal/ImportConfirmationModal";
-import { loadFaviconUrl } from "./faviconUtils";
-import { ShortcutsModal } from "../components/ShortcutsModal/ShortcutsModal";
-import { BookmarkItemV3 } from "./types";
-import { CL } from "./classNameHelper";
-import { collectBookmarksV3 } from "./v3Traversal";
+} from "@/newtab/helpers/importExportHelpers";
+import { ImportConfirmationModal } from "@/newtab/components/ImportConfirmationModal/ImportConfirmationModal";
+import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
+import { ShortcutsModal } from "@/newtab/components/ShortcutsModal/ShortcutsModal";
+import { BookmarkItemV3 } from "@/newtab/helpers/types";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 
 type OnClickOption = {
   onClick: (e: any) => void;

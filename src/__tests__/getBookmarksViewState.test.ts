@@ -1,5 +1,5 @@
-import { getBookmarksViewState } from "../newtab/components/Bookmarks/getBookmarksViewState";
-import { AppState } from "../newtab/state/state";
+import { getBookmarksViewState } from "@/newtab/components/Bookmarks/getBookmarksViewState";
+import { AppState } from "@/newtab/state/state";
 
 function createAppState(): AppState {
   return {

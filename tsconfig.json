@@ -10,7 +10,10 @@
     "noEmitOnError": false,
     "jsx": "react",
     "typeRoots": ["node_modules/@types"],
-    "types": ["chrome", "jest", "node"]
+    "types": ["chrome", "jest", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
   },
   "include": ["src"]
 }

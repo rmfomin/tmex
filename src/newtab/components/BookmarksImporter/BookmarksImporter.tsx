@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { DispatchContext } from "../../state/actions";
-import { AppState } from "../../state/state";
-import { showMessage } from "../../helpers/actionsHelpersWithDOM";
+import { DispatchContext } from "@/newtab/state/actions";
+import { AppState } from "@/newtab/state/state";
+import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
 import {
   BookmarksAsPlainList,
   CustomBookmarkTreeNode,
   getBrowserBookmarks,
   importBrowserBookmarks,
   PlainListRecord,
-} from "../../helpers/importExportHelpers";
-import { RecentItem } from "../../helpers/recentHistoryUtils";
+} from "@/newtab/helpers/importExportHelpers";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 
 const recordToTitle = (rec: PlainListRecord) => {
   const res = rec.breadcrumbs.map((r) => r.title).join(" / ");

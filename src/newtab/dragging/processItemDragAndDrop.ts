@@ -1,8 +1,8 @@
-import { unselectAllItems } from "../helpers/selectionUtils";
+import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
 import {
   setScrollByDummyClientY,
   subscribeMouseEvents,
-} from "./dragAndDropUtils";
+} from "@/newtab/dragging/dragAndDropUtils";
 import {
   calculateFoldersDropAreas,
   createPlaceholder,
@@ -13,8 +13,8 @@ import {
   getNewPlacementForItem,
   getOverlappedDropArea,
   PConfigItem,
-} from "./dragAndDrop";
-import { inRange } from "../helpers/mathUtils";
+} from "@/newtab/dragging/dragAndDrop";
+import { inRange } from "@/newtab/helpers/mathUtils";
 
 export function processItemDragAndDrop(
   mouseDownEvent: React.MouseEvent,

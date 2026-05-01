@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { BookmarkItemV3, GroupV3, SpaceV3 } from "../../helpers/types";
-import { RecentItem } from "../../helpers/recentHistoryUtils";
+import { BookmarkItemV3, GroupV3, SpaceV3 } from "@/newtab/helpers/types";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
-import { FolderItem } from "../FolderItem/FolderItem";
-import { EditableTitle } from "../EditableTitle/EditableTitle";
-import { DispatchContext } from "../../state/actions";
-import { Action } from "../../state/state";
-import { CL } from "../../helpers/classNameHelper";
-import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
-import ChevronIcon from "./icons/shevron.svg";
-import "./FolderGroup.module.scss";
+import { FolderItem } from "@/newtab/components/FolderItem/FolderItem";
+import { EditableTitle } from "@/newtab/components/EditableTitle/EditableTitle";
+import { DispatchContext } from "@/newtab/state/actions";
+import { Action } from "@/newtab/state/state";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import { DropdownMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import ChevronIcon from "@/newtab/components/FolderGroup/icons/shevron.svg";
+import "@/newtab/components/FolderGroup/FolderGroup.module.scss";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];

@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
-import { AppState } from "../../state/state";
-import { CL } from "../../helpers/classNameHelper";
-import IconProgress from "./icons/progress.svg";
-import styles from "./Notification.module.scss";
+import { AppState } from "@/newtab/state/state";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import IconProgress from "@/newtab/components/Notification/icons/progress.svg";
+import styles from "@/newtab/components/Notification/Notification.module.scss";
 
 export const Notification = React.memo(
   (props: { notification: AppState["notification"] }) => {

@@ -1,31 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FolderV3, SpaceV3 } from "../../helpers/types";
+import { FolderV3, SpaceV3 } from "@/newtab/helpers/types";
 import {
   colors,
   DEFAULT_FOLDER_COLOR,
   scrollElementIntoView,
-} from "../../helpers/utils";
-import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
-import { FolderItem } from "../FolderItem/FolderItem";
-import { FolderGroup } from "../FolderGroup/FolderGroup";
-import { EditableTitle } from "../EditableTitle/EditableTitle";
-import { CL } from "../../helpers/classNameHelper";
-import { Action } from "../../state/state";
-import { canShowArchived, DispatchContext } from "../../state/actions";
-import { Color } from "../../helpers/Color";
-import MenuIcon from "./icons/menu.svg";
-import ChevronIcon from "./icons/shevron.svg";
-import { getSpacesList } from "../../helpers/MoveToHelpers";
+} from "@/newtab/helpers/utils";
+import { DropdownMenu, DropdownSubMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { FolderItem } from "@/newtab/components/FolderItem/FolderItem";
+import { FolderGroup } from "@/newtab/components/FolderGroup/FolderGroup";
+import { EditableTitle } from "@/newtab/components/EditableTitle/EditableTitle";
+import { CL } from "@/newtab/helpers/classNameHelper";
+import { Action } from "@/newtab/state/state";
+import { canShowArchived, DispatchContext } from "@/newtab/state/actions";
+import { Color } from "@/newtab/helpers/Color";
+import MenuIcon from "@/newtab/components/Folder/icons/menu.svg";
+import ChevronIcon from "@/newtab/components/Folder/icons/shevron.svg";
+import { getSpacesList } from "@/newtab/helpers/MoveToHelpers";
 import Tab = chrome.tabs.Tab;
-import { showMessageWithUndo } from "../../helpers/actionsHelpersWithDOM";
+import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
 import {
   createNewFolderItem,
   createNewSection,
   findSpaceByFolderId,
-} from "../../state/actionHelpers";
-import { RecentItem } from "../../helpers/recentHistoryUtils";
-import { getVisibleFolderDisplayItems } from "./getFolderDisplayItems";
-import "./Folder.module.scss";
+} from "@/newtab/state/actionHelpers";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
+import { getVisibleFolderDisplayItems } from "@/newtab/components/Folder/getFolderDisplayItems";
+import "@/newtab/components/Folder/Folder.module.scss";
 
 export const Folder = React.memo(function Folder(p: {
   spaces: SpaceV3[];

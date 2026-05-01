@@ -1,10 +1,10 @@
-import { BASE_URL, fetchPOST } from "./api";
+import { BASE_URL, fetchPOST } from "@/api/api";
 import {
   APIResponseEntityCreated,
   APIResponseEntityUpdatedOrDeleted,
-} from "../types/api";
-import { ActionDispatcher } from "../newtab/state/actions";
-import { Action, APICommandPayloadFull } from "../newtab/state/state";
+} from "@/types/api";
+import { ActionDispatcher } from "@/newtab/state/actions";
+import { Action, APICommandPayloadFull } from "@/newtab/state/state";
 
 function postExecuteCommand<T>(cmd: any): Promise<T> {
   return fetchPOST<T>(`${BASE_URL}/api/execute-command`, cmd);

@@ -1,11 +1,11 @@
 import Tab = chrome.tabs.Tab;
 import HistoryItem = chrome.history.HistoryItem;
-import { BookmarkItemV3, LegacyFolderItem, SpaceV3 } from "./types";
+import { BookmarkItemV3, LegacyFolderItem, SpaceV3 } from "@/newtab/helpers/types";
 import type React from "react";
-import { isTabowskiTab } from "./isTabowskiTab";
-import { RecentItem } from "./recentHistoryUtils";
-import { getTempFavIconUrl } from "../state/actionHelpers";
-import { collectBookmarksV3, hasArchivedItemsV3 } from "./v3Traversal";
+import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
+import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
+import { getTempFavIconUrl } from "@/newtab/state/actionHelpers";
+import { collectBookmarksV3, hasArchivedItemsV3 } from "@/newtab/helpers/v3Traversal";
 
 export const SECTION_ICON_BASE64 = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIgLz4KPC9zdmc+Cg==`;
 
