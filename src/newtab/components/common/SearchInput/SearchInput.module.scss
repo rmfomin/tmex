@@ -1,0 +1,33 @@
+.searchWrapper {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  margin-top: 13px;
+  margin-left: 8px;
+  opacity: 0.5;
+}
+
+.clearSearchButton {
+  position: absolute;
+  left: 280px;
+  top: 9px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  box-sizing: border-box;
+  line-height: 14px;
+  padding: 0;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}

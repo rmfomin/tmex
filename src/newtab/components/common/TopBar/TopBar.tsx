@@ -1,18 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import { handleSearchKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
-import { Action, AppState } from "@/newtab/state/state";
-import { DispatchContext } from "@/newtab/state/actions";
+import { AppState } from "@/newtab/state/state";
 import { HelpOptions, SettingsOptions } from "@/newtab/helpers/SettingsOptions";
 import { CL } from "@/newtab/helpers/classNameHelper";
 import IconHelp from "@/newtab/components/common/TopBar/icons/help.svg";
 import IconSettings from "@/newtab/components/common/TopBar/icons/settings.svg";
-import IconFind from "@/newtab/components/common/TopBar/icons/find.svg";
 import { SpacesList } from "@/newtab/components/common/SpacesList/SpacesList";
 import styles from "@/newtab/components/common/TopBar/TopBar.module.scss";
 
 export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
-  const dispatch = useContext(DispatchContext);
   const [settingsMenuVisibility, setSettingsMenuVisibility] = useState(false);
   const [helpMenuVisibility, setHelpMenuVisibility] = useState(false);
 
@@ -22,14 +18,6 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
 
   function onToggleSettings() {
     setSettingsMenuVisibility(!settingsMenuVisibility);
-  }
-
-  function onSearchChange(event: React.ChangeEvent) {
-    dispatch({ type: Action.UpdateSearch, value: (event.target as any).value });
-  }
-
-  function onClearSearch() {
-    dispatch({ type: Action.UpdateSearch, value: "" });
   }
 
   return (
@@ -51,28 +39,6 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
       )}
 
       <div className={styles.stretchingSpace}></div>
-
-      <div className={styles.searchWrapper}>
-        <IconFind className={styles.searchIcon} />
-        <input
-          tabIndex={1}
-          className="search"
-          type="text"
-          placeholder="Search in Tabowski"
-          value={p.appState.search}
-          onChange={onSearchChange}
-          onKeyDown={(e) => handleSearchKeyDown(e, onClearSearch)}
-        />
-        {p.appState.search !== "" ? (
-          <button
-            tabIndex={1}
-            className={styles.clearSearchButton}
-            onClick={onClearSearch}
-          >
-            ✕
-          </button>
-        ) : null}
-      </div>
 
       <div className={styles.menuButtons}>
         <button
