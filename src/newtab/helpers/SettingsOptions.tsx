@@ -3,15 +3,18 @@ import { hasItemsToHighlight } from "@/newtab/helpers/utils";
 import { Action, AppState } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
 import Switch from "react-switch";
-import { showErrorMessage, showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
+import {
+  showErrorMessage,
+  showMessage,
+} from "@/newtab/helpers/actionsHelpersWithDOM";
 import {
   importFromJson,
   onExportJson,
   onImportFromToby,
 } from "@/newtab/helpers/importExportHelpers";
-import { ImportConfirmationModal } from "@/newtab/components/ImportConfirmationModal/ImportConfirmationModal";
+import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal";
 import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
-import { ShortcutsModal } from "@/newtab/components/ShortcutsModal/ShortcutsModal";
+import { ShortcutsModal } from "@/newtab/components/common/ShortcutsModal/ShortcutsModal";
 import { BookmarkItemV3 } from "@/newtab/helpers/types";
 import { CL } from "@/newtab/helpers/classNameHelper";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";

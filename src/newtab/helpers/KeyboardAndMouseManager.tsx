@@ -6,7 +6,7 @@ import {
 import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
 import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
-import { isSomeModalOpened } from "@/newtab/components/Modal/Modal";
+import { isSomeModalOpened } from "@/newtab/components/common/Modal/Modal";
 import { isTargetInputOrTextArea } from "@/newtab/helpers/utils";
 
 export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {

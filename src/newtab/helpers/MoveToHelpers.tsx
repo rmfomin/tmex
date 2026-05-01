@@ -1,6 +1,6 @@
 import React from "react";
 import { SpaceV3 } from "@/newtab/helpers/types";
-import { DropdownSubMenu } from "@/newtab/components/DropdownMenu/DropdownMenu";
+import { DropdownSubMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import IconSaved from "@/newtab/helpers/MoveToHelpers.icons/saved.svg";
 
 export function getFoldersList(

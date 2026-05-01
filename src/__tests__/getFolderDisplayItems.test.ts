@@ -1,12 +1,10 @@
 import {
   getFolderDisplayItems,
   getVisibleFolderDisplayItems,
-} from "@/newtab/components/Folder/getFolderDisplayItems";
+} from "@/newtab/components/common/Folder/getFolderDisplayItems";
 import { FolderV3 } from "@/newtab/helpers/types";
 
-function createFolder(
-  overrides: Partial<FolderV3> = {},
-): FolderV3 {
+function createFolder(overrides: Partial<FolderV3> = {}): FolderV3 {
   return {
     id: 10,
     position: "a0",

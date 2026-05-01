@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer } from "react";
-import { Bookmarks } from "@/newtab/components/Bookmarks/Bookmarks";
-import { Sidebar } from "@/newtab/components/Sidebar/Sidebar";
-import { Notification } from "@/newtab/components/Notification/Notification";
+import { Bookmarks } from "@/newtab/components/common/Bookmarks/Bookmarks";
+import { Sidebar } from "@/newtab/components/common/Sidebar/Sidebar";
+import { Notification } from "@/newtab/components/common/Notification/Notification";
 import { KeyboardAndMouseManager } from "@/newtab/helpers/KeyboardAndMouseManager";
-import { ImportBookmarksFromSettings } from "@/newtab/components/ImportBookmarksFromSettings/ImportBookmarksFromSettings";
+import { ImportBookmarksFromSettings } from "@/newtab/components/common/ImportBookmarksFromSettings/ImportBookmarksFromSettings";
 import { Action, getInitAppState, AppState } from "@/newtab/state/state";
 import { DispatchContext, stateReducer } from "@/newtab/state/actions";
 import { getBC, getStateFromLS } from "@/newtab/state/storage";
