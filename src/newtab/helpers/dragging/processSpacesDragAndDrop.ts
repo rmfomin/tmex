@@ -1,4 +1,4 @@
-import { PConfigSpaces } from "@/newtab/helpers/dragging/dragAndDrop";
+import type { PConfigSpaces } from "@/newtab/helpers/dragging/dragAndDrop";
 import { subscribeMouseEvents } from "@/newtab/helpers/dragging/dragAndDropUtils";
 import { findParentWithClass } from "@/newtab/helpers/utils";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
@@ -14,7 +14,7 @@ type InitRes = {
 
 export function processSpacesDragAndDrop(
   mouseDownEvent: React.MouseEvent,
-  config: PConfigSpaces,
+  config: PConfigSpaces
 ) {
   let dummy: InitRes | undefined;
   let prevOverItem: HTMLElement | undefined = undefined;
@@ -22,7 +22,7 @@ export function processSpacesDragAndDrop(
 
   const target = findParentWithClass(
     mouseDownEvent.target as HTMLElement,
-    "spaces-list__item",
+    "spaces-list__item"
   );
 
   if (!target) {
@@ -55,12 +55,12 @@ export function processSpacesDragAndDrop(
     if (insertType === "before") {
       dummy!.draggingItem.dataset.position = insertBetween(
         items[overItemIndex - 1]?.dataset.position ?? "",
-        overItem.dataset.position!,
+        overItem.dataset.position!
       );
     } else {
       dummy!.draggingItem.dataset.position = insertBetween(
         overItem.dataset.position!,
-        items[overItemIndex + 1]?.dataset.position ?? "",
+        items[overItemIndex + 1]?.dataset.position ?? ""
       );
     }
 
@@ -81,7 +81,12 @@ export function processSpacesDragAndDrop(
         const { overItem, insertType } = findOverItem(e.clientX);
         if (
           overItem &&
-          (prevOverItem !== prevOverItem || prevInsertType !== insertType)
+          shouldUpdateSpaceInsertPreview(
+            prevOverItem,
+            prevInsertType,
+            overItem,
+            insertType
+          )
         ) {
           prevOverItem = overItem;
           prevInsertType = insertType;
@@ -100,7 +105,7 @@ export function processSpacesDragAndDrop(
       dummy.clonedSpacesList.remove();
       config.onChangeSpacePosition(
         parseInt(dummy.draggingItem.dataset.spaceId!, 10),
-        dummy.draggingItem.dataset.position!,
+        dummy.draggingItem.dataset.position!
       );
     } else {
       // do nothing here
@@ -114,10 +119,19 @@ export function processSpacesDragAndDrop(
 
 const ITEM_MARGIN_RIGHT = 12;
 
+export function shouldUpdateSpaceInsertPreview(
+  prevOverItem: HTMLElement | undefined,
+  prevInsertType: string,
+  overItem: HTMLElement,
+  insertType: string
+): boolean {
+  return prevOverItem !== overItem || prevInsertType !== insertType;
+}
+
 function createClonedSpacesList(target: HTMLElement): InitRes {
   const origSpacesList = document.querySelector(".spaces-list") as HTMLElement;
   const origItems = Array.from(
-    origSpacesList.querySelectorAll(".spaces-list__item"),
+    origSpacesList.querySelectorAll(".spaces-list__item")
   );
 
   const listRect = origSpacesList.getBoundingClientRect();

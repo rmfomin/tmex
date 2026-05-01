@@ -90,7 +90,7 @@ export function SpacesList(p: {
   };
 
   return (
-    <div className={styles.spacesList}>
+    <div className={`spaces-list ${styles.spacesList}`}>
       {p.spaces.length === 0 && (
         <span style={{ padding: "8px" }}>no spaces</span>
       )}
@@ -98,7 +98,7 @@ export function SpacesList(p: {
         return (
           <span
             key={space.id}
-            className={CL(styles.item, {
+            className={CL(`spaces-list__item ${styles.item}`, {
               [styles.active]: space.id === p.currentSpaceId,
             })}
             onClick={() => onSpaceClick(space.id)}
@@ -114,7 +114,7 @@ export function SpacesList(p: {
             />
             {space.id === p.itemInEdit && p.spaces.length > 1 && (
               <button
-                className={styles.deleteButton}
+                className={`spaces-list__delete-button ${styles.deleteButton}`}
                 title="Delete space"
                 onMouseDown={() => deleteSpace(space)}
               >
