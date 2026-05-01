@@ -14,8 +14,8 @@ import { Action } from "../../state/state";
 import { canShowArchived, DispatchContext } from "../../state/actions";
 import { Color } from "../../helpers/Color";
 import MenuIcon from "./icons/menu.svg";
-import ChevronIcon from "../shared/icons/shevron.svg";
-import { getSpacesList } from "../shared/MoveToHelpers";
+import ChevronIcon from "./icons/shevron.svg";
+import { getSpacesList } from "../../helpers/MoveToHelpers";
 import Tab = chrome.tabs.Tab;
 import { showMessageWithUndo } from "../../helpers/actionsHelpersWithDOM";
 import {

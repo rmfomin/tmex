@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownSubMenu } from "../DropdownMenu/DropdownMenu";
 import { getSelectedItems } from "../../helpers/selectionUtils";
 import { Action } from "../../state/state";
 import { DispatchContext, mergeStepsInHistory } from "../../state/actions";
-import { getSpacesWithNestedFoldersList } from "../shared/MoveToHelpers";
+import { getSpacesWithNestedFoldersList } from "../../helpers/MoveToHelpers";
 import {
   createFolderWithStat,
   showMessage,

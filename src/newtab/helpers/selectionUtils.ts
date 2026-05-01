@@ -1,5 +1,5 @@
 import { BookmarkItemV3 } from "./types";
-import { getGlobalAppState } from "../components/App";
+import { getGlobalAppState } from "../components/root/App";
 import { findItemById } from "../state/actionHelpers";
 
 let selectedItemsElements: HTMLElement[] = [];

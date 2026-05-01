@@ -19,8 +19,8 @@ import {
   showMessage,
 } from "../../helpers/actionsHelpersWithDOM";
 import { SpaceV3 } from "../../helpers/types";
-import IconSaved from "../shared/icons/saved.svg";
-import { getFoldersList } from "../shared/MoveToHelpers";
+import IconSaved from "./icons/saved.svg";
+import { getFoldersList } from "../../helpers/MoveToHelpers";
 import { getBrokenImgSVG } from "../../helpers/faviconUtils";
 import { collectBookmarksV3 } from "../../helpers/v3Traversal";
 import styles from "./SidebarItem.module.scss";
@@ -130,7 +130,12 @@ export const TabOrRecentItem = (p: {
       data-id={p.data.id}
       onContextMenu={onTabContextMenu}
     >
-      <img className={styles.icon} src={p.data.favIconUrl} alt="" onError={handleImageError} />
+      <img
+        className={styles.icon}
+        src={p.data.favIconUrl}
+        alt=""
+        onError={handleImageError}
+      />
       <div className={styles.text}>
         <div
           className={styles.title}
@@ -143,7 +148,9 @@ export const TabOrRecentItem = (p: {
           dangerouslySetInnerHTML={hlSearch(domain, p.search)}
         />
         {savedInFolders ? (
-          <div className={styles.alreadySaved}>Already saved in {savedInFolders}</div>
+          <div className={styles.alreadySaved}>
+            Already saved in {savedInFolders}
+          </div>
         ) : null}
       </div>
       {p.onCloseTab && (

@@ -1,5 +1,5 @@
 import React from "react";
-import { App } from "./components/App";
+import { App } from "./components/root/App";
 import "../styles/index.scss";
 import { setInitAppState } from "./state/state";
 import {

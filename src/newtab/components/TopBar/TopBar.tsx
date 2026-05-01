@@ -3,7 +3,7 @@ import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
 import { handleSearchKeyDown } from "../../helpers/handleBookmarksKeyDown";
 import { Action, AppState } from "../../state/state";
 import { DispatchContext } from "../../state/actions";
-import { HelpOptions, SettingsOptions } from "../SettingsOptions";
+import { HelpOptions, SettingsOptions } from "../../helpers/SettingsOptions";
 import { CL } from "../../helpers/classNameHelper";
 import IconHelp from "./icons/help.svg";
 import IconSettings from "./icons/settings.svg";

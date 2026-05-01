@@ -1,23 +1,20 @@
 import React, { useContext, useRef, useState } from "react";
-import { hasItemsToHighlight } from "../helpers/utils";
+import { hasItemsToHighlight } from "./utils";
 import { Action, AppState } from "../state/state";
 import { DispatchContext } from "../state/actions";
 import Switch from "react-switch";
-import {
-  showErrorMessage,
-  showMessage,
-} from "../helpers/actionsHelpersWithDOM";
+import { showErrorMessage, showMessage } from "./actionsHelpersWithDOM";
 import {
   importFromJson,
   onExportJson,
   onImportFromToby,
-} from "../helpers/importExportHelpers";
-import { ImportConfirmationModal } from "./ImportConfirmationModal/ImportConfirmationModal";
-import { loadFaviconUrl } from "../helpers/faviconUtils";
-import { ShortcutsModal } from "./ShortcutsModal/ShortcutsModal";
-import { BookmarkItemV3 } from "../helpers/types";
-import { CL } from "../helpers/classNameHelper";
-import { collectBookmarksV3 } from "../helpers/v3Traversal";
+} from "./importExportHelpers";
+import { ImportConfirmationModal } from "../components/ImportConfirmationModal/ImportConfirmationModal";
+import { loadFaviconUrl } from "./faviconUtils";
+import { ShortcutsModal } from "../components/ShortcutsModal/ShortcutsModal";
+import { BookmarkItemV3 } from "./types";
+import { CL } from "./classNameHelper";
+import { collectBookmarksV3 } from "./v3Traversal";
 
 type OnClickOption = {
   onClick: (e: any) => void;
@@ -80,7 +77,9 @@ export const HelpOptions = (p: { appState: AppState }) => {
       (s) => s.id === p.appState.currentSpaceId,
     );
     if (currentSpace) {
-      promises.push(...collectBookmarksV3([currentSpace]).map(invalidateFavicon));
+      promises.push(
+        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon),
+      );
     }
 
     showMessage("updating...", dispatch, true);
