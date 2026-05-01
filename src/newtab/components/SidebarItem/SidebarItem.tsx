@@ -19,7 +19,7 @@ import {
   showMessage,
 } from "../../helpers/actionsHelpersWithDOM";
 import { SpaceV3 } from "../../helpers/types";
-import IconSaved from "../../icons/saved.svg";
+import IconSaved from "../shared/icons/saved.svg";
 import { getFoldersList } from "../shared/MoveToHelpers";
 import { getBrokenImgSVG } from "../../helpers/faviconUtils";
 import { collectBookmarksV3 } from "../../helpers/v3Traversal";

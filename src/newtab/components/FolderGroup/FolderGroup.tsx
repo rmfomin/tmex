@@ -8,7 +8,7 @@ import { DispatchContext } from "../../state/actions";
 import { Action } from "../../state/state";
 import { CL } from "../../helpers/classNameHelper";
 import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
-import ChevronIcon from "../../icons/shevron.svg";
+import ChevronIcon from "../shared/icons/shevron.svg";
 import "./FolderGroup.module.scss";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {

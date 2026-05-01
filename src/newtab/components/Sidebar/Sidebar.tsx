@@ -12,9 +12,9 @@ import { DropdownMenu } from "../DropdownMenu/DropdownMenu";
 import { CL } from "../../helpers/classNameHelper";
 import { Action, AppState } from "../../state/state";
 import { DispatchContext } from "../../state/actions";
-import IconClean from "../../icons/clean.svg";
-import IconStash from "../../icons/stash.svg";
-import IconPin from "../../icons/pin.svg";
+import IconClean from "./icons/clean.svg";
+import IconStash from "./icons/stash.svg";
+import IconPin from "./icons/pin.svg";
 import Tab = chrome.tabs.Tab;
 import {
   convertTabOrRecentToItem,

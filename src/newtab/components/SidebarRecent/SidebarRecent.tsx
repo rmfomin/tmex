@@ -24,8 +24,8 @@ import {
   tryLoadMoreHistory,
   youtubeHashRegExp,
 } from "../../helpers/recentHistoryUtils";
-import IconFilter from "../../icons/filter.svg";
-import IconNonFilter from "../../icons/no-filter-thin.svg";
+import IconFilter from "./icons/filter.svg";
+import IconNonFilter from "./icons/no-filter-thin.svg";
 import { getTempFavIconUrl } from "../../state/actionHelpers";
 import { DispatchContext } from "../../state/actions";
 import { TabOrRecentItem } from "../SidebarItem/SidebarItem";

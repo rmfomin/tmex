@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { AppState } from "../../state/state";
 import { CL } from "../../helpers/classNameHelper";
-import IconProgress from "../../icons/progress.svg";
+import IconProgress from "./icons/progress.svg";
 import styles from "./Notification.module.scss";
 
 export const Notification = React.memo(

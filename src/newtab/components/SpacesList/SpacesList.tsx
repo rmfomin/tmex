@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import PlusIcon from "../../icons/plus.svg";
-import DeleteIcon from "../../icons/delete.svg";
+import PlusIcon from "./icons/plus.svg";
+import DeleteIcon from "./icons/delete.svg";
 import { SpaceV3 } from "../../helpers/types";
 import { CL } from "../../helpers/classNameHelper";
 import { DispatchContext } from "../../state/actions";

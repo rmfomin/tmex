@@ -5,9 +5,9 @@ import { Action, AppState } from "../../state/state";
 import { DispatchContext } from "../../state/actions";
 import { HelpOptions, SettingsOptions } from "../SettingsOptions";
 import { CL } from "../../helpers/classNameHelper";
-import IconHelp from "../../icons/help.svg";
-import IconSettings from "../../icons/settings.svg";
-import IconFind from "../../icons/find.svg";
+import IconHelp from "./icons/help.svg";
+import IconSettings from "./icons/settings.svg";
+import IconFind from "./icons/find.svg";
 import { SpacesList } from "../SpacesList/SpacesList";
 import styles from "./TopBar.module.scss";
 
