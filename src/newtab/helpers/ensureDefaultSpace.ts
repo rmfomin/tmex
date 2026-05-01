@@ -12,7 +12,7 @@ export function ensureDefaultSpace(state: SavingState): void {
       id: DEFAULT_SPACE_ID,
       position: "a0",
       objectType: "space",
-      title: "Bookmarks",
+      title: "Default bookmarks",
       folders: [],
     },
   ];

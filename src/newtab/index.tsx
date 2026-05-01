@@ -1,6 +1,6 @@
 import React from "react";
 import { App } from "./components/App";
-import "../styles/style.scss";
+import "../styles/index.scss";
 import { setInitAppState } from "./state/state";
 import {
   applyTheme,
@@ -8,26 +8,17 @@ import {
   SavingState,
   saveStateThrottled,
 } from "./state/storage";
-import { loadFromNetwork } from "../api/api";
 import { createRoot } from "react-dom/client";
 import { getFirstSortedByPosition } from "./helpers/fractionalIndexes";
 import { faviconsStorage } from "./helpers/faviconUtils";
 import { ensureDefaultSpace } from "./helpers/ensureDefaultSpace";
-import { collectBookmarksV3, hasArchivedItemsV3 } from "./helpers/v3Traversal";
+import { collectBookmarksV3 } from "./helpers/v3Traversal";
 
-if (loadFromNetwork()) {
-  getStateFromLS((res) => {
-    setInitAppState(res);
-    mountApp();
-  });
-} else {
-  runLocally();
-}
+runLocally();
 
 async function runLocally() {
   getStateFromLS((res) => {
     preprocessLoadedState(res);
-    disableHideItemFunctionality(res);
     setInitAppState(res);
     mountApp();
   });
@@ -60,8 +51,4 @@ function preprocessLoadedState(state: SavingState): void {
   applyTheme(state.colorTheme);
 
   saveStateThrottled(state);
-}
-
-function disableHideItemFunctionality(res: SavingState) {
-  res.hiddenFeatureIsEnabled = hasArchivedItemsV3(res.spaces);
 }

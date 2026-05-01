@@ -11,6 +11,8 @@ declare module "*.module.scss" {
   export default classes;
 }
 
+declare module "*.scss";
+
 declare const __OVERRIDE_NEWTAB: boolean;
 declare const MIXPANEL_TOKEN: string;
 
