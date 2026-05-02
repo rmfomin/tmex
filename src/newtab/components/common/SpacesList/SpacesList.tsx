@@ -34,14 +34,10 @@ export function SpacesList(p: {
   };
 
   const onSpaceClick = (spaceId: number) => {
-    if (p.currentSpaceId === spaceId) {
-      setEditingSpaceId(spaceId);
-    } else {
-      dispatch({
-        type: Action.SelectSpace,
-        spaceId: spaceId,
-      });
-    }
+    dispatch({
+      type: Action.SelectSpace,
+      spaceId: spaceId,
+    });
   };
 
   const onSaveNewSpaceTitle = (spaceId: number, title: string) => {
@@ -116,6 +112,7 @@ export function SpacesList(p: {
               [styles.active]: space.id === p.currentSpaceId,
             })}
             onClick={() => onSpaceClick(space.id)}
+            onDoubleClick={() => setEditingSpaceId(space.id)}
             data-position={space.position}
             data-space-id={space.id}
           >

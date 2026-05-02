@@ -394,7 +394,7 @@ export const Folder = React.memo(function Folder(p: {
               className="dropdown-menu__button focusable"
               onClick={onAddSection}
             >
-              + Add Section
+              + Add Group
             </button>
             <button
               className="dropdown-menu__button focusable"
