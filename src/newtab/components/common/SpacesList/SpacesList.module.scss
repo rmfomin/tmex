@@ -15,7 +15,8 @@
     background-color: var(--input-background-color);
   }
 
-  &:hover .newButton {
+  &:hover .newButton,
+  &:hover .importButton {
     visibility: visible;
   }
 }
@@ -81,6 +82,31 @@
   visibility: hidden;
   opacity: 0.7;
   cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.importInput {
+  display: none;
+}
+
+.importButton {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 8px;
+  margin-left: -4px;
+  margin-right: 8px;
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.7;
+  cursor: pointer;
+  visibility: hidden;
 
   &:hover {
     opacity: 1;

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import PlusIcon from "@/newtab/components/common/SpacesList/icons/plus.svg";
 import DeleteIcon from "@/newtab/components/common/SpacesList/icons/delete.svg";
 import { SpaceV3 } from "@/newtab/helpers/types";
@@ -10,6 +10,10 @@ import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMe
 import { genUniqLocalId } from "@/newtab/state/actionHelpers";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
+import {
+  importSpaceFromJson,
+  onExportSpaceJson,
+} from "@/newtab/helpers/importExportHelpers";
 import styles from "@/newtab/components/common/SpacesList/SpacesList.module.scss";
 
 export function SpacesList(p: {
@@ -18,6 +22,7 @@ export function SpacesList(p: {
   itemInEdit: number | undefined;
 }) {
   const dispatch = useContext(DispatchContext);
+  const importSpaceInputRef = useRef<HTMLInputElement>(null);
 
   const [menuSpaceId, setMenuSpaceId] = useState(-1);
 
@@ -57,6 +62,11 @@ export function SpacesList(p: {
     setEditingSpaceId(spaceId);
   };
 
+  const onExportSpace = (space: SpaceV3) => {
+    setMenuSpaceId(-1);
+    onExportSpaceJson(space);
+  };
+
   const deleteSpace = (space: SpaceV3) => {
     const bookmarksCount = collectBookmarksV3([space]).length;
     let res = true;
@@ -87,6 +97,10 @@ export function SpacesList(p: {
     });
 
     setEditingSpaceId(spaceId);
+  };
+
+  const onImportSpaceClick = () => {
+    importSpaceInputRef.current?.click();
   };
 
   return (
@@ -135,6 +149,12 @@ export function SpacesList(p: {
                 >
                   Rename space
                 </button>
+                <button
+                  className="dropdown-menu__button focusable"
+                  onClick={() => onExportSpace(space)}
+                >
+                  Export space
+                </button>
                 {p.spaces.length > 1 && (
                   <button
                     className="dropdown-menu__button dropdown-menu__button--dander focusable"
@@ -149,13 +169,30 @@ export function SpacesList(p: {
         );
       })}
       {!p.itemInEdit && (
-        <div
-          className={styles.newButton}
-          onClick={onAddSpace}
-          title="Add new space"
-        >
-          <PlusIcon />
-        </div>
+        <>
+          <input
+            ref={importSpaceInputRef}
+            type="file"
+            accept=".json,application/json"
+            className={styles.importInput}
+            onChange={(e) => importSpaceFromJson(e, dispatch, p.spaces)}
+          />
+          <button
+            type="button"
+            className={styles.importButton}
+            onClick={onImportSpaceClick}
+            title="Import space"
+          >
+            Import space
+          </button>
+          <div
+            className={styles.newButton}
+            onClick={onAddSpace}
+            title="Add new space"
+          >
+            <PlusIcon />
+          </div>
+        </>
       )}
     </div>
   );

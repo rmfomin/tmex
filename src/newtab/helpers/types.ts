@@ -91,6 +91,12 @@ export type DataBackupV3 = BackupBrandMarker & {
   spaces: SpaceV3[];
 };
 
+export type SpaceBackupV3 = BackupBrandMarker & {
+  version: 3;
+  objectType: "space-backup";
+  space: SpaceV3;
+};
+
 export interface SpaceV3 {
   id: number;
   remoteId?: number;
