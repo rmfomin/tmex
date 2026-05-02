@@ -189,10 +189,10 @@ export function Bookmarks(p: { appState: AppState }) {
   const searchFilterMode = p.appState.searchFilterMode ?? "or";
 
   return (
-    <div className="bookmarks-box" onMouseDown={onMouseDown}>
+    <div className={styles.bookmarksBox} onMouseDown={onMouseDown}>
       <TopBar appState={p.appState} isScrolled={isScrolled} />
       <div
-        className="bookmarks"
+        className={`${styles.bookmarks} bookmarks`}
         ref={bookmarksRef}
         onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
       >
@@ -222,9 +222,9 @@ export function Bookmarks(p: { appState: AppState }) {
         ))}
 
         {showEmptyImport ? (
-          <div className="empty-dashboard">
+          <div className={styles.emptyDashboard}>
             <button
-              className="welcome-button empty-dashboard__button"
+              className={`welcome-button ${styles.emptyDashboardButton}`}
               onClick={onOpenJsonImport}
             >
               Import from JSON

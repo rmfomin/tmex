@@ -25,4 +25,16 @@ describe("compiled style selectors", () => {
     expect(css).toContain(".dropdown-menu");
     expect(css).toContain(".modal-wrapper");
   });
+
+  test("bookmarks module keeps component-owned selectors local", () => {
+    const modulePath = path.join(
+      __dirname,
+      "../newtab/components/common/Bookmarks/Bookmarks.module.scss",
+    );
+    const moduleScss = fs.readFileSync(modulePath, "utf8");
+
+    expect(moduleScss).not.toMatch(/:global\(\.bookmarks-box\)/);
+    expect(moduleScss).not.toMatch(/:global\(\.empty-dashboard/);
+    expect(moduleScss).toContain("&:global(.bookmarks)");
+  });
 });

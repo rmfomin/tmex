@@ -1,3 +1,11 @@
+:global(.folder) {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  padding: 8px 28px;
+  user-select: none;
+}
+
 :global(.folder--empty) {
   .draggable-folder {
     color: #bbbbbb !important;
