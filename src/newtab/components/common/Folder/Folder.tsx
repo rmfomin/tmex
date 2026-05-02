@@ -14,7 +14,11 @@ import { FolderGroup } from "@/newtab/components/common/FolderGroup/FolderGroup"
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
 import { CL } from "@/newtab/helpers/classNameHelper";
 import { Action } from "@/newtab/state/state";
-import { canShowArchived, DispatchContext } from "@/newtab/state/actions";
+import {
+  canShowArchived,
+  DispatchContext,
+  mergeStepsInHistory,
+} from "@/newtab/state/actions";
 import { Color } from "@/newtab/helpers/Color";
 import MenuIcon from "@/newtab/components/common/Folder/icons/menu.svg";
 import ChevronIcon from "@/newtab/components/common/Folder/icons/shevron.svg";
@@ -168,6 +172,31 @@ export const Folder = React.memo(function Folder(p: {
     });
 
     setShowMenu(false);
+  }
+
+  function setAllGroupsCollapsed(collapsed: boolean) {
+    mergeStepsInHistory((historyStepId) => {
+      p.folder.items.forEach((item) => {
+        if (item.type === "group" && item.collapsed !== collapsed) {
+          dispatch({
+            type: Action.UpdateFolderItem,
+            itemId: item.id,
+            collapsed,
+            historyStepId,
+          });
+        }
+      });
+    });
+
+    setShowMenu(false);
+  }
+
+  function onCollapseAllGroups() {
+    setAllGroupsCollapsed(true);
+  }
+
+  function onExpandAllGroups() {
+    setAllGroupsCollapsed(false);
   }
 
   function onRename() {
@@ -364,6 +393,18 @@ export const Folder = React.memo(function Folder(p: {
               onClick={onOpenAll}
             >
               Open All
+            </button>
+            <button
+              className="dropdown-menu__button focusable"
+              onClick={onCollapseAllGroups}
+            >
+              Collapse all
+            </button>
+            <button
+              className="dropdown-menu__button focusable"
+              onClick={onExpandAllGroups}
+            >
+              Expand All
             </button>
             {p.hiddenFeatureIsEnabled && (
               <button
