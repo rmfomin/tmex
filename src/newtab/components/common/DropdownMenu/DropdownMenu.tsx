@@ -9,7 +9,7 @@ import { createContext } from "react";
 import { CL } from "@/newtab/helpers/classNameHelper";
 import ReactDOM from "react-dom";
 import { isSomeParentHaveClass } from "@/newtab/helpers/utils";
-import { Offset, Point } from "@/newtab/helpers/MathTypes";
+import { Offset, Point } from "@/newtab/helpers/mathTypes";
 
 const DROPDOWN_MENU_OPENED_EVENT = "dropdown-menu-opened";
 

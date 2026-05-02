@@ -1,4 +1,4 @@
-import { Offset, Rect } from "@/newtab/helpers/MathTypes";
+import { Offset, Rect } from "@/newtab/helpers/mathTypes";
 
 export function areRectsOverlapping(rect1: Rect, rect2: Rect): boolean {
   // Check if one rectangle is to the left of the other

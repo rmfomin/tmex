@@ -7,7 +7,7 @@ import {
 import { getSelectedItems } from "@/newtab/helpers/selectionUtils";
 import { Action } from "@/newtab/state/state";
 import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
-import { getSpacesWithNestedFoldersList } from "@/newtab/helpers/MoveToHelpers";
+import { getSpacesWithNestedFoldersList } from "@/newtab/helpers/moveToHelpers";
 import {
   createFolderWithStat,
   showMessage,

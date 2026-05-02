@@ -7,7 +7,7 @@ import {
   isTargetInputOrTextArea,
   isTargetSupportsDragAndDrop,
 } from "@/newtab/helpers/utils";
-import { Point } from "@/newtab/helpers/MathTypes";
+import { Point } from "@/newtab/helpers/mathTypes";
 import { processFolderDragAndDrop } from "@/newtab/helpers/dragging/processFolderDragAndDrop";
 import { processItemDragAndDrop } from "@/newtab/helpers/dragging/processItemDragAndDrop";
 import { processSpacesDragAndDrop } from "@/newtab/helpers/dragging/processSpacesDragAndDrop";

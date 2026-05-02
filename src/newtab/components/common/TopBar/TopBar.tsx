@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import { AppState } from "@/newtab/state/state";
-import { HelpOptions, SettingsOptions } from "@/newtab/helpers/SettingsOptions";
+import { HelpOptions, SettingsOptions } from "@/newtab/helpers/settingsOptions";
 import { CL } from "@/newtab/helpers/classNameHelper";
 import { hasSearch } from "@/newtab/helpers/utils";
 import IconHelp from "@/newtab/components/common/TopBar/icons/help.svg";

@@ -308,10 +308,10 @@ describe("style build configuration", () => {
     expect(fs.existsSync(legacyDirPath)).toBe(false);
   });
 
-  test("move helpers stay shared with PascalCase naming", () => {
+  test("move helpers stay shared with camelCase naming", () => {
     const sharedHelperPath = path.join(
       __dirname,
-      "../../src/newtab/components/shared/MoveToHelpers.tsx",
+      "../../src/newtab/helpers/moveToHelpers.tsx",
     );
     const legacyHelperPath = path.join(
       __dirname,

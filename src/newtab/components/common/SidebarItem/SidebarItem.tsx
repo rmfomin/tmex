@@ -23,7 +23,7 @@ import {
 } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import IconSaved from "@/newtab/components/common/SidebarItem/icons/saved.svg";
-import { getFoldersList } from "@/newtab/helpers/MoveToHelpers";
+import { getFoldersList } from "@/newtab/helpers/moveToHelpers";
 import { getBrokenImgSVG } from "@/newtab/helpers/faviconUtils";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 import styles from "@/newtab/components/common/SidebarItem/SidebarItem.module.scss";

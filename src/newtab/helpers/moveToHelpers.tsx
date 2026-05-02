@@ -1,7 +1,6 @@
 import React from "react";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import { DropdownSubMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import IconSaved from "@/newtab/helpers/MoveToHelpers.icons/saved.svg";
 
 export function getFoldersList(
   space: Pick<SpaceV3, "id" | "folders">,
@@ -23,10 +22,14 @@ export function getFoldersList(
             className="folder-color"
             style={{ backgroundColor: folder.color }}
           ></span>
-          <span style={{ flexGrow: 1 }}>{folder.title}</span>
-          {currentFolderId === folder.id && (
-            <IconSaved className="current-icon"></IconSaved>
-          )}
+          <span
+            style={{
+              flexGrow: 1,
+              fontWeight: currentFolderId === folder.id ? 700 : undefined,
+            }}
+          >
+            {folder.title}
+          </span>
         </button>
       ))}
       <button
@@ -56,10 +59,13 @@ export function getSpacesList(
           disabled={currentSpaceId === space.id}
           onClick={() => onSpaceClick(space.id)}
         >
-          <span>{space.title}</span>
-          {currentSpaceId === space.id && (
-            <IconSaved className="current-icon"></IconSaved>
-          )}
+          <span
+            style={{
+              fontWeight: currentSpaceId === space.id ? 700 : undefined,
+            }}
+          >
+            {space.title}
+          </span>
         </button>
       ))}
     </>

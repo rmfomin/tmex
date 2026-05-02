@@ -21,10 +21,10 @@ import {
   DispatchContext,
   mergeStepsInHistory,
 } from "@/newtab/state/actions";
-import { Color } from "@/newtab/helpers/Color";
+import { Color } from "@/newtab/helpers/color";
 import MenuIcon from "@/newtab/components/common/Folder/icons/menu.svg";
 import ChevronIcon from "@/newtab/components/common/Folder/icons/shevron.svg";
-import { getSpacesList } from "@/newtab/helpers/MoveToHelpers";
+import { getSpacesList } from "@/newtab/helpers/moveToHelpers";
 import Tab = chrome.tabs.Tab;
 import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
 import {
