@@ -66,7 +66,8 @@ export function Bookmarks(p: { appState: AppState }) {
       const onDropItems = (
         folderId: number,
         insertBeforeItemId: number | undefined,
-        targetsIds: number[]
+        targetsIds: number[],
+        targetGroupId?: number
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
@@ -81,6 +82,7 @@ export function Bookmarks(p: { appState: AppState }) {
             type: Action.MoveFolderItems,
             itemIds: targetsIds,
             targetFolderId: folderId,
+            targetGroupId,
             insertBeforeItemId: insertBeforeItemId,
             historyStepId,
           });

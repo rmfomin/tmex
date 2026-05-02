@@ -496,6 +496,7 @@ export const Folder = React.memo(function Folder(p: {
             <FolderGroup
               key={item.group.id}
               spaces={p.spaces}
+              folderId={p.folder.id}
               group={item.group}
               items={visibleGroupItems}
               tabs={p.tabs}

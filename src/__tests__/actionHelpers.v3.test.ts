@@ -1,4 +1,8 @@
-import { updateFolder, updateFolderItem } from "@/newtab/state/actionHelpers";
+import {
+  createNewSection,
+  updateFolder,
+  updateFolderItem,
+} from "@/newtab/state/actionHelpers";
 import { SpaceV3 } from "@/newtab/helpers/types";
 
 function createSpacesFixture(): SpaceV3[] {
@@ -94,6 +98,18 @@ test("updateFolder preserves v3-only folder and group structure", () => {
         ],
       },
     ],
+  });
+});
+
+test("createNewSection creates an empty v3 group", () => {
+  expect(createNewSection("Section")).toEqual({
+    id: expect.any(Number),
+    position: "",
+    type: "group",
+    objectType: "group",
+    title: "Section",
+    collapsed: false,
+    groupItems: [],
   });
 });
 

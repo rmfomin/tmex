@@ -51,6 +51,8 @@ export type FolderItemToCreate = Pick<
   "id" | "favIconUrl" | "url" | "title" | "isSection"
 > & { position?: string };
 
+export type ItemToCreateV3 = FolderItemToCreate | ItemV3;
+
 /**
  * Compatibility-only payload shape for legacy API/import boundaries.
  * Do not use as a runtime source of truth.

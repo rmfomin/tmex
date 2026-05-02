@@ -14,6 +14,8 @@ import { processSpacesDragAndDrop } from "@/newtab/helpers/dragging/processSpace
 
 export type DropArea = {
   objectId: number;
+  groupId?: number;
+  insertAtEnd?: boolean;
   element: HTMLElement;
   rect: DOMRect;
   itemRects: { thresholdY: number; itemTop: number; itemHeight: number }[];
@@ -24,7 +26,8 @@ export type PConfigItem = {
   onDrop: (
     folderId: number,
     insertBeforeItemId: number | undefined,
-    targetsIds: number[]
+    targetsIds: number[],
+    targetGroupId?: number
   ) => void;
   onCancel: () => void;
   onClick: (targetId: number) => void;
@@ -102,7 +105,20 @@ export function getOverlappedDropArea(
   dropAreas: DropArea[],
   e: MouseEvent
 ): DropArea | undefined {
-  return dropAreas.find((da) => {
+  const realRectAreas = dropAreas.filter((da) => {
+    return (
+      da.rect.left < e.clientX &&
+      e.clientX < da.rect.right &&
+      da.rect.top < e.clientY &&
+      e.clientY < da.rect.bottom
+    );
+  });
+
+  if (realRectAreas.length > 0) {
+    return realRectAreas.sort(compareDropAreasByPriority)[0];
+  }
+
+  const overlappedAreas = dropAreas.filter((da) => {
     return (
       da.rect.left < e.clientX &&
       e.clientX < da.rect.right &&
@@ -110,6 +126,12 @@ export function getOverlappedDropArea(
       e.clientY < da.rect.bottom + FOLDER_BOTTOM_OFFSET
     );
   });
+
+  return overlappedAreas.sort(compareDropAreasByPriority)[0];
+}
+
+function compareDropAreasByPriority(a: DropArea, b: DropArea): number {
+  return a.rect.width * a.rect.height - b.rect.width * b.rect.height;
 }
 
 export function getOverlappedSpaceDropArea(
@@ -228,7 +250,18 @@ export function doStopPropagation(targetElement: HTMLElement | null): boolean {
 }
 
 export function getFolderId(dropAreaElement: HTMLElement): number {
+  return getDropAreaFolderId(dropAreaElement);
+}
+
+export function getDropAreaFolderId(dropAreaElement: HTMLElement): number {
   return parseInt(dropAreaElement.dataset.folderId!);
+}
+
+export function getDropAreaGroupId(
+  dropAreaElement: HTMLElement
+): number | undefined {
+  const groupId = dropAreaElement.dataset.groupId;
+  return groupId ? parseInt(groupId, 10) : undefined;
 }
 
 export function getSpaceId(dropAreaElement: HTMLElement): number {
@@ -306,7 +339,9 @@ export function calculateFoldersDropAreas(
   calcItemRects = false
 ): DropArea[] {
   return folderEls.map((el) => ({
-    objectId: getFolderId(el as HTMLElement),
+    objectId: getDropAreaFolderId(el as HTMLElement),
+    groupId: getDropAreaGroupId(el as HTMLElement),
+    insertAtEnd: (el as HTMLElement).dataset.dropInsert === "end",
     element: el as HTMLElement,
     rect: el.getBoundingClientRect(),
     itemRects: calcItemRects

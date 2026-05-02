@@ -221,3 +221,55 @@ test("MoveFolderItems moves group as a single draggable item", () => {
     },
   ]);
 });
+
+test("MoveFolderItems moves bookmark into group items", () => {
+  const initialState = createState();
+  initialState.spaces[0].folders[0].items.push({
+    id: 102,
+    position: "a1",
+    type: "bookmark",
+    objectType: "bookmark",
+    title: "Docs",
+    url: "https://docs.example",
+    favIconUrl: "https://docs.example/favicon.ico",
+  });
+
+  const result = stateReducer(initialState, {
+    type: Action.MoveFolderItems,
+    itemIds: [102],
+    targetFolderId: 10,
+    targetGroupId: 100,
+    insertBeforeItemId: undefined,
+  });
+
+  expect(result.spaces[0].folders[0].items).toEqual([
+    {
+      id: 100,
+      position: "a0",
+      type: "group",
+      objectType: "group",
+      title: "Infra",
+      collapsed: true,
+      groupItems: [
+        {
+          id: 101,
+          position: "a0",
+          type: "bookmark",
+          objectType: "bookmark",
+          title: "Grafana",
+          url: "https://grafana.example",
+          favIconUrl: "https://grafana.example/favicon.ico",
+        },
+        {
+          id: 102,
+          position: expect.any(String),
+          type: "bookmark",
+          objectType: "bookmark",
+          title: "Docs",
+          url: "https://docs.example",
+          favIconUrl: "https://docs.example/favicon.ico",
+        },
+      ],
+    },
+  ]);
+});

@@ -13,6 +13,7 @@ import "@/newtab/components/common/FolderGroup/FolderGroup.module.scss";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];
+  folderId: number;
   group: GroupV3;
   items: BookmarkItemV3[];
   tabs: Tab[];
@@ -77,6 +78,9 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
       <div
         className="folder-group__header draggable-item"
         data-id={p.group.id}
+        data-folder-id={p.folderId}
+        data-group-id={p.group.id}
+        data-drop-insert="end"
         onContextMenu={onHeaderContextMenu}
         onDragStart={(e) => {
           e.preventDefault();
@@ -122,7 +126,11 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           </DropdownMenu>
         ) : null}
       </div>
-      <div className="folder-group__items">
+      <div
+        className="folder-group__items"
+        data-folder-id={p.folderId}
+        data-group-id={p.group.id}
+      >
         {p.items.map((item) => (
           <FolderItem
             key={item.id}

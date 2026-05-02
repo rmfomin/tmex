@@ -14,6 +14,7 @@ import {
   getNewPlacementForItem,
   getOverlappedDropArea,
   PConfigItem,
+  DropArea,
 } from "@/newtab/helpers/dragging/dragAndDrop";
 import { inRange } from "@/newtab/helpers/mathUtils";
 
@@ -26,13 +27,22 @@ export function processItemDragAndDrop(
   let originalIndex: number;
   let dummy: undefined | HTMLElement = undefined;
   const placeholder: HTMLElement = createPlaceholder(true);
+  const canDropIntoGroupHeader = targetRoots.every(
+    (targetRoot) => !targetRoot.classList.contains("folder-group__header"),
+  );
 
   const folderEls = Array.from(
-    document.querySelectorAll(".folder .folder-items-box"),
+    document.querySelectorAll(
+      `${
+        canDropIntoGroupHeader ? ".folder-group__header, " : ""
+      }.folder-group__items, .folder .folder-items-box`,
+    ),
   );
   let dropAreas = calculateFoldersDropAreas(folderEls, true);
 
   let prevBoxToDrop: HTMLElement | undefined = undefined;
+  let prevHighlightedGroup: HTMLElement | undefined = undefined;
+  let currentDropArea: DropArea | undefined = undefined;
   let indexToDrop: number;
   let targetFolderId: number;
 
@@ -50,10 +60,22 @@ export function processItemDragAndDrop(
 
       // find target position
       const dropArea = getOverlappedDropArea(dropAreas, e);
+      currentDropArea = dropArea;
       const curBoxToDrop = dropArea ? dropArea.element : undefined;
       if (curBoxToDrop !== prevBoxToDrop) {
+        prevHighlightedGroup?.classList.remove("folder-group--drop-target");
+        prevHighlightedGroup = undefined;
+
         if (curBoxToDrop) {
-          curBoxToDrop.appendChild(placeholder);
+          if (dropArea?.insertAtEnd) {
+            placeholder.remove();
+            prevHighlightedGroup =
+              (curBoxToDrop.closest(".folder-group") as HTMLElement | null) ??
+              undefined;
+            prevHighlightedGroup?.classList.add("folder-group--drop-target");
+          } else {
+            curBoxToDrop.appendChild(placeholder);
+          }
         } else {
           placeholder.remove();
         }
@@ -62,13 +84,18 @@ export function processItemDragAndDrop(
       if (curBoxToDrop && dropArea) {
         const res = getNewPlacementForItem(dropArea, e);
         targetFolderId = dropArea.objectId;
+        const targetGroupId = dropArea.groupId;
         const tryAddToOriginalPos =
+          !targetGroupId &&
           targetFolderId === originalFolderId &&
           inRange(res.index, originalIndex, originalIndex + targetRoots.length);
         if (tryAddToOriginalPos) {
           //actual only for isFolderItem
           placeholder.style.top = `${dropArea.itemRects[originalIndex].itemTop}px`;
           indexToDrop = originalIndex;
+        } else if (dropArea.insertAtEnd) {
+          placeholder.remove();
+          indexToDrop = dropArea.itemRects.length;
         } else {
           placeholder.style.top = `${res.placeholderY}px`;
           indexToDrop = res.index;
@@ -112,19 +139,24 @@ export function processItemDragAndDrop(
       document.body.classList.remove("dragging");
       dummy.remove();
       placeholder.remove();
+      prevHighlightedGroup?.classList.remove("folder-group--drop-target");
       targetRoots.forEach((el) =>
         getDragPreviewElement(el).style.removeProperty("opacity"),
       );
       const tryAddToOriginalPos =
+        !currentDropArea?.groupId &&
         targetFolderId === originalFolderId &&
         inRange(indexToDrop, originalIndex, originalIndex + targetRoots.length);
       if (prevBoxToDrop && !tryAddToOriginalPos) {
         const folderId = getFolderId(prevBoxToDrop);
-        const insertBeforeItemId = getItemIdByIndex(prevBoxToDrop, indexToDrop);
+        const insertBeforeItemId = currentDropArea?.insertAtEnd
+          ? undefined
+          : getItemIdByIndex(prevBoxToDrop, indexToDrop);
         config.onDrop(
           folderId,
           insertBeforeItemId,
           getIdsFromElements(targetRoots),
+          currentDropArea?.groupId,
         );
       } else {
         config.onCancel();

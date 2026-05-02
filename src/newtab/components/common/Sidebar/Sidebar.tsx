@@ -49,7 +49,8 @@ export function Sidebar(p: { appState: AppState }) {
       const onDrop = (
         folderId: number,
         insertBeforeItemId: number | undefined,
-        targetTabsOrRecentIds: number[]
+        targetTabsOrRecentIds: number[],
+        targetGroupId?: number
       ) => {
         const targetTabId = targetTabsOrRecentIds[0]; // we support D&D only single element from sidebar
         let tabOrRecentItem:
@@ -78,6 +79,7 @@ export function Sidebar(p: { appState: AppState }) {
           dispatch({
             type: Action.CreateFolderItem,
             folderId,
+            targetGroupId,
             insertBeforeItemId,
             item,
           });

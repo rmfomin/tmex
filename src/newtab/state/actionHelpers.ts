@@ -7,12 +7,12 @@ import {
   GroupV3,
   LegacyFolderItem,
   FolderItemToCreate,
+  ItemToCreateV3,
   ItemV3,
   SpaceV3,
 } from "@/newtab/helpers/types"
 import { insertBetween, sortByPosition } from "@/newtab/helpers/fractionalIndexes"
 import { type AppState } from "@/newtab/state/state"
-import { SECTION_ICON_BASE64 } from "@/newtab/helpers/utils"
 import Tab = chrome.tabs.Tab
 import HistoryItem = chrome.history.HistoryItem
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils"
@@ -54,13 +54,15 @@ export function convertTabOrRecentToItem(item: TabOrRecentData): FolderItemToCre
   }
 }
 
-export function createNewSection(title = "Title"): FolderItemToCreate {
+export function createNewSection(title = "Title"): GroupV3 {
   return {
     id: genUniqLocalId(),
-    favIconUrl: SECTION_ICON_BASE64,
+    position: "",
+    type: "group",
+    objectType: "group",
     title,
-    url: "",
-    isSection: true
+    collapsed: false,
+    groupItems: [],
   }
 }
 
@@ -208,7 +210,7 @@ export function toBookmarkItemV3(item: FolderItemToCreate): BookmarkItemV3 {
 }
 
 export function addItemsToFolderV3(
-  insertingItems: FolderItemToCreate[] | ItemV3[],
+  insertingItems: ItemToCreateV3[],
   existingItems: ItemV3[],
   insertBeforeItemId?: number,
 ): ItemV3[] {
@@ -240,6 +242,28 @@ export function addItemsToFolderV3(
   })
 
   return sortByPosition([...existingItems, ...newItems])
+}
+
+export function addItemsToGroupV3(
+  insertingItems: FolderItemToCreate[] | BookmarkItemV3[],
+  existingItems: ItemV3[],
+  targetGroupId: number,
+  insertBeforeItemId?: number,
+): ItemV3[] {
+  return existingItems.map((item) => {
+    if (item.type !== "group" || item.id !== targetGroupId) {
+      return item
+    }
+
+    return {
+      ...item,
+      groupItems: addItemsToFolderV3(
+        insertingItems,
+        item.groupItems,
+        insertBeforeItemId,
+      ) as BookmarkItemV3[],
+    }
+  })
 }
 
 export function removeItemFromFolderItems(

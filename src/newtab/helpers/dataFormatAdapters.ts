@@ -31,6 +31,20 @@ function normalizeItemV3(item: ItemV3): ItemV3 {
     return normalizeGroupV3(item);
   }
 
+  if (item.isSection) {
+    return {
+      id: item.id,
+      remoteId: item.remoteId,
+      position: item.position,
+      type: "group",
+      objectType: "group",
+      title: item.title,
+      archived: item.archived,
+      collapsed: false,
+      groupItems: [],
+    };
+  }
+
   return normalizeBookmarkItemV3(item);
 }
 
@@ -114,7 +128,22 @@ export function convertV3BackupToLegacySpaces(data: DataBackupV3): LegacySpace[]
   return normalizeBackupV3(data).spaces.map(convertSpaceV3ToLegacy);
 }
 
-function convertLegacyFolderItemToV3(item: LegacyFolderItemApiPayload): BookmarkItemV3 {
+function convertLegacyFolderItemToV3(
+  item: LegacyFolderItemApiPayload,
+): BookmarkItemV3 | GroupV3 {
+  if (item.isSection) {
+    return {
+      id: item.id,
+      position: item.position,
+      title: item.title,
+      type: "group",
+      objectType: "group",
+      archived: item.archived,
+      collapsed: false,
+      groupItems: [],
+    };
+  }
+
   return {
     id: item.id,
     position: item.position,

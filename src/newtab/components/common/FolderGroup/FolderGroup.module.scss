@@ -28,6 +28,15 @@
   );
 }
 
+:global(.folder-group.folder-group--drop-target::before) {
+  outline: 2px solid var(--colors-blue-500);
+  background: color-mix(
+    in srgb,
+    var(--colors-blue-500) 14%,
+    transparent 86%
+  );
+}
+
 :global(.folder-group__header) {
   position: relative;
   z-index: 1;
@@ -78,4 +87,5 @@
   position: relative;
   z-index: 1;
   padding-top: 2px;
+  min-height: 18px;
 }

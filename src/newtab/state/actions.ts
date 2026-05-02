@@ -11,6 +11,7 @@ import {
 import {
   BookmarkItemV3,
   ColorTheme,
+  FolderItemToCreate,
   FolderV3,
   LegacySpace,
   SpaceV3,
@@ -30,6 +31,7 @@ import {
 import { loadFromNetwork } from "@/api/api";
 import {
   addItemsToFolderV3,
+  addItemsToGroupV3,
   findAnyItemById,
   findFolderById,
   findFolderByItemId,
@@ -616,22 +618,40 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
      ********************************************************/
 
     case Action.CreateFolderItem: {
+      if (
+        action.targetGroupId &&
+        "type" in action.item &&
+        action.item.type === "group"
+      ) {
+        return showErrorReducer("Only bookmarks can be created into group");
+      }
+
       const spaces = updateFolder(state.spaces, action.folderId, (folder) => {
-        const items = addItemsToFolderV3(
-          [action.item],
-          folder.items,
-          action.insertBeforeItemId
-        );
+        const items = action.targetGroupId
+          ? addItemsToGroupV3(
+              [action.item as BookmarkItemV3 | FolderItemToCreate],
+              folder.items,
+              action.targetGroupId,
+              action.insertBeforeItemId
+            )
+          : addItemsToFolderV3(
+              [action.item],
+              folder.items,
+              action.insertBeforeItemId
+            );
         return {
           ...folder,
           items,
         };
       });
 
-      let createdItem: BookmarkItemV3 = findItemById({ spaces }, action.item.id)!;
+      const createdItem = findAnyItemById({ spaces }, action.item.id);
       const targetFolder = findFolderById(state, action.folderId);
       let apiCommandsQueue = state.apiCommandsQueue;
-      if (isNetworkAvailable(targetFolder)) {
+      if (
+        createdItem?.type === "bookmark" &&
+        isNetworkAvailable(targetFolder)
+      ) {
         //todo maybe we should not check presence of removeId at all here. and just let it be resolved async?
         // otherwise how I create folder with items in several actions?
         apiCommandsQueue = getCommandsQueue(state, {
@@ -774,6 +794,13 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         (itemId) => findAnyItemById(state, itemId)!
       );
 
+      if (
+        action.targetGroupId &&
+        movingItems.some((movingItem) => movingItem.type !== "bookmark")
+      ) {
+        return showErrorReducer("Only bookmarks can be moved into group");
+      }
+
       // Store the original folder IDs and positions for undo purposes
       // const originalPositions = movingItems.map(item => ({
       //   itemId: item.id,
@@ -797,11 +824,18 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         action.targetFolderId,
         (folder) => ({
           ...folder,
-          items: addItemsToFolderV3(
-            movingItems,
-            folder.items,
-            action.insertBeforeItemId
-          ),
+          items: action.targetGroupId
+            ? addItemsToGroupV3(
+                movingItems as BookmarkItemV3[],
+                folder.items,
+                action.targetGroupId,
+                action.insertBeforeItemId
+              )
+            : addItemsToFolderV3(
+                movingItems,
+                folder.items,
+                action.insertBeforeItemId
+              ),
         })
       );
 

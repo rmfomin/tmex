@@ -161,6 +161,50 @@ test("normalizeStateFromStorageResult normalizes v3 spaces with missing objectTy
   });
 });
 
+test("normalizeStateFromStorageResult converts legacy section bookmarks to v3 groups", () => {
+  const result = normalizeStateFromStorageResult({
+    spaces: [
+      {
+        id: 1,
+        position: "a0",
+        objectType: "space",
+        title: "Main",
+        folders: [
+          {
+            id: 10,
+            position: "a0",
+            objectType: "folder",
+            title: "Folder",
+            items: [
+              {
+                id: 100,
+                position: "a0",
+                type: "bookmark",
+                objectType: "bookmark",
+                title: "Old section",
+                url: "",
+                favIconUrl: "",
+                isSection: true,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    version: 3,
+  } as any);
+
+  expect(result.spaces[0].folders[0].items[0]).toEqual({
+    id: 100,
+    position: "a0",
+    type: "group",
+    objectType: "group",
+    title: "Old section",
+    collapsed: false,
+    groupItems: [],
+  });
+});
+
 test("normalizeStateFromStorageResult falls back to defaults for empty storage", () => {
   const result = normalizeStateFromStorageResult({});
 

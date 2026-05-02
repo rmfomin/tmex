@@ -2,6 +2,7 @@ import { ActionDispatcher } from "@/newtab/state/actions";
 import {
   ColorTheme,
   FolderItemToCreate,
+  ItemToCreateV3,
   LegacyFolderApiPayload,
   LegacyFolderItemApiPayload,
   SpaceV3,
@@ -309,8 +310,9 @@ export type ActionPayload = (
   | {
       type: Action.CreateFolderItem;
       folderId: number;
+      targetGroupId?: number;
       insertBeforeItemId: number | undefined;
-      item: FolderItemToCreate;
+      item: ItemToCreateV3;
     }
   | {
       type: Action.CreateFolderItems;
@@ -331,6 +333,7 @@ export type ActionPayload = (
       type: Action.MoveFolderItems;
       itemIds: number[];
       targetFolderId: number;
+      targetGroupId?: number;
       insertBeforeItemId: number | undefined;
     }
   | { type: Action.SaveBookmarksToCloud }
