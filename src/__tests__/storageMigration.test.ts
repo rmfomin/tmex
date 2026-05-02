@@ -212,6 +212,14 @@ test("normalizeStateFromStorageResult falls back to defaults for empty storage",
   expect(result.spaces).toEqual([]);
   expect(result.sidebarCollapsed).toBe(false);
   expect(result.openBookmarksInNewTab).toBe(true);
-  expect(result.colorTheme).toBe("light");
+  expect(result.colorTheme).toBe("system");
   expect("currentWhatsNew" in result).toBe(false);
+});
+
+test("normalizeStateFromStorageResult normalizes legacy missing color theme to system", () => {
+  const result = normalizeStateFromStorageResult({
+    colorTheme: undefined,
+  } as any);
+
+  expect(result.colorTheme).toBe("system");
 });

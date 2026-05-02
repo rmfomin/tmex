@@ -38,7 +38,7 @@ const savingStateDefaultValues = {
   currentSpaceId: undefined,
   sidebarCollapsed: false,
   openBookmarksInNewTab: !__OVERRIDE_NEWTAB,
-  colorTheme: "light", // todo I don't use system because it's not ready to used by default
+  colorTheme: "system",
   showRecent: false,
   showArchived: false,
   showNotUsed: false,
@@ -69,6 +69,10 @@ export function normalizeStateFromStorageResult(
     }
   });
 
+  if (!result.colorTheme) {
+    result.colorTheme = "system";
+  }
+
   result.spaces = Array.isArray(res.spaces) ? getV3SpacesView(res.spaces as any) : [];
   result.version = 3;
   result.hiddenFeatureIsEnabled = res.hiddenFeatureIsEnabled ?? false;
@@ -98,20 +102,22 @@ darkThemeMq.addEventListener("change", () => {
   }
 });
 
-export function applyTheme(theme: ColorTheme) {
+export function applyTheme(theme: ColorTheme | undefined) {
   canUseSystemTheme = false;
   switch (theme) {
     case "light":
       setThemeStyle(false);
       break;
+    case "system":
+      canUseSystemTheme = true;
+      setThemeStyle(darkThemeMq.matches);
+      break;
     case "dark":
       setThemeStyle(true);
       break;
     default:
-      setThemeStyle(false);
-      // who need system color?
-      // canUseSystemTheme = true
-      // setThemeStyle(darkThemeMq.matches)
+      canUseSystemTheme = true;
+      setThemeStyle(darkThemeMq.matches);
       break;
   }
 }

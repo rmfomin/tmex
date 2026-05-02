@@ -178,12 +178,18 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
     }
 
     case Action.ToggleDarkMode: {
-      const curMode = state.colorTheme;
-      const options: ColorTheme[] = ["light", "dark"];
+      const curMode = state.colorTheme ?? "system";
+      const options: ColorTheme[] = ["light", "system", "dark"];
       const curModeIndex = options.indexOf(curMode);
-      const nextMode = options[curModeIndex + 1 === 2 ? 0 : curModeIndex + 1];
+      const nextMode =
+        options[curModeIndex + 1 === options.length ? 0 : curModeIndex + 1];
       applyTheme(nextMode);
       return { ...state, colorTheme: nextMode };
+    }
+
+    case Action.SetColorTheme: {
+      applyTheme(action.colorTheme);
+      return { ...state, colorTheme: action.colorTheme };
     }
 
     case Action.UpdateShowArchivedItems: {

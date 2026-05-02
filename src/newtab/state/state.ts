@@ -167,6 +167,7 @@ export enum Action {
   CloseTabs = "close-tab",
   SetTabsOrHistory = "set-tab-or-history",
   ToggleDarkMode = "toggle-dark-mode",
+  SetColorTheme = "set-color-theme",
   UpdateShowArchivedItems = "update-show-hidden-items",
   UpdateShowNotUsedItems = "update-show-not-used-items",
   SelectSpace = "select-space",
@@ -256,6 +257,7 @@ export type ActionPayload = (
   | { type: Action.CloseTabs; tabIds: number[] }
   | { type: Action.SetTabsOrHistory; tabs?: Tab[]; recentItems?: RecentItem[] }
   | { type: Action.ToggleDarkMode }
+  | { type: Action.SetColorTheme; colorTheme: ColorTheme }
   | { type: Action.UpdateShowArchivedItems; value: boolean }
   | { type: Action.UpdateShowNotUsedItems; value: boolean }
   | { type: Action.FixBrokenIcons }

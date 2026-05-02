@@ -71,8 +71,7 @@ export type LegacyFolderApiPayload = Pick<
   "id" | "position" | "title" | "items" | "color" | "twoColumn" | "archived"
 >;
 
-// undefined === 'system'
-export type ColorTheme = "light" | "dark" | undefined;
+export type ColorTheme = "light" | "system" | "dark";
 
 export type ItemTypeV3 = "bookmark" | "group";
 

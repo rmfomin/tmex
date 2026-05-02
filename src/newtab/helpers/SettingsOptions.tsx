@@ -15,7 +15,7 @@ import {
 import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal";
 import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { ShortcutsModal } from "@/newtab/components/common/ShortcutsModal/ShortcutsModal";
-import { BookmarkItemV3 } from "@/newtab/helpers/types";
+import { BookmarkItemV3, ColorTheme } from "@/newtab/helpers/types";
 import { CL } from "@/newtab/helpers/classNameHelper";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 
@@ -34,8 +34,16 @@ type OnToggleOption = {
   text: string;
   hidden?: boolean;
 };
+type SegmentedOption<T extends string> = {
+  onSelect: (value: T) => void;
+  value: T;
+  title: string;
+  text: string;
+  items: Array<{ value: T; text: string; title?: string }>;
+  hidden?: boolean;
+};
 export type OptionsConfig = Array<
-  OnClickOption | OnToggleOption | { separator: true }
+  OnClickOption | OnToggleOption | SegmentedOption<any> | { separator: true }
 >;
 
 export const HelpOptions = (p: { appState: AppState }) => {
@@ -186,8 +194,8 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     });
   }
 
-  function onToggleMode() {
-    dispatch({ type: Action.ToggleDarkMode });
+  function onSelectColorTheme(colorTheme: ColorTheme) {
+    dispatch({ type: Action.SetColorTheme, colorTheme });
   }
 
   function onToggleOpenInTheNewTab() {
@@ -237,10 +245,15 @@ export const SettingsOptions = (p: { appState: AppState }) => {
       text: "Show Recent in Sidebar",
     },
     {
-      onToggle: onToggleMode,
-      value: p.appState.colorTheme === "dark",
-      title: "Change your Color Schema",
-      text: "Use Dark Theme",
+      onSelect: onSelectColorTheme,
+      value: p.appState.colorTheme ?? "system",
+      title: "Choose light theme, system theme, or dark theme",
+      text: "Theme",
+      items: [
+        { value: "light", text: "Light", title: "Always use light theme" },
+        { value: "system", text: "Auto", title: "Use system theme" },
+        { value: "dark", text: "Dark", title: "Always use dark theme" },
+      ],
     },
     {
       onToggle: onToggleOpenInTheNewTab,
@@ -314,6 +327,10 @@ export const Options = (props: {
     return opt.hasOwnProperty("onClick");
   }
 
+  function isSegmented(opt: any): opt is SegmentedOption<string> {
+    return opt.hasOwnProperty("onSelect");
+  }
+
   const options =
     typeof props.optionsConfig === "function"
       ? props.optionsConfig()
@@ -328,6 +345,33 @@ export const Options = (props: {
 
         if (isSeparator(option)) {
           return <div key={index} className="dropdown-menu__separator" />;
+        } else if (isSegmented(option)) {
+          return (
+            <div
+              key={index}
+              className="dropdown-menu__segmented-row"
+              title={option.title}
+            >
+              <span className="dropdown-menu__segmented-label">
+                {option.text}
+              </span>
+              <div className="dropdown-menu__segmented-control">
+                {option.items.map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    className={CL("dropdown-menu__segmented-button focusable", {
+                      active: item.value === option.value,
+                    })}
+                    title={item.title}
+                    onClick={() => option.onSelect(item.value)}
+                  >
+                    {item.text}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
         } else if (isToggle(option)) {
           return (
             <label

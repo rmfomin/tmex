@@ -34,6 +34,7 @@ Object.defineProperty(global, "localStorage", {
 
 const { stateReducer } = require("../newtab/state/actions");
 const { Action } = require("../newtab/state/state");
+const { applyTheme } = require("@/newtab/state/storage");
 type AppState = import("../newtab/state/state").AppState;
 
 function createState(): AppState {
@@ -144,4 +145,14 @@ test("UpdateFolderItem toggles group collapsed flag by group item id", () => {
       collapsed: false,
     }),
   ]);
+});
+
+test("SetColorTheme stores selected theme and applies it", () => {
+  const result = stateReducer(createState(), {
+    type: Action.SetColorTheme,
+    colorTheme: "system",
+  });
+
+  expect(result.colorTheme).toBe("system");
+  expect(applyTheme).toHaveBeenCalledWith("system");
 });
