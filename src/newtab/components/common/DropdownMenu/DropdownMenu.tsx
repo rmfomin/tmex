@@ -11,6 +11,8 @@ import ReactDOM from "react-dom";
 import { isSomeParentHaveClass } from "@/newtab/helpers/utils";
 import { Offset, Point } from "@/newtab/helpers/MathTypes";
 
+const DROPDOWN_MENU_OPENED_EVENT = "dropdown-menu-opened";
+
 export const DropdownSetMenuIdContext = createContext((id: number) => {});
 export const DropdownMenuIdContext = createContext(-1);
 
@@ -127,10 +129,20 @@ export function DropdownMenu(p: {
 }) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuIdRef = useRef(Math.random().toString(36).slice(2));
+  const closeRef = useRef(p.onClose);
   const [activeSubmenuId, setActiveSubmenuId] = useState(-1);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
 
+  closeRef.current = p.onClose;
+
   useEffect(() => {
+    function onOtherMenuOpened(e: Event) {
+      if ((e as CustomEvent<string>).detail !== menuIdRef.current) {
+        closeRef.current();
+      }
+    }
+
     function onOutsideClick(e: MouseEvent) {
       // ignore submenu clicks
       const target = e.target as HTMLElement;
@@ -145,7 +157,7 @@ export function DropdownMenu(p: {
         menuRef.current &&
         !menuRef.current.contains(e.target as HTMLElement)
       ) {
-        p.onClose();
+        closeRef.current();
       }
     }
 
@@ -155,7 +167,7 @@ export function DropdownMenu(p: {
       const isInputInFocus = document.activeElement?.tagName === "INPUT";
 
       if (e.key === "Escape" || (isInputInFocus && e.key === "Enter")) {
-        p.onClose();
+        closeRef.current();
         return;
       }
 
@@ -178,14 +190,24 @@ export function DropdownMenu(p: {
     const outsideClickListenerTimerId = window.setTimeout(() => {
       document.addEventListener("click", onOutsideClick);
     }, 0);
+    document.addEventListener(DROPDOWN_MENU_OPENED_EVENT, onOtherMenuOpened);
+    document.dispatchEvent(
+      new CustomEvent(DROPDOWN_MENU_OPENED_EVENT, {
+        detail: menuIdRef.current,
+      })
+    );
     document.addEventListener("keydown", onKeydown);
 
     return () => {
       window.clearTimeout(outsideClickListenerTimerId);
       document.removeEventListener("click", onOutsideClick);
+      document.removeEventListener(
+        DROPDOWN_MENU_OPENED_EVENT,
+        onOtherMenuOpened
+      );
       document.removeEventListener("keydown", onKeydown);
     };
-  }, [p.onClose]);
+  }, []);
 
   // Adjust menu position based on available space when it opens
   useEffect(() => {
