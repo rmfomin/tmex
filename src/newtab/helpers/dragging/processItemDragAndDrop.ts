@@ -7,6 +7,7 @@ import {
   calculateFoldersDropAreas,
   createPlaceholder,
   createTabDummy,
+  getDragPreviewElement,
   getFolderId,
   getIdsFromElements,
   getItemIdByIndex,
@@ -111,7 +112,9 @@ export function processItemDragAndDrop(
       document.body.classList.remove("dragging");
       dummy.remove();
       placeholder.remove();
-      targetRoots.forEach((el) => el.style.removeProperty("opacity"));
+      targetRoots.forEach((el) =>
+        getDragPreviewElement(el).style.removeProperty("opacity"),
+      );
       const tryAddToOriginalPos =
         targetFolderId === originalFolderId &&
         inRange(indexToDrop, originalIndex, originalIndex + targetRoots.length);

@@ -273,14 +273,15 @@ export function createTabDummy(
 ): HTMLElement {
   const dummy = document.createElement("div");
   targetRoots.forEach((selectedEl) => {
-    const clonedNode = selectedEl.cloneNode(true) as HTMLElement;
+    const previewEl = getDragPreviewElement(selectedEl);
+    const clonedNode = previewEl.cloneNode(true) as HTMLElement;
     clonedNode.classList.add("folder-item__inner--selected");
     dummy.append(clonedNode);
     if (isFolderItem) {
-      selectedEl.style.opacity = "0";
+      previewEl.style.opacity = "0";
     }
   });
-  const rect = targetRoots[0].getBoundingClientRect();
+  const rect = getDragPreviewElement(targetRoots[0]).getBoundingClientRect();
   dummy.style.width = `${rect.width + 4}px`;
   dummy.style.marginTop = `${rect.top - mouseDownEvent.clientY}px`;
   dummy.style.marginLeft = `${rect.left - mouseDownEvent.clientX}px`;
@@ -290,6 +291,14 @@ export function createTabDummy(
   }
 
   return dummy;
+}
+
+export function getDragPreviewElement(targetRoot: HTMLElement): HTMLElement {
+  if (targetRoot.classList.contains("folder-group__header")) {
+    return targetRoot.parentElement!;
+  }
+
+  return targetRoot;
 }
 
 export function calculateFoldersDropAreas(

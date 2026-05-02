@@ -15,7 +15,11 @@ jest.mock("@/newtab/helpers/dragging/processSpacesDragAndDrop", () => ({
   processSpacesDragAndDrop: jest.fn(),
 }));
 
-import { getItemIdByIndex } from "@/newtab/helpers/dragging/dragAndDrop";
+import {
+  createTabDummy,
+  getDragPreviewElement,
+  getItemIdByIndex,
+} from "@/newtab/helpers/dragging/dragAndDrop";
 
 test("getItemIdByIndex returns group id for top-level group drop target", () => {
   const groupEl = {
@@ -51,4 +55,19 @@ test("getItemIdByIndex returns bookmark id for top-level bookmark drop target", 
   } as unknown) as HTMLElement;
 
   expect(getItemIdByIndex(folderItemsBox, 0)).toBe(102);
+});
+
+test("group header drag preview uses the whole group element", () => {
+  const group = {} as HTMLElement;
+  const header = ({
+    classList: {
+      contains: jest.fn(
+        (className: string) => className === "folder-group__header"
+      ),
+    },
+    parentElement: group,
+  } as unknown) as HTMLElement;
+
+  expect(getDragPreviewElement(header)).toBe(group);
+  expect(createTabDummy).toBeDefined();
 });
