@@ -3,6 +3,7 @@ import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMe
 import { AppState } from "@/newtab/state/state";
 import { HelpOptions, SettingsOptions } from "@/newtab/helpers/SettingsOptions";
 import { CL } from "@/newtab/helpers/classNameHelper";
+import { hasSearch } from "@/newtab/helpers/utils";
 import IconHelp from "@/newtab/components/common/TopBar/icons/help.svg";
 import IconSettings from "@/newtab/components/common/TopBar/icons/settings.svg";
 import { SpacesList } from "@/newtab/components/common/SpacesList/SpacesList";
@@ -11,6 +12,10 @@ import styles from "@/newtab/components/common/TopBar/TopBar.module.scss";
 export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const [settingsMenuVisibility, setSettingsMenuVisibility] = useState(false);
   const [helpMenuVisibility, setHelpMenuVisibility] = useState(false);
+  const searchActive = hasSearch(
+    p.appState.search,
+    p.appState.searchFilters ?? []
+  );
 
   function onToggleHelpSettings() {
     setHelpMenuVisibility(!helpMenuVisibility);
@@ -26,11 +31,11 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
         [styles.scrolled]: p.isScrolled,
       })}
     >
-      {p.appState.search && (
+      {searchActive && (
         <div className={styles.searchResultsHeader}>Search results:</div>
       )}
 
-      {!p.appState.search && (
+      {!searchActive && (
         <SpacesList
           spaces={p.appState.spaces}
           currentSpaceId={p.appState.currentSpaceId}

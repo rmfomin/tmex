@@ -1,4 +1,8 @@
-import { isContainsSearch } from "@/newtab/helpers/utils";
+import {
+  hasSearch,
+  isContainsSearch,
+  SearchFilterMode,
+} from "@/newtab/helpers/utils";
 import { SpaceV3, FolderV3 } from "@/newtab/helpers/types";
 import type { AppState } from "@/newtab/state/state";
 import { findSpaceById } from "@/newtab/state/actionHelpers";
@@ -6,25 +10,33 @@ import { findSpaceById } from "@/newtab/state/actionHelpers";
 export function getBookmarksViewState(
   appState: Pick<
     AppState,
-    "spaces" | "currentSpaceId" | "search" | "showArchived"
-  >,
+    | "spaces"
+    | "currentSpaceId"
+    | "search"
+    | "searchFilters"
+    | "searchFilterMode"
+    | "showArchived"
+  >
 ): {
   folders: FolderV3[];
 } {
-  const canShowArchived = appState.showArchived || appState.search.length > 0;
+  const searchFilters = appState.searchFilters ?? [];
+  const searchFilterMode: SearchFilterMode = appState.searchFilterMode ?? "or";
+  const searchActive = hasSearch(appState.search, searchFilters);
+  const canShowArchived = appState.showArchived || searchActive;
   let folders: FolderV3[] = [];
 
-  if (appState.search === "") {
+  if (!searchActive) {
     const currentSpace = findSpaceById(
       appState as { spaces: SpaceV3[]; currentSpaceId: number },
-      appState.currentSpaceId,
+      appState.currentSpaceId
     );
 
     if (currentSpace) {
       folders = appState.showArchived
         ? currentSpace.folders ?? []
         : currentSpace.folders.filter(
-            (folder) => canShowArchived || !folder.archived,
+            (folder) => canShowArchived || !folder.archived
           );
     }
   } else {
@@ -32,15 +44,32 @@ export function getBookmarksViewState(
     appState.spaces.forEach((space) => {
       space.folders.forEach((folder) => {
         if (
-          isContainsSearch(folder, searchValueLC) ||
+          isContainsSearch(
+            folder,
+            searchValueLC,
+            searchFilters,
+            searchFilterMode
+          ) ||
           folder.items.some((item) => {
-            if (isContainsSearch(item, searchValueLC)) {
+            if (
+              isContainsSearch(
+                item,
+                searchValueLC,
+                searchFilters,
+                searchFilterMode
+              )
+            ) {
               return true;
             }
 
             if (item.type === "group") {
               return item.groupItems.some((groupItem) =>
-                isContainsSearch(groupItem, searchValueLC),
+                isContainsSearch(
+                  groupItem,
+                  searchValueLC,
+                  searchFilters,
+                  searchFilterMode
+                )
               );
             }
 

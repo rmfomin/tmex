@@ -1,5 +1,10 @@
 import { BookmarkItemV3, FolderV3, GroupV3 } from "@/newtab/helpers/types";
-import { isContainsSearch } from "@/newtab/helpers/utils";
+import {
+  hasSearch,
+  isContainsSearch,
+  SearchFilter,
+  SearchFilterMode,
+} from "@/newtab/helpers/utils";
 
 export type FolderDisplayItem =
   | {
@@ -36,9 +41,11 @@ export function getFolderDisplayItems(folder: FolderV3): FolderDisplayItem[] {
 export function getVisibleFolderDisplayItems(
   folder: FolderV3,
   search: string,
+  filters: SearchFilter[] = [],
+  filterMode: SearchFilterMode = "or"
 ): FolderDisplayItem[] {
   const displayItems = getFolderDisplayItems(folder);
-  if (search === "") {
+  if (!hasSearch(search, filters)) {
     return displayItems;
   }
 
@@ -47,15 +54,20 @@ export function getVisibleFolderDisplayItems(
 
   displayItems.forEach((item) => {
     if (item.type === "bookmark") {
-      if (isContainsSearch(item.item, searchLC)) {
+      if (isContainsSearch(item.item, searchLC, filters, filterMode)) {
         result.push(item);
       }
       return;
     }
 
-    const groupMatched = isContainsSearch(item.group, searchLC);
+    const groupMatched = isContainsSearch(
+      item.group,
+      searchLC,
+      filters,
+      filterMode
+    );
     const matchedItems = item.group.groupItems.filter((groupItem) =>
-      isContainsSearch(groupItem, searchLC),
+      isContainsSearch(groupItem, searchLC, filters, filterMode)
     );
 
     if (!groupMatched && matchedItems.length === 0) {

@@ -8,6 +8,7 @@ import {
 } from "@/newtab/helpers/types";
 import { SavingState } from "@/newtab/state/storage";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
+import type { SearchFilter, SearchFilterMode } from "@/newtab/helpers/utils";
 import Tab = chrome.tabs.Tab;
 
 export type AppAchievements = {
@@ -67,6 +68,8 @@ export type AppState = {
   };
   lastActiveTabIds: number[];
   search: string;
+  searchFilters?: SearchFilter[];
+  searchFilterMode?: SearchFilterMode;
   itemInEdit: undefined | number; //can be item or folder or space
   showRecent: boolean; // Stored in LS
   showArchived: boolean; // Stored in LS
@@ -103,6 +106,8 @@ let initState: AppState = {
   notification: { visible: false, message: "" },
   lastActiveTabIds: [],
   search: "",
+  searchFilters: [],
+  searchFilterMode: "or",
   itemInEdit: undefined,
   showRecent: false,
   showArchived: false,
@@ -196,7 +201,10 @@ export enum Action {
 }
 
 export type APICommandPayload =
-  | { type: Action.CreateFolder; body: { folder: Partial<LegacyFolderApiPayload> } }
+  | {
+      type: Action.CreateFolder;
+      body: { folder: Partial<LegacyFolderApiPayload> };
+    }
   | { type: Action.DeleteFolder; body: { folderId: number } }
   | {
       type: Action.UpdateFolder;

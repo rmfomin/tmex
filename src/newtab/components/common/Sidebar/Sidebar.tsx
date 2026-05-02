@@ -31,6 +31,8 @@ import { SearchInput } from "@/newtab/components/common/SearchInput/SearchInput"
 
 export function Sidebar(p: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);
+  const searchFilters = p.appState.searchFilters ?? [];
+  const searchFilterMode = p.appState.searchFilterMode ?? "or";
   const keepSidebarOpened =
     !p.appState.sidebarCollapsed || p.appState.sidebarHovered;
   const sidebarClassName = keepSidebarOpened ? "" : "collapsed";
@@ -172,7 +174,11 @@ export function Sidebar(p: { appState: AppState }) {
       onMouseDown={onMouseDown}
     >
       <div className="app-sidebar__search">
-        <SearchInput search={p.appState.search} />
+        <SearchInput
+          search={p.appState.search}
+          searchFilters={searchFilters}
+          searchFilterMode={searchFilterMode}
+        />
       </div>
 
       <div
@@ -199,12 +205,18 @@ export function Sidebar(p: { appState: AppState }) {
         tabs={p.appState.tabs}
         spaces={p.appState.spaces}
         search={p.appState.search}
+        searchFilters={searchFilters}
+        searchFilterMode={searchFilterMode}
         lastActiveTabIds={p.appState.lastActiveTabIds}
         currentWindowId={p.appState.currentWindowId}
       />
-      {(p.appState.showRecent || p.appState.search) && (
+      {(p.appState.showRecent ||
+        p.appState.search ||
+        searchFilters.some((filter) => filter.enabled)) && (
         <SidebarRecent
           search={p.appState.search}
+          searchFilters={searchFilters}
+          searchFilterMode={searchFilterMode}
           recentItems={p.appState.recentItems}
           spaces={p.appState.spaces}
         ></SidebarRecent>

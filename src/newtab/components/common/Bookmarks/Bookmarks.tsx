@@ -66,14 +66,14 @@ export function Bookmarks(p: { appState: AppState }) {
       const onDropItems = (
         folderId: number,
         insertBeforeItemId: number | undefined,
-        targetsIds: number[],
+        targetsIds: number[]
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
             folderId = createFolderWithStat(
               dispatch,
               { historyStepId },
-              "by-drag-in-new-folder--bookmarks",
+              "by-drag-in-new-folder--bookmarks"
             );
           }
 
@@ -91,7 +91,7 @@ export function Bookmarks(p: { appState: AppState }) {
       const onDropFolder = (
         folderId: number,
         targetSpaceId: number | undefined,
-        insertBeforeFolderId: number | undefined,
+        insertBeforeFolderId: number | undefined
       ) => {
         dispatch({
           type: Action.MoveFolder,
@@ -115,7 +115,7 @@ export function Bookmarks(p: { appState: AppState }) {
           p.appState,
           dispatch,
           meta,
-          p.appState.openBookmarksInNewTab,
+          p.appState.openBookmarksInNewTab
         );
       };
 
@@ -153,7 +153,7 @@ export function Bookmarks(p: { appState: AppState }) {
         {
           onChangeSpacePosition,
           canSortSpaces: () => p.appState.spaces.length > 1,
-        },
+        }
       );
     }
   }, [mouseDownEvent]);
@@ -169,7 +169,7 @@ export function Bookmarks(p: { appState: AppState }) {
     const folderId = createFolderWithStat(
       dispatch,
       {},
-      "by-click-new-in-bookmarks",
+      "by-click-new-in-bookmarks"
     );
     dispatch({
       type: Action.UpdateAppState,
@@ -183,6 +183,8 @@ export function Bookmarks(p: { appState: AppState }) {
 
   const { folders } = getBookmarksViewState(p.appState);
   const showEmptyImport = isEmptyDashboard(p.appState);
+  const searchFilters = p.appState.searchFilters ?? [];
+  const searchFilterMode = p.appState.searchFilterMode ?? "or";
 
   return (
     <div className="bookmarks-box" onMouseDown={onMouseDown}>
@@ -210,6 +212,8 @@ export function Bookmarks(p: { appState: AppState }) {
             showNotUsed={p.appState.showNotUsed}
             showArchived={p.appState.showArchived}
             search={p.appState.search}
+            searchFilters={searchFilters}
+            searchFilterMode={searchFilterMode}
             itemInEdit={p.appState.itemInEdit}
             hiddenFeatureIsEnabled={p.appState.hiddenFeatureIsEnabled}
           />
@@ -224,7 +228,8 @@ export function Bookmarks(p: { appState: AppState }) {
               Import from JSON
             </button>
           </div>
-        ) : p.appState.search === "" ? (
+        ) : p.appState.search === "" &&
+          !searchFilters.some((filter) => filter.enabled) ? (
           <div className="folder folder--new">
             <h2 onClick={onCreateFolder}>
               New folder <span>+ Click to add</span>

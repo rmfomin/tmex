@@ -1,11 +1,27 @@
 import Tab = chrome.tabs.Tab;
 import HistoryItem = chrome.history.HistoryItem;
-import { BookmarkItemV3, LegacyFolderItem, SpaceV3 } from "@/newtab/helpers/types";
+import {
+  BookmarkItemV3,
+  LegacyFolderItem,
+  SpaceV3,
+} from "@/newtab/helpers/types";
 import type React from "react";
 import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { getTempFavIconUrl } from "@/newtab/state/actionHelpers";
-import { collectBookmarksV3, hasArchivedItemsV3 } from "@/newtab/helpers/v3Traversal";
+import {
+  collectBookmarksV3,
+  hasArchivedItemsV3,
+} from "@/newtab/helpers/v3Traversal";
+
+export type SearchFilter = {
+  id: string;
+  title: string;
+  pattern: string;
+  enabled?: boolean;
+};
+
+export type SearchFilterMode = "or" | "and";
 
 export const SECTION_ICON_BASE64 = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2ZmZiIgLz4KPC9zdmc+Cg==`;
 
@@ -64,14 +80,20 @@ export function filterNonImportant(tab: Tab): boolean {
   );
 }
 
-export function filterTabsBySearch(list: Tab[], searchValue: string): Tab[] {
+export function filterTabsBySearch(
+  list: Tab[],
+  searchValue: string,
+  filters: SearchFilter[] = [],
+  filterMode: SearchFilterMode = "or"
+): Tab[] {
   const searchValueLC = searchValue.toLowerCase();
   return list.filter((item) => {
-    if (searchValue === "") {
+    if (!hasSearch(searchValue, filters)) {
       return canDisplayTabInSidebar(item);
     } else {
       return (
-        canDisplayTabInSidebar(item) && isContainsSearch(item, searchValueLC)
+        canDisplayTabInSidebar(item) &&
+        isContainsSearch(item, searchValueLC, filters, filterMode)
       );
     }
   });
@@ -79,14 +101,16 @@ export function filterTabsBySearch(list: Tab[], searchValue: string): Tab[] {
 
 export function filterRecentItemsBySearch(
   list: RecentItem[],
-  searchValue: string
+  searchValue: string,
+  filters: SearchFilter[] = [],
+  filterMode: SearchFilterMode = "or"
 ): RecentItem[] {
-  if (searchValue === "") {
+  if (!hasSearch(searchValue, filters)) {
     return list;
   }
   const searchValueLC = searchValue.toLowerCase();
   return list.filter((item) => {
-    return isContainsSearch(item, searchValueLC);
+    return isContainsSearch(item, searchValueLC, filters, filterMode);
   });
 }
 
@@ -99,31 +123,102 @@ export function hasItemsToHighlight(
   recentItems: RecentItem[]
 ): boolean {
   return collectBookmarksV3(spaces).some((item) =>
-    isFolderItemNotUsed(item, recentItems),
+    isFolderItemNotUsed(item, recentItems)
   );
 }
 
 export function filterItemsBySearch<T extends { title?: string; url?: string }>(
   list: T[],
-  searchValue: string
+  searchValue: string,
+  filters: SearchFilter[] = [],
+  filterMode: SearchFilterMode = "or"
 ): T[] {
-  if (searchValue === "") {
+  if (!hasSearch(searchValue, filters)) {
     return list;
   } else {
     const searchValueLC = searchValue.toLowerCase();
-    return list.filter((item) => isContainsSearch(item, searchValueLC));
+    return list.filter((item) =>
+      isContainsSearch(item, searchValueLC, filters, filterMode)
+    );
   }
 }
 
 export function isContainsSearch<T extends { title?: string; url?: string }>(
   item: T,
-  searchValue: string
+  searchValue: string,
+  filters: SearchFilter[] = [],
+  filterMode: SearchFilterMode = "or"
 ): boolean {
-  return (
-    item.title?.toLowerCase().includes(searchValue) ||
-    item.url?.toLowerCase().includes(searchValue) ||
-    false
+  const enabledFilters = enabledSearchFilterRegexes(filters);
+  const textSearchActive = searchValue !== "";
+  const filterSearchActive = enabledFilters.length > 0;
+  const textMatches = Boolean(
+    textSearchActive &&
+      (item.title?.toLowerCase().includes(searchValue) ||
+        item.url?.toLowerCase().includes(searchValue))
   );
+  const filterMatches = enabledFilters.some((regex) => {
+    regex.lastIndex = 0;
+    return Boolean(
+      (item.title && regex.test(item.title)) ||
+        (item.url && regex.test(item.url))
+    );
+  });
+
+  if (textSearchActive && filterSearchActive) {
+    return filterMode === "and"
+      ? textMatches && filterMatches
+      : textMatches || filterMatches;
+  }
+
+  return textMatches || filterMatches;
+}
+
+export function hasSearch(
+  searchValue: string,
+  filters: SearchFilter[] = []
+): boolean {
+  return searchValue !== "" || filters.some((filter) => filter.enabled);
+}
+
+export function getSearchFilterRegex(pattern: string): RegExp | undefined {
+  try {
+    return new RegExp(pattern, "i");
+  } catch {
+    return undefined;
+  }
+}
+
+export function getSearchFilterRegexError(pattern: string): string | undefined {
+  if (getSearchFilterRegex(pattern)) {
+    return undefined;
+  }
+
+  return "Invalid regular expression";
+}
+
+export function updateSearchFilter(
+  filters: SearchFilter[],
+  filterId: string,
+  patch: Pick<SearchFilter, "title" | "pattern">
+): SearchFilter[] {
+  return filters.map((filter) => {
+    if (filter.id !== filterId) {
+      return filter;
+    }
+
+    return {
+      ...filter,
+      ...patch,
+    };
+  });
+}
+
+function enabledSearchFilterRegexes(filters: SearchFilter[]): RegExp[] {
+  return filters
+    .filter((filter) => filter.enabled)
+    .map((filter) => getSearchFilterRegex(filter.pattern))
+    .filter((regex): regex is RegExp => regex !== undefined);
 }
 
 // const irrelecantHosts = [

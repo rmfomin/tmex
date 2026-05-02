@@ -1,5 +1,10 @@
 import React, { memo, useContext } from "react";
-import { filterTabsBySearch } from "@/newtab/helpers/utils";
+import {
+  filterTabsBySearch,
+  hasSearch,
+  SearchFilter,
+  SearchFilterMode,
+} from "@/newtab/helpers/utils";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
@@ -11,6 +16,8 @@ import Tab = chrome.tabs.Tab;
 export const SidebarOpenTabs = memo(
   (p: {
     search: string;
+    searchFilters: SearchFilter[];
+    searchFilterMode: SearchFilterMode;
     tabs: Tab[];
     spaces: SpaceV3[];
     lastActiveTabIds: number[];
@@ -28,7 +35,12 @@ export const SidebarOpenTabs = memo(
 
     const tabsByWindows: Map<number, Tab[]> = new Map();
     let tabsCount = 0;
-    filterTabsBySearch(p.tabs, p.search).forEach((t) => {
+    filterTabsBySearch(
+      p.tabs,
+      p.search,
+      p.searchFilters,
+      p.searchFilterMode
+    ).forEach((t) => {
       let tabsInWindow = tabsByWindows.get(t.windowId);
       if (!tabsInWindow) {
         tabsInWindow = [];
@@ -40,7 +52,7 @@ export const SidebarOpenTabs = memo(
 
     const sortedWindowsWithTabs = getSortedWindowsWithTabs(
       tabsByWindows,
-      p.currentWindowId,
+      p.currentWindowId
     );
 
     return (
@@ -75,7 +87,7 @@ export const SidebarOpenTabs = memo(
                 </div>
               );
             })}
-        {tabsCount === 0 && p.search === "" ? (
+        {tabsCount === 0 && !hasSearch(p.search, p.searchFilters) ? (
           <p className="sidebar-message">
             No open tabs.
             <br /> Pinned tabs are filtered out.
@@ -83,12 +95,12 @@ export const SidebarOpenTabs = memo(
         ) : null}
       </div>
     );
-  },
+  }
 );
 
 function getSortedWindowsWithTabs(
   map: Map<number, Tab[]>,
-  currentWindowId: number | undefined,
+  currentWindowId: number | undefined
 ): { windowId: number; tabs: Tab[] }[] {
   const res = Array.from(map.entries());
   let allWindows: { windowId: number; tabs: Tab[] }[] = [];
