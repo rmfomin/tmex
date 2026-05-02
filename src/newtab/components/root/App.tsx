@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { Bookmarks } from "@/newtab/components/common/Bookmarks/Bookmarks";
 import { Sidebar } from "@/newtab/components/common/Sidebar/Sidebar";
 import { Notification } from "@/newtab/components/common/Notification/Notification";
-import { KeyboardAndMouseManager } from "@/newtab/helpers/KeyboardAndMouseManager";
+import { KeyboardAndMouseManager } from "./useKeyboardAndMouseManager";
 import { ImportBookmarksFromSettings } from "@/newtab/components/common/ImportBookmarksFromSettings/ImportBookmarksFromSettings";
 import { Action, getInitAppState, AppState } from "@/newtab/state/state";
 import { DispatchContext, stateReducer } from "@/newtab/state/actions";
@@ -33,15 +33,49 @@ function invalidateStats(newState: AppState, prevState: AppState | undefined) {
   }
 }
 
+function getTabs() {
+  return new Promise<Tab[]>((res) => {
+    chrome.tabs.query({}, (tabs) => {
+      const openedTabs = tabs.reverse();
+      res(openedTabs);
+    });
+  });
+}
+
+function getLastActiveTabsIds() {
+  return new Promise<number[]>((res) => {
+    chrome.runtime.sendMessage(
+      { type: "get-last-active-tabs" },
+      function (response) {
+        if (response) {
+          res(response.tabs);
+        } else {
+          res([]);
+        }
+      },
+    );
+  });
+}
+
+function getCurrentWindow() {
+  return new Promise<number>((res) => {
+    chrome.windows.getCurrent((window) => {
+      res(window.id);
+    });
+  });
+}
+
 export function App() {
   const [appState, dispatch] = useReducer(stateReducer, getInitAppState());
 
+  // Обновляет глобальную ссылку на актуальное состояние приложения.
   useEffect(() => {
     invalidateStats(appState, globalAppState);
     // hack for getting last instance of appState in "getBC().onmessage" callback
     globalAppState = appState;
   });
 
+  // Добавляет класс загрузки на body после инициализации приложения.
   useEffect(() => {
     if (appState.loaded) {
       requestAnimationFrame(() => {
@@ -50,6 +84,7 @@ export function App() {
     }
   }, [appState.loaded]);
 
+  // Загружает начальные данные и подписывается на события Chrome.
   useEffect(function () {
     Promise.all([
       getTabs(),
@@ -130,6 +165,7 @@ export function App() {
     });
   }, []);
 
+  // Автоматически скрывает уведомление после короткой задержки.
   useEffect(() => {
     if (notificationTimeout) {
       clearTimeout(notificationTimeout);
@@ -143,6 +179,7 @@ export function App() {
     }
   }, [appState.notification]);
 
+  // Берёт следующую API-команду из очереди, если ничего не выполняется.
   useEffect(() => {
     // here we run the next command if any
     if (!appState.apiCommandId && appState.apiCommandsQueue.length > 0) {
@@ -154,6 +191,7 @@ export function App() {
     }
   }, [appState.apiCommandsQueue, appState.apiCommandId]);
 
+  // Выполняет выбранную API-команду.
   useEffect(() => {
     if (appState.apiCommandId) {
       const currentCommand = appState.apiCommandsQueue.find(
@@ -190,42 +228,4 @@ export function App() {
       )}
     </DispatchContext.Provider>
   );
-}
-
-function getTabs() {
-  return new Promise<Tab[]>((res) => {
-    chrome.tabs.query({}, (tabs) => {
-      const openedTabs = tabs.reverse();
-      res(openedTabs);
-    });
-  });
-}
-
-function getLastActiveTabsIds() {
-  return new Promise<number[]>((res) => {
-    chrome.runtime.sendMessage(
-      { type: "get-last-active-tabs" },
-      function (response) {
-        if (response) {
-          res(response.tabs);
-        } else {
-          res([]);
-        }
-      },
-    );
-  });
-}
-
-function getCurrentWindow() {
-  return new Promise<number>((res) => {
-    chrome.windows.getCurrent((window) => {
-      res(window.id);
-    });
-  });
-}
-
-declare global {
-  interface Window {
-    pSBC: any;
-  }
 }

@@ -16,6 +16,10 @@ declare module "*.scss";
 declare const __OVERRIDE_NEWTAB: boolean;
 declare const MIXPANEL_TOKEN: string;
 
+interface Window {
+  pSBC: any;
+}
+
 declare module "mixpanel-browser" {
   const mixpanel: any;
   export default mixpanel;

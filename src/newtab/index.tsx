@@ -14,9 +14,7 @@ import { faviconsStorage } from "@/newtab/helpers/faviconUtils";
 import { ensureDefaultSpace } from "@/newtab/helpers/ensureDefaultSpace";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 
-runLocally();
-
-async function runLocally() {
+async function startLocally() {
   // Читает сохраненное состояние из chrome.storage.local.
   getStateFromLS((res) => {
     // Подготавливает состояние перед запуском React.
@@ -56,3 +54,7 @@ function preprocessLoadedState(state: SavingState): void {
   // Сохраняет подготовленное состояние с задержкой, чтобы не писать слишком часто.
   saveStateThrottled(state);
 }
+
+// Запуск
+// Здесь будет развилка на startFromNetwork
+startLocally();

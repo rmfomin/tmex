@@ -17,19 +17,19 @@ export const ShortcutsModal = ({
           <span className="hotkey">TAB</span> to focus on Search input when open
           Tabowski
         </p>
-        <p>
+        {/* <p>
           <span className="hotkey">Arrow keys</span> navigate bookmarks
-        </p>
+        </p> */}
         <p>
           <span className="hotkey">{cmdOrCtrl}&thinsp;+&thinsp;click</span> open
           bookmark in new Tab
         </p>
-        <p>
+        {/* <p>
           <span className="hotkey">CTRL + 1..9</span> open Space by index
-        </p>
-        <p>
+        </p> */}
+        {/* <p>
           <span className="hotkey">DEL</span> delete selected items
-        </p>
+        </p> */}
         <p>
           <span className="hotkey">{cmdOrCtrl}&thinsp;+&thinsp;Z</span> undo
         </p>
