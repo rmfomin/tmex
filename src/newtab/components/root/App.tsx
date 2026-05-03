@@ -9,7 +9,7 @@ import { DispatchContext, stateReducer } from "@/newtab/state/actions";
 import { getBC, getStateFromLS } from "@/newtab/state/storage";
 import { executeAPICall } from "@/api/serverCommands";
 import Tab = chrome.tabs.Tab;
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import {
   getHistory,
   tryLoadMoreHistory,
@@ -209,7 +209,7 @@ export function App() {
     <DispatchContext.Provider value={dispatch}>
       {appState.loaded && (
         <div
-          className={CL("app", {
+          className={cn("app", {
             "collapsible-sidebar": appState.sidebarCollapsed,
           })}
         >

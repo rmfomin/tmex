@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import { AppState } from "@/newtab/state/state";
 import { HelpOptions, SettingsOptions } from "@/newtab/helpers/settingsOptions";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { hasSearch } from "@/newtab/helpers/utils";
 import IconHelp from "@/newtab/components/common/TopBar/icons/help.svg";
 import IconSettings from "@/newtab/components/common/TopBar/icons/settings.svg";
@@ -27,7 +27,7 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
 
   return (
     <div
-      className={CL(styles.root, {
+      className={cn(styles.root, {
         [styles.scrolled]: p.isScrolled,
       })}
     >

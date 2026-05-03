@@ -4,7 +4,7 @@ import { findTabsByURL, isFolderItemNotUsed } from "@/newtab/helpers/utils";
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
 import { Action } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import IconClose from "@/newtab/components/common/FolderItem/icons/close.svg";
 import IconMore from "@/newtab/components/common/FolderItem/icons/more.svg";
 import { FolderItemMenu } from "@/newtab/components/common/FolderItemMenu/FolderItemMenu";
@@ -85,7 +85,7 @@ export const FolderItem = React.memo(
 
     return (
       <div
-        className={CL("folder-item", {
+        className={cn("folder-item", {
           section: p.item.isSection,
           selected: showMenu,
           archived: p.item.archived,
@@ -111,7 +111,7 @@ export const FolderItem = React.memo(
         </button>
 
         <a
-          className={CL("folder-item__inner draggable-item", {
+          className={cn("folder-item__inner draggable-item", {
             section: p.item.isSection,
             open: folderItemOpened,
           })}
@@ -127,7 +127,7 @@ export const FolderItem = React.memo(
         >
           <img src={p.item.favIconUrl} alt="" onError={handleImageError} />
           <EditableTitle
-            className={CL("folder-item__inner__title", {
+            className={cn("folder-item__inner__title", {
               "not-used":
                 p.showNotUsed && isFolderItemNotUsed(p.item, p.recentItems),
             })}
@@ -151,5 +151,5 @@ export const FolderItem = React.memo(
         </a>
       </div>
     );
-  },
+  }
 );

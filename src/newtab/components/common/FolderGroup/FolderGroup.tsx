@@ -6,7 +6,7 @@ import { FolderItem } from "@/newtab/components/common/FolderItem/FolderItem";
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
 import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import ChevronIcon from "@/newtab/components/common/FolderGroup/icons/shevron.svg";
 import "@/newtab/components/common/FolderGroup/FolderGroup.module.scss";
@@ -87,7 +87,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
         }}
       >
         <button
-          className={CL("folder-group__toggle", {
+          className={cn("folder-group__toggle", {
             "folder-group__toggle--collapsed": p.group.collapsed,
           })}
           onClick={onToggleCollapsed}

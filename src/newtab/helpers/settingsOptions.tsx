@@ -16,7 +16,7 @@ import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfir
 import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { ShortcutsModal } from "@/newtab/components/common/ShortcutsModal/ShortcutsModal";
 import { BookmarkItemV3, ColorTheme } from "@/newtab/helpers/types";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 
 type OnClickOption = {
@@ -360,7 +360,7 @@ export const Options = (props: {
                   <button
                     key={item.value}
                     type="button"
-                    className={CL("dropdown-menu__segmented-button focusable", {
+                    className={cn("dropdown-menu__segmented-button focusable", {
                       active: item.value === option.value,
                     })}
                     title={item.title}
@@ -398,7 +398,7 @@ export const Options = (props: {
             return (
               <label
                 key={index}
-                className={CL("dropdown-menu__button focusable")}
+                className="dropdown-menu__button focusable"
                 style={{ position: "relative" }}
                 title={option.title}
                 tabIndex={0}
@@ -417,7 +417,7 @@ export const Options = (props: {
             return (
               <button
                 key={index}
-                className={CL("dropdown-menu__button focusable", {
+                className={cn("dropdown-menu__button focusable", {
                   "dropdown-menu__button--dander": option.dangerStyle,
                 })}
                 onClick={option.onClick}

@@ -13,7 +13,7 @@ import {
   SearchFilterMode,
   updateSearchFilter,
 } from "@/newtab/helpers/utils";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import styles from "@/newtab/components/common/SearchInput/SearchInput.module.scss";
 
 const SEARCH_FILTERS_STORAGE_KEY = "customSearchFilters";
@@ -283,7 +283,7 @@ export function SearchInput(p: {
         ) : null}
         <button
           tabIndex={1}
-          className={CL(styles.filterToggleButton, {
+          className={cn(styles.filterToggleButton, {
             [styles.panelOpened]: filtersPanelOpened,
             [styles.accentActive]: enabledFiltersCount > 0,
           })}
@@ -296,7 +296,7 @@ export function SearchInput(p: {
       {filtersPanelOpened ? (
         <div className={styles.filterPanel}>
           <button
-            className={CL(styles.filterButton, {
+            className={cn(styles.filterButton, {
               [styles.active]: enabledFiltersCount === 0,
             })}
             title="Disable search filters"
@@ -305,7 +305,7 @@ export function SearchInput(p: {
             <IconNonFilter />
           </button>
           <button
-            className={CL(styles.filterModeButton, {
+            className={cn(styles.filterModeButton, {
               [styles.active]: p.searchFilterMode === "and",
             })}
             title="Toggle search/filter mode"
@@ -317,7 +317,7 @@ export function SearchInput(p: {
             return (
               <div className={styles.filterButtonWrap} key={filter.id}>
                 <button
-                  className={CL(styles.filterButton, {
+                  className={cn(styles.filterButton, {
                     [styles.accentActive]: filter.enabled,
                     [styles.editingFilter]: editingFilterId === filter.id,
                   })}

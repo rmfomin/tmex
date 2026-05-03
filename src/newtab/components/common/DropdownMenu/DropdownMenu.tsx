@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { createContext } from "react";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import ReactDOM from "react-dom";
 import { isSomeParentHaveClass } from "@/newtab/helpers/utils";
 import { Offset, Point } from "@/newtab/helpers/mathTypes";
@@ -81,7 +81,7 @@ export const DropdownSubMenu = ({
       <button
         ref={buttonRef}
         style={style}
-        className={CL(`dropdown-menu__button sub-menu__button focusable`, {
+        className={cn("dropdown-menu__button sub-menu__button focusable", {
           active: menuId === currentMenuId,
         })}
         onClick={onClick}

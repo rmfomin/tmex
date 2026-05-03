@@ -9,7 +9,7 @@ import {
   scrollElementIntoView,
 } from "@/newtab/helpers/utils";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { Action, AppState } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
 import IconClean from "@/newtab/components/common/Sidebar/icons/clean.svg";
@@ -188,7 +188,7 @@ export function Sidebar(p: { appState: AppState }) {
         <StashButton tabs={p.appState.tabs} />
         <button
           id="toggle-sidebar-btn"
-          className={CL("btn__icon")}
+          className="btn__icon"
           onClick={onToggleSidebar}
           style={
             p.appState.sidebarCollapsed ? { transform: "rotate(180deg)" } : {}
@@ -269,7 +269,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
   return (
     <div style={{ display: "inline-block", position: "relative" }}>
       <button
-        className={CL("btn__icon", { active: confirmationOpened })}
+        className={cn("btn__icon", { active: confirmationOpened })}
         disabled={filteredTabs.length < 1}
         title="Stash open Tabs in the new Folder"
         onClick={onStashClick}

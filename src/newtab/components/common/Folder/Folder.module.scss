@@ -1,4 +1,4 @@
-:global(.folder) {
+.root {
   display: flex;
   flex-direction: column;
   width: 340px;
@@ -6,14 +6,13 @@
   user-select: none;
 }
 
-:global(.folder--empty) {
-  .draggable-folder {
-    color: #bbbbbb !important;
-    background-color: transparent !important;
+.empty {
+  .header {
+    color: #bbbbbb;
   }
 }
 
-:global(.folder h2) {
+.header {
   color: rgb(5, 0, 56);
   margin-left: 24px;
   padding: 6px 8px;
@@ -23,7 +22,7 @@
   height: 36px;
   box-sizing: border-box;
 
-  .folder-title__text {
+  .titleText {
     display: inline-block;
     cursor: text;
     max-width: calc(100% - 32px);
@@ -46,17 +45,17 @@
     margin-bottom: -9px;
   }
 
-  .searched {
+  .titleText span {
     color: rgb(5, 0, 56);
   }
 }
 
-:global(.folder-empty-tip) {
+.emptyTip {
   padding: 0 0 0 32px;
   color: var(--colors-gray-600);
 }
 
-:global(.folder-collapse-toggle) {
+.collapseToggle {
   appearance: none;
   border: none;
   background: transparent;
@@ -78,72 +77,37 @@
   }
 }
 
-:global(.folder-collapse-toggle--collapsed) {
+.collapseToggleCollapsed {
   svg {
     transform: rotate(-90deg);
   }
 }
 
-:global(.folder-items-box) {
+.items {
   position: relative;
   flex-grow: 1;
   padding-bottom: 40px;
 }
 
-:global(.folder-item-new) {
-  span {
-    font-size: 14px;
-    display: inline-block;
-    margin: 10px 0 0 54px;
-    color: #999;
-    visibility: hidden;
-  }
-}
-
-:global(.folder:hover) {
-  .folder-item-new {
-    span {
-      visibility: visible;
-    }
-  }
-}
-
-:global(.folder.two-column) {
+.twoColumn {
   width: 720px;
 }
 
-:global(.folder.two-column .folder-items-box) {
+.twoColumn .items {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-flow: row;
 }
 
-:global(.folder.folder--new h2) {
-  background-color: var(--input-background-color);
-  color: var(--colors-gray-600);
-  cursor: pointer;
-}
-
-:global(.folder.folder--new h2 span) {
-  display: inline-block;
-  vertical-align: top;
-  font-weight: 200;
-  margin-left: 76px;
-}
-
-:global(.draggable-folder) {
+.dragHandle {
   cursor: grab;
 }
 
-:global(.draggable-folder:active) {
+.dragHandle:active {
   cursor: grabbing;
 }
 
-:global(.folder .folder-title) {
-  cursor: pointer;
-}
-
-:global(.folder .folder-title__button) {
+.menuButton {
   cursor: pointer;
   padding: 0 6px;
   float: right;
@@ -159,14 +123,14 @@
   }
 }
 
-:global(.folder .folder-title__button--visible) {
+.menuButtonVisible {
   visibility: visible;
 }
 
-:global(.folder:hover .folder-title__button) {
+.root:hover .menuButton {
   visibility: visible;
 }
 
-:global(.folder.folder--empty .folder-title__button) {
+.empty .menuButton {
   visibility: hidden;
 }

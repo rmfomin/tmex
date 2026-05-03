@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { AppState } from "@/newtab/state/state";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import IconProgress from "@/newtab/components/common/Notification/icons/progress.svg";
 import styles from "@/newtab/components/common/Notification/Notification.module.scss";
 
@@ -19,7 +19,7 @@ export const Notification = React.memo(
           unmountOnExit
         >
           <div
-            className={CL(styles.notification, {
+            className={cn(styles.notification, {
               [styles.error]: props.notification.isError,
             })}
             ref={refEl}
@@ -38,5 +38,5 @@ export const Notification = React.memo(
         </CSSTransition>
       </div>
     );
-  },
+  }
 );

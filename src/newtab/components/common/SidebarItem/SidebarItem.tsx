@@ -9,7 +9,7 @@ import {
   DropdownMenu,
   DropdownSubMenu,
 } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { Action } from "@/newtab/state/state";
 import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
 import {
@@ -124,7 +124,7 @@ export const TabOrRecentItem = (p: {
     <div
       key={p.data.id}
       style={{ backgroundColor: getBgColor(p.data.id) }}
-      className={CL(styles.item, {
+      className={cn(styles.item, {
         [styles.active]: showMenu,
         [styles.recentItem]: !isTab,
         "draggable-item": true,
@@ -158,7 +158,7 @@ export const TabOrRecentItem = (p: {
       {p.onCloseTab && (
         <div
           onClick={() => p.onCloseTab!(p.data.id!)}
-          className={CL(styles.close, {
+          className={cn(styles.close, {
             "stop-click-propagation2": true,
             "stop-dad-propagation": true,
           })}

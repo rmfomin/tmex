@@ -14,7 +14,7 @@ import {
 import { FolderItem } from "@/newtab/components/common/FolderItem/FolderItem";
 import { FolderGroup } from "@/newtab/components/common/FolderGroup/FolderGroup";
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { Action } from "@/newtab/state/state";
 import {
   canShowArchived,
@@ -34,7 +34,7 @@ import {
 } from "@/newtab/state/actionHelpers";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { getVisibleFolderDisplayItems } from "@/newtab/components/common/Folder/getFolderDisplayItems";
-import "@/newtab/components/common/Folder/Folder.module.scss";
+import styles from "@/newtab/components/common/Folder/Folder.module.scss";
 
 export const Folder = React.memo(function Folder(p: {
   spaces: SpaceV3[];
@@ -247,11 +247,10 @@ export const Folder = React.memo(function Folder(p: {
     (p.search !== "" || p.searchFilters.some((filter) => filter.enabled)) &&
     folderItems.length === 0;
 
-  const folderClassName = `folder 
-  ${p.folder.twoColumn ? "two-column" : ""}
-  ${folderIsEmptyDuringSearch ? "folder--empty" : ""}
-  ${p.folder.archived ? "archived" : ""}
-  `;
+  const folderClassName = cn("folder", styles.root, {
+    [styles.twoColumn]: p.folder.twoColumn,
+    [styles.empty]: folderIsEmptyDuringSearch,
+  });
   const folderColor = localColor ?? p.folder.color;
   const color = new Color();
   const color2 = new Color();
@@ -294,15 +293,17 @@ export const Folder = React.memo(function Folder(p: {
     <div className={folderClassName} data-folder-id={p.folder.id}>
       <h2
         style={{
-          background: folderGradientColor,
+          background: folderIsEmptyDuringSearch
+            ? "transparent"
+            : folderGradientColor,
           outline: p.folder.archived ? "1px solid rgba(0, 0, 0, 0.3)" : "none",
         }}
-        className="draggable-folder"
+        className={cn("draggable-folder", styles.header, styles.dragHandle)}
         onContextMenu={onHeaderContextMenu}
       >
         <button
-          className={CL("folder-collapse-toggle", {
-            "folder-collapse-toggle--collapsed": p.folder.collapsed,
+          className={cn(styles.collapseToggle, {
+            [styles.collapseToggleCollapsed]: p.folder.collapsed,
           })}
           onClick={onToggleCollapsed}
           title={p.folder.collapsed ? "Expand folder" : "Collapse folder"}
@@ -310,7 +311,7 @@ export const Folder = React.memo(function Folder(p: {
           <ChevronIcon />
         </button>
         <EditableTitle
-          className="folder-title__text"
+          className={styles.titleText}
           inEdit={p.folder.id === p.itemInEdit}
           localTitle={localTitle}
           setLocalTitle={setLocalTitle}
@@ -320,8 +321,8 @@ export const Folder = React.memo(function Folder(p: {
         />
         {p.folder.archived ? <span> [hidden]</span> : ""}
         <span
-          className={CL("folder-title__button", {
-            "folder-title__button--visible": showMenu,
+          className={cn(styles.menuButton, {
+            [styles.menuButtonVisible]: showMenu,
           })}
           onClick={() => setShowMenu(!showMenu)}
         >
@@ -453,13 +454,13 @@ export const Folder = React.memo(function Folder(p: {
       {folderItems.length === 0 &&
       !folderIsEmptyDuringSearch &&
       !p.folder.collapsed ? (
-        <div className="folder-empty-tip">
+        <div className={styles.emptyTip}>
           To add bookmark, drop an item form the sidebar
         </div>
       ) : null}
 
       <div
-        className="folder-items-box"
+        className={cn("folder-items-box", styles.items)}
         data-folder-id={p.folder.id}
         style={p.folder.collapsed ? { display: "none" } : undefined}
       >

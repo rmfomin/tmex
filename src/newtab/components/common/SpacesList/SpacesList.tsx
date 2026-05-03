@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import PlusIcon from "@/newtab/components/common/SpacesList/icons/plus.svg";
 import DeleteIcon from "@/newtab/components/common/SpacesList/icons/delete.svg";
 import { SpaceV3 } from "@/newtab/helpers/types";
-import { CL } from "@/newtab/helpers/classNameHelper";
+import cn from "clsx";
 import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
 import { SimpleEditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
@@ -108,7 +108,7 @@ export function SpacesList(p: {
         return (
           <span
             key={space.id}
-            className={CL(`spaces-list__item ${styles.item}`, {
+            className={cn("spaces-list__item", styles.item, {
               [styles.active]: space.id === p.currentSpaceId,
             })}
             onClick={() => onSpaceClick(space.id)}
