@@ -63,7 +63,7 @@
   appearance: none;
   user-select: none;
   border: none;
-  background-color: var(--colors-gray-300);
+  background-color: var(--popup-background-color);
   border-radius: 6px;
   width: 28px;
   height: 28px;
@@ -105,7 +105,7 @@
   }
 
   &.opened {
-    background-color: var(--colors-gray-300);
+    background-color: var(--popup-background-color);
     filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.2));
   }
 
