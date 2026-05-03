@@ -25,7 +25,7 @@ import {
   showMessage,
 } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { SidebarRecent } from "@/newtab/components/common/SidebarRecent/SidebarRecent";
-import { bindDADItemEffect } from "@/newtab/helpers/dragging/dragAndDrop";
+import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { SearchInput } from "@/newtab/components/common/SearchInput/SearchInput";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
@@ -51,7 +51,7 @@ export function Sidebar(p: { appState: AppState }) {
         folderId: number,
         insertBeforeItemId: number | undefined,
         targetTabsOrRecentIds: number[],
-        targetGroupId?: number,
+        targetGroupId?: number
       ) => {
         const targetTabId = targetTabsOrRecentIds[0]; // we support D&D only single element from sidebar
         let tabOrRecentItem:
@@ -61,7 +61,7 @@ export function Sidebar(p: { appState: AppState }) {
 
         if (!tabOrRecentItem) {
           tabOrRecentItem = p.appState.recentItems.find(
-            (hi) => hi.id === targetTabId,
+            (hi) => hi.id === targetTabId
           );
         }
 
@@ -102,7 +102,7 @@ export function Sidebar(p: { appState: AppState }) {
           chrome.windows.update(tab.windowId, { focused: true });
         } else {
           const recent = p.appState.recentItems.find(
-            (ri) => ri.id === tabOrRecentId,
+            (ri) => ri.id === tabOrRecentId
           );
           if (recent && recent.url) {
             chrome.tabs.create({ url: recent.url, active: true });

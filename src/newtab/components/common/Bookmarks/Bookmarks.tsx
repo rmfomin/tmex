@@ -6,7 +6,7 @@ import {
   blurSearch,
   isTargetSupportsDragAndDrop,
 } from "@/newtab/helpers/utils";
-import { bindDADItemEffect } from "@/newtab/helpers/dragging/dragAndDrop";
+import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { Folder } from "@/newtab/components/common/Folder/Folder";
 import { handleBookmarksKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
 import { Action, AppState } from "@/newtab/state/state";
@@ -70,7 +70,7 @@ export function Bookmarks(p: { appState: AppState }) {
         folderId: number,
         insertBeforeItemId: number | undefined,
         targetsIds: number[],
-        targetGroupId?: number,
+        targetGroupId?: number
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
@@ -92,7 +92,7 @@ export function Bookmarks(p: { appState: AppState }) {
       const onDropFolder = (
         folderId: number,
         targetSpaceId: number | undefined,
-        insertBeforeFolderId: number | undefined,
+        insertBeforeFolderId: number | undefined
       ) => {
         dispatch({
           type: Action.MoveFolder,
@@ -116,7 +116,7 @@ export function Bookmarks(p: { appState: AppState }) {
           p.appState,
           dispatch,
           meta,
-          p.appState.openBookmarksInNewTab,
+          p.appState.openBookmarksInNewTab
         );
       };
 
@@ -154,7 +154,7 @@ export function Bookmarks(p: { appState: AppState }) {
         {
           onChangeSpacePosition,
           canSortSpaces: () => p.appState.spaces.length > 1,
-        },
+        }
       );
     }
   }, [mouseDownEvent]);

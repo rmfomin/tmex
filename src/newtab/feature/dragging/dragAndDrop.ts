@@ -7,9 +7,9 @@ import {
   isTargetInputOrTextArea,
 } from "@/newtab/helpers/utils";
 import { Point } from "@/newtab/helpers/mathTypes";
-import { processFolderDragAndDrop } from "@/newtab/helpers/dragging/processFolderDragAndDrop";
-import { processItemDragAndDrop } from "@/newtab/helpers/dragging/processItemDragAndDrop";
-import { processSpacesDragAndDrop } from "@/newtab/helpers/dragging/processSpacesDragAndDrop";
+import { processFolderDragAndDrop } from "@/newtab/feature/dragging/processFolderDragAndDrop";
+import { processItemDragAndDrop } from "@/newtab/feature/dragging/processItemDragAndDrop";
+import { processSpacesDragAndDrop } from "@/newtab/feature/dragging/processSpacesDragAndDrop";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 export type DropArea = {
@@ -27,7 +27,7 @@ export type PConfigItem = {
     folderId: number,
     insertBeforeItemId: number | undefined,
     targetsIds: number[],
-    targetGroupId?: number
+    targetGroupId?: number,
   ) => void;
   onCancel: () => void;
   onClick: (targetId: number) => void;
@@ -38,7 +38,7 @@ export type PConfigFolder = {
   onDrop: (
     draggedFolderId: number,
     targetSpaceId: number | undefined,
-    insertBeforeFolderId: number | undefined
+    insertBeforeFolderId: number | undefined,
   ) => void;
   onCancel: () => void;
   onChangeSpace: (spaceId: number) => void;
@@ -54,7 +54,7 @@ export function bindDADItemEffect(
   mouseDownEvent: React.MouseEvent,
   itemConfig: PConfigItem,
   folderConfig?: PConfigFolder,
-  spacesConfig?: PConfigSpaces
+  spacesConfig?: PConfigSpaces,
 ) {
   const target = mouseDownEvent.target as HTMLElement;
   const targetRoot = findRootOfDraggableItem(target);
@@ -82,7 +82,7 @@ export function bindDADItemEffect(
       return processFolderDragAndDrop(
         mouseDownEvent,
         folderConfig,
-        targetFolderHeader.parentElement!
+        targetFolderHeader.parentElement!,
       );
     } else if (
       spacesConfig &&
@@ -103,7 +103,7 @@ const FOLDER_BOTTOM_OFFSET = 20;
 
 export function getOverlappedDropArea(
   dropAreas: DropArea[],
-  e: MouseEvent
+  e: MouseEvent,
 ): DropArea | undefined {
   const realRectAreas = dropAreas.filter((da) => {
     return (
@@ -136,7 +136,7 @@ function compareDropAreasByPriority(a: DropArea, b: DropArea): number {
 
 export function getOverlappedSpaceDropArea(
   dropAreas: DropArea[],
-  e: MouseEvent
+  e: MouseEvent,
 ): DropArea | undefined {
   return dropAreas.find((da) => {
     return (
@@ -150,7 +150,7 @@ export function getOverlappedSpaceDropArea(
 
 export function getNewPlacementForItem(
   dropArea: DropArea,
-  e: MouseEvent
+  e: MouseEvent,
 ): { placeholderY: number; index: number } {
   const deltaY = e.clientY - dropArea.rect.y;
 
@@ -179,7 +179,7 @@ export function getNewPlacementForItem(
 export function calculateTargetInsertBeforeFolderId(
   dropAreas: DropArea[],
   dropArea: DropArea,
-  insertBefore: boolean
+  insertBefore: boolean,
 ): number | undefined {
   if (insertBefore) {
     return dropArea.objectId;
@@ -192,7 +192,7 @@ export function calculateTargetInsertBeforeFolderId(
 }
 
 function findRootOfDraggableFolder(
-  targetElement: HTMLElement
+  targetElement: HTMLElement,
 ): HTMLElement | null {
   if (doStopPropagation(targetElement)) {
     return null;
@@ -210,7 +210,7 @@ function findRootOfDraggableFolder(
 }
 
 function findRootOfDraggableItem(
-  targetElement: HTMLElement
+  targetElement: HTMLElement,
 ): HTMLElement | null {
   if (doStopPropagation(targetElement)) {
     return null;
@@ -238,7 +238,7 @@ function isDraggableItemRoot(targetElement: HTMLElement | null): boolean {
 }
 
 export function isDraggableFolderHeader(
-  targetElement: HTMLElement | null
+  targetElement: HTMLElement | null,
 ): boolean {
   return targetElement
     ? targetElement.classList.contains("draggable-folder")
@@ -258,7 +258,7 @@ export function getDropAreaFolderId(dropAreaElement: HTMLElement): number {
 }
 
 export function getDropAreaGroupId(
-  dropAreaElement: HTMLElement
+  dropAreaElement: HTMLElement,
 ): number | undefined {
   const groupId = dropAreaElement.dataset.groupId;
   return groupId ? parseInt(groupId, 10) : undefined;
@@ -285,7 +285,7 @@ export function getIdFromElement(target: HTMLElement): number {
 
 export function getItemIdByIndex(
   currentBoxToDrop: HTMLElement,
-  index: number
+  index: number,
 ): number | undefined {
   const children = currentBoxToDrop.children;
   if (index >= children.length) {
@@ -294,8 +294,8 @@ export function getItemIdByIndex(
     const child = children.item(index)!;
     const item = child.querySelector(
       `:scope > ${roleSelector(DOM_ROLE.folderItem)}, :scope > ${roleSelector(
-        DOM_ROLE.groupHeader
-      )}`
+        DOM_ROLE.groupHeader,
+      )}`,
     ) as HTMLElement;
     return parseInt(item.dataset.id!, 10);
   }
@@ -304,7 +304,7 @@ export function getItemIdByIndex(
 export function createTabDummy(
   targetRoots: HTMLElement[],
   mouseDownEvent: React.MouseEvent,
-  isFolderItem: boolean
+  isFolderItem: boolean,
 ): HTMLElement {
   const dummy = document.createElement("div");
   targetRoots.forEach((selectedEl) => {
@@ -343,7 +343,7 @@ export function getDragPreviewElement(targetRoot: HTMLElement): HTMLElement {
 
 export function calculateFoldersDropAreas(
   folderEls: Element[],
-  calcItemRects = false
+  calcItemRects = false,
 ): DropArea[] {
   return folderEls.map((el) => ({
     objectId: getDropAreaFolderId(el as HTMLElement),
@@ -367,7 +367,7 @@ export function calculateFoldersDropAreas(
 
 export function calculateSpacesDropAreas(): DropArea[] {
   const spacesEls = Array.from(
-    document.querySelectorAll(roleSelector(DOM_ROLE.spaceItem))
+    document.querySelectorAll(roleSelector(DOM_ROLE.spaceItem)),
   );
   return spacesEls.map((el) => ({
     objectId: getSpaceId(el as HTMLElement),
@@ -379,14 +379,14 @@ export function calculateSpacesDropAreas(): DropArea[] {
 
 export function createFolderDummy(
   targetRoot: HTMLElement,
-  mouseDownEvent: React.MouseEvent
+  mouseDownEvent: React.MouseEvent,
 ): HTMLElement {
   // targetRoot.style.opacity = `0.4`
   const dummy = document.createElement("div");
   dummy.append(targetRoot.cloneNode(true));
   dummy.style.opacity = "0.8";
   const itemsBoxEl = dummy.querySelector<HTMLElement>(
-    roleSelector(DOM_ROLE.folderItems)
+    roleSelector(DOM_ROLE.folderItems),
   )!;
   itemsBoxEl.style.visibility = "hidden";
 
@@ -401,7 +401,7 @@ export function createFolderDummy(
 export function createPlaceholder(forItem: boolean) {
   const dummy = document.createElement("div");
   dummy.classList.add(
-    forItem ? "bm-item-placeholder" : "bm-folder-placeholder"
+    forItem ? "bm-item-placeholder" : "bm-folder-placeholder",
   );
   return dummy;
 }

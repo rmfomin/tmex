@@ -1,5 +1,5 @@
-import type { PConfigSpaces } from "@/newtab/helpers/dragging/dragAndDrop";
-import { subscribeMouseEvents } from "@/newtab/helpers/dragging/dragAndDropUtils";
+import type { PConfigSpaces } from "@/newtab/feature/dragging/dragAndDrop";
+import { subscribeMouseEvents } from "@/newtab/feature/dragging/dragAndDropUtils";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
 import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
@@ -14,14 +14,14 @@ type InitRes = {
 
 export function processSpacesDragAndDrop(
   mouseDownEvent: React.MouseEvent,
-  config: PConfigSpaces
+  config: PConfigSpaces,
 ) {
   let dummy: InitRes | undefined;
   let prevOverItem: HTMLElement | undefined = undefined;
   let prevInsertType: string = "";
 
   const target = (mouseDownEvent.target as HTMLElement).closest(
-    roleSelector(DOM_ROLE.spaceItem)
+    roleSelector(DOM_ROLE.spaceItem),
   ) as HTMLElement | null;
 
   if (!target) {
@@ -54,12 +54,12 @@ export function processSpacesDragAndDrop(
     if (insertType === "before") {
       dummy!.draggingItem.dataset.position = insertBetween(
         items[overItemIndex - 1]?.dataset.position ?? "",
-        overItem.dataset.position!
+        overItem.dataset.position!,
       );
     } else {
       dummy!.draggingItem.dataset.position = insertBetween(
         overItem.dataset.position!,
-        items[overItemIndex + 1]?.dataset.position ?? ""
+        items[overItemIndex + 1]?.dataset.position ?? "",
       );
     }
 
@@ -84,7 +84,7 @@ export function processSpacesDragAndDrop(
             prevOverItem,
             prevInsertType,
             overItem,
-            insertType
+            insertType,
           )
         ) {
           prevOverItem = overItem;
@@ -104,7 +104,7 @@ export function processSpacesDragAndDrop(
       dummy.clonedSpacesList.remove();
       config.onChangeSpacePosition(
         parseInt(dummy.draggingItem.dataset.spaceId!, 10),
-        dummy.draggingItem.dataset.position!
+        dummy.draggingItem.dataset.position!,
       );
     } else {
       // do nothing here
@@ -122,17 +122,17 @@ export function shouldUpdateSpaceInsertPreview(
   prevOverItem: HTMLElement | undefined,
   prevInsertType: string,
   overItem: HTMLElement,
-  insertType: string
+  insertType: string,
 ): boolean {
   return prevOverItem !== overItem || prevInsertType !== insertType;
 }
 
 function createClonedSpacesList(target: HTMLElement): InitRes {
   const origSpacesList = document.querySelector(
-    roleSelector(DOM_ROLE.spacesList)
+    roleSelector(DOM_ROLE.spacesList),
   ) as HTMLElement;
   const origItems = Array.from(
-    origSpacesList.querySelectorAll(roleSelector(DOM_ROLE.spaceItem))
+    origSpacesList.querySelectorAll(roleSelector(DOM_ROLE.spaceItem)),
   );
 
   const listRect = origSpacesList.getBoundingClientRect();

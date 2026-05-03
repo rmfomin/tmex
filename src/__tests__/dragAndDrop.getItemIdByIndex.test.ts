@@ -6,15 +6,15 @@ jest.mock("@/newtab/helpers/selectionUtils", () => ({
   unselectAllItems: jest.fn(),
 }));
 
-jest.mock("@/newtab/helpers/dragging/processFolderDragAndDrop", () => ({
+jest.mock("@/newtab/feature/dragging/processFolderDragAndDrop", () => ({
   processFolderDragAndDrop: jest.fn(),
 }));
 
-jest.mock("@/newtab/helpers/dragging/processItemDragAndDrop", () => ({
+jest.mock("@/newtab/feature/dragging/processItemDragAndDrop", () => ({
   processItemDragAndDrop: jest.fn(),
 }));
 
-jest.mock("@/newtab/helpers/dragging/processSpacesDragAndDrop", () => ({
+jest.mock("@/newtab/feature/dragging/processSpacesDragAndDrop", () => ({
   processSpacesDragAndDrop: jest.fn(),
 }));
 
@@ -26,7 +26,7 @@ import {
   getDragPreviewElement,
   getItemIdByIndex,
   getOverlappedDropArea,
-} from "@/newtab/helpers/dragging/dragAndDrop";
+} from "@/newtab/feature/dragging/dragAndDrop";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 test("getItemIdByIndex returns group id for top-level group drop target", () => {

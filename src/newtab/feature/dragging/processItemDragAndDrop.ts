@@ -2,7 +2,7 @@ import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
 import {
   setScrollByDummyClientY,
   subscribeMouseEvents,
-} from "@/newtab/helpers/dragging/dragAndDropUtils";
+} from "@/newtab/feature/dragging/dragAndDropUtils";
 import {
   calculateFoldersDropAreas,
   createPlaceholder,
@@ -15,21 +15,21 @@ import {
   getOverlappedDropArea,
   PConfigItem,
   DropArea,
-} from "@/newtab/helpers/dragging/dragAndDrop";
+} from "@/newtab/feature/dragging/dragAndDrop";
 import { inRange } from "@/newtab/helpers/mathUtils";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 export function processItemDragAndDrop(
   mouseDownEvent: React.MouseEvent,
   config: PConfigItem,
-  targetRoots: HTMLElement[]
+  targetRoots: HTMLElement[],
 ) {
   let originalFolderId: number;
   let originalIndex: number;
   let dummy: undefined | HTMLElement = undefined;
   const placeholder: HTMLElement = createPlaceholder(true);
   const canDropIntoGroupHeader = targetRoots.every(
-    (targetRoot) => targetRoot.dataset.role !== DOM_ROLE.groupHeader
+    (targetRoot) => targetRoot.dataset.role !== DOM_ROLE.groupHeader,
   );
 
   const folderEls = Array.from(
@@ -37,9 +37,9 @@ export function processItemDragAndDrop(
       `${
         canDropIntoGroupHeader ? `${roleSelector(DOM_ROLE.groupHeader)}, ` : ""
       }${roleSelector(DOM_ROLE.groupItems)}, ${roleSelector(
-        DOM_ROLE.folderItems
-      )}`
-    )
+        DOM_ROLE.folderItems,
+      )}`,
+    ),
   );
   let dropAreas = calculateFoldersDropAreas(folderEls, true);
 
@@ -76,7 +76,7 @@ export function processItemDragAndDrop(
             placeholder.remove();
             prevHighlightedGroup =
               (curBoxToDrop.closest(
-                roleSelector(DOM_ROLE.folderGroup)
+                roleSelector(DOM_ROLE.folderGroup),
               ) as HTMLElement | null) ?? undefined;
             if (prevHighlightedGroup) {
               prevHighlightedGroup.dataset.dropTarget = "true";
@@ -121,7 +121,7 @@ export function processItemDragAndDrop(
         dummy = createTabDummy(
           targetRoots,
           mouseDownEvent,
-          config.isFolderItem
+          config.isFolderItem,
         );
         dummy.style.transform = `translateX(${e.clientX + "px"}) translateY(${
           e.clientY + "px"
@@ -133,10 +133,10 @@ export function processItemDragAndDrop(
           const targetRoot = targetRoots[0];
           // here we remember only first index from all selected elements
           originalIndex = Array.from(
-            targetRoot.parentElement!.parentElement!.children
+            targetRoot.parentElement!.parentElement!.children,
           ).indexOf(targetRoot.parentElement!);
           originalFolderId = getFolderId(
-            targetRoot.parentElement!.parentElement!
+            targetRoot.parentElement!.parentElement!,
           );
         }
       }
@@ -151,7 +151,7 @@ export function processItemDragAndDrop(
         delete prevHighlightedGroup.dataset.dropTarget;
       }
       targetRoots.forEach((el) =>
-        getDragPreviewElement(el).style.removeProperty("opacity")
+        getDragPreviewElement(el).style.removeProperty("opacity"),
       );
       const tryAddToOriginalPos =
         !currentDropArea?.groupId &&
@@ -166,7 +166,7 @@ export function processItemDragAndDrop(
           folderId,
           insertBeforeItemId,
           getIdsFromElements(targetRoots),
-          currentDropArea?.groupId
+          currentDropArea?.groupId,
         );
       } else {
         config.onCancel();
@@ -183,7 +183,7 @@ export function processItemDragAndDrop(
     mouseDownEvent,
     onMouseMove,
     onMouseUp,
-    onViewportScrolled
+    onViewportScrolled,
   );
   return unsubscribeEvents;
 }

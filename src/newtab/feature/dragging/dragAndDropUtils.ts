@@ -7,10 +7,10 @@ export function subscribeMouseEvents(
   onMouseMove: (
     e: MouseEvent,
     mouseMoved: boolean,
-    mouseMovedFirstTime: boolean
+    mouseMovedFirstTime: boolean,
   ) => void,
   onMouseUp: (e: MouseEvent, mouseMoved: boolean) => void,
-  onViewportScrolled?: () => void // invoked before onMouseMove
+  onViewportScrolled?: () => void, // invoked before onMouseMove
 ): () => void {
   let mouseMoved = false;
   let mouseMovedFirstTimeReported = false;
@@ -62,7 +62,7 @@ const SCROLL_THRESHOLD = 60;
 
 function getBookmarksElement(): HTMLElement {
   return document.querySelector(
-    roleSelector(DOM_ROLE.bookmarks)
+    roleSelector(DOM_ROLE.bookmarks),
   ) as HTMLElement;
 }
 
@@ -76,7 +76,7 @@ function tryToScrollViewport() {
       const speed = Math.min(
         ((scrollByDummyClientY - bottomThreshold) / SCROLL_THRESHOLD) *
           MAX_SCROLL_SPEED,
-        MAX_SCROLL_SPEED
+        MAX_SCROLL_SPEED,
       );
       getBookmarksElement().scrollBy(0, speed);
       viewportWasScrolled = true;
@@ -85,7 +85,7 @@ function tryToScrollViewport() {
       const speed = Math.min(
         ((SCROLL_THRESHOLD - scrollByDummyClientY) / SCROLL_THRESHOLD) *
           MAX_SCROLL_SPEED,
-        MAX_SCROLL_SPEED
+        MAX_SCROLL_SPEED,
       );
       getBookmarksElement().scrollBy(0, -speed);
       viewportWasScrolled = true;

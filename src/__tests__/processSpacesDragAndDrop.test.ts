@@ -1,4 +1,4 @@
-jest.mock("@/newtab/helpers/dragging/dragAndDropUtils", () => ({
+jest.mock("@/newtab/feature/dragging/dragAndDropUtils", () => ({
   subscribeMouseEvents: jest.fn(),
 }));
 
@@ -6,7 +6,7 @@ jest.mock("@/newtab/helpers/selectionUtils", () => ({
   unselectAllItems: jest.fn(),
 }));
 
-import { shouldUpdateSpaceInsertPreview } from "@/newtab/helpers/dragging/processSpacesDragAndDrop";
+import { shouldUpdateSpaceInsertPreview } from "@/newtab/feature/dragging/processSpacesDragAndDrop";
 
 test("space drag preview updates when the hovered space changes", () => {
   const previous = {} as HTMLElement;
