@@ -1,8 +1,5 @@
-@use "./variables" as *;
+@use "@/styles/variables" as *;
 
-/*********
- * MODAL
- */
 .modal-wrapper {
   position: fixed;
   top: 0;

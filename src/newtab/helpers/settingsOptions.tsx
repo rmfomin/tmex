@@ -15,7 +15,10 @@ import {
 import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal";
 import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { ShortcutsModal } from "@/newtab/components/common/ShortcutsModal/ShortcutsModal";
-import { ThemeOptionIcon } from "@/newtab/components/common/ThemeOptionIcon/ThemeOptionIcon";
+import {
+  getThemeOptionButtonStyle,
+  ThemeOptionIcon,
+} from "@/newtab/components/common/ThemeOptionIcon/ThemeOptionIcon";
 import { BookmarkItemV3, ColorTheme } from "@/newtab/helpers/types";
 import cn from "clsx";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
@@ -45,6 +48,7 @@ type SegmentedOption<T extends string> = {
     text: string;
     title?: string;
     icon?: React.ReactNode;
+    buttonStyle?: (isActive: boolean) => React.CSSProperties;
   }>;
   hidden?: boolean;
 };
@@ -91,11 +95,11 @@ export const HelpOptions = (p: { appState: AppState }) => {
   function invalidateBrokenIcons() {
     const promises: Promise<unknown>[] = [minTimeoutPromise()];
     const currentSpace = p.appState.spaces.find(
-      (s) => s.id === p.appState.currentSpaceId,
+      (s) => s.id === p.appState.currentSpaceId
     );
     if (currentSpace) {
       promises.push(
-        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon),
+        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon)
       );
     }
 
@@ -167,7 +171,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
         dispatch({ type: Action.UpdateShowNotUsedItems, value: true });
         showMessage(
           "Unused items for the past 60 days are highlighted",
-          dispatch,
+          dispatch
         );
       } else {
         showErrorMessage(`There are no unused items to highlight`, dispatch);
@@ -232,18 +236,21 @@ export const SettingsOptions = (p: { appState: AppState }) => {
           text: "Light",
           title: "Always use light theme",
           icon: <ThemeOptionIcon theme="light" />,
+          buttonStyle: getThemeOptionButtonStyle,
         },
         {
           value: "system",
           text: "Auto",
           title: "Use system theme",
           icon: <ThemeOptionIcon theme="system" />,
+          buttonStyle: getThemeOptionButtonStyle,
         },
         {
           value: "dark",
           text: "Dark",
           title: "Always use dark theme",
           icon: <ThemeOptionIcon theme="dark" />,
+          buttonStyle: getThemeOptionButtonStyle,
         },
       ],
     },
@@ -377,10 +384,10 @@ export const Options = (props: {
                     type="button"
                     className={cn("dropdown-menu__segmented-button focusable", {
                       active: item.value === option.value,
-                      "dropdown-menu__segmented-button--icon": item.icon,
                     })}
                     title={item.title}
                     aria-label={item.text}
+                    style={item.buttonStyle?.(item.value === option.value)}
                     onClick={() => option.onSelect(item.value)}
                   >
                     {item.icon ?? item.text}

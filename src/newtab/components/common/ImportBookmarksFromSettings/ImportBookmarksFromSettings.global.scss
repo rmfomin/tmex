@@ -1,6 +1,5 @@
-@use "./variables" as *;
+@use "@/styles/variables" as *;
 
-/* Importing bookmarks styles */
 .welcome {
   display: flex;
   align-items: center;
@@ -47,7 +46,7 @@
     position: relative;
     font-size: 32px;
     background: none;
-    border: 2px solid rgba(5, 0, 56, 0.2); /** --main-text-color */
+    border: 2px solid rgba(5, 0, 56, 0.2);
     border-radius: 8px;
     padding: 12px 16px;
     margin-top: 34px;
@@ -66,7 +65,7 @@
     }
 
     &:hover {
-      border: 2px solid #0066ff; /** --main-text-color */
+      border: 2px solid #0066ff;
       background-color: #fff;
 
       .subtext {

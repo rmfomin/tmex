@@ -47,7 +47,7 @@ describe("svg icon sizing", () => {
   });
 
   test("shared icon buttons fix the current 24px svg size in css", () => {
-    const scss = read("../styles/_bookmarks.scss");
+    const scss = read("../styles/_shared-controls.scss");
 
     expectRuleWithSize(scss, ".btn__icon svg", "24px", "24px");
   });

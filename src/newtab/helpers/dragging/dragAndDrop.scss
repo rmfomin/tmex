@@ -1,6 +1,5 @@
-@use "./variables" as *;
+@use "@/styles/variables" as *;
 
-/* DAD styles */
 body.dragging * {
   pointer-events: none;
 }
@@ -11,11 +10,8 @@ body.dragging * {
   top: 0;
   left: 0;
   box-sizing: content-box;
-  /*background-color: var(--sidebar-background-color);*/
   border-radius: 8px;
   pointer-events: none;
-  /*border: 1px solid var(--colors-gray-600);*/
-  /*opacity: 0.8;*/
 }
 
 .dad-dummy--folder-item {
