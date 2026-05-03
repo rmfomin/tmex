@@ -64,7 +64,7 @@ export const HelpOptions = (p: { appState: AppState }) => {
 
   function invalidateFavicon(folderItem: BookmarkItemV3): Promise<void> {
     if (folderItem.url) {
-      return loadFaviconUrl(folderItem.url, false).then((newFaviconUrl) => {
+      return loadFaviconUrl(folderItem.url).then((newFaviconUrl) => {
         if (newFaviconUrl !== folderItem.favIconUrl) {
           dispatch({
             type: Action.UpdateFolderItem,
@@ -85,11 +85,11 @@ export const HelpOptions = (p: { appState: AppState }) => {
   function invalidateBrokenIcons() {
     const promises: Promise<unknown>[] = [minTimeoutPromise()];
     const currentSpace = p.appState.spaces.find(
-      (s) => s.id === p.appState.currentSpaceId,
+      (s) => s.id === p.appState.currentSpaceId
     );
     if (currentSpace) {
       promises.push(
-        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon),
+        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon)
       );
     }
 
@@ -164,7 +164,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
         dispatch({ type: Action.UpdateShowNotUsedItems, value: true });
         showMessage(
           "Unused items for the past 60 days are highlighted",
-          dispatch,
+          dispatch
         );
       } else {
         showErrorMessage(`There are no unused items to highlight`, dispatch);

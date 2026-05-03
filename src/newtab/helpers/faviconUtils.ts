@@ -1,7 +1,4 @@
-import { LegacyFolderItem } from "@/newtab/helpers/types";
 import { convertToURL, getTempFavIconUrl } from "@/newtab/state/actionHelpers";
-
-const STORAGE_KEY = "faviconsStorage";
 
 type FaviconInfo = {
   faviconUrl: string;
@@ -10,17 +7,6 @@ type FaviconInfo = {
 
 // Load initial data from localStorage
 let cache = new Map<string, FaviconInfo[]>();
-
-let debounceTimer: number | null = null;
-const DEBOUNCE_DELAY = 200;
-
-function flushCache() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
-  } catch (e) {
-    console.error("Error saving faviconsStorage:", e);
-  }
-}
 
 const MAX_SCORE = 2;
 
@@ -112,10 +98,7 @@ export const faviconsStorage = {
   registerInCache,
 };
 
-export async function loadFaviconUrl(
-  bookmarkUrl: string,
-  searchInCache = true
-): Promise<string> {
+export async function loadFaviconUrl(bookmarkUrl: string): Promise<string> {
   return findInCache(bookmarkUrl, true) ?? "";
 
   // todo TEMP DISABLED

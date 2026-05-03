@@ -32,7 +32,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   });
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.type === "get-last-active-tabs") {
     sendResponse({ type: "send-last-active-tabs", tabs: lastActiveTabIds });
   }

@@ -71,11 +71,7 @@ export function Bookmarks(p: { appState: AppState }) {
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
-            folderId = createFolderWithStat(
-              dispatch,
-              { historyStepId },
-              "by-drag-in-new-folder--bookmarks"
-            );
+            folderId = createFolderWithStat(dispatch, { historyStepId });
           }
 
           dispatch({
@@ -168,11 +164,7 @@ export function Bookmarks(p: { appState: AppState }) {
   }
 
   function onCreateFolder() {
-    const folderId = createFolderWithStat(
-      dispatch,
-      {},
-      "by-click-new-in-bookmarks"
-    );
+    const folderId = createFolderWithStat(dispatch, {});
     dispatch({
       type: Action.UpdateAppState,
       newState: { itemInEdit: folderId },

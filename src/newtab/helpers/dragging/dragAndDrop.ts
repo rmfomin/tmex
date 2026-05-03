@@ -5,7 +5,6 @@ import {
 import {
   isSomeParentHaveClass,
   isTargetInputOrTextArea,
-  isTargetSupportsDragAndDrop,
 } from "@/newtab/helpers/utils";
 import { Point } from "@/newtab/helpers/mathTypes";
 import { processFolderDragAndDrop } from "@/newtab/helpers/dragging/processFolderDragAndDrop";

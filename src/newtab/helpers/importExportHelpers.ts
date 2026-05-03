@@ -14,11 +14,9 @@ import {
 } from "@/newtab/state/actionHelpers";
 import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { getTopVisitedFromHistory } from "@/newtab/helpers/utils";
-import HistoryItem = chrome.history.HistoryItem;
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import {
   convertLegacySpacesToV3Backup,
-  getV3SpacesView,
   normalizeBackupV3,
 } from "@/newtab/helpers/dataFormatAdapters";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
@@ -30,10 +28,7 @@ type LegacyBackup = {
   spaces: LegacySpace[];
 };
 
-function hasSupportedBackupMarker(data: {
-  isTabowski?: true;
-  isTabme?: true;
-}) {
+function hasSupportedBackupMarker(data: { isTabowski?: true; isTabme?: true }) {
   return data.isTabowski === true || data.isTabme === true;
 }
 
@@ -44,11 +39,19 @@ function isLegacyImportJson(data: LegacyFolder[]) {
 
 // TODO(v3-migration): delete after version 2 backups are no longer supported.
 function isImportJsonV2(data: LegacyBackup) {
-  return hasSupportedBackupMarker(data) && Array.isArray(data.spaces) && data.version === 2;
+  return (
+    hasSupportedBackupMarker(data) &&
+    Array.isArray(data.spaces) &&
+    data.version === 2
+  );
 }
 
 function isImportJsonV3(data: DataBackupV3) {
-  return hasSupportedBackupMarker(data) && Array.isArray(data.spaces) && data.version === 3;
+  return (
+    hasSupportedBackupMarker(data) &&
+    Array.isArray(data.spaces) &&
+    data.version === 3
+  );
 }
 
 function isSpaceBackupJsonV3(data: SpaceBackupV3) {
@@ -204,11 +207,15 @@ export function onExportJson(spaces: SpaceV3[]) {
 
 export function onExportSpaceJson(space: SpaceV3) {
   const backup = createExportSpaceBackupV3(space);
-  const safeTitle = space.title.trim().replace(/[^a-z0-9_-]+/gi, "_") || "space";
+  const safeTitle =
+    space.title.trim().replace(/[^a-z0-9_-]+/gi, "_") || "space";
   downloadObjectAsJson(backup, `tabowski_space_${safeTitle}`);
 }
 
-function cloneSpaceForImport(space: SpaceV3, existingSpaces: SpaceV3[]): SpaceV3 {
+function cloneSpaceForImport(
+  space: SpaceV3,
+  existingSpaces: SpaceV3[]
+): SpaceV3 {
   const lastSpace = existingSpaces.at(-1);
   const normalized = normalizeBackupV3({
     isTabowski: true,
@@ -252,7 +259,7 @@ function cloneSpaceForImport(space: SpaceV3, existingSpaces: SpaceV3[]): SpaceV3
 export function importSpaceFromJson(
   event: any,
   dispatch: ActionDispatcher,
-  existingSpaces: SpaceV3[],
+  existingSpaces: SpaceV3[]
 ) {
   function receivedText(e: any) {
     try {
@@ -304,7 +311,7 @@ export function importSpaceFromJson(
 export function onImportFromToby(
   event: any,
   dispatch: ActionDispatcher,
-  onReady?: () => void,
+  onReady?: () => void
 ) {
   function receivedText(e: any) {
     let lines = e.target.result;
@@ -405,7 +412,7 @@ export type BookmarksAsPlainList = PlainListRecord[];
 export function getBrowserBookmarks(
   onReady: (res: BookmarksAsPlainList) => void,
   recentItems: RecentItem[],
-  dispatch: ActionDispatcher,
+  dispatch: ActionDispatcher
 ): void {
   const history = getTopVisitedFromHistory(recentItems, 1000);
 
@@ -430,7 +437,7 @@ function traverseTree(
   nodes: CustomBookmarkTreeNode[],
   plainList: BookmarksAsPlainList,
   breadcrumbs: CustomBookmarkTreeNode[],
-  history: RecentItem[],
+  history: RecentItem[]
 ) {
   nodes.forEach((node) => {
     if (node.children && node.children.length > 0) {
@@ -441,7 +448,7 @@ function traverseTree(
       traverseTree(node.children, plainList, [...breadcrumbs, node], history);
     } else {
       node.mostVisited = history.some(
-        (hItem) => node.url && hItem.url?.includes(node.url),
+        (hItem) => node.url && hItem.url?.includes(node.url)
       );
     }
   });
@@ -450,7 +457,7 @@ function traverseTree(
 export function importBrowserBookmarks(
   records: BookmarksAsPlainList,
   dispatch: ActionDispatcher,
-  skipChecked: boolean,
+  skipChecked: boolean
 ) {
   let count = 0;
   records.forEach((rec) => {
@@ -458,11 +465,7 @@ export function importBrowserBookmarks(
       const items = rec.folder.children
         ?.filter((item) => (skipChecked || item.checked) && item.url)
         .map((item) =>
-          createNewFolderItem(
-            item.url,
-            item.title,
-            getTempFavIconUrl(item.url),
-          ),
+          createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url))
         );
       count += items?.length ?? 0;
 

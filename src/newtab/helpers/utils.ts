@@ -8,7 +8,6 @@ import {
 import type React from "react";
 import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
-import { getTempFavIconUrl } from "@/newtab/state/actionHelpers";
 import {
   collectBookmarksV3,
   hasArchivedItemsV3,
@@ -384,7 +383,7 @@ function escapeRegex(s: string): string {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 }
 
-export function blurSearch(e: React.MouseEvent) {
+export function blurSearch(_e: React.MouseEvent) {
   if (
     document.activeElement &&
     document.activeElement === document.querySelector("input.search")

@@ -1,56 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal } from "@/newtab/components/common/Modal/Modal";
 import styles from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal.module.scss";
 
 export const ImportConfirmationModal = (p: {
   onClose: (opt: string) => void;
 }) => {
-  const [importOption, setImportOption] = useState("add");
-
-  // todo improve this logic later
-  const handleOptionChange = (event: any) => {
-    setImportOption(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    p.onClose(importOption);
-  };
-
   return (
-    <Modal
-      className={styles.modal}
-      onClose={() => p.onClose(importOption)}
-    >
-      {/*<h2>How to add imported bookmarks?</h2>*/}
-      {/*<p>*/}
-      {/*  <label>*/}
-      {/*    <input*/}
-      {/*      type="radio"*/}
-      {/*      name="import-type"*/}
-      {/*      value="add"*/}
-      {/*      checked={importOption === "add"}*/}
-      {/*      onChange={handleOptionChange}*/}
-      {/*    />*/}
-      {/*    <span>Add to already existing bookmarks.</span>*/}
-      {/*  </label>*/}
-      {/*</p>*/}
-      {/*<p>*/}
-      {/*  <label>*/}
-      {/*    <input*/}
-      {/*      type="radio"*/}
-      {/*      name="import-type"*/}
-      {/*      value="clear"*/}
-      {/*      checked={importOption === "replace"}*/}
-      {/*      onChange={handleOptionChange}*/}
-      {/*    />*/}
-      {/*    <span>Replace existing bookmarks.</span>*/}
-      {/*  </label>*/}
-      {/*</p>*/}
-      {/*<p>*/}
-      {/*  <button className="btn__setting primary" style={{ float: "right" }} onClick={handleSubmit}>*/}
-      {/*    Done*/}
-      {/*  </button>*/}
-      {/*</p>*/}
+    <Modal className={styles.modal} onClose={() => p.onClose("add")}>
       <h2>
         Importing JSON backup will replace <br />
         all current bookmarks

@@ -13,7 +13,7 @@ import { Offset, Point } from "@/newtab/helpers/mathTypes";
 
 const DROPDOWN_MENU_OPENED_EVENT = "dropdown-menu-opened";
 
-export const DropdownSetMenuIdContext = createContext((id: number) => {});
+export const DropdownSetMenuIdContext = createContext((_id: number) => {});
 export const DropdownMenuIdContext = createContext(-1);
 
 interface DropdownSubMenuProps {

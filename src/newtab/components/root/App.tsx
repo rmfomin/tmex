@@ -52,7 +52,7 @@ function getLastActiveTabsIds() {
         } else {
           res([]);
         }
-      },
+      }
     );
   });
 }
@@ -110,7 +110,7 @@ export function App() {
       });
     });
 
-    function onTabUpdated(tabId: number, info: Partial<Tab>, tab: Tab) {
+    function onTabUpdated(tabId: number, _info: Partial<Tab>, tab: Tab) {
       dispatch({ type: Action.UpdateTab, tabId, opt: tab });
     }
 
@@ -195,7 +195,7 @@ export function App() {
   useEffect(() => {
     if (appState.apiCommandId) {
       const currentCommand = appState.apiCommandsQueue.find(
-        (cmd) => cmd.commandId === appState.apiCommandId,
+        (cmd) => cmd.commandId === appState.apiCommandId
       );
       if (currentCommand) {
         executeAPICall(currentCommand, dispatch);

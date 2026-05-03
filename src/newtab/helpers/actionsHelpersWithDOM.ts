@@ -1,4 +1,8 @@
-import { BookmarkItemV3, FolderItemToCreate, SpaceV3 } from "@/newtab/helpers/types";
+import {
+  BookmarkItemV3,
+  FolderItemToCreate,
+  SpaceV3,
+} from "@/newtab/helpers/types";
 import { ActionDispatcher, executeCustomAction } from "@/newtab/state/actions";
 import { Action, AppState } from "@/newtab/state/state";
 import {
@@ -10,7 +14,7 @@ import {
 export function showMessage(
   message: string,
   dispatch: ActionDispatcher,
-  isLoading = false,
+  isLoading = false
 ): void {
   dispatch({
     type: Action.ShowNotification,
@@ -21,7 +25,7 @@ export function showMessage(
 
 export function showErrorMessage(
   errorMessage: string,
-  dispatch: ActionDispatcher,
+  dispatch: ActionDispatcher
 ): void {
   dispatch({
     type: Action.ShowNotification,
@@ -41,8 +45,7 @@ type CreateFolderProps = {
 
 export function createFolderWithStat(
   dispatch: any,
-  props: CreateFolderProps,
-  statSource: string,
+  props: CreateFolderProps
 ): number {
   const newFolderId = genUniqLocalId();
   dispatch({ type: Action.CreateFolder, newFolderId, ...props });
@@ -51,7 +54,7 @@ export function createFolderWithStat(
 
 export function showMessageWithUndo(
   message: string,
-  dispatch: ActionDispatcher,
+  dispatch: ActionDispatcher
 ): void {
   dispatch({
     type: Action.ShowNotification,
@@ -68,7 +71,7 @@ export function showMessageWithUndo(
 
 export function getCanDragChecker(
   search: string,
-  dispatch: ActionDispatcher,
+  dispatch: ActionDispatcher
 ): () => boolean {
   return () => {
     if (search) {
@@ -88,7 +91,7 @@ export function clickFolderItem(
   appState: { spaces: SpaceV3[]; tabs: AppState["tabs"] },
   dispatch: ActionDispatcher,
   openInNewTab: boolean,
-  openBookmarksInNewTab: boolean,
+  openBookmarksInNewTab: boolean
 ) {
   const targetItem = findItemById(appState, targetId);
   if (targetItem?.isSection) {

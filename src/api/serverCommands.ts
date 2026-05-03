@@ -70,7 +70,7 @@ export function executeAPICall(
         command: command.type,
         ...command.body,
       })
-        .then((value) => {
+        .then(() => {
           dispatchApiResolved();
         })
         .catch(dispatchApiError);

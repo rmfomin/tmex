@@ -66,11 +66,7 @@ export function Sidebar(p: { appState: AppState }) {
 
         if (folderId === -1) {
           // we need to create new folder first
-          folderId = createFolderWithStat(
-            dispatch,
-            {},
-            "by-drag-in-new-folder--sidebar"
-          );
+          folderId = createFolderWithStat(dispatch, {});
         }
 
         if (tabOrRecentItem && tabOrRecentItem.id) {
@@ -258,11 +254,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
 
       const items = tabsToShelve.map(convertTabToItem);
       const title = `Saved ${getCurrentData()}`;
-      const folderId = createFolderWithStat(
-        dispatch,
-        { title, items },
-        "by-stash"
-      );
+      const folderId = createFolderWithStat(dispatch, { title, items });
 
       dispatch({
         type: Action.ShowNotification,

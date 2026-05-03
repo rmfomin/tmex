@@ -13,12 +13,14 @@ import {
   ColorTheme,
   FolderItemToCreate,
   FolderV3,
-  LegacySpace,
   SpaceV3,
 } from "@/newtab/helpers/types";
-import { applyTheme, saveStateThrottled, savingStateKeys } from "@/newtab/state/storage";
 import {
-  addItemsToFolder,
+  applyTheme,
+  saveStateThrottled,
+  savingStateKeys,
+} from "@/newtab/state/storage";
+import {
   insertBetween,
   sortByPosition,
 } from "@/newtab/helpers/fractionalIndexes";
@@ -40,16 +42,11 @@ import {
   findSpaceById,
   genUniqLocalId,
   removeItemFromFolderItems,
-  toBookmarkItemV3,
   updateFolder,
   updateFolderItem,
   updateSpace,
 } from "@/newtab/state/actionHelpers";
-import {
-  genNextRuntimeId,
-  getRandomHEXColor,
-  isArraysEqual,
-} from "@/newtab/helpers/utils";
+import { genNextRuntimeId, getRandomHEXColor } from "@/newtab/helpers/utils";
 
 type ObjectWithRemoteId = {
   remoteId: number;
@@ -59,10 +56,7 @@ export const DispatchContext = createContext<ActionDispatcher>(null!);
 
 export type ActionDispatcher = (action: ActionPayload) => void;
 
-export function stateReducer(
-  state: AppState,
-  action: ActionPayload
-): AppState {
+export function stateReducer(state: AppState, action: ActionPayload): AppState {
   // unselectAll()
   const newState = stateReducer0(state, action);
 
@@ -107,9 +101,9 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
     ];
   };
 
-  function isNetworkAvailable(object?: {
+  function isNetworkAvailable(_object?: {
     remoteId?: number;
-  }): object is ObjectWithRemoteId {
+  }): _object is ObjectWithRemoteId {
     return loadFromNetwork();
     // todo with it something. So optimistic updates works, and batching works, and no user data looses
     // if (object && !object.remoteId) {
@@ -581,7 +575,9 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
           if (space.id === prevFolderSpace.id) {
             return {
               ...space,
-              folders: space.folders.filter((folder) => folder.id !== action.folderId),
+              folders: space.folders.filter(
+                (folder) => folder.id !== action.folderId
+              ),
             };
           } else if (space.id === targetFolderSpace.id) {
             return {
@@ -759,7 +755,10 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       }
 
       let apiCommandsQueue = state.apiCommandsQueue;
-      if (originalItem.type === "bookmark" && isNetworkAvailable(originalItem)) {
+      if (
+        originalItem.type === "bookmark" &&
+        isNetworkAvailable(originalItem)
+      ) {
         apiCommandsQueue = getCommandsQueue(state, {
           type: Action.UpdateFolderItem,
           body: {
@@ -778,7 +777,9 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
           originalItem.type === "group" ? originalItem.collapsed : undefined,
         url: originalItem.type === "bookmark" ? originalItem.url : undefined,
         favIconUrl:
-          originalItem.type === "bookmark" ? originalItem.favIconUrl : undefined,
+          originalItem.type === "bookmark"
+            ? originalItem.favIconUrl
+            : undefined,
       }));
 
       return {

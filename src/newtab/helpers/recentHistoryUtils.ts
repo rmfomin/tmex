@@ -2,7 +2,6 @@ import HistoryItem = chrome.history.HistoryItem;
 import { faviconsStorage } from "@/newtab/helpers/faviconUtils";
 import { ActionDispatcher } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
-import { getTempFavIconUrl } from "@/newtab/state/actionHelpers";
 
 export const miroHashRegExp = /\/board\/([^/?]+)/;
 
