@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import cn from "clsx";
 import styles from "./Sidebar.module.scss";
 import { SidebarOpenTabs } from "@/newtab/components/common/SidebarOpenTabs/SidebarOpenTabs";
-import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
+import { isTabloTab } from "@/newtab/helpers/isTabloTab";
 import {
   blurSearch,
   getCurrentData,
@@ -245,7 +245,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
       const tabsToShelve: Tab[] = [];
       tabs.forEach((t) => {
         if (t.id && !t.pinned) {
-          if (!isTabowskiTab(t)) {
+          if (!isTabloTab(t)) {
             tabsToShelve.push(t);
           }
           if (!t.active && shouldCloseTabs) {
@@ -271,7 +271,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
     });
   };
 
-  const filteredTabs = props.tabs.filter((t) => !t.pinned && !isTabowskiTab(t));
+  const filteredTabs = props.tabs.filter((t) => !t.pinned && !isTabloTab(t));
 
   return (
     <div style={{ display: "inline-block", position: "relative" }}>
@@ -378,8 +378,8 @@ function getDuplicatedTabs(cb: (value: Tab[]) => void): void {
         }
         const groupedTabsByUrl = tabsByUrl.get(t.url)!;
 
-        //special condition to now close current tab with Tabowski but close all others
-        if (isTabowskiTab(t) && t.active) {
+        //special condition to now close current tab with Tablo but close all others
+        if (isTabloTab(t) && t.active) {
           groupedTabsByUrl.unshift(t);
         } else {
           groupedTabsByUrl.push(t);

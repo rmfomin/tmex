@@ -22,14 +22,21 @@ import {
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
 
 type LegacyBackup = {
+  isTablo?: true;
   isTabowski?: true;
   isTabme?: true;
   version: number;
   spaces: LegacySpace[];
 };
 
-function hasSupportedBackupMarker(data: { isTabowski?: true; isTabme?: true }) {
-  return data.isTabowski === true || data.isTabme === true;
+function hasSupportedBackupMarker(data: {
+  isTablo?: true;
+  isTabowski?: true;
+  isTabme?: true;
+}) {
+  return (
+    data.isTablo === true || data.isTabowski === true || data.isTabme === true
+  );
 }
 
 // TODO(v3-migration): delete after legacy import formats are dropped.
@@ -169,7 +176,7 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
 
 export function createExportBackupV3(spaces: SpaceV3[]): DataBackupV3 {
   return normalizeBackupV3({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces,
   });
@@ -177,11 +184,11 @@ export function createExportBackupV3(spaces: SpaceV3[]): DataBackupV3 {
 
 export function createExportSpaceBackupV3(space: SpaceV3): SpaceBackupV3 {
   return {
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     objectType: "space-backup",
     space: normalizeBackupV3({
-      isTabowski: true,
+      isTablo: true,
       version: 3,
       spaces: [space],
     }).spaces[0],
@@ -202,14 +209,14 @@ function downloadObjectAsJson(exportObj: unknown, exportName: string) {
 
 export function onExportJson(spaces: SpaceV3[]) {
   const backup = createExportBackupV3(spaces);
-  downloadObjectAsJson(backup, "tabowski_backup");
+  downloadObjectAsJson(backup, "tablo_backup");
 }
 
 export function onExportSpaceJson(space: SpaceV3) {
   const backup = createExportSpaceBackupV3(space);
   const safeTitle =
     space.title.trim().replace(/[^a-z0-9_-]+/gi, "_") || "space";
-  downloadObjectAsJson(backup, `tabowski_space_${safeTitle}`);
+  downloadObjectAsJson(backup, `tablo_space_${safeTitle}`);
 }
 
 function cloneSpaceForImport(
@@ -218,7 +225,7 @@ function cloneSpaceForImport(
 ): SpaceV3 {
   const lastSpace = existingSpaces.at(-1);
   const normalized = normalizeBackupV3({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: [space],
   }).spaces[0];
@@ -279,7 +286,7 @@ export function importSpaceFromJson(
       dispatch({
         type: Action.InitDashboard,
         spaces: normalizeBackupV3({
-          isTabowski: true,
+          isTablo: true,
           version: 3,
           spaces: [...existingSpaces, importedSpace],
         }).spaces,

@@ -103,7 +103,7 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
   ];
 
   expect(createExportBackupV3(spaces)).toEqual({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: [
       {
@@ -148,8 +148,8 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
 });
 
 test("createExportBackupV3 is compatible with the committed v3 backup fixture", () => {
-  expect(createExportBackupV3(legacyExportFixture.spaces)).toEqual(
-    normalizeBackupV3(legacyExportFixture),
+  expect(createExportBackupV3(legacyExportFixture.spaces).spaces).toEqual(
+    normalizeBackupV3(legacyExportFixture).spaces
   );
 });
 
@@ -188,7 +188,7 @@ test("createExportSpaceBackupV3 exports one normalized v3 space", () => {
   };
 
   expect(createExportSpaceBackupV3(space)).toEqual({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     objectType: "space-backup",
     space: {
@@ -252,7 +252,7 @@ test("importFromJson accepts legacy tabme-branded v3 backups", () => {
         files: [{}],
       },
     },
-    dispatch,
+    dispatch
   );
 
   expect(dispatch).toHaveBeenCalledWith({
@@ -277,7 +277,7 @@ test("importFromJson accepts legacy tabme-branded v3 backups", () => {
 test("importFromJson tells users to use Import space for space backups", () => {
   const dispatch = jest.fn();
   const fileContents = JSON.stringify({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     objectType: "space-backup",
     space: {
@@ -297,7 +297,7 @@ test("importFromJson tells users to use Import space for space backups", () => {
         files: [{}],
       },
     },
-    dispatch,
+    dispatch
   );
 
   expect(dispatch).toHaveBeenCalledWith({
@@ -306,7 +306,7 @@ test("importFromJson tells users to use Import space for space backups", () => {
     message: "This is a space backup. Use Import space button to add it.",
   });
   expect(dispatch).not.toHaveBeenCalledWith(
-    expect.objectContaining({ type: "init-dashboard" }),
+    expect.objectContaining({ type: "init-dashboard" })
   );
 });
 
@@ -322,7 +322,7 @@ test("importSpaceFromJson appends one remapped space backup", () => {
     },
   ];
   const fileContents = JSON.stringify({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     objectType: "space-backup",
     space: {
@@ -376,7 +376,7 @@ test("importSpaceFromJson appends one remapped space backup", () => {
   importSpaceFromJson(event, dispatch, existingSpaces);
 
   const initAction = dispatch.mock.calls.find(
-    ([action]) => action.type === "init-dashboard",
+    ([action]) => action.type === "init-dashboard"
   )?.[0];
   expect(initAction.saveToLS).toBe(true);
   expect(initAction.spaces).toHaveLength(2);
@@ -404,7 +404,7 @@ test("importSpaceFromJson appends one remapped space backup", () => {
 test("importSpaceFromJson accepts a v3 backup with exactly one space", () => {
   const dispatch = jest.fn();
   const fileContents = JSON.stringify({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: [
       {
@@ -427,11 +427,11 @@ test("importSpaceFromJson accepts a v3 backup with exactly one space", () => {
       },
     },
     dispatch,
-    [],
+    []
   );
 
   const initAction = dispatch.mock.calls.find(
-    ([action]) => action.type === "init-dashboard",
+    ([action]) => action.type === "init-dashboard"
   )?.[0];
   expect(initAction.spaces).toHaveLength(1);
   expect(initAction.spaces[0].title).toBe("Single");
@@ -440,7 +440,7 @@ test("importSpaceFromJson accepts a v3 backup with exactly one space", () => {
 test("importSpaceFromJson rejects v3 backups with multiple spaces", () => {
   const dispatch = jest.fn();
   const fileContents = JSON.stringify({
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: [
       {
@@ -470,7 +470,7 @@ test("importSpaceFromJson rejects v3 backups with multiple spaces", () => {
       },
     },
     dispatch,
-    [],
+    []
   );
 
   expect(dispatch).toHaveBeenCalledWith({
@@ -479,6 +479,6 @@ test("importSpaceFromJson rejects v3 backups with multiple spaces", () => {
     message: "Unsupported space JSON format",
   });
   expect(dispatch).not.toHaveBeenCalledWith(
-    expect.objectContaining({ type: "init-dashboard" }),
+    expect.objectContaining({ type: "init-dashboard" })
   );
 });

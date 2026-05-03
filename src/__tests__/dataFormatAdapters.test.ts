@@ -10,7 +10,7 @@ import { DataBackupV3, FolderV3 } from "@/newtab/helpers/types";
 
 test("legacy round-trip is lossy for groups and collapsed flags", () => {
   const backup: DataBackupV3 = {
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: [
       {
@@ -125,7 +125,7 @@ test("legacy compatibility patch serializers strip v3-only fields", () => {
       title: "Renamed",
       collapsed: true,
       color: "#abcdef",
-    }),
+    })
   ).toEqual({
     title: "Renamed",
     color: "#abcdef",
@@ -139,7 +139,7 @@ test("legacy compatibility patch serializers strip v3-only fields", () => {
       title: "New title",
       collapsed: true,
       favIconUrl: "https://icon.example/favicon.ico",
-    }),
+    })
   ).toEqual({
     title: "New title",
     archived: undefined,
@@ -150,7 +150,7 @@ test("legacy compatibility patch serializers strip v3-only fields", () => {
 
 test("normalizeBackupV3 sorts all nested collections by position", () => {
   const backup: DataBackupV3 = {
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: [
       {
@@ -246,7 +246,10 @@ test("normalizeBackupV3 sorts all nested collections by position", () => {
 
   const result = normalizeBackupV3(backup);
 
-  expect(result.spaces.map((space) => space.title)).toEqual(["Earlier", "Later"]);
+  expect(result.spaces.map((space) => space.title)).toEqual([
+    "Earlier",
+    "Later",
+  ]);
   expect(result.spaces[0].folders.map((folder) => folder.title)).toEqual([
     "First folder",
     "Second folder",
@@ -257,8 +260,9 @@ test("normalizeBackupV3 sorts all nested collections by position", () => {
   ]);
   const groupedItem = result.spaces[0].folders[0].items[1];
   expect(groupedItem.type).toBe("group");
-  expect(groupedItem.type === "group" ? groupedItem.groupItems.map((item) => item.title) : []).toEqual([
-    "First grouped item",
-    "Second grouped item",
-  ]);
+  expect(
+    groupedItem.type === "group"
+      ? groupedItem.groupItems.map((item) => item.title)
+      : []
+  ).toEqual(["First grouped item", "Second grouped item"]);
 });

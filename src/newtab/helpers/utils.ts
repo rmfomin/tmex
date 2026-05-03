@@ -6,7 +6,7 @@ import {
   SpaceV3,
 } from "@/newtab/helpers/types";
 import type React from "react";
-import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
+import { isTabloTab } from "@/newtab/helpers/isTabloTab";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import {
   collectBookmarksV3,
@@ -334,7 +334,7 @@ export function filterOpenedTabsFromHistory(
 }
 
 export function canDisplayTabInSidebar(t: Tab): boolean {
-  return !isTabowskiTab(t) && !t.pinned;
+  return !isTabloTab(t) && !t.pinned;
 }
 
 export function findTabsByURL(url: string | undefined, tabs: Tab[]): Tab[] {

@@ -72,7 +72,7 @@ export function normalizeBackupV3(data: DataBackupV3): DataBackupV3 {
 }
 
 export function convertBookmarkItemV3ToLegacy(
-  item: BookmarkItemV3,
+  item: BookmarkItemV3
 ): LegacyFolderItemApiPayload {
   return {
     id: item.id,
@@ -83,7 +83,9 @@ export function convertBookmarkItemV3ToLegacy(
   };
 }
 
-function convertFolderItemsV3ToLegacy(items: ItemV3[]): LegacyFolderItemApiPayload[] {
+function convertFolderItemsV3ToLegacy(
+  items: ItemV3[]
+): LegacyFolderItemApiPayload[] {
   return items.flatMap((item) => {
     if (item.type === "bookmark") {
       return [convertBookmarkItemV3ToLegacy(item)];
@@ -93,7 +95,9 @@ function convertFolderItemsV3ToLegacy(items: ItemV3[]): LegacyFolderItemApiPaylo
   });
 }
 
-export function convertFolderV3ToLegacy(folder: FolderV3): LegacyFolderApiPayload {
+export function convertFolderV3ToLegacy(
+  folder: FolderV3
+): LegacyFolderApiPayload {
   return {
     id: folder.id,
     position: folder.position,
@@ -104,7 +108,7 @@ export function convertFolderV3ToLegacy(folder: FolderV3): LegacyFolderApiPayloa
 }
 
 export function convertFolderPatchV3ToLegacy(
-  folder: Partial<FolderV3>,
+  folder: Partial<FolderV3>
 ): Partial<LegacyFolderApiPayload> {
   return {
     title: folder.title,
@@ -124,12 +128,14 @@ function convertSpaceV3ToLegacy(space: SpaceV3): LegacySpace {
   };
 }
 
-export function convertV3BackupToLegacySpaces(data: DataBackupV3): LegacySpace[] {
+export function convertV3BackupToLegacySpaces(
+  data: DataBackupV3
+): LegacySpace[] {
   return normalizeBackupV3(data).spaces.map(convertSpaceV3ToLegacy);
 }
 
 function convertLegacyFolderItemToV3(
-  item: LegacyFolderItemApiPayload,
+  item: LegacyFolderItemApiPayload
 ): BookmarkItemV3 | GroupV3 {
   if (item.isSection) {
     return {
@@ -167,7 +173,7 @@ function convertLegacyFolderToV3(folder: LegacyFolderApiPayload): FolderV3 {
 }
 
 export function convertBookmarkPatchV3ToLegacy(
-  item: Partial<BookmarkItemV3> & { collapsed?: boolean },
+  item: Partial<BookmarkItemV3> & { collapsed?: boolean }
 ): Partial<LegacyFolderItemApiPayload> {
   return {
     title: item.title,
@@ -187,15 +193,19 @@ function convertLegacySpaceToV3(space: LegacySpace): SpaceV3 {
   };
 }
 
-export function convertLegacySpacesToV3Backup(spaces: LegacySpace[]): DataBackupV3 {
+export function convertLegacySpacesToV3Backup(
+  spaces: LegacySpace[]
+): DataBackupV3 {
   return {
-    isTabowski: true,
+    isTablo: true,
     version: 3,
     spaces: spaces.map(convertLegacySpaceToV3),
   };
 }
 
-export function getLegacySpacesView(spaces: SpaceV3[] | LegacySpace[]): LegacySpace[] {
+export function getLegacySpacesView(
+  spaces: SpaceV3[] | LegacySpace[]
+): LegacySpace[] {
   const firstSpace = spaces[0];
   if (!firstSpace) {
     return [];
@@ -203,7 +213,7 @@ export function getLegacySpacesView(spaces: SpaceV3[] | LegacySpace[]): LegacySp
 
   if ("objectType" in firstSpace && firstSpace.objectType === "space") {
     return convertV3BackupToLegacySpaces({
-      isTabowski: true,
+      isTablo: true,
       version: 3,
       spaces: spaces as SpaceV3[],
     });
@@ -220,7 +230,7 @@ export function getV3SpacesView(spaces: SpaceV3[] | LegacySpace[]): SpaceV3[] {
 
   if ("objectType" in firstSpace && firstSpace.objectType === "space") {
     return normalizeBackupV3({
-      isTabowski: true,
+      isTablo: true,
       version: 3,
       spaces: spaces as SpaceV3[],
     }).spaces;

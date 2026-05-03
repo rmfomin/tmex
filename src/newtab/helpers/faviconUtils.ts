@@ -112,14 +112,14 @@ export async function loadFaviconUrl(bookmarkUrl: string): Promise<string> {
   //
   // try {
   //   const encodedUrl = encodeURIComponent(bookmarkUrl)
-  //   const response = await fetch(`https://gettabowski.com/app/?url=${encodedUrl}`)
+  //   const response = await fetch(`https://gettablo.com/app/?url=${encodedUrl}`)
   //   const data = await response.json()
   //   if (data?.favicon) {
   //     registerInCache(data.favicon, bookmarkUrl)
   //     return data.favicon
   //   }
   // } catch (error) {
-  //   console.error("Error fetching favicon from gettabowski.com:", error)
+  //   console.error("Error fetching favicon from gettablo.com:", error)
   // }
   //
   // return getTempFavIconUrl(bookmarkUrl)

@@ -292,7 +292,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     },
     {
       onClick: onImportExistingBookmarks,
-      title: "Import existing Chrome bookmarks into Tabowski",
+      title: "Import existing Chrome bookmarks into Tablo",
       text: "Import from browser bookmarks",
     },
     {
@@ -308,7 +308,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     },
     {
       onClick: (e) => onImportClick(e),
-      title: "Open exported Tabowski JSON file",
+      title: "Open exported Tablo JSON file",
       text: "Import from JSON",
       isFile: true,
     },

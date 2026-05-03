@@ -54,7 +54,7 @@ function loadSearchFilters(callback: (filters: SearchFilter[]) => void) {
       const storedFilters = res[SEARCH_FILTERS_STORAGE_KEY];
       const legacyFilters = res[LEGACY_HISTORY_FILTERS_STORAGE_KEY];
       callback(normalizeStoredFilters(storedFilters ?? legacyFilters));
-    },
+    }
   );
 }
 
@@ -97,14 +97,14 @@ export function SearchInput(p: {
   const [newFilterError, setNewFilterError] = useState("");
   const [filterModalOpened, setFilterModalOpened] = useState(false);
   const [editingFilterId, setEditingFilterId] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [menuFilterId, setMenuFilterId] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const enabledFiltersCount = p.searchFilters.reduce(
     (prevVal, filter) => prevVal + (filter.enabled ? 1 : 0),
-    0,
+    0
   );
 
   useEffect(() => {
@@ -152,7 +152,7 @@ export function SearchInput(p: {
           ...f,
           enabled: false,
         };
-      }),
+      })
     );
   }
 
@@ -161,7 +161,7 @@ export function SearchInput(p: {
       p.searchFilters.map((filter) => ({
         ...filter,
         enabled: false,
-      })),
+      }))
     );
   }
 
@@ -225,7 +225,7 @@ export function SearchInput(p: {
         updateSearchFilter(p.searchFilters, editingFilterId, {
           title,
           pattern,
-        }),
+        })
       );
       clearFilterForm();
       return;
@@ -252,7 +252,7 @@ export function SearchInput(p: {
 
   function onFilterContextMenu(
     event: React.MouseEvent<HTMLButtonElement>,
-    filter: SearchFilter,
+    filter: SearchFilter
   ) {
     event.preventDefault();
     event.stopPropagation();
@@ -268,7 +268,7 @@ export function SearchInput(p: {
           tabIndex={1}
           className="search"
           type="text"
-          placeholder="Search in Tabowski"
+          placeholder="Search in Tablo"
           value={p.search}
           onChange={onSearchChange}
           onKeyDown={(e) => handleSearchKeyDown(e, onClearSearch)}

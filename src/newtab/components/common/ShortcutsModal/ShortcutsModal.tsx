@@ -15,7 +15,7 @@ export const ShortcutsModal = ({
         <h2>Keyboard shortcuts</h2>
         <p>
           <span className="hotkey">TAB</span> to focus on Search input when open
-          Tabowski
+          Tablo
         </p>
         {/* <p>
           <span className="hotkey">Arrow keys</span> navigate bookmarks

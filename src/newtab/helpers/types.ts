@@ -77,10 +77,17 @@ export type ItemTypeV3 = "bookmark" | "group";
 
 export type BackupBrandMarker =
   | {
+      isTablo: true;
+      isTabowski?: never;
+      isTabme?: never;
+    }
+  | {
+      isTablo?: never;
       isTabowski: true;
       isTabme?: never;
     }
   | {
+      isTablo?: never;
       isTabowski?: never;
       isTabme: true;
     };

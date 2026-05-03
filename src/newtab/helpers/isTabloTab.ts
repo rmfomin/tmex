@@ -1,4 +1,4 @@
-export function isTabowskiTab(tab: {
+export function isTabloTab(tab: {
   url?: string;
   pendingUrl?: string;
 }): boolean {

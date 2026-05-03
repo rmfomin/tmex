@@ -43,7 +43,7 @@ const buildProject = (env) => {
 
 // Function to zip the /dist folder and save it in the /builds folder
 const zipDistFolder = (version, buildType, onCompleted) => {
-  const zipName = `tabowski_v${version}_${buildType}.zip`;
+  const zipName = `tablo_v${version}_${buildType}.zip`;
   const zipPath = path.join(buildsPath, zipName);
 
   fs.ensureDirSync(buildsPath);
@@ -76,7 +76,7 @@ const main = async () => {
 
     execSync(`npm run clean`);
 
-    // Step 1: Update version in manifest.json for tabowski
+    // Step 1: Update version in manifest.json for Tablo
     let newVersion = updateVersionInManifest(isPatch, "manifest-normal.json");
     // Step 2: Build the test version (window.isTest = true)
     buildProject({ BUILD_TYPE: "normal" });
@@ -86,7 +86,7 @@ const main = async () => {
       // Step: Clean
       execSync(`npm run clean`);
 
-      // Step 4: Update version in manifest.json for tabowski - version without newtab
+      // Step 4: Update version in manifest.json for Tablo - version without newtab
       newVersion = updateVersionInManifest(
         isPatch,
         "manifest-overrideless.json"
