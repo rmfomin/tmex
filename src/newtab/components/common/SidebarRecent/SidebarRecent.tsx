@@ -13,7 +13,7 @@ import {
 import { DispatchContext } from "@/newtab/state/actions";
 import { TabOrRecentItem } from "@/newtab/components/common/SidebarItem/SidebarItem";
 import { SpaceV3 } from "@/newtab/helpers/types";
-import styles from "@/newtab/components/common/SidebarRecent/SidebarRecent.module.scss";
+import styles from "./SidebarRecent.module.scss";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 const PAGE_SIZE = 100;

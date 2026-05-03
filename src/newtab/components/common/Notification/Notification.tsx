@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { AppState } from "@/newtab/state/state";
 import cn from "clsx";
-import IconProgress from "@/newtab/components/common/Notification/icons/progress.svg";
-import styles from "@/newtab/components/common/Notification/Notification.module.scss";
+import IconProgress from "./icons/progress.svg";
+import styles from "./Notification.module.scss";
 
 export const Notification = React.memo(
   (props: { notification: AppState["notification"] }) => {

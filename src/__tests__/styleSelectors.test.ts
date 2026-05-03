@@ -60,4 +60,34 @@ describe("compiled style selectors", () => {
       expect(moduleScss).not.toMatch(/\.[A-Za-z0-9-]+--[A-Za-z0-9-]+/);
     });
   });
+
+  test("component-local files use relative imports", () => {
+    const componentsRoot = path.join(
+      __dirname,
+      "../newtab/components/common"
+    );
+    const filesToCheck: Array<{ componentName: string; filePath: string }> = fs
+      .readdirSync(componentsRoot, { withFileTypes: true })
+      .filter((entry: { isDirectory: () => boolean }) => entry.isDirectory())
+      .flatMap((entry: { name: string }) => {
+        const componentDir = path.join(componentsRoot, entry.name);
+        return fs
+          .readdirSync(componentDir)
+          .filter((fileName: string) => /\.(ts|tsx)$/.test(fileName))
+          .map((fileName: string) => ({
+            componentName: entry.name,
+            filePath: path.join(componentDir, fileName),
+          }));
+      });
+
+    filesToCheck.forEach(({ componentName, filePath }) => {
+      const source = fs.readFileSync(filePath, "utf8");
+      const ownAbsoluteImport = new RegExp(
+        `from "@/newtab/components/common/${componentName}/`,
+        "g"
+      );
+
+      expect(source).not.toMatch(ownAbsoluteImport);
+    });
+  });
 });

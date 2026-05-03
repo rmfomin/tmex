@@ -22,12 +22,12 @@ import {
   showMessage,
 } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { SpaceV3 } from "@/newtab/helpers/types";
-import IconSaved from "@/newtab/components/common/SidebarItem/icons/saved.svg";
+import IconSaved from "./icons/saved.svg";
 import { getFoldersList } from "@/newtab/helpers/moveToHelpers";
 import { getBrokenImgSVG } from "@/newtab/helpers/faviconUtils";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
-import styles from "@/newtab/components/common/SidebarItem/SidebarItem.module.scss";
+import styles from "./SidebarItem.module.scss";
 
 export const TabOrRecentItem = (p: {
   data: TabOrRecentData;

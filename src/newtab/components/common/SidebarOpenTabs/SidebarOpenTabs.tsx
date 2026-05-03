@@ -11,7 +11,7 @@ import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
 import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { TabOrRecentItem } from "@/newtab/components/common/SidebarItem/SidebarItem";
-import styles from "@/newtab/components/common/SidebarOpenTabs/SidebarOpenTabs.module.scss";
+import styles from "./SidebarOpenTabs.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const SidebarOpenTabs = memo(

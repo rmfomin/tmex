@@ -8,9 +8,9 @@ import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
 import cn from "clsx";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import ChevronIcon from "@/newtab/components/common/FolderGroup/icons/shevron.svg";
+import ChevronIcon from "./icons/shevron.svg";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
-import styles from "@/newtab/components/common/FolderGroup/FolderGroup.module.scss";
+import styles from "./FolderGroup.module.scss";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];

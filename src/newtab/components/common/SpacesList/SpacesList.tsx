@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
-import PlusIcon from "@/newtab/components/common/SpacesList/icons/plus.svg";
-import DeleteIcon from "@/newtab/components/common/SpacesList/icons/delete.svg";
+import PlusIcon from "./icons/plus.svg";
+import DeleteIcon from "./icons/delete.svg";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import cn from "clsx";
 import { DispatchContext } from "@/newtab/state/actions";
@@ -15,7 +15,7 @@ import {
   onExportSpaceJson,
 } from "@/newtab/helpers/importExportHelpers";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
-import styles from "@/newtab/components/common/SpacesList/SpacesList.module.scss";
+import styles from "./SpacesList.module.scss";
 
 export function SpacesList(p: {
   spaces: SpaceV3[];

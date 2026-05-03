@@ -5,13 +5,13 @@ import { EditableTitle } from "@/newtab/components/common/EditableTitle/Editable
 import { Action } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
 import cn from "clsx";
-import IconClose from "@/newtab/components/common/FolderItem/icons/close.svg";
-import IconMore from "@/newtab/components/common/FolderItem/icons/more.svg";
+import IconClose from "./icons/close.svg";
+import IconMore from "./icons/more.svg";
 import { FolderItemMenu } from "@/newtab/components/common/FolderItemMenu/FolderItemMenu";
 import { getBrokenImgSVG, loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
-import styles from "@/newtab/components/common/FolderItem/FolderItem.module.scss";
+import styles from "./FolderItem.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const FolderItem = React.memo(

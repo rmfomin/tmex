@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import cn from "clsx";
-import styles from "@/newtab/components/common/Sidebar/Sidebar.module.scss";
+import styles from "./Sidebar.module.scss";
 import { SidebarOpenTabs } from "@/newtab/components/common/SidebarOpenTabs/SidebarOpenTabs";
 import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
 import {
@@ -12,9 +12,9 @@ import {
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import { Action, AppState } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
-import IconDelDuplicates from "@/newtab/components/common/Sidebar/icons/delete-duplicates.svg";
-import IconSave from "@/newtab/components/common/Sidebar/icons/save.svg";
-import IconPin from "@/newtab/components/common/Sidebar/icons/pin.svg";
+import IconDelDuplicates from "./icons/delete-duplicates.svg";
+import IconSave from "./icons/save.svg";
+import IconPin from "./icons/pin.svg";
 import Tab = chrome.tabs.Tab;
 import {
   convertTabOrRecentToItem,

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "@/newtab/components/common/Modal/Modal";
-import styles from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal.module.scss";
+import styles from "./ImportConfirmationModal.module.scss";
 
 export const ImportConfirmationModal = (p: {
   onClose: (opt: string) => void;

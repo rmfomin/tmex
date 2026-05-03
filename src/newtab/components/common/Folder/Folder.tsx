@@ -22,8 +22,8 @@ import {
   mergeStepsInHistory,
 } from "@/newtab/state/actions";
 import { Color } from "@/newtab/helpers/color";
-import MenuIcon from "@/newtab/components/common/Folder/icons/menu.svg";
-import ChevronIcon from "@/newtab/components/common/Folder/icons/shevron.svg";
+import MenuIcon from "./icons/menu.svg";
+import ChevronIcon from "./icons/shevron.svg";
 import { getSpacesList } from "@/newtab/helpers/moveToHelpers";
 import Tab = chrome.tabs.Tab;
 import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
@@ -33,9 +33,9 @@ import {
   findSpaceByFolderId,
 } from "@/newtab/state/actionHelpers";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
-import { getVisibleFolderDisplayItems } from "@/newtab/components/common/Folder/getFolderDisplayItems";
+import { getVisibleFolderDisplayItems } from "./getFolderDisplayItems";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
-import styles from "@/newtab/components/common/Folder/Folder.module.scss";
+import styles from "./Folder.module.scss";
 
 export const Folder = React.memo(function Folder(p: {
   spaces: SpaceV3[];

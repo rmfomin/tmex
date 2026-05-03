@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import cn from "clsx";
-import styles from "@/newtab/components/common/Bookmarks/Bookmarks.module.scss";
+import styles from "./Bookmarks.module.scss";
 import folderStyles from "@/newtab/components/common/Folder/Folder.module.scss";
 import {
   blurSearch,
@@ -18,8 +18,8 @@ import {
 } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { TopBar } from "@/newtab/components/common/TopBar/TopBar";
 import { importFromJson } from "@/newtab/helpers/importExportHelpers";
-import { isEmptyDashboard } from "@/newtab/components/common/Bookmarks/isEmptyDashboard";
-import { getBookmarksViewState } from "@/newtab/components/common/Bookmarks/getBookmarksViewState";
+import { isEmptyDashboard } from "./isEmptyDashboard";
+import { getBookmarksViewState } from "./getBookmarksViewState";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 
 let __prevCurrentSpaceId: number | undefined = undefined;

@@ -4,10 +4,10 @@ import { AppState } from "@/newtab/state/state";
 import { HelpOptions, SettingsOptions } from "@/newtab/helpers/settingsOptions";
 import cn from "clsx";
 import { hasSearch } from "@/newtab/helpers/utils";
-import IconHelp from "@/newtab/components/common/TopBar/icons/help.svg";
-import IconSettings from "@/newtab/components/common/TopBar/icons/settings.svg";
+import IconHelp from "./icons/help.svg";
+import IconSettings from "./icons/settings.svg";
 import { SpacesList } from "@/newtab/components/common/SpacesList/SpacesList";
-import styles from "@/newtab/components/common/TopBar/TopBar.module.scss";
+import styles from "./TopBar.module.scss";
 
 export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const [settingsMenuVisibility, setSettingsMenuVisibility] = useState(false);
