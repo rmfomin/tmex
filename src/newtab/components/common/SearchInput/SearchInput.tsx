@@ -273,15 +273,6 @@ export function SearchInput(p: {
           onChange={onSearchChange}
           onKeyDown={(e) => handleSearchKeyDown(e, onClearSearch)}
         />
-        {p.search !== "" ? (
-          <button
-            tabIndex={1}
-            className={styles.clearSearchButton}
-            onClick={onClearSearch}
-          >
-            x
-          </button>
-        ) : null}
         <button
           tabIndex={1}
           className={cn(styles.filterToggleButton, {
