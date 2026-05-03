@@ -15,6 +15,7 @@ import {
 import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal";
 import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { ShortcutsModal } from "@/newtab/components/common/ShortcutsModal/ShortcutsModal";
+import { ThemeOptionIcon } from "@/newtab/components/common/ThemeOptionIcon/ThemeOptionIcon";
 import { BookmarkItemV3, ColorTheme } from "@/newtab/helpers/types";
 import cn from "clsx";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
@@ -39,7 +40,12 @@ type SegmentedOption<T extends string> = {
   value: T;
   title: string;
   text: string;
-  items: Array<{ value: T; text: string; title?: string }>;
+  items: Array<{
+    value: T;
+    text: string;
+    title?: string;
+    icon?: React.ReactNode;
+  }>;
   hidden?: boolean;
 };
 export type OptionsConfig = Array<
@@ -85,11 +91,11 @@ export const HelpOptions = (p: { appState: AppState }) => {
   function invalidateBrokenIcons() {
     const promises: Promise<unknown>[] = [minTimeoutPromise()];
     const currentSpace = p.appState.spaces.find(
-      (s) => s.id === p.appState.currentSpaceId
+      (s) => s.id === p.appState.currentSpaceId,
     );
     if (currentSpace) {
       promises.push(
-        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon)
+        ...collectBookmarksV3([currentSpace]).map(invalidateFavicon),
       );
     }
 
@@ -130,9 +136,6 @@ export const HelpOptions = (p: { appState: AppState }) => {
       text: "Reload favicons",
     },
     {
-      separator: true,
-    },
-    {
       onClick: onGithubOpen,
       title: "Open Github",
       text: "Open Github (example)",
@@ -164,7 +167,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
         dispatch({ type: Action.UpdateShowNotUsedItems, value: true });
         showMessage(
           "Unused items for the past 60 days are highlighted",
-          dispatch
+          dispatch,
         );
       } else {
         showErrorMessage(`There are no unused items to highlight`, dispatch);
@@ -219,6 +222,35 @@ export const SettingsOptions = (p: { appState: AppState }) => {
 
   const settingsOptions: OptionsConfig = [
     {
+      onSelect: onSelectColorTheme,
+      value: p.appState.colorTheme ?? "system",
+      title: "Choose light theme, system theme, or dark theme",
+      text: "Theme",
+      items: [
+        {
+          value: "light",
+          text: "Light",
+          title: "Always use light theme",
+          icon: <ThemeOptionIcon theme="light" />,
+        },
+        {
+          value: "system",
+          text: "Auto",
+          title: "Use system theme",
+          icon: <ThemeOptionIcon theme="system" />,
+        },
+        {
+          value: "dark",
+          text: "Dark",
+          title: "Always use dark theme",
+          icon: <ThemeOptionIcon theme="dark" />,
+        },
+      ],
+    },
+    {
+      separator: true,
+    },
+    {
       onToggle: onToggleNotUsed,
       value: p.appState.showNotUsed,
       title:
@@ -235,25 +267,11 @@ export const SettingsOptions = (p: { appState: AppState }) => {
       hidden: !p.appState.hiddenFeatureIsEnabled,
     },
     {
-      separator: true,
-    },
-    {
       onToggle: onToggleRecentVisibility,
       value: p.appState.showRecent,
       title:
         "Show recently closed tabs in the sidebar. When off, they appear only during search.",
       text: "Show Recent in Sidebar",
-    },
-    {
-      onSelect: onSelectColorTheme,
-      value: p.appState.colorTheme ?? "system",
-      title: "Choose light theme, system theme, or dark theme",
-      text: "Theme",
-      items: [
-        { value: "light", text: "Light", title: "Always use light theme" },
-        { value: "system", text: "Auto", title: "Use system theme" },
-        { value: "dark", text: "Dark", title: "Always use dark theme" },
-      ],
     },
     {
       onToggle: onToggleOpenInTheNewTab,
@@ -280,9 +298,6 @@ export const SettingsOptions = (p: { appState: AppState }) => {
         "To get Toby`s 'JSON file' go to Account -> Export -> Json in the Toby App",
       text: "Import from Toby App JSON",
       isFile: true,
-    },
-    {
-      separator: true,
     },
     {
       onClick: (e) => onImportClick(e),
@@ -362,11 +377,13 @@ export const Options = (props: {
                     type="button"
                     className={cn("dropdown-menu__segmented-button focusable", {
                       active: item.value === option.value,
+                      "dropdown-menu__segmented-button--icon": item.icon,
                     })}
                     title={item.title}
+                    aria-label={item.text}
                     onClick={() => option.onSelect(item.value)}
                   >
-                    {item.text}
+                    {item.icon ?? item.text}
                   </button>
                 ))}
               </div>
