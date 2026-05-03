@@ -6,7 +6,7 @@ export function isEmptyDashboard(
   appState: Pick<
     AppState,
     "spaces" | "currentSpaceId" | "search" | "searchFilters"
-  >
+  >,
 ): boolean {
   if (hasSearch(appState.search, appState.searchFilters ?? [])) {
     return false;

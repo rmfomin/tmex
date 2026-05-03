@@ -16,7 +16,7 @@ export function getBookmarksViewState(
     | "searchFilters"
     | "searchFilterMode"
     | "showArchived"
-  >
+  >,
 ): {
   folders: FolderV3[];
 } {
@@ -29,14 +29,14 @@ export function getBookmarksViewState(
   if (!searchActive) {
     const currentSpace = findSpaceById(
       appState as { spaces: SpaceV3[]; currentSpaceId: number },
-      appState.currentSpaceId
+      appState.currentSpaceId,
     );
 
     if (currentSpace) {
       folders = appState.showArchived
         ? currentSpace.folders ?? []
         : currentSpace.folders.filter(
-            (folder) => canShowArchived || !folder.archived
+            (folder) => canShowArchived || !folder.archived,
           );
     }
   } else {
@@ -48,7 +48,7 @@ export function getBookmarksViewState(
             folder,
             searchValueLC,
             searchFilters,
-            searchFilterMode
+            searchFilterMode,
           ) ||
           folder.items.some((item) => {
             if (
@@ -56,7 +56,7 @@ export function getBookmarksViewState(
                 item,
                 searchValueLC,
                 searchFilters,
-                searchFilterMode
+                searchFilterMode,
               )
             ) {
               return true;
@@ -68,8 +68,8 @@ export function getBookmarksViewState(
                   groupItem,
                   searchValueLC,
                   searchFilters,
-                  searchFilterMode
-                )
+                  searchFilterMode,
+                ),
               );
             }
 

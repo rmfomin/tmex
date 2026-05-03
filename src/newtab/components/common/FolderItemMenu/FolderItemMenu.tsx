@@ -69,7 +69,7 @@ export const FolderItemMenu = React.memo(
       alert(
         "The “Hiding” feature will be deprecated soon due to very low usage.\n" +
           "All previously hidden bookmarks will became visible again.\n" +
-          "Sorry for the inconvenience, and thank you for understanding!"
+          "Sorry for the inconvenience, and thank you for understanding!",
       );
       mergeStepsInHistory((historyStepId) => {
         selectedItems.forEach((item) => {
@@ -176,7 +176,7 @@ export const FolderItemMenu = React.memo(
                 p.spaces,
                 moveToFolder,
                 moveToNewFolder,
-                findFolderByItemId(p, p.item.id)?.id
+                findFolderByItemId(p, p.item.id)?.id,
               )}
             />
             <button
@@ -292,7 +292,7 @@ export const FolderItemMenu = React.memo(
                     p.spaces,
                     moveToFolder,
                     moveToNewFolder,
-                    findFolderByItemId(p, p.item.id)?.id
+                    findFolderByItemId(p, p.item.id)?.id,
                   )}
                 />
                 <button
@@ -307,5 +307,5 @@ export const FolderItemMenu = React.memo(
         )}
       </>
     );
-  }
+  },
 );

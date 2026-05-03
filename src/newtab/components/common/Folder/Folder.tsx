@@ -65,7 +65,7 @@ export const Folder = React.memo(function Folder(p: {
     if (archivedItemsCount > 0) {
       const itemsText = archivedItemsCount > 1 ? "items" : "item";
       const res = confirm(
-        `Folder contains ${archivedItemsCount} hidden ${itemsText}. Do you still want to delete it?`
+        `Folder contains ${archivedItemsCount} hidden ${itemsText}. Do you still want to delete it?`,
       );
       if (!res) {
         return;
@@ -94,7 +94,7 @@ export const Folder = React.memo(function Folder(p: {
     alert(
       "The “Hiding” feature will be deprecated soon due to very low usage.\n" +
         "All previously hidden folders will became visible again.\n" +
-        "Sorry for the inconvenience, and thank you for understanding!"
+        "Sorry for the inconvenience, and thank you for understanding!",
     );
 
     const newArchiveState = !p.folder.archived;
@@ -141,10 +141,10 @@ export const Folder = React.memo(function Folder(p: {
 
     requestAnimationFrame(() => {
       const bookmarkElement = document.querySelector(
-        `[data-id="${newBookmark.id}"]`
+        `[data-id="${newBookmark.id}"]`,
       );
       const menuButton = bookmarkElement?.parentElement?.querySelector(
-        roleSelector(DOM_ROLE.folderItemMenu)
+        roleSelector(DOM_ROLE.folderItemMenu),
       ) as HTMLButtonElement;
       if (menuButton) {
         menuButton.click();
@@ -230,7 +230,7 @@ export const Folder = React.memo(function Folder(p: {
     p.folder,
     p.search,
     p.searchFilters,
-    p.searchFilterMode
+    p.searchFilterMode,
   );
   const flatFolderDisplayItems = visibleFolderDisplayItems.flatMap((item) => {
     if (item.type === "bookmark") {
@@ -241,7 +241,7 @@ export const Folder = React.memo(function Folder(p: {
   });
 
   const folderItems = flatFolderDisplayItems.filter(
-    (i) => canShowArchived(p) || !i.archived
+    (i) => canShowArchived(p) || !i.archived,
   );
 
   const folderIsEmptyDuringSearch =
@@ -435,7 +435,7 @@ export const Folder = React.memo(function Folder(p: {
                 submenuContent={getSpacesList(
                   p.spaces,
                   moveFolderToSpace,
-                  findSpaceByFolderId(p, p.folder.id)?.id
+                  findSpaceByFolderId(p, p.folder.id)?.id,
                 )}
               />
             ) : null}
@@ -492,7 +492,7 @@ export const Folder = React.memo(function Folder(p: {
           }
 
           const visibleGroupItems = item.items.filter(
-            (groupItem) => canShowArchived(p) || !groupItem.archived
+            (groupItem) => canShowArchived(p) || !groupItem.archived,
           );
 
           if (p.search !== "" && visibleGroupItems.length === 0) {

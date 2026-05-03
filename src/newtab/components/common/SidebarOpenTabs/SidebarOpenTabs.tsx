@@ -41,7 +41,7 @@ export const SidebarOpenTabs = memo(
       p.tabs,
       p.search,
       p.searchFilters,
-      p.searchFilterMode
+      p.searchFilterMode,
     ).forEach((t) => {
       let tabsInWindow = tabsByWindows.get(t.windowId);
       if (!tabsInWindow) {
@@ -54,7 +54,7 @@ export const SidebarOpenTabs = memo(
 
     const sortedWindowsWithTabs = getSortedWindowsWithTabs(
       tabsByWindows,
-      p.currentWindowId
+      p.currentWindowId,
     );
 
     return (
@@ -105,12 +105,12 @@ export const SidebarOpenTabs = memo(
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 function getSortedWindowsWithTabs(
   map: Map<number, Tab[]>,
-  currentWindowId: number | undefined
+  currentWindowId: number | undefined,
 ): { windowId: number; tabs: Tab[] }[] {
   const res = Array.from(map.entries());
   let allWindows: { windowId: number; tabs: Tab[] }[] = [];

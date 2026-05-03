@@ -14,7 +14,7 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
   const [helpMenuVisibility, setHelpMenuVisibility] = useState(false);
   const searchActive = hasSearch(
     p.appState.search,
-    p.appState.searchFilters ?? []
+    p.appState.searchFilters ?? [],
   );
 
   function onToggleHelpSettings() {

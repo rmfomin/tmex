@@ -154,5 +154,5 @@ export const FolderItem = React.memo(
         </a>
       </div>
     );
-  }
+  },
 );

@@ -76,7 +76,7 @@ const RecentList = React.memo(
         })}
       </div>
     );
-  }
+  },
 );
 
 export const SidebarRecent = React.memo(
@@ -92,11 +92,11 @@ export const SidebarRecent = React.memo(
       p.recentItems,
       p.search,
       p.searchFilters,
-      p.searchFilterMode
+      p.searchFilterMode,
     );
 
     const itemsFilteredBySearchAndFilter = getBaseFilteredRecentItems(
-      itemsFilteredBySearch
+      itemsFilteredBySearch,
     );
 
     return (
@@ -121,5 +121,5 @@ export const SidebarRecent = React.memo(
         </div>
       </div>
     );
-  }
+  },
 );

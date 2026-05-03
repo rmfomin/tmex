@@ -42,7 +42,7 @@ export function getVisibleFolderDisplayItems(
   folder: FolderV3,
   search: string,
   filters: SearchFilter[] = [],
-  filterMode: SearchFilterMode = "or"
+  filterMode: SearchFilterMode = "or",
 ): FolderDisplayItem[] {
   const displayItems = getFolderDisplayItems(folder);
   if (!hasSearch(search, filters)) {
@@ -64,10 +64,10 @@ export function getVisibleFolderDisplayItems(
       item.group,
       searchLC,
       filters,
-      filterMode
+      filterMode,
     );
     const matchedItems = item.group.groupItems.filter((groupItem) =>
-      isContainsSearch(groupItem, searchLC, filters, filterMode)
+      isContainsSearch(groupItem, searchLC, filters, filterMode),
     );
 
     if (!groupMatched && matchedItems.length === 0) {

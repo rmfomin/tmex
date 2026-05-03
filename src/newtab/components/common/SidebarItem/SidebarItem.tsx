@@ -117,7 +117,7 @@ export const TabOrRecentItem = (p: {
   const domain = isTabData(p.data)
     ? extractHostname(p.data.url)
     : `${extractHostname(p.data.url)}, ${formatDate(
-        new Date(p.data.lastVisitTime || 0)
+        new Date(p.data.lastVisitTime || 0),
       )}`;
   const savedInFolders = findFoldersTitlesWhereTabSaved(p.data, p.spaces);
 
@@ -193,7 +193,7 @@ export const TabOrRecentItem = (p: {
               submenuContent={getFoldersList(
                 p.spaces[0],
                 moveToFolder,
-                moveToNewFolder
+                moveToNewFolder,
               )}
             />
           ) : (
@@ -206,7 +206,7 @@ export const TabOrRecentItem = (p: {
                   submenuContent={getFoldersList(
                     s,
                     moveToFolder,
-                    moveToNewFolder
+                    moveToNewFolder,
                   )}
                 />
               );
@@ -229,15 +229,15 @@ export const TabOrRecentItem = (p: {
 
 function findFoldersTitlesWhereTabSaved(
   curTab: { url?: string },
-  spaces: SpaceV3[]
+  spaces: SpaceV3[],
 ): string {
   let res: string[] = [];
   spaces.forEach((space) => {
     const titles = space.folders
       .filter((folder) =>
         collectBookmarksV3([{ ...space, folders: [folder] }]).some(
-          (item) => item.url === curTab.url
-        )
+          (item) => item.url === curTab.url,
+        ),
       )
       .map((folder) => `«${folder.title}»`);
     res.push(...titles);
@@ -251,7 +251,7 @@ function formatDate(d: Date): string {
   const todayDate = new Date(
     today.getFullYear(),
     today.getMonth(),
-    today.getDate()
+    today.getDate(),
   );
 
   const diffTime = todayDate.getTime() - inputDate.getTime();

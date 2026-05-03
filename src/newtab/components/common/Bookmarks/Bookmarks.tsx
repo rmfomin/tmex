@@ -70,7 +70,7 @@ export function Bookmarks(p: { appState: AppState }) {
         folderId: number,
         insertBeforeItemId: number | undefined,
         targetsIds: number[],
-        targetGroupId?: number
+        targetGroupId?: number,
       ) => {
         mergeStepsInHistory((historyStepId) => {
           if (folderId === -1) {
@@ -92,7 +92,7 @@ export function Bookmarks(p: { appState: AppState }) {
       const onDropFolder = (
         folderId: number,
         targetSpaceId: number | undefined,
-        insertBeforeFolderId: number | undefined
+        insertBeforeFolderId: number | undefined,
       ) => {
         dispatch({
           type: Action.MoveFolder,
@@ -116,7 +116,7 @@ export function Bookmarks(p: { appState: AppState }) {
           p.appState,
           dispatch,
           meta,
-          p.appState.openBookmarksInNewTab
+          p.appState.openBookmarksInNewTab,
         );
       };
 
@@ -154,7 +154,7 @@ export function Bookmarks(p: { appState: AppState }) {
         {
           onChangeSpacePosition,
           canSortSpaces: () => p.appState.spaces.length > 1,
-        }
+        },
       );
     }
   }, [mouseDownEvent]);

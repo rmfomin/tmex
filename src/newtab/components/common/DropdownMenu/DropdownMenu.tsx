@@ -109,7 +109,7 @@ export const DropdownSubMenu = ({
                 </DropdownMenuIdContext.Provider>
               </DropdownSetMenuIdContext.Provider>
             </div>,
-            document.body
+            document.body,
           )
         : null}
     </>
@@ -194,7 +194,7 @@ export function DropdownMenu(p: {
     document.dispatchEvent(
       new CustomEvent(DROPDOWN_MENU_OPENED_EVENT, {
         detail: menuIdRef.current,
-      })
+      }),
     );
     document.addEventListener("keydown", onKeydown);
 
@@ -203,7 +203,7 @@ export function DropdownMenu(p: {
       document.removeEventListener("click", onOutsideClick);
       document.removeEventListener(
         DROPDOWN_MENU_OPENED_EVENT,
-        onOtherMenuOpened
+        onOtherMenuOpened,
       );
       document.removeEventListener("keydown", onKeydown);
     };
@@ -266,7 +266,7 @@ export function DropdownMenu(p: {
             </DropdownMenuIdContext.Provider>
           </DropdownSetMenuIdContext.Provider>
         </div>,
-        document.body
+        document.body,
       )}
     </>
   );

@@ -38,5 +38,5 @@ export const Notification = React.memo(
         </CSSTransition>
       </div>
     );
-  }
+  },
 );
