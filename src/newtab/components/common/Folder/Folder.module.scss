@@ -39,14 +39,16 @@
 
   .titleText {
     display: inline-block;
-    cursor: text;
+    cursor: grab;
     max-width: calc(100% - 32px);
-    font-weight: 600;
+    font-family: var(--title-font-family);
+    font-weight: 700;
   }
 
   textarea {
     color: rgb(5, 0, 56);
-    font-weight: 600;
+    font-family: var(--title-font-family);
+    font-weight: 700;
     background: none;
     flex-grow: 1;
     height: 0;

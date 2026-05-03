@@ -74,11 +74,17 @@
 
 .title {
   color: var(--section-text-color);
+  font-family: var(--title-font-family);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
   flex: 1;
   cursor: grab;
+}
+
+.header textarea {
+  font-family: var(--title-font-family);
+  font-weight: 700;
 }
 
 .items {
