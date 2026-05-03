@@ -6,7 +6,6 @@ import { Action } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
 import cn from "clsx";
 import IconClose from "./icons/close.svg";
-import IconMore from "./icons/more.svg";
 import { FolderItemMenu } from "@/newtab/components/common/FolderItemMenu/FolderItemMenu";
 import { getBrokenImgSVG, loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
@@ -103,15 +102,6 @@ export const FolderItem = React.memo(
             onClose={() => setShowMenu(false)}
           />
         ) : null}
-        <button
-          className={styles.menu}
-          data-role={DOM_ROLE.folderItemMenu}
-          onContextMenu={onContextMenu}
-          onClick={() => setShowMenu(!showMenu)}
-        >
-          <IconMore />
-        </button>
-
         <a
           className={cn("draggable-item", styles.inner, {
             [styles.section]: p.item.isSection,

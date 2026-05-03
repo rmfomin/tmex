@@ -90,4 +90,31 @@ describe("compiled style selectors", () => {
       expect(source).not.toMatch(ownAbsoluteImport);
     });
   });
+
+  test("folder item does not render a menu button", () => {
+    const componentPath = path.join(
+      __dirname,
+      "../newtab/components/common/FolderItem/FolderItem.tsx"
+    );
+    const modulePath = path.join(
+      __dirname,
+      "../newtab/components/common/FolderItem/FolderItem.module.scss"
+    );
+    const componentSource = fs.readFileSync(componentPath, "utf8");
+    const moduleScss = fs.readFileSync(modulePath, "utf8");
+
+    expect(componentSource).not.toContain("folderItemMenu");
+    expect(componentSource).not.toContain("IconMore");
+    expect(moduleScss).not.toContain(".menu");
+  });
+
+  test("folder item keeps the old menu gutter without rendering a button", () => {
+    const modulePath = path.join(
+      __dirname,
+      "../newtab/components/common/FolderItem/FolderItem.module.scss"
+    );
+    const moduleScss = fs.readFileSync(modulePath, "utf8");
+
+    expect(moduleScss).toMatch(/\.root\s*\{[^}]*padding-left:\s*24px;/);
+  });
 });

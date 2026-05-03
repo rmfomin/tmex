@@ -3,6 +3,7 @@
   align-items: flex-start;
   position: relative;
   margin-bottom: 2px;
+  padding-left: 24px;
 
   textarea {
     flex-grow: 1;
@@ -26,67 +27,13 @@
     text-decoration: underline;
   }
 
-  &:hover .menu {
-    visibility: visible;
-  }
-
   &.section {
     margin-top: 8px;
-
-    .menu {
-      margin-top: 8px;
-    }
-  }
-
-  &.selected .menu,
-  &[data-first-selected="true"] .menu {
-    visibility: visible;
-  }
-
-  &[data-selected="true"] .menu {
-    visibility: hidden;
   }
 
   &.archived .inner {
     opacity: 0.4;
   }
-}
-
-.menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  visibility: hidden;
-  box-sizing: border-box;
-  appearance: none;
-  user-select: none;
-  border: none;
-  background-color: var(--popup-background-color);
-  border-radius: 6px;
-  width: 28px;
-  height: 28px;
-  filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.2));
-  padding: 0;
-  flex-shrink: 0;
-  margin: 0 6px 0 -10px;
-  left: -8px;
-
-  svg {
-    opacity: 0.7;
-    transform: scale(0.82);
-  }
-
-  svg:hover {
-    opacity: 1;
-  }
-}
-
-.menu svg {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
 }
 
 .inner {

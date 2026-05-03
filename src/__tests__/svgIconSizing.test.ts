@@ -86,11 +86,6 @@ describe("svg icon sizing", () => {
       },
       {
         file: "../newtab/components/common/FolderItem/FolderItem.module.scss",
-        selector: ".menu svg",
-        size: "24px",
-      },
-      {
-        file: "../newtab/components/common/FolderItem/FolderItem.module.scss",
         selector: ".closeButton svg",
         size: "10px",
       },
