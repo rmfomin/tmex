@@ -8,7 +8,7 @@ import { DispatchContext } from "@/newtab/state/actions";
 import { Action } from "@/newtab/state/state";
 import cn from "clsx";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import ChevronIcon from "./icons/shevron.svg";
+import ChevronIcon from "./icons/chevron.svg";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 import styles from "./FolderGroup.module.scss";
 

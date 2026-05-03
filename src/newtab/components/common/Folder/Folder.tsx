@@ -23,7 +23,7 @@ import {
 } from "@/newtab/state/actions";
 import { Color } from "@/newtab/helpers/color";
 import MenuIcon from "./icons/menu.svg";
-import ChevronIcon from "./icons/shevron.svg";
+import ChevronIcon from "./icons/chevron.svg";
 import { getSpacesList } from "@/newtab/helpers/moveToHelpers";
 import Tab = chrome.tabs.Tab;
 import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
