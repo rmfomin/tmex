@@ -36,6 +36,28 @@ describe("style build configuration", () => {
     expect(moduleRule).toBeDefined();
   });
 
+  test("webpack svg loader preserves viewBox for css resizing", () => {
+    const config = getCommonConfig({});
+    const svgRule = config.module.rules.find((rule: { test?: RegExp }) =>
+      String(rule.test).includes("svg")
+    );
+
+    expect(svgRule).toBeDefined();
+    expect(svgRule.use[0].loader).toBe("@svgr/webpack");
+    expect(svgRule.use[0].options.svgoConfig.plugins).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: "preset-default",
+          params: expect.objectContaining({
+            overrides: expect.objectContaining({
+              removeViewBox: false,
+            }),
+          }),
+        }),
+      ])
+    );
+  });
+
   test("notification uses the folder-based component structure", () => {
     const folderComponentPath = path.join(
       __dirname,

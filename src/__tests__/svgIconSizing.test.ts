@@ -27,6 +27,15 @@ function expectRuleWithSize(
 }
 
 describe("svg icon sizing", () => {
+  test("search icon receives the fixed-size class on the svg element", () => {
+    const component = read(
+      "../newtab/components/common/SearchInput/SearchInput.tsx"
+    );
+
+    expect(component).toContain('<IconSearch className={styles.searchIcon} />');
+    expect(component).not.toContain('<div className={styles.searchIcon}>');
+  });
+
   test("shared icon buttons fix the current 24px svg size in css", () => {
     const scss = read("../styles/_bookmarks.scss");
 

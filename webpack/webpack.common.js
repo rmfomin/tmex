@@ -63,7 +63,25 @@ module.exports.getCommonConfig = (env) => {
         },
         {
           test: /\.svg$/, // Add this rule for SVG files
-          use: ["@svgr/webpack"],
+          use: [
+            {
+              loader: "@svgr/webpack",
+              options: {
+                svgoConfig: {
+                  plugins: [
+                    {
+                      name: "preset-default",
+                      params: {
+                        overrides: {
+                          removeViewBox: false,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
       ],
     },

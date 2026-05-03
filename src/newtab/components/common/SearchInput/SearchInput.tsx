@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { handleSearchKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
 import { Action } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
-import IconFind from "@/newtab/components/common/TopBar/icons/find.svg";
-import IconFilter from "@/newtab/components/common/SidebarRecent/icons/filter.svg";
-import IconNonFilter from "@/newtab/components/common/SidebarRecent/icons/no-filter-thin.svg";
+import IconSearch from "./icons/search.svg";
+import IconFilter from "./icons/filter.svg";
+import IconClearFilter from "./icons/filter-clear.svg";
 import { Modal } from "@/newtab/components/common/Modal/Modal";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import {
@@ -14,7 +14,7 @@ import {
   updateSearchFilter,
 } from "@/newtab/helpers/utils";
 import cn from "clsx";
-import styles from "@/newtab/components/common/SearchInput/SearchInput.module.scss";
+import styles from "./SearchInput.module.scss";
 
 const SEARCH_FILTERS_STORAGE_KEY = "customSearchFilters";
 const SEARCH_FILTER_MODE_STORAGE_KEY = "customSearchFilterMode";
@@ -54,7 +54,7 @@ function loadSearchFilters(callback: (filters: SearchFilter[]) => void) {
       const storedFilters = res[SEARCH_FILTERS_STORAGE_KEY];
       const legacyFilters = res[LEGACY_HISTORY_FILTERS_STORAGE_KEY];
       callback(normalizeStoredFilters(storedFilters ?? legacyFilters));
-    }
+    },
   );
 }
 
@@ -97,14 +97,14 @@ export function SearchInput(p: {
   const [newFilterError, setNewFilterError] = useState("");
   const [filterModalOpened, setFilterModalOpened] = useState(false);
   const [editingFilterId, setEditingFilterId] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [menuFilterId, setMenuFilterId] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const enabledFiltersCount = p.searchFilters.reduce(
     (prevVal, filter) => prevVal + (filter.enabled ? 1 : 0),
-    0
+    0,
   );
 
   useEffect(() => {
@@ -152,7 +152,7 @@ export function SearchInput(p: {
           ...f,
           enabled: false,
         };
-      })
+      }),
     );
   }
 
@@ -161,7 +161,7 @@ export function SearchInput(p: {
       p.searchFilters.map((filter) => ({
         ...filter,
         enabled: false,
-      }))
+      })),
     );
   }
 
@@ -225,7 +225,7 @@ export function SearchInput(p: {
         updateSearchFilter(p.searchFilters, editingFilterId, {
           title,
           pattern,
-        })
+        }),
       );
       clearFilterForm();
       return;
@@ -252,7 +252,7 @@ export function SearchInput(p: {
 
   function onFilterContextMenu(
     event: React.MouseEvent<HTMLButtonElement>,
-    filter: SearchFilter
+    filter: SearchFilter,
   ) {
     event.preventDefault();
     event.stopPropagation();
@@ -262,7 +262,8 @@ export function SearchInput(p: {
   return (
     <div className={styles.searchBlock}>
       <div className={styles.searchWrapper}>
-        <IconFind className={styles.searchIcon} />
+        <IconSearch className={styles.searchIcon} />
+
         <input
           tabIndex={1}
           className="search"
@@ -302,7 +303,7 @@ export function SearchInput(p: {
             title="Disable search filters"
             onClick={onClearFilters}
           >
-            <IconNonFilter />
+            <IconClearFilter />
           </button>
           <button
             className={cn(styles.filterModeButton, {

@@ -12,8 +12,8 @@ import {
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import { Action, AppState } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
-import IconClean from "@/newtab/components/common/Sidebar/icons/clean.svg";
-import IconStash from "@/newtab/components/common/Sidebar/icons/stash.svg";
+import IconDelDuplicates from "@/newtab/components/common/Sidebar/icons/delete-duplicates.svg";
+import IconSave from "@/newtab/components/common/Sidebar/icons/save.svg";
 import IconPin from "@/newtab/components/common/Sidebar/icons/pin.svg";
 import Tab = chrome.tabs.Tab;
 import {
@@ -51,7 +51,7 @@ export function Sidebar(p: { appState: AppState }) {
         folderId: number,
         insertBeforeItemId: number | undefined,
         targetTabsOrRecentIds: number[],
-        targetGroupId?: number
+        targetGroupId?: number,
       ) => {
         const targetTabId = targetTabsOrRecentIds[0]; // we support D&D only single element from sidebar
         let tabOrRecentItem:
@@ -61,7 +61,7 @@ export function Sidebar(p: { appState: AppState }) {
 
         if (!tabOrRecentItem) {
           tabOrRecentItem = p.appState.recentItems.find(
-            (hi) => hi.id === targetTabId
+            (hi) => hi.id === targetTabId,
           );
         }
 
@@ -102,7 +102,7 @@ export function Sidebar(p: { appState: AppState }) {
           chrome.windows.update(tab.windowId, { focused: true });
         } else {
           const recent = p.appState.recentItems.find(
-            (ri) => ri.id === tabOrRecentId
+            (ri) => ri.id === tabOrRecentId,
           );
           if (recent && recent.url) {
             chrome.tabs.create({ url: recent.url, active: true });
@@ -281,7 +281,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
         title="Stash open Tabs in the new Folder"
         onClick={onStashClick}
       >
-        <IconStash />
+        <IconSave />
       </button>
       {confirmationOpened ? (
         <DropdownMenu
@@ -357,7 +357,7 @@ const CleanupButton = React.memo((props: { tabs: Tab[] }) => {
       disabled={duplicateTabsCount === 0}
       onClick={onCleanupTabs}
     >
-      <IconClean />
+      <IconDelDuplicates />
       {duplicateTabsCount > 0 ? (
         <div className={styles.duplicateCount}>{duplicateTabsCount}</div>
       ) : null}
