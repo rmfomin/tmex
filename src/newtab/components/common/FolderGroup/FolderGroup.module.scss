@@ -56,10 +56,14 @@
   flex-shrink: 0;
 
   svg {
-    width: 16px;
-    height: 16px;
     transition: transform 0.18s ease;
   }
+}
+
+.toggle svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .toggleCollapsed {

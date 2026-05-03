@@ -82,6 +82,12 @@
   }
 }
 
+.menu svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
 .inner {
   display: flex;
   align-items: start;
@@ -176,4 +182,10 @@
   &:hover svg {
     opacity: 1;
   }
+}
+
+.closeButton svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
 }

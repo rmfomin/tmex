@@ -71,6 +71,9 @@
   position: absolute;
   right: 11px;
   top: 14px;
+  width: 10px;
+  height: 9px;
+  flex-shrink: 0;
 }
 
 .title {

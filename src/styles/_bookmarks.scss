@@ -58,6 +58,12 @@
   }
 }
 
+.btn__icon svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
 .btn__setting {
   appearance: none;
   background-color: var(--button-background-color);

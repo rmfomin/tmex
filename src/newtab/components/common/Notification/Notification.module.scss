@@ -30,6 +30,12 @@
   }
 }
 
+.notification svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
 .error {
   background-color: var(--colors-red-600);
 }

@@ -72,6 +72,12 @@
   }
 }
 
+.deleteButton svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
 .newButton {
   display: flex;
   justify-content: center;
@@ -86,6 +92,12 @@
   &:hover {
     opacity: 1;
   }
+}
+
+.newButton svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .importInput {
