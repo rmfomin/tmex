@@ -17,26 +17,29 @@ import {
   DropArea,
 } from "@/newtab/helpers/dragging/dragAndDrop";
 import { inRange } from "@/newtab/helpers/mathUtils";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 export function processItemDragAndDrop(
   mouseDownEvent: React.MouseEvent,
   config: PConfigItem,
-  targetRoots: HTMLElement[],
+  targetRoots: HTMLElement[]
 ) {
   let originalFolderId: number;
   let originalIndex: number;
   let dummy: undefined | HTMLElement = undefined;
   const placeholder: HTMLElement = createPlaceholder(true);
   const canDropIntoGroupHeader = targetRoots.every(
-    (targetRoot) => !targetRoot.classList.contains("folder-group__header"),
+    (targetRoot) => targetRoot.dataset.role !== DOM_ROLE.groupHeader
   );
 
   const folderEls = Array.from(
     document.querySelectorAll(
       `${
-        canDropIntoGroupHeader ? ".folder-group__header, " : ""
-      }.folder-group__items, .folder .folder-items-box`,
-    ),
+        canDropIntoGroupHeader ? `${roleSelector(DOM_ROLE.groupHeader)}, ` : ""
+      }${roleSelector(DOM_ROLE.groupItems)}, ${roleSelector(
+        DOM_ROLE.folderItems
+      )}`
+    )
   );
   let dropAreas = calculateFoldersDropAreas(folderEls, true);
 
@@ -63,16 +66,21 @@ export function processItemDragAndDrop(
       currentDropArea = dropArea;
       const curBoxToDrop = dropArea ? dropArea.element : undefined;
       if (curBoxToDrop !== prevBoxToDrop) {
-        prevHighlightedGroup?.classList.remove("folder-group--drop-target");
+        if (prevHighlightedGroup) {
+          delete prevHighlightedGroup.dataset.dropTarget;
+        }
         prevHighlightedGroup = undefined;
 
         if (curBoxToDrop) {
           if (dropArea?.insertAtEnd) {
             placeholder.remove();
             prevHighlightedGroup =
-              (curBoxToDrop.closest(".folder-group") as HTMLElement | null) ??
-              undefined;
-            prevHighlightedGroup?.classList.add("folder-group--drop-target");
+              (curBoxToDrop.closest(
+                roleSelector(DOM_ROLE.folderGroup)
+              ) as HTMLElement | null) ?? undefined;
+            if (prevHighlightedGroup) {
+              prevHighlightedGroup.dataset.dropTarget = "true";
+            }
           } else {
             curBoxToDrop.appendChild(placeholder);
           }
@@ -113,7 +121,7 @@ export function processItemDragAndDrop(
         dummy = createTabDummy(
           targetRoots,
           mouseDownEvent,
-          config.isFolderItem,
+          config.isFolderItem
         );
         dummy.style.transform = `translateX(${e.clientX + "px"}) translateY(${
           e.clientY + "px"
@@ -125,10 +133,10 @@ export function processItemDragAndDrop(
           const targetRoot = targetRoots[0];
           // here we remember only first index from all selected elements
           originalIndex = Array.from(
-            targetRoot.parentElement!.parentElement!.children,
+            targetRoot.parentElement!.parentElement!.children
           ).indexOf(targetRoot.parentElement!);
           originalFolderId = getFolderId(
-            targetRoot.parentElement!.parentElement!,
+            targetRoot.parentElement!.parentElement!
           );
         }
       }
@@ -139,9 +147,11 @@ export function processItemDragAndDrop(
       document.body.classList.remove("dragging");
       dummy.remove();
       placeholder.remove();
-      prevHighlightedGroup?.classList.remove("folder-group--drop-target");
+      if (prevHighlightedGroup) {
+        delete prevHighlightedGroup.dataset.dropTarget;
+      }
       targetRoots.forEach((el) =>
-        getDragPreviewElement(el).style.removeProperty("opacity"),
+        getDragPreviewElement(el).style.removeProperty("opacity")
       );
       const tryAddToOriginalPos =
         !currentDropArea?.groupId &&
@@ -156,7 +166,7 @@ export function processItemDragAndDrop(
           folderId,
           insertBeforeItemId,
           getIdsFromElements(targetRoots),
-          currentDropArea?.groupId,
+          currentDropArea?.groupId
         );
       } else {
         config.onCancel();
@@ -173,7 +183,7 @@ export function processItemDragAndDrop(
     mouseDownEvent,
     onMouseMove,
     onMouseUp,
-    onViewportScrolled,
+    onViewportScrolled
   );
   return unsubscribeEvents;
 }

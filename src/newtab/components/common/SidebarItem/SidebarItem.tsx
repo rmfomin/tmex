@@ -26,6 +26,7 @@ import IconSaved from "@/newtab/components/common/SidebarItem/icons/saved.svg";
 import { getFoldersList } from "@/newtab/helpers/moveToHelpers";
 import { getBrokenImgSVG } from "@/newtab/helpers/faviconUtils";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
+import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 import styles from "@/newtab/components/common/SidebarItem/SidebarItem.module.scss";
 
 export const TabOrRecentItem = (p: {
@@ -150,7 +151,10 @@ export const TabOrRecentItem = (p: {
           dangerouslySetInnerHTML={hlSearch(domain, p.search)}
         />
         {savedInFolders ? (
-          <div className={styles.alreadySaved}>
+          <div
+            className={styles.alreadySaved}
+            data-role={DOM_ROLE.alreadySaved}
+          >
             Already saved in {savedInFolders}
           </div>
         ) : null}

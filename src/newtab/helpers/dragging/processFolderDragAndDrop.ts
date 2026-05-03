@@ -14,16 +14,19 @@ import {
   setScrollByDummyClientY,
   subscribeMouseEvents,
 } from "@/newtab/helpers/dragging/dragAndDropUtils";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 export function processFolderDragAndDrop(
   mouseDownEvent: React.MouseEvent,
   config: PConfigFolder,
-  targetRoot: HTMLElement,
+  targetRoot: HTMLElement
 ) {
   let dummy: undefined | HTMLElement = undefined;
   const placeholder: HTMLElement = createPlaceholder(false);
   const folderEls = Array.from(
-    document.querySelectorAll(".folder:not(.folder--new)"),
+    document.querySelectorAll(
+      `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`
+    )
   );
   let dropFoldersAreas = calculateFoldersDropAreas(folderEls);
   let dropSpacesAreas = calculateSpacesDropAreas();
@@ -35,7 +38,9 @@ export function processFolderDragAndDrop(
 
   const onViewportScrolled = () => {
     const folderEls = Array.from(
-      document.querySelectorAll(".folder:not(.folder--new)"),
+      document.querySelectorAll(
+        `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`
+      )
     );
     dropFoldersAreas = calculateFoldersDropAreas(folderEls);
   };
@@ -67,7 +72,7 @@ export function processFolderDragAndDrop(
           targetInsertBeforeFolderId = calculateTargetInsertBeforeFolderId(
             dropFoldersAreas,
             dropArea,
-            insertBefore,
+            insertBefore
           );
 
           if (dropArea.objectId !== draggingFolderId) {
@@ -121,7 +126,7 @@ export function processFolderDragAndDrop(
         config.onDrop(
           draggingFolderId,
           lastSelectedSpaceId,
-          targetInsertBeforeFolderId,
+          targetInsertBeforeFolderId
         );
       } else {
         config.onCancel();
@@ -133,7 +138,7 @@ export function processFolderDragAndDrop(
     mouseDownEvent,
     onMouseMove,
     onMouseUp,
-    onViewportScrolled,
+    onViewportScrolled
   );
   return unsubscribeEvents;
 }

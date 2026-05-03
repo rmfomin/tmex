@@ -1,4 +1,4 @@
-:global(.collapsible-sidebar) :global(.app-sidebar) {
+.floating {
   position: absolute;
   width: 360px;
   z-index: 2;
@@ -7,7 +7,7 @@
   filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.1));
 }
 
-:global(.app-sidebar) {
+.root {
   position: relative;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -21,27 +21,23 @@
   user-select: none;
   transition: width 100ms;
   transition-delay: 100ms;
-}
 
-:global(.app-sidebar.collapsed) {
-  width: 48px;
+  &.collapsed {
+    width: 48px;
 
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+
+    .search,
+    .header {
+      opacity: 0;
+    }
   }
 }
 
-:global(.app-sidebar) :global(.inbox-item__text) {
-  transition: opacity 50ms;
-  transition-delay: 100ms;
-}
-
-:global(.app-sidebar.collapsed) :global(.inbox-item__text) {
-  opacity: 0;
-}
-
-:global(.app-sidebar__search) {
+.search {
   position: sticky;
   z-index: 2;
   top: 0;
@@ -55,7 +51,7 @@
   transition-delay: 100ms;
 }
 
-:global(.app-sidebar__header) {
+.header {
   position: sticky;
   z-index: 1;
   top: 64px;
@@ -69,28 +65,15 @@
   margin-left: -19px;
   transition: opacity 50ms;
   transition-delay: 100ms;
-
-  &:global(.app-sidebar__header--open-tabs) {
-    margin-left: -20px;
-    display: flex;
-    align-items: center;
-  }
-
-  &:global(.app-sidebar__header--recent) {
-    margin-left: -16px;
-
-    &:global(.filters-opened) {
-      height: 100px;
-    }
-
-    :global(.inner-header) {
-      display: flex;
-      align-items: center;
-    }
-  }
 }
 
-:global(.app-sidebar__header__text) {
+.openTabsHeader {
+  margin-left: -20px;
+  display: flex;
+  align-items: center;
+}
+
+.headerText {
   flex-grow: 1;
   font-size: 16px;
   vertical-align: middle;
@@ -98,39 +81,7 @@
   font-weight: 600;
 }
 
-:global(.app-sidebar__header) :global(.btn__cleanup),
-:global(.app-sidebar__header) :global(.btn__shelve-tabs) {
-  vertical-align: middle;
-  text-align: center;
-  height: 32px;
-  width: 84px;
-  padding: 0;
-
-  &[disabled] {
-    background-color: var(--input-background-color);
-    pointer-events: auto;
-    cursor: initial;
-  }
-}
-
-:global(.app-sidebar__header) :global(.btn__shelve-tabs) {
-  position: relative;
-  width: 42px;
-
-  svg {
-    color: inherit;
-  }
-}
-
-:global(.app-sidebar.collapsed) :global(.app-sidebar__search) {
-  opacity: 0;
-}
-
-:global(.app-sidebar.collapsed) :global(.app-sidebar__header) {
-  opacity: 0;
-}
-
-:global(.dropdown-menu.stash-confirmation-popup) {
+.stashPopup {
   align-items: flex-start;
   justify-content: flex-start;
   font-size: 14px;
@@ -144,7 +95,7 @@
   }
 }
 
-:global(.duplicate-tabs-number) {
+.duplicateCount {
   background-color: var(--active-control-color);
   position: absolute;
   width: 16px;

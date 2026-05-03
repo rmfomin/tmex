@@ -3,13 +3,14 @@ import { AppState } from "@/newtab/state/state";
 import { ActionDispatcher } from "@/newtab/state/actions";
 import { clickFolderItem } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { findFolderByItemId } from "@/newtab/state/actionHelpers";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
-const FOLDER_ITEM_SELECTOR = "a.folder-item__inner";
+const FOLDER_ITEM_SELECTOR = `a${roleSelector(DOM_ROLE.folderItem)}`;
 
 function focusNextItem(
   folderItems: Element[],
   currentElement: Element,
-  offset: number,
+  offset: number
 ) {
   if (folderItems.length === 0) {
     return;
@@ -36,7 +37,7 @@ function focusHorizontalItem(offset: number, appState: AppState) {
   if (document.activeElement) {
     const folderItems = convertItemsIntoHorizontalList(
       document.activeElement as HTMLElement,
-      appState,
+      appState
     );
     focusNextItem(folderItems, document.activeElement, offset);
   }
@@ -45,7 +46,7 @@ function focusHorizontalItem(offset: number, appState: AppState) {
 function openFocusedItem(
   event: React.KeyboardEvent,
   appState: AppState,
-  dispatch: ActionDispatcher,
+  dispatch: ActionDispatcher
 ) {
   const link = event.target as HTMLLinkElement;
   if (link && link.href) {
@@ -58,7 +59,7 @@ function openFocusedItem(
         appState,
         dispatch,
         inNewTab,
-        appState.openBookmarksInNewTab,
+        appState.openBookmarksInNewTab
       );
     }
   }
@@ -67,11 +68,11 @@ function openFocusedItem(
 export function handleBookmarksKeyDown(
   event: React.KeyboardEvent,
   appState: AppState,
-  dispatch: ActionDispatcher,
+  dispatch: ActionDispatcher
 ) {
   const activeElement = document.activeElement as HTMLElement;
   const isActiveLink =
-    activeElement && activeElement.classList.contains("folder-item__inner");
+    activeElement && activeElement.dataset.role === DOM_ROLE.folderItem;
   if (!isActiveLink) {
     return;
   }
@@ -111,7 +112,9 @@ type FolderPosition = {
 
 function getFolderPositions(): FolderPosition[] {
   const folderElements = (document.querySelectorAll(
-    ".folder[data-folder-id]",
+    `${roleSelector(
+      DOM_ROLE.folder
+    )}[data-folder-id]:not([data-folder-new="true"])`
   ) as unknown) as HTMLElement[];
   const results: FolderPosition[] = [];
   let prevRes: FolderPosition | undefined;
@@ -162,37 +165,37 @@ function convertItemsIntoVerticalList(): Element[] {
 
 function convertItemsIntoHorizontalList(
   currentItem: HTMLElement,
-  appState: AppState,
+  appState: AppState
 ): Element[] {
   const currentFolder = findFolderByItemId(
     appState,
-    parseInt(currentItem.dataset.id || "", 10),
+    parseInt(currentItem.dataset.id || "", 10)
   );
   if (!currentFolder) {
     return [];
   }
   const foldersPositions = getFolderPositions();
   const currentFoldersPos = foldersPositions.find(
-    (f) => f.id === currentFolder.id,
+    (f) => f.id === currentFolder.id
   );
   if (!currentFoldersPos) {
     return [];
   }
   const allFoldersInRow = foldersPositions.filter(
-    (f) => f.row === currentFoldersPos.row,
+    (f) => f.row === currentFoldersPos.row
   );
   const allItemsInCurrentFolder = Array.from(
     currentFoldersPos.element.querySelectorAll<HTMLElement>(
-      FOLDER_ITEM_SELECTOR,
-    ),
+      FOLDER_ITEM_SELECTOR
+    )
   );
   const currentItemIndexInFolder = allItemsInCurrentFolder.findIndex(
-    (item) => item.dataset.id === currentItem.dataset.id,
+    (item) => item.dataset.id === currentItem.dataset.id
   );
   const resItems: Element[] = [];
   allFoldersInRow.forEach((folder) => {
     const items = Array.from(
-      folder.element.querySelectorAll<HTMLElement>(FOLDER_ITEM_SELECTOR),
+      folder.element.querySelectorAll<HTMLElement>(FOLDER_ITEM_SELECTOR)
     );
     if (items.length > currentItemIndexInFolder) {
       resItems.push(items[currentItemIndexInFolder]);
@@ -207,11 +210,11 @@ let trackSearchUsedTimeout: ReturnType<typeof setTimeout> | null = null;
 
 export function handleSearchKeyDown(
   event: React.KeyboardEvent,
-  onClearSearch: () => void,
+  onClearSearch: () => void
 ) {
   if (event.code === "ArrowDown") {
     const firstFolderItem = document.querySelector(
-      FOLDER_ITEM_SELECTOR,
+      FOLDER_ITEM_SELECTOR
     ) as HTMLElement;
     if (firstFolderItem) {
       firstFolderItem.focus();

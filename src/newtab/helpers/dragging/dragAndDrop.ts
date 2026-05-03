@@ -10,6 +10,7 @@ import { Point } from "@/newtab/helpers/mathTypes";
 import { processFolderDragAndDrop } from "@/newtab/helpers/dragging/processFolderDragAndDrop";
 import { processItemDragAndDrop } from "@/newtab/helpers/dragging/processItemDragAndDrop";
 import { processSpacesDragAndDrop } from "@/newtab/helpers/dragging/processSpacesDragAndDrop";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 export type DropArea = {
   objectId: number;
@@ -85,10 +86,10 @@ export function bindDADItemEffect(
       );
     } else if (
       spacesConfig &&
-      isSomeParentHaveClass(target, "spaces-list__item")
+      target.closest(roleSelector(DOM_ROLE.spaceItem))
     ) {
       if (
-        !isSomeParentHaveClass(target, "spaces-list__delete-button") &&
+        !target.closest(roleSelector(DOM_ROLE.spaceDelete)) &&
         spacesConfig.canSortSpaces()
       ) {
         processSpacesDragAndDrop(mouseDownEvent, spacesConfig);
@@ -292,7 +293,9 @@ export function getItemIdByIndex(
   } else {
     const child = children.item(index)!;
     const item = child.querySelector(
-      ":scope > .folder-item__inner, :scope > .folder-group__header"
+      `:scope > ${roleSelector(DOM_ROLE.folderItem)}, :scope > ${roleSelector(
+        DOM_ROLE.groupHeader
+      )}`
     ) as HTMLElement;
     return parseInt(item.dataset.id!, 10);
   }
@@ -307,7 +310,12 @@ export function createTabDummy(
   targetRoots.forEach((selectedEl) => {
     const previewEl = getDragPreviewElement(selectedEl);
     const clonedNode = previewEl.cloneNode(true) as HTMLElement;
-    clonedNode.classList.add("folder-item__inner--selected");
+    clonedNode.dataset.selected = "true";
+    clonedNode
+      .querySelectorAll(roleSelector(DOM_ROLE.alreadySaved))
+      .forEach((el) => {
+        (el as HTMLElement).style.display = "block";
+      });
     dummy.append(clonedNode);
     if (isFolderItem) {
       previewEl.style.opacity = "0";
@@ -326,7 +334,7 @@ export function createTabDummy(
 }
 
 export function getDragPreviewElement(targetRoot: HTMLElement): HTMLElement {
-  if (targetRoot.classList.contains("folder-group__header")) {
+  if (targetRoot.dataset.role === DOM_ROLE.groupHeader) {
     return targetRoot.parentElement!;
   }
 
@@ -358,7 +366,9 @@ export function calculateFoldersDropAreas(
 }
 
 export function calculateSpacesDropAreas(): DropArea[] {
-  const spacesEls = Array.from(document.querySelectorAll(".spaces-list__item"));
+  const spacesEls = Array.from(
+    document.querySelectorAll(roleSelector(DOM_ROLE.spaceItem))
+  );
   return spacesEls.map((el) => ({
     objectId: getSpaceId(el as HTMLElement),
     element: el as HTMLElement,
@@ -375,7 +385,9 @@ export function createFolderDummy(
   const dummy = document.createElement("div");
   dummy.append(targetRoot.cloneNode(true));
   dummy.style.opacity = "0.8";
-  const itemsBoxEl = dummy.querySelector<HTMLElement>(".folder-items-box")!;
+  const itemsBoxEl = dummy.querySelector<HTMLElement>(
+    roleSelector(DOM_ROLE.folderItems)
+  )!;
   itemsBoxEl.style.visibility = "hidden";
 
   const rect = targetRoot.getBoundingClientRect();

@@ -1,4 +1,5 @@
 import React, { memo, useContext } from "react";
+import cn from "clsx";
 import {
   filterTabsBySearch,
   hasSearch,
@@ -22,6 +23,7 @@ export const SidebarOpenTabs = memo(
     spaces: SpaceV3[];
     lastActiveTabIds: number[];
     currentWindowId: number | undefined;
+    sidebarCollapsed: boolean;
   }) => {
     const dispatch = useContext(DispatchContext);
 
@@ -56,7 +58,11 @@ export const SidebarOpenTabs = memo(
     );
 
     return (
-      <div className={styles.inboxBox}>
+      <div
+        className={cn(styles.inboxBox, {
+          [styles.collapsed]: p.sidebarCollapsed,
+        })}
+      >
         {sortedWindowsWithTabs.length === 1
           ? sortedWindowsWithTabs[0].tabs.map((t) => (
               <TabOrRecentItem
@@ -71,7 +77,11 @@ export const SidebarOpenTabs = memo(
           : sortedWindowsWithTabs.map((window, index) => {
               return (
                 <div key={window.windowId}>
-                  <div className={styles.windowName}>
+                  <div
+                    className={cn(styles.windowName, {
+                      [styles.collapsedText]: p.sidebarCollapsed,
+                    })}
+                  >
                     {index === 0 ? "current window" : "window"}
                   </div>
                   {window.tabs.map((t) => (

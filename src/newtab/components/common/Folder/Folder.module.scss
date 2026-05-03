@@ -6,6 +6,21 @@
   user-select: none;
 }
 
+.newFolder {
+  .header {
+    background-color: var(--input-background-color);
+    color: var(--colors-gray-600);
+    cursor: pointer;
+  }
+}
+
+.newText {
+  display: inline-block;
+  vertical-align: top;
+  font-weight: 200;
+  margin-left: 76px;
+}
+
 .empty {
   .header {
     color: #bbbbbb;

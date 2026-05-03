@@ -1,8 +1,8 @@
 import type { PConfigSpaces } from "@/newtab/helpers/dragging/dragAndDrop";
 import { subscribeMouseEvents } from "@/newtab/helpers/dragging/dragAndDropUtils";
-import { findParentWithClass } from "@/newtab/helpers/utils";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
 import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 type InitRes = {
   clonedSpacesList: HTMLElement;
@@ -20,10 +20,9 @@ export function processSpacesDragAndDrop(
   let prevOverItem: HTMLElement | undefined = undefined;
   let prevInsertType: string = "";
 
-  const target = findParentWithClass(
-    mouseDownEvent.target as HTMLElement,
-    "spaces-list__item"
-  );
+  const target = (mouseDownEvent.target as HTMLElement).closest(
+    roleSelector(DOM_ROLE.spaceItem)
+  ) as HTMLElement | null;
 
   if (!target) {
     return;
@@ -129,9 +128,11 @@ export function shouldUpdateSpaceInsertPreview(
 }
 
 function createClonedSpacesList(target: HTMLElement): InitRes {
-  const origSpacesList = document.querySelector(".spaces-list") as HTMLElement;
+  const origSpacesList = document.querySelector(
+    roleSelector(DOM_ROLE.spacesList)
+  ) as HTMLElement;
   const origItems = Array.from(
-    origSpacesList.querySelectorAll(".spaces-list__item")
+    origSpacesList.querySelectorAll(roleSelector(DOM_ROLE.spaceItem))
   );
 
   const listRect = origSpacesList.getBoundingClientRect();

@@ -13,3 +13,36 @@
     margin-left: 6px;
   }
 }
+
+.header {
+  position: sticky;
+  z-index: 1;
+  top: 64px;
+  left: 0;
+  width: 349px;
+  padding-left: 18px;
+  padding-top: 20px;
+  padding-bottom: 16px;
+  background-color: var(--popup-background-color);
+  box-sizing: border-box;
+  margin-left: -16px;
+  transition: opacity 50ms;
+  transition-delay: 100ms;
+}
+
+.collapsedHeader {
+  opacity: 0;
+}
+
+.innerHeader {
+  display: flex;
+  align-items: center;
+}
+
+.headerText {
+  flex-grow: 1;
+  font-size: 16px;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-weight: 600;
+}

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import "@/newtab/components/common/Sidebar/Sidebar.module.scss";
+import cn from "clsx";
+import styles from "@/newtab/components/common/Sidebar/Sidebar.module.scss";
 import { SidebarOpenTabs } from "@/newtab/components/common/SidebarOpenTabs/SidebarOpenTabs";
 import { isTabowskiTab } from "@/newtab/helpers/isTabowskiTab";
 import {
@@ -9,7 +10,6 @@ import {
   scrollElementIntoView,
 } from "@/newtab/helpers/utils";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import cn from "clsx";
 import { Action, AppState } from "@/newtab/state/state";
 import { DispatchContext } from "@/newtab/state/actions";
 import IconClean from "@/newtab/components/common/Sidebar/icons/clean.svg";
@@ -28,6 +28,7 @@ import { SidebarRecent } from "@/newtab/components/common/SidebarRecent/SidebarR
 import { bindDADItemEffect } from "@/newtab/helpers/dragging/dragAndDrop";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { SearchInput } from "@/newtab/components/common/SearchInput/SearchInput";
+import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 
 export function Sidebar(p: { appState: AppState }) {
   const dispatch = useContext(DispatchContext);
@@ -35,7 +36,7 @@ export function Sidebar(p: { appState: AppState }) {
   const searchFilterMode = p.appState.searchFilterMode ?? "or";
   const keepSidebarOpened =
     !p.appState.sidebarCollapsed || p.appState.sidebarHovered;
-  const sidebarClassName = keepSidebarOpened ? "" : "collapsed";
+  const sidebarCollapsed = !keepSidebarOpened;
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const openTabsHeaderRef = useRef<HTMLDivElement | null>(null);
 
@@ -165,13 +166,17 @@ export function Sidebar(p: { appState: AppState }) {
 
   return (
     <div
-      className={"app-sidebar " + sidebarClassName}
+      className={cn(styles.root, {
+        [styles.floating]: p.appState.sidebarCollapsed,
+        [styles.collapsed]: sidebarCollapsed,
+      })}
+      data-role={DOM_ROLE.sidebar}
       ref={sidebarRef}
       onMouseEnter={onSidebarMouseEnter}
       onMouseLeave={onSidebarMouseLeave}
       onMouseDown={onMouseDown}
     >
-      <div className="app-sidebar__search">
+      <div className={styles.search}>
         <SearchInput
           search={p.appState.search}
           searchFilters={searchFilters}
@@ -180,10 +185,10 @@ export function Sidebar(p: { appState: AppState }) {
       </div>
 
       <div
-        className="app-sidebar__header app-sidebar__header--open-tabs"
+        className={cn(styles.header, styles.openTabsHeader)}
         ref={openTabsHeaderRef}
       >
-        <span className="app-sidebar__header__text">Open tabs</span>
+        <span className={styles.headerText}>Open tabs</span>
         <CleanupButton tabs={p.appState.tabs} />
         <StashButton tabs={p.appState.tabs} />
         <button
@@ -207,6 +212,7 @@ export function Sidebar(p: { appState: AppState }) {
         searchFilterMode={searchFilterMode}
         lastActiveTabIds={p.appState.lastActiveTabIds}
         currentWindowId={p.appState.currentWindowId}
+        sidebarCollapsed={sidebarCollapsed}
       />
       {(p.appState.showRecent ||
         p.appState.search ||
@@ -217,6 +223,7 @@ export function Sidebar(p: { appState: AppState }) {
           searchFilterMode={searchFilterMode}
           recentItems={p.appState.recentItems}
           spaces={p.appState.spaces}
+          sidebarCollapsed={sidebarCollapsed}
         ></SidebarRecent>
       )}
     </div>
@@ -279,7 +286,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
       {confirmationOpened ? (
         <DropdownMenu
           onClose={() => setConfirmationOpened(false)}
-          className="stash-confirmation-popup"
+          className={styles.stashPopup}
           width={240}
           offset={{ top: 12, left: 4 }}
           skipTabIndexes={true}
@@ -352,7 +359,7 @@ const CleanupButton = React.memo((props: { tabs: Tab[] }) => {
     >
       <IconClean />
       {duplicateTabsCount > 0 ? (
-        <div className="duplicate-tabs-number">{duplicateTabsCount}</div>
+        <div className={styles.duplicateCount}>{duplicateTabsCount}</div>
       ) : null}
     </button>
   );

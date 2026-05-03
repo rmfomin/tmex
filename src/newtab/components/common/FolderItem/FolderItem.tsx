@@ -10,7 +10,8 @@ import IconMore from "@/newtab/components/common/FolderItem/icons/more.svg";
 import { FolderItemMenu } from "@/newtab/components/common/FolderItemMenu/FolderItemMenu";
 import { getBrokenImgSVG, loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
-import "@/newtab/components/common/FolderItem/FolderItem.module.scss";
+import { DOM_ROLE } from "@/newtab/helpers/domRoles";
+import styles from "@/newtab/components/common/FolderItem/FolderItem.module.scss";
 import Tab = chrome.tabs.Tab;
 
 export const FolderItem = React.memo(
@@ -85,10 +86,10 @@ export const FolderItem = React.memo(
 
     return (
       <div
-        className={cn("folder-item", {
-          section: p.item.isSection,
-          selected: showMenu,
-          archived: p.item.archived,
+        className={cn(styles.root, {
+          [styles.section]: p.item.isSection,
+          [styles.selected]: showMenu,
+          [styles.archived]: p.item.archived,
         })}
       >
         {showMenu ? (
@@ -103,7 +104,8 @@ export const FolderItem = React.memo(
           />
         ) : null}
         <button
-          className="folder-item__menu"
+          className={styles.menu}
+          data-role={DOM_ROLE.folderItemMenu}
           onContextMenu={onContextMenu}
           onClick={() => setShowMenu(!showMenu)}
         >
@@ -111,14 +113,15 @@ export const FolderItem = React.memo(
         </button>
 
         <a
-          className={cn("folder-item__inner draggable-item", {
-            section: p.item.isSection,
-            open: folderItemOpened,
+          className={cn("draggable-item", styles.inner, {
+            [styles.section]: p.item.isSection,
+            [styles.opened]: folderItemOpened,
           })}
           onDragStart={(e) => {
             e.preventDefault();
           }}
           tabIndex={2}
+          data-role={DOM_ROLE.folderItem}
           data-id={p.item.id}
           onClick={(e) => e.preventDefault()}
           title={p.item.url}
@@ -127,8 +130,8 @@ export const FolderItem = React.memo(
         >
           <img src={p.item.favIconUrl} alt="" onError={handleImageError} />
           <EditableTitle
-            className={cn("folder-item__inner__title", {
-              "not-used":
+            className={cn(styles.title, {
+              [styles.notUsed]:
                 p.showNotUsed && isFolderItemNotUsed(p.item, p.recentItems),
             })}
             inEdit={p.inEdit}
@@ -140,7 +143,7 @@ export const FolderItem = React.memo(
           />
           {folderItemOpened ? (
             <button
-              className="btn__close-tab stop-dad-propagation"
+              className={cn(styles.closeButton, "stop-dad-propagation")}
               tabIndex={2}
               title="Close tab"
               onClick={onCloseTab}

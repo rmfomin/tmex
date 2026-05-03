@@ -2,23 +2,21 @@
   flex-grow: 1;
 }
 
-:global(.collapsible-sidebar) .bookmarksBox {
+.withCollapsedSidebar {
   padding-left: 24px;
 }
 
 .bookmarks {
-  &:global(.bookmarks) {
-    position: relative;
-    padding-left: 20px;
-    flex-grow: 1;
-    height: calc(100% - 68px);
-    overflow-y: auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    padding-bottom: 150px;
-    box-sizing: border-box;
-  }
+  position: relative;
+  padding-left: 20px;
+  flex-grow: 1;
+  height: calc(100% - 68px);
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding-bottom: 150px;
+  box-sizing: border-box;
 }
 
 .emptyDashboard {

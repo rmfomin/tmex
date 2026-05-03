@@ -29,12 +29,35 @@ describe("compiled style selectors", () => {
   test("bookmarks module keeps component-owned selectors local", () => {
     const modulePath = path.join(
       __dirname,
-      "../newtab/components/common/Bookmarks/Bookmarks.module.scss",
+      "../newtab/components/common/Bookmarks/Bookmarks.module.scss"
     );
     const moduleScss = fs.readFileSync(modulePath, "utf8");
 
     expect(moduleScss).not.toMatch(/:global\(\.bookmarks-box\)/);
     expect(moduleScss).not.toMatch(/:global\(\.empty-dashboard/);
-    expect(moduleScss).toContain("&:global(.bookmarks)");
+    expect(moduleScss).not.toContain(":global");
+  });
+
+  test("component modules avoid global and BEM selectors after migration", () => {
+    const migratedModules = [
+      "../newtab/components/common/Bookmarks/Bookmarks.module.scss",
+      "../newtab/components/common/Folder/Folder.module.scss",
+      "../newtab/components/common/FolderItem/FolderItem.module.scss",
+      "../newtab/components/common/FolderGroup/FolderGroup.module.scss",
+      "../newtab/components/common/SidebarItem/SidebarItem.module.scss",
+      "../newtab/components/common/Sidebar/Sidebar.module.scss",
+      "../newtab/components/common/SidebarOpenTabs/SidebarOpenTabs.module.scss",
+      "../newtab/components/common/SidebarRecent/SidebarRecent.module.scss",
+      "../newtab/components/common/TopBar/TopBar.module.scss",
+    ];
+
+    migratedModules.forEach((relativePath) => {
+      const modulePath = path.join(__dirname, relativePath);
+      const moduleScss = fs.readFileSync(modulePath, "utf8");
+
+      expect(moduleScss).not.toContain(":global");
+      expect(moduleScss).not.toMatch(/\.[A-Za-z0-9-]+__[A-Za-z0-9-]+/);
+      expect(moduleScss).not.toMatch(/\.[A-Za-z0-9-]+--[A-Za-z0-9-]+/);
+    });
   });
 });

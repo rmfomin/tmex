@@ -3,7 +3,7 @@
   width: 338px;
 }
 
-:global(.app-sidebar.collapsed) .inboxBox {
+.collapsed {
   margin-right: -8px;
 }
 
@@ -22,6 +22,6 @@
   width: 120px;
 }
 
-:global(.collapsed) .windowName {
+.collapsedText {
   width: 22px;
 }

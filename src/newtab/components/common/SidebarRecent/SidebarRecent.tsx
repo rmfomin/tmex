@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
+import cn from "clsx";
 import {
   filterRecentItemsBySearch,
   SearchFilter,
@@ -13,6 +14,7 @@ import { DispatchContext } from "@/newtab/state/actions";
 import { TabOrRecentItem } from "@/newtab/components/common/SidebarItem/SidebarItem";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import styles from "@/newtab/components/common/SidebarRecent/SidebarRecent.module.scss";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 const PAGE_SIZE = 100;
 
@@ -38,7 +40,7 @@ const RecentList = React.memo(
     }, [page, p.items, displayedItems, dispatch]);
 
     const handleScroll = useCallback(() => {
-      const sidebar = document.querySelector(".app-sidebar")!;
+      const sidebar = document.querySelector(roleSelector(DOM_ROLE.sidebar))!;
       if (sidebar) {
         const { scrollTop, scrollHeight, clientHeight } = sidebar;
         if (scrollTop + clientHeight >= scrollHeight - 200) {
@@ -48,7 +50,7 @@ const RecentList = React.memo(
     }, [loadMore]);
 
     useEffect(() => {
-      const sidebar = document.querySelector(".app-sidebar")!;
+      const sidebar = document.querySelector(roleSelector(DOM_ROLE.sidebar))!;
       if (sidebar) {
         sidebar.addEventListener("scroll", handleScroll);
       }
@@ -84,6 +86,7 @@ export const SidebarRecent = React.memo(
     searchFilters: SearchFilter[];
     searchFilterMode: SearchFilterMode;
     spaces: SpaceV3[];
+    sidebarCollapsed: boolean;
   }) => {
     const itemsFilteredBySearch = filterRecentItemsBySearch(
       p.recentItems,
@@ -98,9 +101,13 @@ export const SidebarRecent = React.memo(
 
     return (
       <div className={styles.recentList}>
-        <div className="app-sidebar__header app-sidebar__header--recent">
-          <div className="inner-header">
-            <span className="app-sidebar__header__text">Recent</span>
+        <div
+          className={cn(styles.header, {
+            [styles.collapsedHeader]: p.sidebarCollapsed,
+          })}
+        >
+          <div className={styles.innerHeader}>
+            <span className={styles.headerText}>Recent</span>
           </div>
         </div>
 

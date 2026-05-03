@@ -1,3 +1,5 @@
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
+
 const DAD_THRESHOLD = 4;
 
 export function subscribeMouseEvents(
@@ -59,7 +61,9 @@ const MAX_SCROLL_SPEED = 18;
 const SCROLL_THRESHOLD = 60;
 
 function getBookmarksElement(): HTMLElement {
-  return document.querySelector(".bookmarks") as HTMLElement;
+  return document.querySelector(
+    roleSelector(DOM_ROLE.bookmarks)
+  ) as HTMLElement;
 }
 
 function tryToScrollViewport() {

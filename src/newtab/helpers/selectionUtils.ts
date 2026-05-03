@@ -3,40 +3,47 @@ import { getGlobalAppState } from "@/newtab/components/root/App";
 import { findItemById } from "@/newtab/state/actionHelpers";
 
 let selectedItemsElements: HTMLElement[] = [];
-const SELECTOR = `folder-item--selected`;
-const FIRST_SELECTOR = `folder-item--first-selected`;
-
-const INNER_SELECTOR = `folder-item__inner--selected`;
+const SELECTED_ATTR = "selected";
+const FIRST_SELECTED_ATTR = "firstSelected";
 
 export function selectItems(elements: HTMLElement[]) {
   unselectAllItems();
 
   elements.forEach((el: HTMLElement) => {
-    el.classList.add(INNER_SELECTOR);
-    el.parentElement?.classList.add(SELECTOR);
+    el.dataset[SELECTED_ATTR] = "true";
+    if (el.parentElement) {
+      el.parentElement.dataset[SELECTED_ATTR] = "true";
+    }
   });
 
-  const prevSelectedElement = document.querySelector(`.${FIRST_SELECTOR}`);
-  const newFirstSelectedElement = document.querySelector(`.${SELECTOR}`);
+  const prevSelectedElement = document.querySelector(
+    `[data-first-selected="true"]`
+  );
+  const newFirstSelectedElement = document.querySelector(
+    `[data-selected="true"]`
+  );
   if (
     newFirstSelectedElement &&
     prevSelectedElement !== newFirstSelectedElement
   ) {
-    newFirstSelectedElement.classList.add(FIRST_SELECTOR);
+    (newFirstSelectedElement as HTMLElement).dataset[FIRST_SELECTED_ATTR] =
+      "true";
   }
   if (prevSelectedElement) {
-    prevSelectedElement.classList.remove(FIRST_SELECTOR);
+    delete (prevSelectedElement as HTMLElement).dataset[FIRST_SELECTED_ATTR];
   }
 
   selectedItemsElements = elements;
 }
 
 function unselectItemForced(el: HTMLElement) {
-  el.classList.remove(INNER_SELECTOR);
-  el.parentElement?.classList.remove(SELECTOR);
+  delete el.dataset[SELECTED_ATTR];
+  if (el.parentElement) {
+    delete el.parentElement.dataset[SELECTED_ATTR];
+  }
   document
-    .querySelector(`.${FIRST_SELECTOR}`)
-    ?.classList.remove(FIRST_SELECTOR);
+    .querySelector(`[data-first-selected="true"]`)
+    ?.removeAttribute("data-first-selected");
 }
 
 export function unselectAllItems() {

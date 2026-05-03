@@ -34,6 +34,7 @@ import {
 } from "@/newtab/state/actionHelpers";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { getVisibleFolderDisplayItems } from "@/newtab/components/common/Folder/getFolderDisplayItems";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 import styles from "@/newtab/components/common/Folder/Folder.module.scss";
 
 export const Folder = React.memo(function Folder(p: {
@@ -143,7 +144,7 @@ export const Folder = React.memo(function Folder(p: {
         `[data-id="${newBookmark.id}"]`
       );
       const menuButton = bookmarkElement?.parentElement?.querySelector(
-        ".folder-item__menu"
+        roleSelector(DOM_ROLE.folderItemMenu)
       ) as HTMLButtonElement;
       if (menuButton) {
         menuButton.click();
@@ -247,7 +248,7 @@ export const Folder = React.memo(function Folder(p: {
     (p.search !== "" || p.searchFilters.some((filter) => filter.enabled)) &&
     folderItems.length === 0;
 
-  const folderClassName = cn("folder", styles.root, {
+  const folderClassName = cn(styles.root, {
     [styles.twoColumn]: p.folder.twoColumn,
     [styles.empty]: folderIsEmptyDuringSearch,
   });
@@ -290,7 +291,11 @@ export const Folder = React.memo(function Folder(p: {
   };
 
   return (
-    <div className={folderClassName} data-folder-id={p.folder.id}>
+    <div
+      className={folderClassName}
+      data-role={DOM_ROLE.folder}
+      data-folder-id={p.folder.id}
+    >
       <h2
         style={{
           background: folderIsEmptyDuringSearch
@@ -460,7 +465,8 @@ export const Folder = React.memo(function Folder(p: {
       ) : null}
 
       <div
-        className={cn("folder-items-box", styles.items)}
+        className={styles.items}
+        data-role={DOM_ROLE.folderItems}
         data-folder-id={p.folder.id}
         style={p.folder.collapsed ? { display: "none" } : undefined}
       >

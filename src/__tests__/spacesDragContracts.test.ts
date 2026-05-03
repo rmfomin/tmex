@@ -3,7 +3,7 @@ const path = require("path");
 
 export {};
 
-test("spaces list keeps global drag-and-drop class hooks", () => {
+test("spaces list keeps data-role drag-and-drop hooks", () => {
   const source = fs.readFileSync(
     path.join(
       __dirname,
@@ -12,9 +12,9 @@ test("spaces list keeps global drag-and-drop class hooks", () => {
     "utf8"
   );
 
-  expect(source).toContain("spaces-list");
-  expect(source).toContain("spaces-list__item");
-  expect(source).toContain("spaces-list__delete-button");
+  expect(source).toContain("DOM_ROLE.spacesList");
+  expect(source).toContain("DOM_ROLE.spaceItem");
+  expect(source).toContain("DOM_ROLE.spaceDelete");
 });
 
 test("spaces list exposes single-space import and export controls", () => {

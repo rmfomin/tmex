@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import cn from "clsx";
 import styles from "@/newtab/components/common/Bookmarks/Bookmarks.module.scss";
+import folderStyles from "@/newtab/components/common/Folder/Folder.module.scss";
 import {
   blurSearch,
   isTargetSupportsDragAndDrop,
@@ -18,6 +20,7 @@ import { TopBar } from "@/newtab/components/common/TopBar/TopBar";
 import { importFromJson } from "@/newtab/helpers/importExportHelpers";
 import { isEmptyDashboard } from "@/newtab/components/common/Bookmarks/isEmptyDashboard";
 import { getBookmarksViewState } from "@/newtab/components/common/Bookmarks/getBookmarksViewState";
+import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
@@ -181,10 +184,16 @@ export function Bookmarks(p: { appState: AppState }) {
   const searchFilterMode = p.appState.searchFilterMode ?? "or";
 
   return (
-    <div className={styles.bookmarksBox} onMouseDown={onMouseDown}>
+    <div
+      className={cn(styles.bookmarksBox, {
+        [styles.withCollapsedSidebar]: p.appState.sidebarCollapsed,
+      })}
+      onMouseDown={onMouseDown}
+    >
       <TopBar appState={p.appState} isScrolled={isScrolled} />
       <div
-        className={`${styles.bookmarks} bookmarks`}
+        className={styles.bookmarks}
+        data-role={DOM_ROLE.bookmarks}
         ref={bookmarksRef}
         onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
       >
@@ -224,11 +233,21 @@ export function Bookmarks(p: { appState: AppState }) {
           </div>
         ) : p.appState.search === "" &&
           !searchFilters.some((filter) => filter.enabled) ? (
-          <div className="folder folder--new">
-            <h2 onClick={onCreateFolder}>
-              New folder <span>+ Click to add</span>
+          <div
+            className={cn(folderStyles.root, folderStyles.newFolder)}
+            data-role={DOM_ROLE.folder}
+            data-folder-id="-1"
+            data-folder-new="true"
+          >
+            <h2 className={folderStyles.header} onClick={onCreateFolder}>
+              New folder{" "}
+              <span className={folderStyles.newText}>+ Click to add</span>
             </h2>
-            <div className="folder-items-box" data-folder-id="-1" />
+            <div
+              className={folderStyles.items}
+              data-role={DOM_ROLE.folderItems}
+              data-folder-id="-1"
+            />
           </div>
         ) : folders.length === 0 ? (
           <div className={styles.noBookmarksFound}>No bookmarks found</div>

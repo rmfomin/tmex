@@ -14,6 +14,7 @@ import {
   importSpaceFromJson,
   onExportSpaceJson,
 } from "@/newtab/helpers/importExportHelpers";
+import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 import styles from "@/newtab/components/common/SpacesList/SpacesList.module.scss";
 
 export function SpacesList(p: {
@@ -100,7 +101,7 @@ export function SpacesList(p: {
   };
 
   return (
-    <div className={`spaces-list ${styles.spacesList}`}>
+    <div className={styles.spacesList} data-role={DOM_ROLE.spacesList}>
       {p.spaces.length === 0 && (
         <span style={{ padding: "8px" }}>no spaces</span>
       )}
@@ -108,9 +109,10 @@ export function SpacesList(p: {
         return (
           <span
             key={space.id}
-            className={cn("spaces-list__item", styles.item, {
+            className={cn(styles.item, {
               [styles.active]: space.id === p.currentSpaceId,
             })}
+            data-role={DOM_ROLE.spaceItem}
             onClick={() => onSpaceClick(space.id)}
             onDoubleClick={() => setEditingSpaceId(space.id)}
             data-position={space.position}
@@ -125,7 +127,8 @@ export function SpacesList(p: {
             />
             {space.id === p.itemInEdit && p.spaces.length > 1 && (
               <button
-                className={`spaces-list__delete-button ${styles.deleteButton}`}
+                className={styles.deleteButton}
+                data-role={DOM_ROLE.spaceDelete}
                 title="Delete space"
                 onMouseDown={() => deleteSpace(space)}
               >

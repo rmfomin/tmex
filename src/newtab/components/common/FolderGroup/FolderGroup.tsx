@@ -9,7 +9,8 @@ import { Action } from "@/newtab/state/state";
 import cn from "clsx";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import ChevronIcon from "@/newtab/components/common/FolderGroup/icons/shevron.svg";
-import "@/newtab/components/common/FolderGroup/FolderGroup.module.scss";
+import { DOM_ROLE } from "@/newtab/helpers/domRoles";
+import styles from "@/newtab/components/common/FolderGroup/FolderGroup.module.scss";
 
 export const FolderGroup = React.memo(function FolderGroup(p: {
   spaces: SpaceV3[];
@@ -74,9 +75,14 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   }
 
   return (
-    <div className="folder-group" data-group-id={p.group.id}>
+    <div
+      className={styles.root}
+      data-role={DOM_ROLE.folderGroup}
+      data-group-id={p.group.id}
+    >
       <div
-        className="folder-group__header draggable-item"
+        className={cn("draggable-item", styles.header)}
+        data-role={DOM_ROLE.groupHeader}
         data-id={p.group.id}
         data-folder-id={p.folderId}
         data-group-id={p.group.id}
@@ -87,8 +93,8 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
         }}
       >
         <button
-          className={cn("folder-group__toggle", {
-            "folder-group__toggle--collapsed": p.group.collapsed,
+          className={cn(styles.toggle, {
+            [styles.toggleCollapsed]: p.group.collapsed,
           })}
           onClick={onToggleCollapsed}
           title={p.group.collapsed ? "Expand group" : "Collapse group"}
@@ -96,7 +102,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           <ChevronIcon />
         </button>
         <EditableTitle
-          className="folder-group__title"
+          className={styles.title}
           inEdit={p.group.id === p.itemInEdit}
           setEditing={setEditing}
           localTitle={localTitle}
@@ -127,7 +133,8 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
         ) : null}
       </div>
       <div
-        className="folder-group__items"
+        className={styles.items}
+        data-role={DOM_ROLE.groupItems}
         data-folder-id={p.folderId}
         data-group-id={p.group.id}
       >

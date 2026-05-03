@@ -27,14 +27,15 @@ import {
   getItemIdByIndex,
   getOverlappedDropArea,
 } from "@/newtab/helpers/dragging/dragAndDrop";
+import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 test("getItemIdByIndex returns group id for top-level group drop target", () => {
   const groupEl = {
     querySelector: jest.fn((selector: string) => {
-      if (selector.includes(".folder-group__header")) {
+      if (selector.includes(roleSelector(DOM_ROLE.groupHeader))) {
         return { dataset: { id: "100" } };
       }
-      if (selector.includes(".folder-item__inner")) {
+      if (selector.includes(roleSelector(DOM_ROLE.folderItem))) {
         return { dataset: { id: "101" } };
       }
       return undefined;
@@ -67,10 +68,8 @@ test("getItemIdByIndex returns bookmark id for top-level bookmark drop target", 
 test("group header drag preview uses the whole group element", () => {
   const group = {} as HTMLElement;
   const header = ({
-    classList: {
-      contains: jest.fn(
-        (className: string) => className === "folder-group__header"
-      ),
+    dataset: {
+      role: DOM_ROLE.groupHeader,
     },
     parentElement: group,
   } as unknown) as HTMLElement;
@@ -102,7 +101,14 @@ test("overlapped drop area prefers nested group area over parent folder area", (
     objectId: 10,
     groupId: 100,
     element: {} as HTMLElement,
-    rect: { left: 20, right: 280, top: 80, bottom: 140, width: 260, height: 60 },
+    rect: {
+      left: 20,
+      right: 280,
+      top: 80,
+      bottom: 140,
+      width: 260,
+      height: 60,
+    },
     itemRects: [],
   } as any;
   const event = { clientX: 100, clientY: 100 } as MouseEvent;
@@ -116,20 +122,34 @@ test("overlapped drop area prefers group header when cursor is inside its real r
     groupId: 100,
     insertAtEnd: true,
     element: {} as HTMLElement,
-    rect: { left: 20, right: 280, top: 80, bottom: 108, width: 260, height: 28 },
+    rect: {
+      left: 20,
+      right: 280,
+      top: 80,
+      bottom: 108,
+      width: 260,
+      height: 28,
+    },
     itemRects: [],
   } as any;
   const emptyGroupItemsArea = {
     objectId: 10,
     groupId: 100,
     element: {} as HTMLElement,
-    rect: { left: 20, right: 280, top: 110, bottom: 128, width: 260, height: 18 },
+    rect: {
+      left: 20,
+      right: 280,
+      top: 110,
+      bottom: 128,
+      width: 260,
+      height: 18,
+    },
     itemRects: [],
   } as any;
   const event = { clientX: 100, clientY: 92 } as MouseEvent;
 
   expect(
-    getOverlappedDropArea([groupHeaderArea, emptyGroupItemsArea], event),
+    getOverlappedDropArea([groupHeaderArea, emptyGroupItemsArea], event)
   ).toBe(groupHeaderArea);
 });
 
@@ -137,14 +157,12 @@ test("empty group items keep a stable drop zone before dragging starts", () => {
   const source = fs.readFileSync(
     path.join(
       __dirname,
-      "../newtab/components/common/FolderGroup/FolderGroup.module.scss",
+      "../newtab/components/common/FolderGroup/FolderGroup.module.scss"
     ),
-    "utf8",
+    "utf8"
   );
 
-  const baseRule = source.match(
-    /:global\(\.folder-group__items\) \{[^}]*\}/,
-  )?.[0];
+  const baseRule = source.match(/\.items \{[^}]*\}/)?.[0];
 
   expect(baseRule).toContain("min-height: 18px;");
 });
@@ -169,7 +187,7 @@ test("group header can be used as a drop area that inserts into group end", () =
           x: 10,
           y: 20,
           toJSON: jest.fn(),
-        }) as DOMRect,
+        } as DOMRect)
     ),
   } as unknown) as Element;
 
@@ -187,11 +205,11 @@ test("group drop target style outlines the whole group", () => {
   const source = fs.readFileSync(
     path.join(
       __dirname,
-      "../newtab/components/common/FolderGroup/FolderGroup.module.scss",
+      "../newtab/components/common/FolderGroup/FolderGroup.module.scss"
     ),
-    "utf8",
+    "utf8"
   );
 
-  expect(source).toContain(".folder-group--drop-target");
+  expect(source).toContain('[data-drop-target="true"]');
   expect(source).toContain("outline:");
 });

@@ -1,6 +1,6 @@
 import { ensureDefaultSpace } from "@/newtab/helpers/ensureDefaultSpace";
 
-test("creates default Bookmarks space when spaces are empty", () => {
+test("creates default bookmarks space when spaces are empty", () => {
   const state: any = {
     spaces: [],
     currentSpaceId: -1,
@@ -13,7 +13,7 @@ test("creates default Bookmarks space when spaces are empty", () => {
       id: 1,
       position: "a0",
       objectType: "space",
-      title: "Bookmarks",
+      title: "Default bookmarks",
       folders: [],
     },
   ]);
