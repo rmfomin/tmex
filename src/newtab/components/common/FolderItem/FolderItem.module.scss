@@ -63,7 +63,7 @@
   appearance: none;
   user-select: none;
   border: none;
-  background-color: var(--popup-background-color);
+  background-color: var(--colors-gray-300);
   border-radius: 6px;
   width: 28px;
   height: 28px;
@@ -98,11 +98,14 @@
   border-radius: 4px;
 
   img[src=""] {
-    visibility: hidden;
+    outline-offset: -1px;
+    visibility: visible;
+    border-radius: 3px;
+    background-color: var(--colors-gray-400);
   }
 
   &.opened {
-    background-color: var(--popup-background-color);
+    background-color: var(--colors-gray-300);
     filter: drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.2));
   }
 
