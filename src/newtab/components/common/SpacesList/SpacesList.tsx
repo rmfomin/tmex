@@ -1,6 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
 import PlusIcon from "./icons/plus.svg";
-import DeleteIcon from "./icons/delete.svg";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import cn from "clsx";
 import { DispatchContext } from "@/newtab/state/actions";
@@ -131,9 +130,7 @@ export function SpacesList(p: {
                 data-role={DOM_ROLE.spaceDelete}
                 title="Delete space"
                 onMouseDown={() => deleteSpace(space)}
-              >
-                <DeleteIcon />
-              </button>
+              ></button>
             )}
             {menuSpaceId === space.id && (
               <DropdownMenu
@@ -160,7 +157,7 @@ export function SpacesList(p: {
                     className="dropdown-menu__button dropdown-menu__button--dander focusable"
                     onClick={() => deleteSpace(space)}
                   >
-                    Delete space
+                    <span>Delete space</span>
                   </button>
                 )}
               </DropdownMenu>

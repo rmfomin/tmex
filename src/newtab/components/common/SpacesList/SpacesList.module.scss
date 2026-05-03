@@ -63,6 +63,7 @@
   cursor: pointer;
 
   svg {
+    color: var(--colors-red-600);
     pointer-events: none;
   }
 
@@ -76,6 +77,13 @@
   width: 24px;
   height: 24px;
   flex-shrink: 0;
+}
+
+.dropdownDeleteIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-left: 8px;
 }
 
 .newButton {

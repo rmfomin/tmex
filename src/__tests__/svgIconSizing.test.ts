@@ -36,6 +36,16 @@ describe("svg icon sizing", () => {
     expect(component).not.toContain('<div className={styles.searchIcon}>');
   });
 
+  test("space context menu delete action renders a fixed-size icon", () => {
+    const component = read(
+      "../newtab/components/common/SpacesList/SpacesList.tsx"
+    );
+
+    expect(component).toContain(
+      '<DeleteIcon className={styles.dropdownDeleteIcon} />'
+    );
+  });
+
   test("shared icon buttons fix the current 24px svg size in css", () => {
     const scss = read("../styles/_bookmarks.scss");
 
@@ -48,6 +58,11 @@ describe("svg icon sizing", () => {
         file: "../newtab/components/common/SpacesList/SpacesList.module.scss",
         selector: ".deleteButton svg",
         size: "24px",
+      },
+      {
+        file: "../newtab/components/common/SpacesList/SpacesList.module.scss",
+        selector: ".dropdownDeleteIcon",
+        size: "18px",
       },
       {
         file: "../newtab/components/common/SpacesList/SpacesList.module.scss",
