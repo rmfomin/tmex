@@ -8,20 +8,21 @@ type InitRes = {
   clonedSpacesList: HTMLElement;
   clonedSpacesListRect: DOMRect;
   clonedItems: HTMLElement[];
+  itemSlotLefts: number[];
   draggingItem: HTMLElement;
   draggingItemStartLeft: number;
 };
 
 export function processSpacesDragAndDrop(
   mouseDownEvent: React.MouseEvent,
-  config: PConfigSpaces,
+  config: PConfigSpaces
 ) {
   let dummy: InitRes | undefined;
   let prevOverItem: HTMLElement | undefined = undefined;
   let prevInsertType: string = "";
 
   const target = (mouseDownEvent.target as HTMLElement).closest(
-    roleSelector(DOM_ROLE.spaceItem),
+    roleSelector(DOM_ROLE.spaceItem)
   ) as HTMLElement | null;
 
   if (!target) {
@@ -54,16 +55,20 @@ export function processSpacesDragAndDrop(
     if (insertType === "before") {
       dummy!.draggingItem.dataset.position = insertBetween(
         items[overItemIndex - 1]?.dataset.position ?? "",
-        overItem.dataset.position!,
+        overItem.dataset.position!
       );
     } else {
       dummy!.draggingItem.dataset.position = insertBetween(
         overItem.dataset.position!,
-        items[overItemIndex + 1]?.dataset.position ?? "",
+        items[overItemIndex + 1]?.dataset.position ?? ""
       );
     }
 
-    updateItemsOrder(dummy!.clonedItems, dummy!.draggingItem);
+    updateItemsOrder(
+      dummy!.clonedItems,
+      dummy!.itemSlotLefts,
+      dummy!.draggingItem
+    );
   }
 
   const onMouseMove = (e: MouseEvent, mouseMoved: boolean) => {
@@ -84,7 +89,7 @@ export function processSpacesDragAndDrop(
             prevOverItem,
             prevInsertType,
             overItem,
-            insertType,
+            insertType
           )
         ) {
           prevOverItem = overItem;
@@ -104,7 +109,7 @@ export function processSpacesDragAndDrop(
       dummy.clonedSpacesList.remove();
       config.onChangeSpacePosition(
         parseInt(dummy.draggingItem.dataset.spaceId!, 10),
-        dummy.draggingItem.dataset.position!,
+        dummy.draggingItem.dataset.position!
       );
     } else {
       // do nothing here
@@ -116,29 +121,28 @@ export function processSpacesDragAndDrop(
   return subscribeMouseEvents(mouseDownEvent, onMouseMove, onMouseUp);
 }
 
-const ITEM_MARGIN_RIGHT = 12;
-
 export function shouldUpdateSpaceInsertPreview(
   prevOverItem: HTMLElement | undefined,
   prevInsertType: string,
   overItem: HTMLElement,
-  insertType: string,
+  insertType: string
 ): boolean {
   return prevOverItem !== overItem || prevInsertType !== insertType;
 }
 
 function createClonedSpacesList(target: HTMLElement): InitRes {
   const origSpacesList = document.querySelector(
-    roleSelector(DOM_ROLE.spacesList),
+    roleSelector(DOM_ROLE.spacesList)
   ) as HTMLElement;
   const origItems = Array.from(
-    origSpacesList.querySelectorAll(roleSelector(DOM_ROLE.spaceItem)),
+    origSpacesList.querySelectorAll(roleSelector(DOM_ROLE.spaceItem))
   );
 
   const listRect = origSpacesList.getBoundingClientRect();
   const clonedSpacesList = origSpacesList.cloneNode() as HTMLElement;
   clonedSpacesList.classList.add("dummy");
   clonedSpacesList.style.position = "absolute";
+  clonedSpacesList.style.boxSizing = "border-box";
   clonedSpacesList.style.width = `${listRect.width}px`;
   clonedSpacesList.style.height = `${listRect.height}px`;
   clonedSpacesList.style.top = `${listRect.top}px`;
@@ -146,12 +150,15 @@ function createClonedSpacesList(target: HTMLElement): InitRes {
 
   let draggingItem: HTMLElement = undefined!;
   let clonedItems: HTMLElement[] = [];
+  let itemSlotLefts: number[] = [];
   origItems.forEach((item) => {
     const clonedItem = item.cloneNode(true) as HTMLElement;
     const itemRect = item.getBoundingClientRect();
     clonedItem.style.position = "absolute";
+    clonedItem.style.boxSizing = "border-box";
     clonedItem.style.width = `${itemRect.width}px`;
     clonedItem.style.top = `${itemRect.top - listRect.top}px`;
+    clonedItem.style.left = `${itemRect.left - listRect.left}px`;
 
     if (target.dataset.spaceId === clonedItem.dataset.spaceId) {
       clonedItem.classList.add("dummy");
@@ -162,25 +169,31 @@ function createClonedSpacesList(target: HTMLElement): InitRes {
     clonedItems.push(clonedItem);
   });
   draggingItem.style.zIndex = "10";
-  updateItemsOrder(clonedItems);
+  itemSlotLefts = getSortedItems(clonedItems).map((item) =>
+    parseFloat(item.style.left)
+  );
+  updateItemsOrder(clonedItems, itemSlotLefts);
 
   return {
     clonedSpacesList,
     clonedSpacesListRect: listRect,
     clonedItems,
+    itemSlotLefts,
     draggingItem,
-    draggingItemStartLeft: parseInt(draggingItem.style.left, 10),
+    draggingItemStartLeft: parseFloat(draggingItem.style.left),
   };
 }
 
-function updateItemsOrder(items: HTMLElement[], skipElement?: HTMLElement) {
+function updateItemsOrder(
+  items: HTMLElement[],
+  itemSlotLefts: number[],
+  skipElement?: HTMLElement
+) {
   const itemsArray = getSortedItems(items);
-  let curX = 2; //padding in spaces-list
-  itemsArray.forEach((item) => {
+  itemsArray.forEach((item, index) => {
     if (item !== skipElement) {
-      item.style.left = `${curX}px`;
+      item.style.left = `${itemSlotLefts[index]}px`;
     }
-    curX += parseInt(item.style.width, 10) + ITEM_MARGIN_RIGHT;
   });
 }
 

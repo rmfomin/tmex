@@ -1,3 +1,20 @@
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &:hover .menuButton {
+    visibility: visible;
+  }
+}
+
+.actions {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  height: 40px;
+}
+
 .spacesList {
   display: flex;
   align-items: center;
@@ -13,11 +30,6 @@
   &.dummy,
   &:hover {
     background-color: var(--input-background-color);
-  }
-
-  &:hover .newButton,
-  &:hover .importButton {
-    visibility: visible;
   }
 }
 
@@ -86,23 +98,26 @@
   margin-left: 8px;
 }
 
-.newButton {
+.menuButton {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 40px;
-  height: 100%;
-  margin-left: -8px;
+  height: 40px;
   visibility: hidden;
   opacity: 0.7;
   cursor: pointer;
+  padding: 0 8px;
+  border: none;
+  background: none;
+  color: inherit;
 
   &:hover {
     opacity: 1;
   }
 }
 
-.newButton svg {
+.menuButton svg {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
@@ -110,25 +125,4 @@
 
 .importInput {
   display: none;
-}
-
-.importButton {
-  display: flex;
-  align-items: center;
-  height: 32px;
-  padding: 0 8px;
-  margin-left: -4px;
-  margin-right: 8px;
-  border: none;
-  background: none;
-  color: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  opacity: 0.7;
-  cursor: pointer;
-  visibility: hidden;
-
-  &:hover {
-    opacity: 1;
-  }
 }
