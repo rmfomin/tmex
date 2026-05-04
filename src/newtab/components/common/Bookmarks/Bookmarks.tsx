@@ -17,8 +17,6 @@ import {
   getCanDragChecker,
 } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { TopBar } from "@/newtab/components/common/TopBar/TopBar";
-import { importFromJson } from "@/newtab/helpers/importExportHelpers";
-import { isEmptyDashboard } from "./isEmptyDashboard";
 import { getBookmarksViewState } from "./getBookmarksViewState";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 
@@ -33,7 +31,6 @@ export function Bookmarks(p: { appState: AppState }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const bookmarksRef = useRef<HTMLDivElement>(null);
-  const importInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (
@@ -174,12 +171,7 @@ export function Bookmarks(p: { appState: AppState }) {
     });
   }
 
-  function onOpenJsonImport() {
-    importInputRef.current?.click();
-  }
-
   const { folders } = getBookmarksViewState(p.appState);
-  const showEmptyImport = isEmptyDashboard(p.appState);
   const searchFilters = p.appState.searchFilters ?? [];
   const searchFilterMode = p.appState.searchFilterMode ?? "or";
 
@@ -197,14 +189,6 @@ export function Bookmarks(p: { appState: AppState }) {
         ref={bookmarksRef}
         onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
       >
-        <input
-          ref={importInputRef}
-          type="file"
-          accept=".json"
-          style={{ display: "none" }}
-          onChange={(e) => importFromJson(e, dispatch)}
-        />
-
         {folders.map((folder) => (
           <Folder
             key={folder.id}
@@ -222,17 +206,8 @@ export function Bookmarks(p: { appState: AppState }) {
           />
         ))}
 
-        {showEmptyImport ? (
-          <div className={styles.emptyDashboard}>
-            <button
-              className={`welcome-button ${styles.emptyDashboardButton}`}
-              onClick={onOpenJsonImport}
-            >
-              Import from JSON
-            </button>
-          </div>
-        ) : p.appState.search === "" &&
-          !searchFilters.some((filter) => filter.enabled) ? (
+        {p.appState.search === "" &&
+        !searchFilters.some((filter) => filter.enabled) ? (
           <div
             className={cn(folderStyles.root, folderStyles.newFolder)}
             data-role={DOM_ROLE.folder}

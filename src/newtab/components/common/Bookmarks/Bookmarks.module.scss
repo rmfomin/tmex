@@ -19,27 +19,6 @@
   box-sizing: border-box;
 }
 
-.emptyDashboard {
-  height: calc(100dvh - 100px);
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.emptyDashboardButton {
-  height: 34px;
-  width: 300px;
-  padding: 8px 8px 8px 32px;
-  font-size: 16px;
-  border-radius: 8px;
-  margin: 0;
-  text-align: center;
-  color: var(--notification-text-color);
-  border: 1px solid var(--input-border-color);
-  background-color: var(--colors-blue-600);
-}
-
 .noBookmarksFound {
   margin-left: 58px;
 }
