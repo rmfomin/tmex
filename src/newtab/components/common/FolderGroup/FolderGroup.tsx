@@ -66,6 +66,12 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   }
 
   function onOpenAllTabs() {
+    p.items.forEach((item) => {
+      if (!item.archived) {
+        chrome.tabs.create({ url: item.url, active: false });
+      }
+    });
+
     setShowMenu(false);
   }
 

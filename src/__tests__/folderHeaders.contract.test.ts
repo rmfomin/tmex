@@ -49,4 +49,21 @@ describe("folder and group header contracts", () => {
     expect(source).toContain("Open all tabs");
     expect(source).toContain("onContextMenu={onHeaderContextMenu}");
   });
+
+  test("group open-all action opens non-archived group bookmarks in background tabs", () => {
+    const source = readSource(
+      "newtab/components/common/FolderGroup/FolderGroup.tsx"
+    );
+
+    const openAllFunction = source.match(
+      /function onOpenAllTabs\(\) \{([\s\S]*?)\n  \}/
+    )?.[1];
+
+    expect(openAllFunction).toContain("p.items.forEach");
+    expect(openAllFunction).toContain("!item.archived");
+    expect(openAllFunction).toContain(
+      "chrome.tabs.create({ url: item.url, active: false })"
+    );
+    expect(openAllFunction).toContain("setShowMenu(false)");
+  });
 });
