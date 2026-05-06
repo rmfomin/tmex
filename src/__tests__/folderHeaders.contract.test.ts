@@ -22,7 +22,7 @@ describe("folder and group header contracts", () => {
     );
 
     expect(source).toContain("&::before");
-    expect(source).toContain("inset: 0 0 0 10px;");
+    expect(source).toContain("inset: 0 0 0 15px;");
     expect(source).toContain("z-index: 0;");
     expect(source).toContain(".header {");
     expect(source).toContain(".items {");
