@@ -2,7 +2,6 @@ import Tab = chrome.tabs.Tab;
 import HistoryItem = chrome.history.HistoryItem;
 import {
   BookmarkItemV3,
-  LegacyFolderItem,
   SpaceV3,
 } from "@/newtab/helpers/types";
 import type React from "react";
@@ -319,13 +318,6 @@ export function genNextRuntimeId(): number {
   return ++runtimeIdCounter;
 }
 
-// temporary and for debug only
-let fakeRemoteIdCounter = 1000000;
-
-export function get_FAKE_REMOTE_ID_TO_BE_DELETED(): number {
-  return ++fakeRemoteIdCounter;
-}
-
 export function filterOpenedTabsFromHistory(
   tabs: Tab[],
   historyItems: HistoryItem[]
@@ -345,7 +337,7 @@ export function findTabsByURL(url: string | undefined, tabs: Tab[]): Tab[] {
 }
 
 export function isFolderItemNotUsed(
-  item: LegacyFolderItem | BookmarkItemV3,
+  item: BookmarkItemV3,
   historyItems: RecentItem[]
 ): boolean {
   if (item.isSection) {

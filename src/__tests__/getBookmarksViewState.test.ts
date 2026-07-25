@@ -95,9 +95,6 @@ function createAppState(): AppState {
       archivedItemsShowed: 0,
     },
     loaded: true,
-    apiCommandsQueue: [],
-    apiCommandId: undefined,
-    apiLastError: undefined,
     undoSteps: [],
     hiddenFeatureIsEnabled: false,
   };

@@ -19,6 +19,5 @@
     "default_icon": "icon_48.png",
     "default_title": "Tablo"
   },
-  "permissions": ["bookmarks", "storage", "history", "tabs"],
-  "optional_host_permissions": ["<all_urls>"]
+  "permissions": ["bookmarks", "storage", "history", "tabs"]
 }

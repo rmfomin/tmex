@@ -2,8 +2,6 @@ import { createContext } from "react";
 import {
   Action,
   ActionPayload,
-  APICommandPayload,
-  APICommandPayloadFull,
   HistoryActionPayload,
   AppState,
   UndoStep,
@@ -25,19 +23,11 @@ import {
   sortByPosition,
 } from "@/newtab/helpers/fractionalIndexes";
 import {
-  convertBookmarkItemV3ToLegacy,
-  convertBookmarkPatchV3ToLegacy,
-  convertFolderPatchV3ToLegacy,
-  convertFolderV3ToLegacy,
-} from "@/newtab/helpers/dataFormatAdapters";
-import { loadFromNetwork } from "@/api/api";
-import {
   addItemsToFolderV3,
   addItemsToGroupV3,
   findAnyItemById,
   findFolderById,
   findFolderByItemId,
-  findItemById,
   findSpaceByFolderId,
   findSpaceById,
   genUniqLocalId,
@@ -47,10 +37,6 @@ import {
   updateSpace,
 } from "@/newtab/state/actionHelpers";
 import { genNextRuntimeId, getRandomHEXColor } from "@/newtab/helpers/utils";
-
-type ObjectWithRemoteId = {
-  remoteId: number;
-};
 
 export const DispatchContext = createContext<ActionDispatcher>(null!);
 
@@ -85,32 +71,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       message,
       isError: true,
     });
-
-  const getCommandsQueue = (
-    state: AppState,
-    command: APICommandPayload
-  ): APICommandPayloadFull[] => {
-    return [
-      ...state.apiCommandsQueue,
-      {
-        type: command.type,
-        body: command.body,
-        rollbackState: state,
-        commandId: genNextRuntimeId(),
-      } as APICommandPayloadFull,
-    ];
-  };
-
-  function isNetworkAvailable(_object?: {
-    remoteId?: number;
-  }): _object is ObjectWithRemoteId {
-    return loadFromNetwork();
-    // todo with it something. So optimistic updates works, and batching works, and no user data looses
-    // if (object && !object.remoteId) {
-    //   showNotificationReducer("Network operation not available", true)
-    //   return false
-    // }
-  }
 
   switch (action.type) {
     case Action.UpdateAppState: {
@@ -272,7 +232,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
 
     case Action.CreateSpace: {
       const lastSpace = state.spaces.at(-1);
-      // todo add network later !!!
 
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.DeleteSpace,
@@ -296,14 +255,12 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
     }
 
     case Action.DeleteSpace: {
-      // todo add network later !!!
 
       const deletingSpace = findSpaceById(state, action.spaceId);
       if (!deletingSpace) {
         return showErrorReducer("Deleting space not found");
       }
 
-      // todo can be different when network supported
       // const undoSteps = getUndoSteps(action, state, () => ({
       //   type: Action.CreateSpace,
       //   spaceId: deletingSpace.id,
@@ -322,7 +279,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
     }
 
     case Action.UpdateSpace: {
-      // todo add network later !!!
       const newProps: Partial<SpaceV3> = {};
       if (typeof action.title !== "undefined") {
         newProps.title = action.title;
@@ -375,11 +331,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         position: newPosition,
       });
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-      if (isNetworkAvailable()) {
-        // todo !!! impl later
-      }
-
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.UpdateSpace,
         spaceId: movingSpace.id,
@@ -389,7 +340,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       return {
         ...state,
         spaces: spaces,
-        apiCommandsQueue,
         undoSteps,
       };
     }
@@ -418,14 +368,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
           action.position ?? insertBetween(lastFolder?.position ?? "", ""),
       };
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-      if (isNetworkAvailable()) {
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.CreateFolder,
-          body: { folder: convertFolderV3ToLegacy(newFolder) },
-        });
-      }
-
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.DeleteFolder,
         folderId: newFolder.id,
@@ -436,7 +378,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         spaces: updateSpace(state.spaces, currentSpace.id, {
           folders: sortByPosition([...currentSpace.folders, newFolder]),
         }),
-        apiCommandsQueue,
         undoSteps,
       };
     }
@@ -449,18 +390,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         return showErrorReducer(`Deleting folder or space not found`);
       }
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-
-      if (isNetworkAvailable(deletingFolder)) {
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.DeleteFolder,
-          body: {
-            folderId: deletingFolder.remoteId,
-          },
-        });
-      }
-
-      //todo can be different when network supported
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.InitDashboard,
         spaces: state.spaces,
@@ -474,7 +403,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
             folders: space.folders.filter((f) => f.id !== action.folderId),
           };
         }),
-        apiCommandsQueue,
         undoSteps,
       };
     }
@@ -506,17 +434,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         return showErrorReducer(`Updating folder not found`);
       }
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-      if (isNetworkAvailable(targetFolder)) {
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.UpdateFolder,
-          body: {
-            folderId: targetFolder.remoteId,
-            folder: convertFolderPatchV3ToLegacy(newProps),
-          },
-        });
-      }
-
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.UpdateFolder,
         folderId: action.folderId,
@@ -535,7 +452,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
           newProps,
           !!newProps.position
         ),
-        apiCommandsQueue,
         undoSteps,
       };
     }
@@ -596,11 +512,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         });
       }
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-      if (isNetworkAvailable(movingFolder)) {
-        //todo !!!
-      }
-
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.UpdateFolder,
         folderId: movingFolder.id,
@@ -610,7 +521,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       return {
         ...state,
         spaces,
-        apiCommandsQueue,
         undoSteps,
       };
     }
@@ -647,24 +557,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         };
       });
 
-      const createdItem = findAnyItemById({ spaces }, action.item.id);
-      const targetFolder = findFolderById(state, action.folderId);
-      let apiCommandsQueue = state.apiCommandsQueue;
-      if (
-        createdItem?.type === "bookmark" &&
-        isNetworkAvailable(targetFolder)
-      ) {
-        //todo maybe we should not check presence of removeId at all here. and just let it be resolved async?
-        // otherwise how I create folder with items in several actions?
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.CreateFolderItem, // TODO USE DIFFERENT ACTION TYPES !!!
-          body: {
-            folderId: targetFolder.remoteId,
-            item: convertBookmarkItemV3ToLegacy(createdItem),
-          },
-        });
-      }
-
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.DeleteFolderItems,
         itemIds: [action.item.id],
@@ -673,28 +565,11 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       return {
         ...state,
         spaces: spaces,
-        apiCommandsQueue,
         undoSteps,
       };
     }
 
     case Action.DeleteFolderItems: {
-      let apiCommandsQueue = state.apiCommandsQueue;
-      let removingItems = action.itemIds.map(
-        (itemId) => findItemById(state, itemId)!
-      );
-      if (isNetworkAvailable()) {
-        // also decide what to do with validation of remoteId
-        const itemRemoteIds = removingItems.map((item) => item.remoteId!);
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.DeleteFolderItems,
-          body: {
-            folderItemIds: itemRemoteIds,
-          },
-        });
-      }
-
-      // TODO: Undo for deleting folders for network should be different
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.InitDashboard,
         spaces: state.spaces,
@@ -720,7 +595,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       return {
         ...state,
         spaces: action.itemIds.reduce(deleteItemsFromFolders, state.spaces),
-        apiCommandsQueue,
         undoSteps,
       };
     }
@@ -754,20 +628,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         return showErrorReducer("Folder was not found");
       }
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-      if (
-        originalItem.type === "bookmark" &&
-        isNetworkAvailable(originalItem)
-      ) {
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.UpdateFolderItem,
-          body: {
-            folderItemId: originalItem.remoteId,
-            item: convertBookmarkPatchV3ToLegacy(newProps),
-          },
-        });
-      }
-
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.UpdateFolderItem,
         itemId: originalItem.id,
@@ -790,13 +650,11 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
           newProps,
           folderId
         ),
-        apiCommandsQueue,
         undoSteps,
       };
     }
 
     case Action.MoveFolderItems: {
-      const targetFolder = findFolderById(state, action.targetFolderId);
       const movingItems = action.itemIds.map(
         (itemId) => findAnyItemById(state, itemId)!
       );
@@ -846,32 +704,6 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
         })
       );
 
-      let apiCommandsQueue = state.apiCommandsQueue;
-      //todo decide what to do here
-
-      if (isNetworkAvailable()) {
-        if (
-          !targetFolder?.remoteId ||
-          movingItems.some((item) => !item.remoteId)
-        ) {
-          return showErrorReducer("Network operation not available");
-        }
-        apiCommandsQueue = getCommandsQueue(state, {
-          type: Action.MoveFolderItems,
-          body: {
-            folderId: targetFolder.remoteId,
-            items: action.itemIds.map((itemId) => {
-              const item = findAnyItemById({ spaces }, itemId)!;
-              return {
-                folderItemId: item.remoteId!,
-                position: item.position,
-              };
-            }),
-          },
-        });
-      }
-
-      //todo Generate undo actions to restore each item to its original folder and position
       const undoSteps = getUndoSteps(action, state, () => ({
         type: Action.InitDashboard,
         spaces: state.spaces,
@@ -880,45 +712,8 @@ function stateReducer0(state: AppState, action: ActionPayload): AppState {
       return {
         ...state,
         spaces: spaces,
-        apiCommandsQueue,
         undoSteps,
       };
-    }
-
-    /********************************************************
-     * API HELPERS
-     ********************************************************/
-
-    case Action.APICommandResolved: {
-      return {
-        ...state,
-        apiCommandId: undefined,
-        apiCommandsQueue: state.apiCommandsQueue.filter(
-          (cmd) => cmd.commandId !== action.commandId
-        ),
-      };
-    }
-
-    case Action.APIConfirmEntityCreated: {
-      if (action.entityType === "bookmark") {
-        return {
-          ...state,
-          spaces: updateFolderItem(state.spaces, action.localId, {
-            remoteId: action.remoteId,
-          }),
-        };
-      } else if (action.entityType === "folder") {
-        return {
-          ...state,
-          spaces: updateFolder(state.spaces, action.localId, {
-            remoteId: action.remoteId,
-          }),
-        };
-      } else {
-        throw new Error(
-          `Unknown entityType in APIConfirmEntityCreated, ${action.entityType}`
-        );
-      }
     }
 
     default:

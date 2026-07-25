@@ -5,6 +5,20 @@ const { getCommonConfig } = require("../../webpack/webpack.common");
 export {};
 
 describe("style build configuration", () => {
+  test("source and production manifests do not request host permissions", () => {
+    const sourceManifests = [
+      path.join(__dirname, "../../public/manifest-normal.json"),
+      path.join(__dirname, "../../public/manifest-overrideless.json"),
+    ];
+    const productionManifest = path.join(__dirname, "../../dist/manifest.json");
+
+    [...sourceManifests, productionManifest].forEach((manifestPath) => {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      expect(manifest.optional_host_permissions).toBeUndefined();
+      expect(JSON.stringify(manifest)).not.toContain("<all_urls>");
+    });
+  });
+
   test("newtab html keeps linking the compiled style.css asset", () => {
     const htmlPath = path.join(__dirname, "../../public/newtab.html");
     const html = fs.readFileSync(htmlPath, "utf8");

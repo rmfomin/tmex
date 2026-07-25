@@ -16,10 +16,6 @@ jest.mock("@/newtab/state/storage", () => ({
   ],
 }));
 
-jest.mock("@/api/api", () => ({
-  loadFromNetwork: jest.fn(() => false),
-}));
-
 const localStorageMock = {
   getItem: jest.fn(() => null),
   setItem: jest.fn(),
@@ -103,9 +99,6 @@ function createState(): AppState {
     loaded: true,
     page: "default",
     hiddenFeatureIsEnabled: false,
-    apiCommandsQueue: [],
-    apiCommandId: undefined,
-    apiLastError: undefined,
     undoSteps: [],
     achievements: {
       folderCreated: 0,

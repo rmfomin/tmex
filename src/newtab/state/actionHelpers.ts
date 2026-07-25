@@ -5,7 +5,6 @@ import {
   BookmarkItemV3,
   FolderV3,
   GroupV3,
-  LegacyFolderItem,
   FolderItemToCreate,
   ItemToCreateV3,
   ItemV3,
@@ -384,7 +383,7 @@ export function updateFolder(
 export function updateFolderItem(
   spaces: SpaceV3[],
   itemId: number,
-  newItemProps: Partial<LegacyFolderItem> & { collapsed?: boolean },
+  newItemProps: Partial<BookmarkItemV3> & { collapsed?: boolean },
   folderId?: number //just optimization
 ): SpaceV3[] {
   if (!folderId) {

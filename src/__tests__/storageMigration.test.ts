@@ -23,6 +23,21 @@ Object.defineProperty(global, "BroadcastChannel", {
   configurable: true,
 });
 
+const storageGet = jest.fn();
+const storageSet = jest.fn((_: unknown, callback?: () => void) => callback?.());
+
+Object.defineProperty(global, "chrome", {
+  value: {
+    storage: {
+      local: {
+        get: storageGet,
+        set: storageSet,
+      },
+    },
+  },
+  configurable: true,
+});
+
 Object.defineProperty(global, "window", {
   value: {
     matchMedia: () => ({
@@ -35,32 +50,20 @@ Object.defineProperty(global, "window", {
 });
 
 import { SpaceV3 } from "@/newtab/helpers/types";
-import { normalizeStateFromStorageResult } from "@/newtab/state/storage";
+import {
+  getStateFromLS,
+  normalizeStateFromStorageResult,
+  saveStateThrottled,
+} from "@/newtab/state/storage";
 
-test("normalizeStateFromStorageResult migrates legacy v2 spaces to v3", () => {
+test("normalizeStateFromStorageResult resets pre-v3 storage to empty local state", () => {
   const result = normalizeStateFromStorageResult({
     spaces: [
       {
         id: 1,
         position: "a0",
         title: "Legacy space",
-        folders: [
-          {
-            id: 10,
-            position: "a0",
-            title: "Legacy folder",
-            color: "#ffcc00",
-            items: [
-              {
-                id: 100,
-                position: "a0",
-                title: "Legacy item",
-                url: "https://example.com",
-                favIconUrl: "https://example.com/favicon.ico",
-              },
-            ],
-          },
-        ],
+        folders: [],
       },
     ],
     version: 2,
@@ -68,38 +71,11 @@ test("normalizeStateFromStorageResult migrates legacy v2 spaces to v3", () => {
   } as any);
 
   expect(result.version).toBe(3);
-  expect(result.currentSpaceId).toBe(1);
-  expect(result.spaces).toEqual([
-    {
-      id: 1,
-      position: "a0",
-      objectType: "space",
-      title: "Legacy space",
-      folders: [
-        {
-          id: 10,
-          position: "a0",
-          objectType: "folder",
-          title: "Legacy folder",
-          color: "#ffcc00",
-          items: [
-            {
-              id: 100,
-              position: "a0",
-              type: "bookmark",
-              objectType: "bookmark",
-              title: "Legacy item",
-              url: "https://example.com",
-              favIconUrl: "https://example.com/favicon.ico",
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+  expect(result.currentSpaceId).toBeUndefined();
+  expect(result.spaces).toEqual([]);
 });
 
-test("normalizeStateFromStorageResult normalizes v3 spaces with missing objectType", () => {
+test("normalizeStateFromStorageResult normalizes v3 spaces with missing item objectType", () => {
   const result = normalizeStateFromStorageResult({
     spaces: [
       {
@@ -161,48 +137,22 @@ test("normalizeStateFromStorageResult normalizes v3 spaces with missing objectTy
   });
 });
 
-test("normalizeStateFromStorageResult converts legacy section bookmarks to v3 groups", () => {
+test("normalizeStateFromStorageResult rejects structurally invalid v3 spaces", () => {
   const result = normalizeStateFromStorageResult({
+    version: 3,
+    currentSpaceId: 1,
     spaces: [
       {
         id: 1,
         position: "a0",
-        objectType: "space",
-        title: "Main",
-        folders: [
-          {
-            id: 10,
-            position: "a0",
-            objectType: "folder",
-            title: "Folder",
-            items: [
-              {
-                id: 100,
-                position: "a0",
-                type: "bookmark",
-                objectType: "bookmark",
-                title: "Old section",
-                url: "",
-                favIconUrl: "",
-                isSection: true,
-              },
-            ],
-          },
-        ],
+        title: "Missing space object type",
+        folders: [],
       },
     ],
-    version: 3,
   } as any);
 
-  expect(result.spaces[0].folders[0].items[0]).toEqual({
-    id: 100,
-    position: "a0",
-    type: "group",
-    objectType: "group",
-    title: "Old section",
-    collapsed: false,
-    groupItems: [],
-  });
+  expect(result.currentSpaceId).toBeUndefined();
+  expect(result.spaces).toEqual([]);
 });
 
 test("normalizeStateFromStorageResult falls back to defaults for empty storage", () => {
@@ -216,10 +166,122 @@ test("normalizeStateFromStorageResult falls back to defaults for empty storage",
   expect("currentWhatsNew" in result).toBe(false);
 });
 
-test("normalizeStateFromStorageResult normalizes legacy missing color theme to system", () => {
+test("normalizeStateFromStorageResult normalizes missing color theme to system", () => {
   const result = normalizeStateFromStorageResult({
     colorTheme: undefined,
   } as any);
 
   expect(result.colorTheme).toBe("system");
+});
+
+test("getStateFromLS rewrites nested remote fields as canonical local state", () => {
+  storageSet.mockClear();
+  storageGet.mockImplementation((_: unknown, callback: (state: unknown) => void) =>
+    callback({
+      version: 3,
+      currentSpaceId: 1,
+      spaces: [
+        {
+          id: 1,
+          remoteId: 10,
+          position: "a0",
+          objectType: "space",
+          title: "Main",
+          folders: [
+            {
+              id: 2,
+              remoteId: 20,
+              position: "a0",
+              objectType: "folder",
+              title: "Folder",
+              items: [
+                {
+                  id: 3,
+                  remoteId: 30,
+                  position: "a0",
+                  type: "bookmark",
+                  title: "Bookmark",
+                  url: "https://example.com",
+                  favIconUrl: "",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  );
+
+  getStateFromLS(() => undefined);
+
+  expect(storageSet).toHaveBeenCalledTimes(1);
+  expect(storageSet.mock.calls[0][0]).toEqual(
+    expect.objectContaining({
+      version: 3,
+      spaces: [
+        {
+          id: 1,
+          position: "a0",
+          objectType: "space",
+          title: "Main",
+          folders: [
+            {
+              id: 2,
+              position: "a0",
+              objectType: "folder",
+              title: "Folder",
+              items: [
+                {
+                  id: 3,
+                  position: "a0",
+                  type: "bookmark",
+                  objectType: "bookmark",
+                  title: "Bookmark",
+                  url: "https://example.com",
+                  favIconUrl: "",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  );
+});
+
+test("saveStateThrottled writes canonical local spaces", () => {
+  jest.useFakeTimers();
+  storageSet.mockClear();
+
+  saveStateThrottled({
+    version: 3,
+    spaces: [
+      {
+        id: 1,
+        remoteId: 10,
+        position: "a0",
+        objectType: "space",
+        title: "Main",
+        folders: [],
+      },
+    ],
+  } as any);
+  jest.runOnlyPendingTimers();
+  jest.useRealTimers();
+
+  expect(storageSet).toHaveBeenCalledTimes(1);
+  expect(storageSet.mock.calls[0][0]).toEqual(
+    expect.objectContaining({
+      version: 3,
+      spaces: [
+        {
+          id: 1,
+          position: "a0",
+          objectType: "space",
+          title: "Main",
+          folders: [],
+        },
+      ],
+    })
+  );
 });

@@ -1,48 +1,83 @@
 import {
-  convertBookmarkPatchV3ToLegacy,
-  convertLegacySpacesToV3Backup,
-  convertFolderPatchV3ToLegacy,
-  convertFolderV3ToLegacy,
-  convertV3BackupToLegacySpaces,
+  isDataBackupV3,
   normalizeBackupV3,
 } from "@/newtab/helpers/dataFormatAdapters";
-import { DataBackupV3, FolderV3 } from "@/newtab/helpers/types";
+import { DataBackupV3 } from "@/newtab/helpers/types";
 
-test("legacy round-trip is lossy for groups and collapsed flags", () => {
-  const backup: DataBackupV3 = {
+test("normalizeBackupV3 retains only local v3 fields at every entity level", () => {
+  const backup = {
     isTablo: true,
     version: 3,
+    unexpectedBackupProperty: "discard me",
     spaces: [
       {
+        id: 2,
+        remoteId: 200,
+        position: "z0",
+        objectType: "space",
+        title: "Later",
+        unexpectedSpaceProperty: true,
+        folders: [
+          {
+            id: 20,
+            remoteId: 2000,
+            position: "z0",
+            objectType: "folder",
+            title: "Later folder",
+            unexpectedFolderProperty: true,
+            items: [
+              {
+                id: 200,
+                remoteId: 20000,
+                position: "z0",
+                type: "bookmark",
+                title: "Later item",
+                url: "https://later.example",
+                favIconUrl: "",
+                unexpectedBookmarkProperty: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
         id: 1,
+        remoteId: 100,
         position: "a0",
         objectType: "space",
-        title: "Work",
+        title: "Earlier",
         folders: [
           {
             id: 10,
+            remoteId: 1000,
             position: "a0",
             objectType: "folder",
-            title: "Pinned",
-            color: "#abcdef",
-            collapsed: true,
+            title: "First folder",
             items: [
               {
                 id: 100,
+                remoteId: 10000,
                 position: "a0",
                 type: "group",
-                title: "Infra",
-                objectType: "group",
-                collapsed: true,
+                title: "Grouped",
                 groupItems: [
                   {
-                    id: 101,
+                    id: 1002,
+                    remoteId: 10002,
+                    position: "z0",
+                    type: "bookmark",
+                    title: "Second grouped item",
+                    url: "https://group-second.example",
+                    favIconUrl: "",
+                  },
+                  {
+                    id: 1001,
+                    remoteId: 10001,
                     position: "a0",
                     type: "bookmark",
-                    objectType: "bookmark",
-                    title: "Grafana",
-                    url: "https://grafana.example",
-                    favIconUrl: "https://grafana.example/favicon.ico",
+                    title: "First grouped item",
+                    url: "https://group-first.example",
+                    favIconUrl: "",
                   },
                 ],
               },
@@ -53,106 +88,55 @@ test("legacy round-trip is lossy for groups and collapsed flags", () => {
     ],
   };
 
-  const legacySpaces = convertV3BackupToLegacySpaces(backup);
-  const result = convertLegacySpacesToV3Backup(legacySpaces);
+  const result = normalizeBackupV3(backup as DataBackupV3);
 
-  expect(result).not.toEqual(backup);
-  expect(result.spaces[0].folders[0].collapsed).toBeUndefined();
-  expect(result.spaces[0].folders[0].items).toEqual([
-    {
-      id: 101,
-      position: "a0",
-      title: "Grafana",
-      type: "bookmark",
-      objectType: "bookmark",
-      url: "https://grafana.example",
-      favIconUrl: "https://grafana.example/favicon.ico",
-    },
-  ]);
-});
-
-test("legacy compatibility folder serializer is explicit and lossy by design", () => {
-  const folder: FolderV3 = {
-    id: 10,
-    position: "a0",
-    objectType: "folder",
-    title: "Pinned",
-    color: "#abcdef",
-    collapsed: true,
-    items: [
-      {
-        id: 100,
-        position: "a0",
-        type: "group",
-        objectType: "group",
-        title: "Infra",
-        collapsed: true,
-        groupItems: [
-          {
-            id: 101,
-            position: "a0",
-            type: "bookmark",
-            objectType: "bookmark",
-            title: "Grafana",
-            url: "https://grafana.example",
-            favIconUrl: "https://grafana.example/favicon.ico",
-          },
-        ],
-      },
-    ],
-  };
-
-  expect(convertFolderV3ToLegacy(folder)).toEqual({
-    id: 10,
-    position: "a0",
-    title: "Pinned",
-    color: "#abcdef",
-    items: [
-      {
-        id: 101,
-        position: "a0",
-        title: "Grafana",
-        url: "https://grafana.example",
-        favIconUrl: "https://grafana.example/favicon.ico",
-      },
-    ],
-  });
-});
-
-test("legacy compatibility patch serializers strip v3-only fields", () => {
-  expect(
-    convertFolderPatchV3ToLegacy({
-      title: "Renamed",
-      collapsed: true,
-      color: "#abcdef",
-    })
-  ).toEqual({
-    title: "Renamed",
-    color: "#abcdef",
-    archived: undefined,
-    twoColumn: undefined,
-    position: undefined,
-  });
-
-  expect(
-    convertBookmarkPatchV3ToLegacy({
-      title: "New title",
-      collapsed: true,
-      favIconUrl: "https://icon.example/favicon.ico",
-    })
-  ).toEqual({
-    title: "New title",
-    archived: undefined,
-    url: undefined,
-    favIconUrl: "https://icon.example/favicon.ico",
-  });
-});
-
-test("normalizeBackupV3 sorts all nested collections by position", () => {
-  const backup: DataBackupV3 = {
+  expect(result).toEqual({
     isTablo: true,
     version: 3,
     spaces: [
+      {
+        id: 1,
+        position: "a0",
+        objectType: "space",
+        title: "Earlier",
+        folders: [
+          {
+            id: 10,
+            position: "a0",
+            objectType: "folder",
+            title: "First folder",
+            items: [
+              {
+                id: 100,
+                position: "a0",
+                type: "group",
+                objectType: "group",
+                title: "Grouped",
+                groupItems: [
+                  {
+                    id: 1001,
+                    position: "a0",
+                    type: "bookmark",
+                    objectType: "bookmark",
+                    title: "First grouped item",
+                    url: "https://group-first.example",
+                    favIconUrl: "",
+                  },
+                  {
+                    id: 1002,
+                    position: "z0",
+                    type: "bookmark",
+                    objectType: "bookmark",
+                    title: "Second grouped item",
+                    url: "https://group-second.example",
+                    favIconUrl: "",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
       {
         id: 2,
         position: "z0",
@@ -169,6 +153,7 @@ test("normalizeBackupV3 sorts all nested collections by position", () => {
                 id: 200,
                 position: "z0",
                 type: "bookmark",
+                objectType: "bookmark",
                 title: "Later item",
                 url: "https://later.example",
                 favIconUrl: "",
@@ -177,64 +162,83 @@ test("normalizeBackupV3 sorts all nested collections by position", () => {
           },
         ],
       },
+    ],
+  });
+});
+
+test("isDataBackupV3 distinguishes an invalid backup from a valid empty backup", () => {
+  expect(
+    isDataBackupV3({
+      isTablo: true,
+      version: 3,
+      spaces: [],
+    })
+  ).toBe(true);
+
+  expect(
+    isDataBackupV3({
+      isTablo: true,
+      version: 3,
+      spaces: [
+        {
+          id: 1,
+          position: "a0",
+          title: "Missing object type",
+          folders: [],
+        },
+      ],
+    })
+  ).toBe(false);
+});
+
+test("normalizeBackupV3 sorts positions by code unit order", () => {
+  const result = normalizeBackupV3({
+    isTablo: true,
+    version: 3,
+    spaces: [
       {
         id: 1,
         position: "a0",
         objectType: "space",
-        title: "Earlier",
+        title: "Lowercase",
+        folders: [],
+      },
+      {
+        id: 2,
+        position: "Z0",
+        objectType: "space",
+        title: "Uppercase",
+        folders: [],
+      },
+    ],
+  });
+
+  expect(result.spaces.map((space) => space.position)).toEqual(["Z0", "a0"]);
+});
+
+test("normalizeBackupV3 canonicalizes missing optional item objectType", () => {
+  const result = normalizeBackupV3({
+    isTablo: true,
+    version: 3,
+    spaces: [
+      {
+        id: 1,
+        position: "a0",
+        objectType: "space",
+        title: "Main",
         folders: [
-          {
-            id: 11,
-            position: "z0",
-            objectType: "folder",
-            title: "Second folder",
-            items: [
-              {
-                id: 111,
-                position: "z0",
-                type: "bookmark",
-                title: "Second item",
-                url: "https://second.example",
-                favIconUrl: "",
-              },
-            ],
-          },
           {
             id: 10,
             position: "a0",
             objectType: "folder",
-            title: "First folder",
+            title: "Pinned",
             items: [
-              {
-                id: 101,
-                position: "z0",
-                type: "group",
-                title: "Grouped",
-                groupItems: [
-                  {
-                    id: 1012,
-                    position: "z0",
-                    type: "bookmark",
-                    title: "Second grouped item",
-                    url: "https://group-second.example",
-                    favIconUrl: "",
-                  },
-                  {
-                    id: 1011,
-                    position: "a0",
-                    type: "bookmark",
-                    title: "First grouped item",
-                    url: "https://group-first.example",
-                    favIconUrl: "",
-                  },
-                ],
-              },
               {
                 id: 100,
                 position: "a0",
                 type: "bookmark",
-                title: "First item",
-                url: "https://first.example",
+                title: "Bookmark",
+                url: "https://example.com",
                 favIconUrl: "",
               },
             ],
@@ -242,27 +246,7 @@ test("normalizeBackupV3 sorts all nested collections by position", () => {
         ],
       },
     ],
-  };
+  });
 
-  const result = normalizeBackupV3(backup);
-
-  expect(result.spaces.map((space) => space.title)).toEqual([
-    "Earlier",
-    "Later",
-  ]);
-  expect(result.spaces[0].folders.map((folder) => folder.title)).toEqual([
-    "First folder",
-    "Second folder",
-  ]);
-  expect(result.spaces[0].folders[0].items.map((item) => item.title)).toEqual([
-    "First item",
-    "Grouped",
-  ]);
-  const groupedItem = result.spaces[0].folders[0].items[1];
-  expect(groupedItem.type).toBe("group");
-  expect(
-    groupedItem.type === "group"
-      ? groupedItem.groupItems.map((item) => item.title)
-      : []
-  ).toEqual(["First grouped item", "Second grouped item"]);
+  expect(result.spaces[0].folders[0].items[0].objectType).toBe("bookmark");
 });

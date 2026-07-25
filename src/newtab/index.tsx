@@ -56,5 +56,4 @@ function preprocessLoadedState(state: SavingState): void {
 }
 
 // Запуск
-// Здесь будет развилка на startFromNetwork
 startLocally();

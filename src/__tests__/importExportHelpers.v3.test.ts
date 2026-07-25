@@ -48,7 +48,7 @@ const {
   importSpaceFromJson,
 } = require("../newtab/helpers/importExportHelpers");
 const { normalizeBackupV3 } = require("../newtab/helpers/dataFormatAdapters");
-const legacyExportFixture = require("../../docs/tech-debt/02apr.json");
+const v3ExportFixture = require("../../docs/tech-debt/02apr.json");
 
 function mockFileReaderWithContents(fileContents: string) {
   Object.defineProperty(global, "FileReader", {
@@ -148,8 +148,8 @@ test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => 
 });
 
 test("createExportBackupV3 is compatible with the committed v3 backup fixture", () => {
-  expect(createExportBackupV3(legacyExportFixture.spaces).spaces).toEqual(
-    normalizeBackupV3(legacyExportFixture).spaces
+  expect(createExportBackupV3(v3ExportFixture.spaces).spaces).toEqual(
+    normalizeBackupV3(v3ExportFixture).spaces
   );
 });
 
@@ -228,7 +228,7 @@ test("createExportSpaceBackupV3 exports one normalized v3 space", () => {
   });
 });
 
-test("importFromJson accepts legacy tabme-branded v3 backups", () => {
+test("importFromJson accepts tabme-branded v3 backups", () => {
   const dispatch = jest.fn();
   const fileContents = JSON.stringify({
     isTabme: true,
@@ -310,6 +310,44 @@ test("importFromJson tells users to use Import space for space backups", () => {
   );
 });
 
+test("importFromJson rejects structurally invalid v3 backups without replacing the dashboard", () => {
+  const dispatch = jest.fn();
+  mockFileReaderWithContents(
+    JSON.stringify({
+      isTablo: true,
+      version: 3,
+      spaces: [
+        {
+          id: 1,
+          position: "a0",
+          objectType: "space",
+          title: "Main",
+          folders: [
+            {
+              id: 10,
+              position: "a0",
+              objectType: "folder",
+              title: "Invalid item",
+              items: [{ id: 100, position: "a0", title: "Missing type" }],
+            },
+          ],
+        },
+      ],
+    })
+  );
+
+  importFromJson({ target: { files: [{}] } }, dispatch);
+
+  expect(dispatch).toHaveBeenCalledWith({
+    type: "show-notification",
+    isError: true,
+    message: "Unsupported JSON format",
+  });
+  expect(dispatch).not.toHaveBeenCalledWith(
+    expect.objectContaining({ type: "init-dashboard" })
+  );
+});
+
 test("importSpaceFromJson appends one remapped space backup", () => {
   const dispatch = jest.fn();
   const existingSpaces: SpaceV3[] = [
@@ -336,7 +374,6 @@ test("importSpaceFromJson appends one remapped space backup", () => {
           position: "a0",
           objectType: "folder",
           title: "Folder",
-          remoteId: 500,
           items: [
             {
               id: 100,
@@ -344,7 +381,6 @@ test("importSpaceFromJson appends one remapped space backup", () => {
               type: "group",
               objectType: "group",
               title: "Group",
-              remoteId: 600,
               groupItems: [
                 {
                   id: 101,
@@ -354,7 +390,6 @@ test("importSpaceFromJson appends one remapped space backup", () => {
                   title: "Grafana",
                   url: "https://grafana.example",
                   favIconUrl: "https://grafana.example/favicon.ico",
-                  remoteId: 700,
                 },
               ],
             },
@@ -389,11 +424,8 @@ test("importSpaceFromJson appends one remapped space backup", () => {
   expect(importedSpace.title).toBe("Imported");
   expect(importedSpace.id).not.toBe(1);
   expect(importedFolder.id).not.toBe(10);
-  expect(importedFolder.remoteId).toBeUndefined();
   expect(importedGroup.id).not.toBe(100);
-  expect(importedGroup.remoteId).toBeUndefined();
   expect(importedBookmark.id).not.toBe(101);
-  expect(importedBookmark.remoteId).toBeUndefined();
   expect(event.target.value).toBe("");
   expect(dispatch).toHaveBeenCalledWith({
     type: "select-space",

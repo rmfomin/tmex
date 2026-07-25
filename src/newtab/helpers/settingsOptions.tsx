@@ -10,7 +10,6 @@ import {
 import {
   importFromJson,
   onExportJson,
-  onImportFromToby,
 } from "@/newtab/helpers/importExportHelpers";
 import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal";
 import { loadFaviconUrl } from "@/newtab/helpers/faviconUtils";
@@ -294,17 +293,6 @@ export const SettingsOptions = (p: { appState: AppState }) => {
       onClick: onImportExistingBookmarks,
       title: "Import existing Chrome bookmarks into Tablo",
       text: "Import from browser bookmarks",
-    },
-    {
-      onClick: (e) => {
-        onImportFromToby(e, dispatch, () => {
-          showMessage("Bookmarks has been imported", dispatch);
-        });
-      },
-      title:
-        "To get Toby`s 'JSON file' go to Account -> Export -> Json in the Toby App",
-      text: "Import from Toby App JSON",
-      isFile: true,
     },
     {
       onClick: (e) => onImportClick(e),

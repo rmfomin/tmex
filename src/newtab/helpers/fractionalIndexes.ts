@@ -8,7 +8,10 @@
 // instead. So "insertBetween('', positions[0])" inserts at the front and
 // "insertBetween(positions[positions.length - 1], '')" inserts at the back.
 
-import { LegacyFolderItem, FolderItemToCreate, LegacyObject } from "@/newtab/helpers/types";
+import { FolderItemToCreate } from "@/newtab/helpers/types";
+
+type FolderItemWithPosition = FolderItemToCreate & { position: string };
+type Positionable = { position: string };
 
 // VERY WIERD NAMING, it seems like "before" and "after" are mixed
 export function insertBetween(before: string, after: string): string {
@@ -125,9 +128,9 @@ export function getFirstSortedByPosition<T>(
 
 export function addItemsToFolder(
   insertingItems: FolderItemToCreate[],
-  existingItems: LegacyFolderItem[],
+  existingItems: FolderItemWithPosition[],
   insertBeforeItemId?: number
-): LegacyFolderItem[] {
+): FolderItemWithPosition[] {
   const insertBeforeItemIndex = existingItems.findIndex(
     (item) => item.id === insertBeforeItemId
   );
@@ -140,7 +143,7 @@ export function addItemsToFolder(
   let insertAfterItem = existingItems[insertAfterItemIndex];
   let insertBeforeItem = existingItems[insertBeforeItemIndex];
 
-  const newItems: LegacyFolderItem[] = [];
+  const newItems: FolderItemWithPosition[] = [];
   insertingItems.forEach((insertingItem) => {
     const item = insertFolderItem(
       insertingItem,
@@ -156,9 +159,9 @@ export function addItemsToFolder(
 
 function insertFolderItem(
   newItem: FolderItemToCreate,
-  insertAfterItem: LegacyFolderItem | undefined,
-  insertBeforeItem: LegacyFolderItem | undefined
-): LegacyFolderItem {
+  insertAfterItem: FolderItemWithPosition | undefined,
+  insertBeforeItem: FolderItemWithPosition | undefined
+): FolderItemWithPosition {
   return {
     ...newItem,
     position: insertBetween(
@@ -168,8 +171,8 @@ function insertFolderItem(
   };
 }
 
-export function regeneratePositions<T extends LegacyObject>(records: T[]): T[] {
-  let prevObject: LegacyObject | undefined = undefined;
+export function regeneratePositions<T extends Positionable>(records: T[]): T[] {
+  let prevObject: Positionable | undefined = undefined;
 
   records.forEach((obj) => {
     obj.position = insertBetween(prevObject?.position ?? "", "");

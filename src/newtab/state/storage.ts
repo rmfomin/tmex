@@ -1,7 +1,10 @@
 import { AppState } from "@/newtab/state/state";
 import { throttle } from "@/newtab/helpers/utils";
 import { ColorTheme } from "@/newtab/helpers/types";
-import { getV3SpacesView } from "@/newtab/helpers/dataFormatAdapters";
+import {
+  areSpacesV3,
+  normalizeBackupV3,
+} from "@/newtab/helpers/dataFormatAdapters";
 
 /**
  * SAVING STATE AND BROADCASTING CHANGES
@@ -14,6 +17,10 @@ export function getBC() {
 }
 
 function saveState(appState: AppState): void {
+  persistSavingState(toCanonicalSavingState(appState));
+}
+
+function toCanonicalSavingState(appState: Partial<SavingState>): SavingState {
   const savingState: any = {};
   savingStateKeys.forEach((key) => {
     if (key === "version") {
@@ -23,9 +30,19 @@ function saveState(appState: AppState): void {
     }
   });
 
+  savingState.spaces = areSpacesV3(savingState.spaces)
+    ? normalizeBackupV3({
+        isTablo: true,
+        version: 3,
+        spaces: savingState.spaces,
+      }).spaces
+    : [];
+
+  return savingState as SavingState;
+}
+
+function persistSavingState(savingState: SavingState): void {
   chrome.storage.local.set(savingState, () => {
-    // TODO. store in LS only when last transaction confirmed by server
-    // if last transaction was not confirmed, reload app and use prev state from LS
     bc.postMessage({ type: "folders-updated" });
   });
 }
@@ -73,7 +90,17 @@ export function normalizeStateFromStorageResult(
     result.colorTheme = "system";
   }
 
-  result.spaces = Array.isArray(res.spaces) ? getV3SpacesView(res.spaces as any) : [];
+  const storedSpaces = res.spaces;
+  if (res.version === 3 && areSpacesV3(storedSpaces)) {
+    result.spaces = normalizeBackupV3({
+      isTablo: true,
+      version: 3,
+      spaces: storedSpaces,
+    }).spaces;
+  } else {
+    result.spaces = [];
+    mutableResult.currentSpaceId = savingStateDefaultValues.currentSpaceId;
+  }
   result.version = 3;
   result.hiddenFeatureIsEnabled = res.hiddenFeatureIsEnabled ?? false;
 
@@ -85,6 +112,12 @@ export function getStateFromLS(
 ): void {
   chrome.storage.local.get(savingStateKeys, (res) => {
     const result = normalizeStateFromStorageResult(res);
+    const needsCanonicalRewrite = savingStateKeys.some(
+      (key) => JSON.stringify(res[key]) !== JSON.stringify(result[key])
+    );
+    if (needsCanonicalRewrite) {
+      persistSavingState(toCanonicalSavingState(result));
+    }
     callback(result);
   });
 }

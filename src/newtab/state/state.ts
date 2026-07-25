@@ -3,8 +3,6 @@ import {
   ColorTheme,
   FolderItemToCreate,
   ItemToCreateV3,
-  LegacyFolderApiPayload,
-  LegacyFolderItemApiPayload,
   SpaceV3,
 } from "@/newtab/helpers/types";
 import { SavingState } from "@/newtab/state/storage";
@@ -39,13 +37,6 @@ export type AppAchievements = {
   archivedItemsShowed: number;
 
   // todo add more
-};
-
-export type APICommand = {
-  id: string;
-  status: string;
-  apiAction: string;
-  body: any;
 };
 
 export type UndoStep = {
@@ -83,11 +74,6 @@ export type AppState = {
   achievements: AppAchievements; // Stored in LS
   loaded: boolean;
 
-  // API
-  apiCommandsQueue: APICommandPayloadFull[];
-  apiCommandId?: number;
-  apiLastError?: string;
-
   // undo actions (some single actions can be reverted only by set of actions)
   undoSteps: UndoStep[];
 
@@ -120,7 +106,6 @@ let initState: AppState = {
 
   page: "default",
   hiddenFeatureIsEnabled: false,
-  apiCommandsQueue: [],
   undoSteps: [],
   achievements: {
     folderCreated: 0,
@@ -175,7 +160,7 @@ export enum Action {
   FixBrokenIcons = "fix-broken-icons",
   UpdateAppState = "update-app-state", // generic way to set simple value into AppState
 
-  // CRUD OPERATIONS — causes saving on server
+  // CRUD OPERATIONS
   CreateSpace = "create-space",
   DeleteSpace = "delete-space",
   UpdateSpace = "update-space",
@@ -195,45 +180,7 @@ export enum Action {
   UpdateFolderItem = "update-folder-item",
   MoveFolderItems = "move-folder-items",
 
-  SaveBookmarksToCloud = "save-bookmarks-to-cloud",
-
-  // API HELPERS
-  APICommandResolved = "api-command-resolved",
-  APIConfirmEntityCreated = "api-confirm-entity-created",
 }
-
-export type APICommandPayload =
-  | {
-      type: Action.CreateFolder;
-      body: { folder: Partial<LegacyFolderApiPayload> };
-    }
-  | { type: Action.DeleteFolder; body: { folderId: number } }
-  | {
-      type: Action.UpdateFolder;
-      body: { folderId: number; folder: Partial<LegacyFolderApiPayload> };
-    }
-  | { type: Action.MoveFolder; body: { folderId: number; position: string } }
-  | {
-      type: Action.CreateFolderItem;
-      body: { folderId: number; item: LegacyFolderItemApiPayload };
-    }
-  | { type: Action.DeleteFolderItems; body: { folderItemIds: number[] } }
-  | {
-      type: Action.UpdateFolderItem;
-      body: { folderItemId: number; item: Partial<LegacyFolderItemApiPayload> };
-    }
-  | {
-      type: Action.MoveFolderItems;
-      body: {
-        folderId: number;
-        items: { folderItemId: number; position: string }[];
-      };
-    };
-
-export type APICommandPayloadFull = APICommandPayload & {
-  commandId: number;
-  rollbackState: AppState;
-};
 export type HistoryActionPayload = { byUndo?: boolean; historyStepId?: number };
 export type ActionPayload = (
   | { type: Action.Undo; dispatch: ActionDispatcher }
@@ -337,14 +284,6 @@ export type ActionPayload = (
       targetFolderId: number;
       targetGroupId?: number;
       insertBeforeItemId: number | undefined;
-    }
-  | { type: Action.SaveBookmarksToCloud }
-  | { type: Action.APICommandResolved; commandId: number }
-  | {
-      type: Action.APIConfirmEntityCreated;
-      localId: number;
-      remoteId: number;
-      entityType: "folder" | "bookmark";
     }
 ) &
   HistoryActionPayload;

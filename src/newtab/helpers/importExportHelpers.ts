@@ -1,7 +1,5 @@
 import {
   DataBackupV3,
-  LegacyFolder,
-  LegacySpace,
   SpaceBackupV3,
   SpaceV3,
 } from "@/newtab/helpers/types";
@@ -16,68 +14,37 @@ import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { getTopVisitedFromHistory } from "@/newtab/helpers/utils";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import {
-  convertLegacySpacesToV3Backup,
+  isDataBackupV3,
+  isSpaceV3,
   normalizeBackupV3,
 } from "@/newtab/helpers/dataFormatAdapters";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
 
-type LegacyBackup = {
-  isTablo?: true;
-  isTabowski?: true;
-  isTabme?: true;
-  version: number;
-  spaces: LegacySpace[];
-};
-
-function hasSupportedBackupMarker(data: {
-  isTablo?: true;
-  isTabowski?: true;
-  isTabme?: true;
-}) {
-  return (
-    data.isTablo === true || data.isTabowski === true || data.isTabme === true
-  );
+function hasSupportedBackupMarker(data: Record<string, unknown>) {
+  const markers = [data.isTablo, data.isTabowski, data.isTabme];
+  return markers.filter((marker) => marker === true).length === 1;
 }
 
-// TODO(v3-migration): delete after legacy import formats are dropped.
-function isLegacyImportJson(data: LegacyFolder[]) {
-  return Array.isArray(data) && data[0]?.title && data[0]?.items;
-}
-
-// TODO(v3-migration): delete after version 2 backups are no longer supported.
-function isImportJsonV2(data: LegacyBackup) {
+function isSpaceBackupJsonV3(data: unknown): data is SpaceBackupV3 {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return false;
+  }
+  const backup = data as Record<string, unknown>;
   return (
-    hasSupportedBackupMarker(data) &&
-    Array.isArray(data.spaces) &&
-    data.version === 2
-  );
-}
-
-function isImportJsonV3(data: DataBackupV3) {
-  return (
-    hasSupportedBackupMarker(data) &&
-    Array.isArray(data.spaces) &&
-    data.version === 3
-  );
-}
-
-function isSpaceBackupJsonV3(data: SpaceBackupV3) {
-  return (
-    hasSupportedBackupMarker(data) &&
-    data.version === 3 &&
-    data.objectType === "space-backup" &&
-    data.space?.objectType === "space"
+    hasSupportedBackupMarker(backup) &&
+    backup.version === 3 &&
+    backup.objectType === "space-backup" &&
+    isSpaceV3(backup.space)
   );
 }
 
 function getImportableSpaceV3(data: unknown): SpaceV3 | undefined {
-  if (isSpaceBackupJsonV3(data as SpaceBackupV3)) {
-    return (data as SpaceBackupV3).space;
+  if (isSpaceBackupJsonV3(data)) {
+    return data.space;
   }
 
-  if (isImportJsonV3(data as DataBackupV3)) {
-    const spaces = (data as DataBackupV3).spaces;
-    return spaces.length === 1 ? spaces[0] : undefined;
+  if (isDataBackupV3(data)) {
+    return data.spaces.length === 1 ? data.spaces[0] : undefined;
   }
 
   return undefined;
@@ -88,54 +55,10 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
     let lines = e.target.result;
     try {
       const res = JSON.parse(lines);
-      if (isLegacyImportJson(res)) {
-        // TODO(v3-migration): delete this branch after support for legacy array backups is dropped.
-        dispatch({
-          // clear existing folders
-          type: Action.InitDashboard,
-          spaces: [],
-          saveToLS: true,
-        });
-
-        const defaultSpaceId = genUniqLocalId();
-        dispatch({
-          type: Action.CreateSpace,
-          spaceId: defaultSpaceId,
-          title: "Bookmarks",
-        });
-        dispatch({ type: Action.SelectSpace, spaceId: defaultSpaceId });
-
-        const loadedFolders = res as LegacyFolder[];
-        loadedFolders.forEach((loadedFolder) => {
-          dispatch({
-            type: Action.CreateFolder,
-            title: loadedFolder.title,
-            items: loadedFolder.items,
-            color: loadedFolder.color,
-          });
-        });
-
-        showMessage("Backup has been imported", dispatch);
-      } else if (isImportJsonV2(res)) {
-        // TODO(v3-migration): delete this branch after support for version 2 backups is dropped.
-        const data = res as LegacyBackup;
+      if (isDataBackupV3(res)) {
         dispatch({
           type: Action.InitDashboard,
-          spaces: convertLegacySpacesToV3Backup(data.spaces).spaces,
-          saveToLS: true,
-        });
-
-        dispatch({
-          type: Action.SelectSpace,
-          spaceId: -1, //hack to force update
-        });
-
-        showMessage("Backup has been imported", dispatch);
-      } else if (isImportJsonV3(res)) {
-        const data = res as DataBackupV3;
-        dispatch({
-          type: Action.InitDashboard,
-          spaces: normalizeBackupV3(data).spaces,
+          spaces: normalizeBackupV3(res).spaces,
           saveToLS: true,
         });
 
@@ -233,29 +156,24 @@ function cloneSpaceForImport(
   return {
     ...normalized,
     id: genUniqLocalId(),
-    remoteId: undefined,
     position: insertBetween(lastSpace?.position ?? "", ""),
     folders: normalized.folders.map((folder) => ({
       ...folder,
       id: genUniqLocalId(),
-      remoteId: undefined,
       items: folder.items.map((item) => {
         if (item.type === "bookmark") {
           return {
             ...item,
             id: genUniqLocalId(),
-            remoteId: undefined,
           };
         }
 
         return {
           ...item,
           id: genUniqLocalId(),
-          remoteId: undefined,
           groupItems: item.groupItems.map((groupItem) => ({
             ...groupItem,
             id: genUniqLocalId(),
-            remoteId: undefined,
           })),
         };
       }),
@@ -314,67 +232,6 @@ export function importSpaceFromJson(
   fr.readAsText(file);
   event.target.value = "";
 }
-
-export function onImportFromToby(
-  event: any,
-  dispatch: ActionDispatcher,
-  onReady?: () => void
-) {
-  function receivedText(e: any) {
-    let lines = e.target.result;
-    try {
-      const tobyData = JSON.parse(lines) as TobyJson;
-      const validFormat = Array.isArray(tobyData.lists);
-      if (validFormat) {
-        let count = 0;
-        tobyData.lists.forEach((tobyFolder) => {
-          dispatch({
-            type: Action.CreateFolder,
-            title: tobyFolder.title,
-            items: tobyFolder.cards.map((card) => ({
-              id: genUniqLocalId(),
-              title: card.title,
-              url: card.url,
-              favIconUrl: getTempFavIconUrl(card.url),
-            })),
-          });
-          count += tobyFolder.cards.length;
-        });
-        onReady && onReady();
-      } else {
-        dispatch({
-          type: Action.ShowNotification,
-          isError: true,
-          message: "Unsupported JSON format",
-        });
-      }
-    } catch (e) {
-      console.error(e);
-      dispatch({
-        type: Action.ShowNotification,
-        isError: true,
-        message: "Unsupported JSON format",
-      });
-    }
-  }
-
-  const file = event.target.files[0];
-  const fr = new FileReader();
-  fr.onload = receivedText;
-  fr.readAsText(file);
-}
-
-type TobyItem = {
-  title: string;
-  url: string;
-};
-type TobyFolder = {
-  title: string;
-  cards: TobyItem[];
-};
-type TobyJson = {
-  lists: TobyFolder[];
-};
 
 //////////////////////////////////////////////////////////////////////
 // IMPORT BROWSER BOOKMARKS HELPERS

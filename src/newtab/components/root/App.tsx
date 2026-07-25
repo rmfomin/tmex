@@ -7,7 +7,6 @@ import { ImportBookmarksFromSettings } from "@/newtab/components/common/ImportBo
 import { Action, getInitAppState, AppState } from "@/newtab/state/state";
 import { DispatchContext, stateReducer } from "@/newtab/state/actions";
 import { getBC, getStateFromLS } from "@/newtab/state/storage";
-import { executeAPICall } from "@/api/serverCommands";
 import Tab = chrome.tabs.Tab;
 import cn from "clsx";
 import {
@@ -178,32 +177,6 @@ export function App() {
       }, 3500);
     }
   }, [appState.notification]);
-
-  // Берёт следующую API-команду из очереди, если ничего не выполняется.
-  useEffect(() => {
-    // here we run the next command if any
-    if (!appState.apiCommandId && appState.apiCommandsQueue.length > 0) {
-      // take the new command from queue
-      dispatch({
-        type: Action.UpdateAppState,
-        newState: { apiCommandId: appState.apiCommandsQueue[0].commandId },
-      });
-    }
-  }, [appState.apiCommandsQueue, appState.apiCommandId]);
-
-  // Выполняет выбранную API-команду.
-  useEffect(() => {
-    if (appState.apiCommandId) {
-      const currentCommand = appState.apiCommandsQueue.find(
-        (cmd) => cmd.commandId === appState.apiCommandId,
-      );
-      if (currentCommand) {
-        executeAPICall(currentCommand, dispatch);
-      } else {
-        throw new Error("Unacceptable flow, no currentCommand");
-      }
-    }
-  }, [appState.apiCommandId]);
 
   return (
     <DispatchContext.Provider value={dispatch}>

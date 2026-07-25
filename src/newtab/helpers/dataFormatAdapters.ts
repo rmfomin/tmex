@@ -1,156 +1,130 @@
 import {
+  BackupBrandMarker,
   BookmarkItemV3,
   DataBackupV3,
   FolderV3,
   GroupV3,
-  LegacySpace,
   ItemV3,
-  LegacyFolderApiPayload,
-  LegacyFolderItemApiPayload,
   SpaceV3,
 } from "@/newtab/helpers/types";
-import { sortByPosition } from "@/newtab/helpers/fractionalIndexes";
 
-function normalizeBookmarkItemV3(item: BookmarkItemV3): BookmarkItemV3 {
-  return {
-    ...item,
-    objectType: "bookmark",
-  };
-}
+type UnknownRecord = Record<string, unknown>;
 
-function normalizeGroupV3(item: GroupV3): GroupV3 {
-  return {
-    ...item,
-    objectType: "group",
-    groupItems: sortByPosition(item.groupItems.map(normalizeBookmarkItemV3)),
-  };
-}
-
-function normalizeItemV3(item: ItemV3): ItemV3 {
-  if (item.type === "group") {
-    return normalizeGroupV3(item);
-  }
-
-  if (item.isSection) {
-    return {
-      id: item.id,
-      remoteId: item.remoteId,
-      position: item.position,
-      type: "group",
-      objectType: "group",
-      title: item.title,
-      archived: item.archived,
-      collapsed: false,
-      groupItems: [],
-    };
-  }
-
-  return normalizeBookmarkItemV3(item);
-}
-
-function normalizeFolderV3(folder: FolderV3): FolderV3 {
-  return {
-    ...folder,
-    objectType: "folder",
-    items: sortByPosition(folder.items.map(normalizeItemV3)),
-  };
-}
-
-function normalizeSpaceV3(space: SpaceV3): SpaceV3 {
-  return {
-    ...space,
-    objectType: "space",
-    folders: sortByPosition(space.folders.map(normalizeFolderV3)),
-  };
-}
-
-export function normalizeBackupV3(data: DataBackupV3): DataBackupV3 {
-  return {
-    ...data,
-    spaces: sortByPosition(data.spaces.map(normalizeSpaceV3)),
-  };
-}
-
-export function convertBookmarkItemV3ToLegacy(
-  item: BookmarkItemV3
-): LegacyFolderItemApiPayload {
-  return {
-    id: item.id,
-    position: item.position,
-    title: item.title,
-    url: item.url,
-    favIconUrl: item.favIconUrl,
-  };
-}
-
-function convertFolderItemsV3ToLegacy(
-  items: ItemV3[]
-): LegacyFolderItemApiPayload[] {
-  return items.flatMap((item) => {
-    if (item.type === "bookmark") {
-      return [convertBookmarkItemV3ToLegacy(item)];
+function sortByPosition<T extends { position: string }>(records: T[]): T[] {
+  return Array.from(records).sort((left, right) => {
+    if (left.position < right.position) {
+      return -1;
     }
-
-    return item.groupItems.map(convertBookmarkItemV3ToLegacy);
+    if (left.position > right.position) {
+      return 1;
+    }
+    return 0;
   });
 }
 
-export function convertFolderV3ToLegacy(
-  folder: FolderV3
-): LegacyFolderApiPayload {
-  return {
-    id: folder.id,
-    position: folder.position,
-    title: folder.title,
-    color: folder.color,
-    items: convertFolderItemsV3ToLegacy(folder.items),
-  };
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export function convertFolderPatchV3ToLegacy(
-  folder: Partial<FolderV3>
-): Partial<LegacyFolderApiPayload> {
-  return {
-    title: folder.title,
-    color: folder.color,
-    archived: folder.archived,
-    twoColumn: folder.twoColumn,
-    position: folder.position,
-  };
+function isOptionalBoolean(value: UnknownRecord, key: string): boolean {
+  return value[key] === undefined || typeof value[key] === "boolean";
 }
 
-function convertSpaceV3ToLegacy(space: SpaceV3): LegacySpace {
-  return {
-    id: space.id,
-    position: space.position,
-    title: space.title,
-    folders: space.folders.map(convertFolderV3ToLegacy),
-  };
+function isOptionalString(value: UnknownRecord, key: string): boolean {
+  return value[key] === undefined || typeof value[key] === "string";
 }
 
-export function convertV3BackupToLegacySpaces(
-  data: DataBackupV3
-): LegacySpace[] {
-  return normalizeBackupV3(data).spaces.map(convertSpaceV3ToLegacy);
+function hasLocalBase(value: UnknownRecord): boolean {
+  return (
+    typeof value.id === "number" &&
+    typeof value.position === "string" &&
+    typeof value.title === "string" &&
+    isOptionalBoolean(value, "archived") &&
+    isOptionalBoolean(value, "inEdit")
+  );
 }
 
-function convertLegacyFolderItemToV3(
-  item: LegacyFolderItemApiPayload
-): BookmarkItemV3 | GroupV3 {
-  if (item.isSection) {
-    return {
-      id: item.id,
-      position: item.position,
-      title: item.title,
-      type: "group",
-      objectType: "group",
-      archived: item.archived,
-      collapsed: false,
-      groupItems: [],
-    };
+function isBookmarkItemV3(value: unknown): value is BookmarkItemV3 {
+  if (!isRecord(value) || !hasLocalBase(value)) {
+    return false;
   }
 
-  return {
+  return (
+    value.type === "bookmark" &&
+    (value.objectType === undefined || value.objectType === "bookmark") &&
+    typeof value.url === "string" &&
+    typeof value.favIconUrl === "string" &&
+    isOptionalBoolean(value, "isSection")
+  );
+}
+
+function isGroupV3(value: unknown): value is GroupV3 {
+  if (!isRecord(value) || !hasLocalBase(value)) {
+    return false;
+  }
+
+  return (
+    value.type === "group" &&
+    (value.objectType === undefined || value.objectType === "group") &&
+    isOptionalBoolean(value, "collapsed") &&
+    Array.isArray(value.groupItems) &&
+    value.groupItems.every(isBookmarkItemV3)
+  );
+}
+
+export function isItemV3(value: unknown): value is ItemV3 {
+  return isBookmarkItemV3(value) || isGroupV3(value);
+}
+
+export function isFolderV3(value: unknown): value is FolderV3 {
+  if (!isRecord(value) || !hasLocalBase(value)) {
+    return false;
+  }
+
+  return (
+    value.objectType === "folder" &&
+    Array.isArray(value.items) &&
+    value.items.every(isItemV3) &&
+    isOptionalString(value, "color") &&
+    isOptionalBoolean(value, "collapsed") &&
+    isOptionalBoolean(value, "twoColumn")
+  );
+}
+
+export function isSpaceV3(value: unknown): value is SpaceV3 {
+  return (
+    isRecord(value) &&
+    hasLocalBase(value) &&
+    value.objectType === "space" &&
+    Array.isArray(value.folders) &&
+    value.folders.every(isFolderV3)
+  );
+}
+
+export function areSpacesV3(value: unknown): value is SpaceV3[] {
+  return Array.isArray(value) && value.every(isSpaceV3);
+}
+
+function isBackupBrandMarker(value: UnknownRecord): boolean {
+  return (
+    [value.isTablo, value.isTabowski, value.isTabme].filter(
+      (marker) => marker === true
+    ).length === 1
+  );
+}
+
+export function isDataBackupV3(value: unknown): value is DataBackupV3 {
+  return (
+    isRecord(value) &&
+    value.version === 3 &&
+    isBackupBrandMarker(value) &&
+    areSpacesV3(value.spaces)
+  );
+}
+
+function normalizeBookmarkItemV3(item: BookmarkItemV3): BookmarkItemV3 {
+  const source = item as unknown as UnknownRecord;
+  const normalized: BookmarkItemV3 = {
     id: item.id,
     position: item.position,
     title: item.title,
@@ -159,82 +133,99 @@ function convertLegacyFolderItemToV3(
     url: item.url,
     favIconUrl: item.favIconUrl,
   };
+  if (typeof source.archived === "boolean") {
+    normalized.archived = source.archived;
+  }
+  if (typeof source.inEdit === "boolean") {
+    normalized.inEdit = source.inEdit;
+  }
+  if (typeof source.isSection === "boolean") {
+    normalized.isSection = source.isSection;
+  }
+  return normalized;
 }
 
-function convertLegacyFolderToV3(folder: LegacyFolderApiPayload): FolderV3 {
-  return {
+function normalizeGroupV3(item: GroupV3): GroupV3 {
+  const source = item as unknown as UnknownRecord;
+  const normalized: GroupV3 = {
+    id: item.id,
+    position: item.position,
+    title: item.title,
+    type: "group",
+    objectType: "group",
+    groupItems: sortByPosition(item.groupItems.map(normalizeBookmarkItemV3)),
+  };
+  if (typeof source.archived === "boolean") {
+    normalized.archived = source.archived;
+  }
+  if (typeof source.inEdit === "boolean") {
+    normalized.inEdit = source.inEdit;
+  }
+  if (typeof source.collapsed === "boolean") {
+    normalized.collapsed = source.collapsed;
+  }
+  return normalized;
+}
+
+function normalizeItemV3(item: ItemV3): ItemV3 {
+  return item.type === "group"
+    ? normalizeGroupV3(item)
+    : normalizeBookmarkItemV3(item);
+}
+
+function normalizeFolderV3(folder: FolderV3): FolderV3 {
+  const source = folder as unknown as UnknownRecord;
+  const normalized: FolderV3 = {
     id: folder.id,
     position: folder.position,
     objectType: "folder",
     title: folder.title,
-    items: folder.items.map(convertLegacyFolderItemToV3),
-    color: folder.color,
+    items: sortByPosition(folder.items.map(normalizeItemV3)),
   };
+  if (typeof source.color === "string") {
+    normalized.color = source.color;
+  }
+  if (typeof source.collapsed === "boolean") {
+    normalized.collapsed = source.collapsed;
+  }
+  if (typeof source.twoColumn === "boolean") {
+    normalized.twoColumn = source.twoColumn;
+  }
+  if (typeof source.archived === "boolean") {
+    normalized.archived = source.archived;
+  }
+  return normalized;
 }
 
-export function convertBookmarkPatchV3ToLegacy(
-  item: Partial<BookmarkItemV3> & { collapsed?: boolean }
-): Partial<LegacyFolderItemApiPayload> {
-  return {
-    title: item.title,
-    archived: item.archived,
-    url: item.url,
-    favIconUrl: item.favIconUrl,
-  };
-}
-
-function convertLegacySpaceToV3(space: LegacySpace): SpaceV3 {
+function normalizeSpaceV3(space: SpaceV3): SpaceV3 {
   return {
     id: space.id,
     position: space.position,
     objectType: "space",
     title: space.title,
-    folders: space.folders.map(convertLegacyFolderToV3),
+    folders: sortByPosition(space.folders.map(normalizeFolderV3)),
   };
 }
 
-export function convertLegacySpacesToV3Backup(
-  spaces: LegacySpace[]
-): DataBackupV3 {
-  return {
-    isTablo: true,
-    version: 3,
-    spaces: spaces.map(convertLegacySpaceToV3),
-  };
+function normalizeBackupBrandMarker(data: DataBackupV3): BackupBrandMarker {
+  if (data.isTablo) {
+    return { isTablo: true };
+  }
+  if (data.isTabowski) {
+    return { isTabowski: true };
+  }
+  return { isTabme: true };
 }
 
-export function getLegacySpacesView(
-  spaces: SpaceV3[] | LegacySpace[]
-): LegacySpace[] {
-  const firstSpace = spaces[0];
-  if (!firstSpace) {
-    return [];
+export function normalizeBackupV3(data: DataBackupV3): DataBackupV3 {
+  const spaces = sortByPosition(data.spaces.map(normalizeSpaceV3));
+  const marker = normalizeBackupBrandMarker(data);
+
+  if (marker.isTablo) {
+    return { isTablo: true, version: 3, spaces };
   }
-
-  if ("objectType" in firstSpace && firstSpace.objectType === "space") {
-    return convertV3BackupToLegacySpaces({
-      isTablo: true,
-      version: 3,
-      spaces: spaces as SpaceV3[],
-    });
+  if (marker.isTabowski) {
+    return { isTabowski: true, version: 3, spaces };
   }
-
-  return spaces as LegacySpace[];
-}
-
-export function getV3SpacesView(spaces: SpaceV3[] | LegacySpace[]): SpaceV3[] {
-  const firstSpace = spaces[0];
-  if (!firstSpace) {
-    return [];
-  }
-
-  if ("objectType" in firstSpace && firstSpace.objectType === "space") {
-    return normalizeBackupV3({
-      isTablo: true,
-      version: 3,
-      spaces: spaces as SpaceV3[],
-    }).spaces;
-  }
-
-  return convertLegacySpacesToV3Backup(spaces as LegacySpace[]).spaces;
+  return { isTabme: true, version: 3, spaces };
 }

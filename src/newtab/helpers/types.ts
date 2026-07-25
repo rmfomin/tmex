@@ -1,75 +1,13 @@
-/**
- * @deprecated Legacy runtime object for data format v2.
- * Keep until the application fully switches to v3.
- */
-export interface LegacyObject {
-  id: number; // local id
-  remoteId?: number; // server id
-  position: string;
-}
-
-/**
- * @deprecated Legacy runtime object for data format v2.
- * Keep until the application fully switches to v3.
- */
-export interface LegacySpace extends LegacyObject {
-  title: string;
-  folders: LegacyFolder[];
-}
-
-/**
- * @deprecated Legacy runtime object for data format v2.
- * Keep until the application fully switches to v3.
- */
-export interface LegacyFolder extends LegacyObject {
-  title: string;
-  items: LegacyFolderItem[];
-  color?: string;
-  twoColumn?: boolean;
-  archived?: boolean;
-}
-
-/**
- * @deprecated Legacy runtime object for data format v2.
- * Keep until the application fully switches to v3.
- */
-export interface LegacyFolderItem extends LegacyObject {
-  favIconUrl: string;
+export interface FolderItemToCreate {
+  id: number;
   title: string;
   url: string;
-  archived?: boolean;
-  isSection?: boolean; // todo - replace on "type later". not store bool on server
-  inEdit?: boolean;
+  favIconUrl: string;
+  position?: string;
+  isSection?: boolean;
 }
 
-/**
- * @deprecated Legacy runtime object for data format v2.
- * Keep until the application fully switches to v3.
- */
-export type FolderItemToCreate = Pick<
-  LegacyFolderItem,
-  "id" | "favIconUrl" | "url" | "title" | "isSection"
-> & { position?: string };
-
 export type ItemToCreateV3 = FolderItemToCreate | ItemV3;
-
-/**
- * Compatibility-only payload shape for legacy API/import boundaries.
- * Do not use as a runtime source of truth.
- */
-export type LegacyFolderItemApiPayload = Pick<
-  LegacyFolderItem,
-  "id" | "position" | "favIconUrl" | "title" | "url" | "archived" | "isSection"
->;
-
-/**
- * Compatibility-only payload shape for legacy API/import boundaries.
- * Do not use as a runtime source of truth.
- */
-export type LegacyFolderApiPayload = Pick<
-  LegacyFolder,
-  "id" | "position" | "title" | "items" | "color" | "twoColumn" | "archived"
->;
 
 export type ColorTheme = "light" | "system" | "dark";
 
@@ -107,7 +45,6 @@ export type SpaceBackupV3 = BackupBrandMarker & {
 
 export interface SpaceV3 {
   id: number;
-  remoteId?: number;
   position: string;
   objectType: "space";
   title: string;
@@ -116,7 +53,6 @@ export interface SpaceV3 {
 
 export interface FolderV3 {
   id: number;
-  remoteId?: number;
   position: string;
   objectType: "folder";
   title: string;
@@ -129,7 +65,6 @@ export interface FolderV3 {
 
 export interface ItemBaseV3 {
   id: number;
-  remoteId?: number;
   position: string;
   title: string;
   type: ItemTypeV3;

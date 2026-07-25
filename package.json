@@ -6,7 +6,8 @@
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "watch2": "webpack --config webpack/webpack.dev.js --watch --env BUILD_TYPE=overrideless",
-    "build": "webpack --config webpack/webpack.prod.js",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && webpack --config webpack/webpack.prod.js",
     "publish": "node webpack/publish.js",
     "publish-patch": "node webpack/publish.js --patch",
     "clean": "rimraf dist",
