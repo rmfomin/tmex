@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useMemo, useReducer } from "react";
 import { Bookmarks } from "@/newtab/components/common/Bookmarks/Bookmarks";
 import { Sidebar } from "@/newtab/components/common/Sidebar/Sidebar";
 import { Notification } from "@/newtab/components/common/Notification/Notification";
@@ -13,6 +13,11 @@ import {
   getHistory,
   tryLoadMoreHistory,
 } from "@/newtab/helpers/recentHistoryUtils";
+import {
+  chromeRuntimeStore,
+  useChromeRuntimeStore,
+} from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
+import { createRuntimeActionBridge } from "@/newtab/state/chrome-runtime/runtimeActionBridge";
 
 let notificationTimeout: number | undefined;
 let globalAppState: AppState;
@@ -65,7 +70,48 @@ function getCurrentWindow() {
 }
 
 export function App() {
-  const [appState, dispatch] = useReducer(stateReducer, getInitAppState());
+  const [legacyAppState, legacyDispatch] = useReducer(
+    stateReducer,
+    getInitAppState(),
+  );
+  const tabs = useChromeRuntimeStore((state) => state.tabs);
+  const recentItems = useChromeRuntimeStore((state) => state.recentItems);
+  const currentWindowId = useChromeRuntimeStore(
+    (state) => state.currentWindowId,
+  );
+  const lastActiveTabIds = useChromeRuntimeStore(
+    (state) => state.lastActiveTabIds,
+  );
+  const loaded = useChromeRuntimeStore((state) => state.loaded);
+
+  /**
+   * Временный compatibility state для компонентов, которые пока принимают
+   * полный AppState через props. Runtime-поля уже принадлежат Zustand: старые
+   * одноимённые поля reducer здесь намеренно перекрываются и не читаются UI.
+   */
+  const appState: AppState = {
+    ...legacyAppState,
+    tabs,
+    recentItems,
+    currentWindowId,
+    lastActiveTabIds,
+    loaded,
+  };
+
+  const dispatch = useMemo(
+    () =>
+      createRuntimeActionBridge({
+        runtimeStore: chromeRuntimeStore,
+        legacyDispatch,
+        // Chrome API — внешний эффект. Он остаётся в controller-слое App, а
+        // store получает только синхронное изменение своего state.
+        closeTabs: (tabIds) => {
+          chrome.tabs.remove(tabIds);
+          chromeRuntimeStore.getState().closeTabs(tabIds);
+        },
+      }),
+    [legacyDispatch],
+  );
 
   // Обновляет глобальную ссылку на актуальное состояние приложения.
   useEffect(() => {
