@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { handleSearchKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
-import { Action } from "@/newtab/state/state";
-import { DispatchContext } from "@/newtab/state/actions";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import IconSearch from "./icons/search.svg";
 import IconFilter from "./icons/filter.svg";
 import IconClearFilter from "./icons/filter-clear.svg";
@@ -85,12 +84,13 @@ function saveSearchFilterMode(mode: SearchFilterMode) {
   });
 }
 
-export function SearchInput(p: {
-  search: string;
-  searchFilters: SearchFilter[];
-  searchFilterMode: SearchFilterMode;
-}) {
-  const dispatch = useContext(DispatchContext);
+export function SearchInput() {
+  const search = useUiStore((state) => state.search);
+  const searchFilters = useUiStore((state) => state.searchFilters);
+  const searchFilterMode = useUiStore((state) => state.searchFilterMode);
+  const setSearch = useUiStore((state) => state.setSearch);
+  const setSearchFilters = useUiStore((state) => state.setSearchFilters);
+  const setSearchFilterMode = useUiStore((state) => state.setSearchFilterMode);
   const [filtersPanelOpened, setFiltersPanelOpened] = useState(false);
   const [newFilterTitle, setNewFilterTitle] = useState("");
   const [newFilterPattern, setNewFilterPattern] = useState("");
@@ -102,45 +102,36 @@ export function SearchInput(p: {
   const [menuFilterId, setMenuFilterId] = useState<string | undefined>(
     undefined
   );
-  const enabledFiltersCount = p.searchFilters.reduce(
+  const enabledFiltersCount = searchFilters.reduce(
     (prevVal, filter) => prevVal + (filter.enabled ? 1 : 0),
     0
   );
 
   useEffect(() => {
     loadSearchFilters((filters) => {
-      dispatch({
-        type: Action.UpdateAppState,
-        newState: { searchFilters: filters },
-      });
+      setSearchFilters(filters);
     });
     loadSearchFilterMode((searchFilterMode) => {
-      dispatch({
-        type: Action.UpdateAppState,
-        newState: { searchFilterMode },
-      });
+      setSearchFilterMode(searchFilterMode);
     });
-  }, [dispatch]);
+  }, [setSearchFilters, setSearchFilterMode]);
 
   function onSearchChange(event: React.ChangeEvent) {
-    dispatch({ type: Action.UpdateSearch, value: (event.target as any).value });
+    setSearch((event.target as HTMLInputElement).value);
   }
 
   function onClearSearch() {
-    dispatch({ type: Action.UpdateSearch, value: "" });
+    setSearch("");
   }
 
   function updateFilters(filters: SearchFilter[]) {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { searchFilters: filters },
-    });
+    setSearchFilters(filters);
     saveSearchFilters(filters);
   }
 
   function onFilterClick(filter: SearchFilter) {
     updateFilters(
-      p.searchFilters.map((f) => {
+      searchFilters.map((f) => {
         if (f.id === filter.id) {
           return {
             ...f,
@@ -158,7 +149,7 @@ export function SearchInput(p: {
 
   function onClearFilters() {
     updateFilters(
-      p.searchFilters.map((filter) => ({
+      searchFilters.map((filter) => ({
         ...filter,
         enabled: false,
       }))
@@ -166,12 +157,9 @@ export function SearchInput(p: {
   }
 
   function onToggleFilterMode() {
-    const searchFilterMode = p.searchFilterMode === "or" ? "and" : "or";
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { searchFilterMode },
-    });
-    saveSearchFilterMode(searchFilterMode);
+    const nextSearchFilterMode = searchFilterMode === "or" ? "and" : "or";
+    setSearchFilterMode(nextSearchFilterMode);
+    saveSearchFilterMode(nextSearchFilterMode);
   }
 
   function onDeleteFilter(filter: SearchFilter) {
@@ -179,7 +167,7 @@ export function SearchInput(p: {
     if (editingFilterId === filter.id) {
       clearFilterForm();
     }
-    updateFilters(p.searchFilters.filter((f) => f.id !== filter.id));
+    updateFilters(searchFilters.filter((f) => f.id !== filter.id));
   }
 
   function onAddFilterClick() {
@@ -222,7 +210,7 @@ export function SearchInput(p: {
 
     if (editingFilterId) {
       updateFilters(
-        updateSearchFilter(p.searchFilters, editingFilterId, {
+        updateSearchFilter(searchFilters, editingFilterId, {
           title,
           pattern,
         })
@@ -232,7 +220,7 @@ export function SearchInput(p: {
     }
 
     updateFilters([
-      ...p.searchFilters.map((filter) => ({
+      ...searchFilters.map((filter) => ({
         ...filter,
         enabled: false,
       })),
@@ -269,7 +257,7 @@ export function SearchInput(p: {
           className="search"
           type="text"
           placeholder="Search in Tablo"
-          value={p.search}
+          value={search}
           onChange={onSearchChange}
           onKeyDown={(e) => handleSearchKeyDown(e, onClearSearch)}
         />
@@ -298,14 +286,14 @@ export function SearchInput(p: {
           </button>
           <button
             className={cn(styles.filterModeButton, {
-              [styles.active]: p.searchFilterMode === "and",
+              [styles.active]: searchFilterMode === "and",
             })}
             title="Toggle search/filter mode"
             onClick={onToggleFilterMode}
           >
-            {p.searchFilterMode.toUpperCase()}
+            {searchFilterMode.toUpperCase()}
           </button>
-          {p.searchFilters.map((filter) => {
+          {searchFilters.map((filter) => {
             return (
               <div className={styles.filterButtonWrap} key={filter.id}>
                 <button

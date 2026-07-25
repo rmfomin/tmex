@@ -1,6 +1,8 @@
 import { Action } from "@/newtab/state/state";
 import { createChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
+import { createDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { createRuntimeActionBridge } from "@/newtab/state/chrome-runtime/runtimeActionBridge";
+import { createUiStore } from "@/newtab/state/ui/uiStore";
 
 function createTab(id: number): chrome.tabs.Tab {
   return {
@@ -82,4 +84,30 @@ test("bridge передаёт закрытие tabs внешней команд�
   dispatch({ type: Action.CloseTabs, tabIds: [1, 2] });
 
   expect(closeTabs).toHaveBeenCalledWith([1, 2]);
+});
+
+test("bridge направляет dashboard и UI actions в соответствующие Zustand stores", () => {
+  const dashboardStore = createDashboardStore({ spaces: [], currentSpaceId: -1 });
+  const uiStore = createUiStore();
+  const legacyDispatch = jest.fn();
+  const dispatch = createRuntimeActionBridge({
+    runtimeStore: createChromeRuntimeStore(),
+    dashboardStore,
+    uiStore,
+    legacyDispatch,
+    closeTabs: jest.fn(),
+  });
+
+  dispatch({ type: Action.CreateSpace, spaceId: 1, title: "Работа" });
+  dispatch({ type: Action.UpdateSearch, value: "grafana" });
+  dispatch({ type: Action.ShowNotification, message: "Saved" });
+
+  expect(dashboardStore.getState().spaces).toEqual([
+    expect.objectContaining({ id: 1, title: "Работа" }),
+  ]);
+  expect(uiStore.getState()).toMatchObject({
+    search: "grafana",
+    notification: { visible: true, message: "Saved" },
+  });
+  expect(legacyDispatch).not.toHaveBeenCalled();
 });

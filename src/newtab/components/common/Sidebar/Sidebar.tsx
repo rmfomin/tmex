@@ -177,11 +177,7 @@ export function Sidebar(p: { appState: AppState }) {
       onMouseDown={onMouseDown}
     >
       <div className={styles.search}>
-        <SearchInput
-          search={p.appState.search}
-          searchFilters={searchFilters}
-          searchFilterMode={searchFilterMode}
-        />
+        <SearchInput />
       </div>
 
       <div

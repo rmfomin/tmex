@@ -1,7 +1,5 @@
 import HistoryItem = chrome.history.HistoryItem;
 import { faviconsStorage } from "@/newtab/helpers/faviconUtils";
-import { ActionDispatcher } from "@/newtab/state/actions";
-import { Action } from "@/newtab/state/state";
 
 export const miroHashRegExp = /\/board\/([^/?]+)/;
 
@@ -121,17 +119,18 @@ export function getBaseFilteredRecentItems(
 let moreHistoryAlreadyLoaded = false;
 
 // TODO !!! update when user focus the tab
-export function tryLoadMoreHistory(dispatch: ActionDispatcher) {
+/**
+ * Helper не знает, где хранится история. Он только загружает данные и отдаёт
+ * их вызывающему controller/UI-слою; раньше здесь был скрытый dispatch reducer.
+ */
+export function tryLoadMoreHistory(onLoaded: (recentItems: RecentItem[]) => void) {
   if (moreHistoryAlreadyLoaded) {
     return;
   }
   moreHistoryAlreadyLoaded = true;
 
   getHistory(false).then((recentItems) => {
-    dispatch({
-      type: Action.SetTabsOrHistory,
-      recentItems: recentItems,
-    });
+    onLoaded(recentItems);
   });
 }
 

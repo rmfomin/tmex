@@ -6,23 +6,51 @@ import {
   applyTheme,
   getStateFromLS,
   SavingState,
-  saveStateThrottled,
 } from "@/newtab/state/storage";
 import { createRoot } from "react-dom/client";
 import { getFirstSortedByPosition } from "@/newtab/helpers/fractionalIndexes";
 import { faviconsStorage } from "@/newtab/helpers/faviconUtils";
 import { ensureDefaultSpace } from "@/newtab/helpers/ensureDefaultSpace";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
+import { dashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { uiStore } from "@/newtab/state/ui/uiStore";
+import { createBrowserStorageAdapter } from "@/newtab/state/storage-sync/chromeStorageAdapter";
+import { createStorageSyncController } from "@/newtab/state/storage-sync/controller";
 
 async function startLocally() {
   // Читает сохраненное состояние из chrome.storage.local.
   getStateFromLS((res) => {
     // Подготавливает состояние перед запуском React.
     preprocessLoadedState(res);
+    hydrateZustandStores(res);
     // Кладет загруженное состояние в стартовое состояние reducer.
     setInitAppState(res);
     mountApp();
   });
+}
+
+function hydrateZustandStores(state: SavingState): void {
+  dashboardStore.getState().hydrate({
+    spaces: state.spaces,
+    currentSpaceId: state.currentSpaceId ?? state.spaces[0]?.id ?? -1,
+  });
+  uiStore.getState().hydratePreferences({
+    sidebarCollapsed: state.sidebarCollapsed,
+    openBookmarksInNewTab: state.openBookmarksInNewTab,
+    colorTheme: state.colorTheme ?? "system",
+    showRecent: state.showRecent,
+    showArchived: state.showArchived,
+    showNotUsed: state.showNotUsed,
+    hiddenFeatureIsEnabled: state.hiddenFeatureIsEnabled,
+  });
+
+  // Новый persistence controller запускается только после initial hydration,
+  // поэтому пустой Zustand store не может затереть данные пользователя.
+  createStorageSyncController(
+    dashboardStore,
+    uiStore,
+    createBrowserStorageAdapter(),
+  ).start();
 }
 
 function mountApp() {
@@ -51,8 +79,6 @@ function preprocessLoadedState(state: SavingState): void {
   });
 
   applyTheme(state.colorTheme);
-  // Сохраняет подготовленное состояние с задержкой, чтобы не писать слишком часто.
-  saveStateThrottled(state);
 }
 
 // Запуск

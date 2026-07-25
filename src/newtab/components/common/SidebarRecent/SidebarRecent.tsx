@@ -11,6 +11,7 @@ import {
   tryLoadMoreHistory,
 } from "@/newtab/helpers/recentHistoryUtils";
 import { DispatchContext } from "@/newtab/state/actions";
+import { Action } from "@/newtab/state/state";
 import { TabOrRecentItem } from "@/newtab/components/common/SidebarItem/SidebarItem";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import styles from "./SidebarRecent.module.scss";
@@ -36,7 +37,9 @@ const RecentList = React.memo(
         setDisplayedItems(nextItems);
         setPage(nextPage);
       }
-      tryLoadMoreHistory(dispatch);
+      tryLoadMoreHistory((recentItems) => {
+        dispatch({ type: Action.SetTabsOrHistory, recentItems });
+      });
     }, [page, p.items, displayedItems, dispatch]);
 
     const handleScroll = useCallback(() => {

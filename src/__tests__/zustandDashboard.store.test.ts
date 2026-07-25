@@ -66,3 +66,17 @@ test("hydrate заменяет только dashboard data и сохраняет
   expect(store.getState()).toMatchObject({ spaces: [], currentSpaceId: -1 });
   expect(store.getState().selectSpace).toEqual(expect.any(Function));
 });
+
+test("dashboard store применяет новые CRUD actions без React", () => {
+  const store = createDashboardStore({ spaces: [], currentSpaceId: -1 });
+
+  store.getState().createSpace({ id: 1, title: "Работа" });
+  store.getState().createFolder({ id: 10, spaceId: 1, title: "Инфраструктура", color: "#fff" });
+  store.getState().createFolderItem({
+    folderId: 10,
+    item: { id: 100, title: "Grafana", url: "https://grafana.example", favIconUrl: "" },
+  });
+  store.getState().deleteFolderItems([100]);
+
+  expect(store.getState().spaces[0].folders[0].items).toEqual([]);
+});

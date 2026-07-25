@@ -18,6 +18,11 @@ import {
   useChromeRuntimeStore,
 } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
 import { createRuntimeActionBridge } from "@/newtab/state/chrome-runtime/runtimeActionBridge";
+import {
+  dashboardStore,
+  useDashboardStore,
+} from "@/newtab/state/dashboard/dashboardStore";
+import { uiStore, useUiStore } from "@/newtab/state/ui/uiStore";
 
 let notificationTimeout: number | undefined;
 let globalAppState: AppState;
@@ -74,6 +79,8 @@ export function App() {
     stateReducer,
     getInitAppState(),
   );
+  const dashboard = useDashboardStore((state) => state);
+  const ui = useUiStore((state) => state);
   const tabs = useChromeRuntimeStore((state) => state.tabs);
   const recentItems = useChromeRuntimeStore((state) => state.recentItems);
   const currentWindowId = useChromeRuntimeStore(
@@ -91,6 +98,22 @@ export function App() {
    */
   const appState: AppState = {
     ...legacyAppState,
+    spaces: dashboard.spaces,
+    currentSpaceId: dashboard.currentSpaceId,
+    search: ui.search,
+    searchFilters: ui.searchFilters,
+    searchFilterMode: ui.searchFilterMode,
+    itemInEdit: ui.itemInEdit,
+    notification: ui.notification,
+    showRecent: ui.showRecent,
+    showArchived: ui.showArchived,
+    showNotUsed: ui.showNotUsed,
+    openBookmarksInNewTab: ui.openBookmarksInNewTab,
+    sidebarCollapsed: ui.sidebarCollapsed,
+    sidebarHovered: ui.sidebarHovered,
+    colorTheme: ui.colorTheme,
+    page: ui.page,
+    hiddenFeatureIsEnabled: ui.hiddenFeatureIsEnabled,
     tabs,
     recentItems,
     currentWindowId,
@@ -102,6 +125,8 @@ export function App() {
     () =>
       createRuntimeActionBridge({
         runtimeStore: chromeRuntimeStore,
+        dashboardStore,
+        uiStore,
         legacyDispatch,
         // Chrome API — внешний эффект. Он остаётся в controller-слое App, а
         // store получает только синхронное изменение своего state.
@@ -150,7 +175,12 @@ export function App() {
       requestAnimationFrame(() => {
         setTimeout(() => {
           // preload more history
-          tryLoadMoreHistory(dispatch);
+          tryLoadMoreHistory((recentItems) => {
+            dispatch({
+              type: Action.SetTabsOrHistory,
+              recentItems,
+            });
+          });
         }, 2000);
       });
     });
@@ -232,7 +262,7 @@ export function App() {
             "collapsible-sidebar": appState.sidebarCollapsed,
           })}
         >
-          <Notification notification={appState.notification} />
+          <Notification />
           {appState.page === "import" && (
             <ImportBookmarksFromSettings appState={appState} />
           )}
