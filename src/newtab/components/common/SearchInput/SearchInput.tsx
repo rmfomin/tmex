@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { handleSearchKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
 import { useUiStore } from "@/newtab/state/ui/uiStore";
+import { searchControllerSelector } from "@/newtab/state/ui/selectors";
 import IconSearch from "./icons/search.svg";
 import IconFilter from "./icons/filter.svg";
 import IconClearFilter from "./icons/filter-clear.svg";
@@ -53,7 +55,7 @@ function loadSearchFilters(callback: (filters: SearchFilter[]) => void) {
       const storedFilters = res[SEARCH_FILTERS_STORAGE_KEY];
       const legacyFilters = res[LEGACY_HISTORY_FILTERS_STORAGE_KEY];
       callback(normalizeStoredFilters(storedFilters ?? legacyFilters));
-    }
+    },
   );
 }
 
@@ -85,26 +87,29 @@ function saveSearchFilterMode(mode: SearchFilterMode) {
 }
 
 export function SearchInput() {
-  const search = useUiStore((state) => state.search);
-  const searchFilters = useUiStore((state) => state.searchFilters);
-  const searchFilterMode = useUiStore((state) => state.searchFilterMode);
-  const setSearch = useUiStore((state) => state.setSearch);
-  const setSearchFilters = useUiStore((state) => state.setSearchFilters);
-  const setSearchFilterMode = useUiStore((state) => state.setSearchFilterMode);
+  // useShallow предотвращает ререндеры при изменении других полей uiStore
+  const {
+    search,
+    searchFilters,
+    searchFilterMode,
+    setSearch,
+    setSearchFilters,
+    setSearchFilterMode,
+  } = useUiStore(useShallow(searchControllerSelector));
   const [filtersPanelOpened, setFiltersPanelOpened] = useState(false);
   const [newFilterTitle, setNewFilterTitle] = useState("");
   const [newFilterPattern, setNewFilterPattern] = useState("");
   const [newFilterError, setNewFilterError] = useState("");
   const [filterModalOpened, setFilterModalOpened] = useState(false);
   const [editingFilterId, setEditingFilterId] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [menuFilterId, setMenuFilterId] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const enabledFiltersCount = searchFilters.reduce(
     (prevVal, filter) => prevVal + (filter.enabled ? 1 : 0),
-    0
+    0,
   );
 
   useEffect(() => {
@@ -143,7 +148,7 @@ export function SearchInput() {
           ...f,
           enabled: false,
         };
-      })
+      }),
     );
   }
 
@@ -152,7 +157,7 @@ export function SearchInput() {
       searchFilters.map((filter) => ({
         ...filter,
         enabled: false,
-      }))
+      })),
     );
   }
 
@@ -213,7 +218,7 @@ export function SearchInput() {
         updateSearchFilter(searchFilters, editingFilterId, {
           title,
           pattern,
-        })
+        }),
       );
       clearFilterForm();
       return;
@@ -240,7 +245,7 @@ export function SearchInput() {
 
   function onFilterContextMenu(
     event: React.MouseEvent<HTMLButtonElement>,
-    filter: SearchFilter
+    filter: SearchFilter,
   ) {
     event.preventDefault();
     event.stopPropagation();

@@ -1,6 +1,7 @@
 import { createUiStore } from "@/newtab/state/ui/uiStore";
 import {
   persistedPreferencesSelector,
+  searchControllerSelector,
   searchStateSelector,
 } from "@/newtab/state/ui/selectors";
 
@@ -77,4 +78,22 @@ test("ui selectors возвращают только нужный срез state
     searchFilterMode: "or",
   });
   expect(persistedPreferencesSelector(store.getState()).showArchived).toBe(true);
+});
+
+test("search controller selector объединяет search state и commands", () => {
+  const store = createUiStore();
+  const searchController = searchControllerSelector(store.getState());
+
+  expect(searchController).toEqual(expect.objectContaining({
+    search: "",
+    searchFilters: [],
+    searchFilterMode: "or",
+    setSearch: expect.any(Function),
+    setSearchFilters: expect.any(Function),
+    setSearchFilterMode: expect.any(Function),
+  }));
+
+  searchController.setSearch("grafana");
+
+  expect(store.getState().search).toBe("grafana");
 });

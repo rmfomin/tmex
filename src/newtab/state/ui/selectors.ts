@@ -9,6 +9,16 @@ export function searchStateSelector(state: UiStore) {
   };
 }
 
+/** Данные и команды, которыми управляет SearchInput. Использовать с useShallow. */
+export function searchControllerSelector(state: UiStore) {
+  return {
+    ...searchStateSelector(state),
+    setSearch: state.setSearch,
+    setSearchFilters: state.setSearchFilters,
+    setSearchFilterMode: state.setSearchFilterMode,
+  };
+}
+
 export function persistedPreferencesSelector(state: UiStore): UiPreferences {
   return {
     sidebarCollapsed: state.sidebarCollapsed,
