@@ -9,10 +9,10 @@ import {
 import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { Folder } from "@/newtab/components/common/Folder/Folder";
 import { handleBookmarksKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
-import { AppState } from "@/newtab/state/state";
 import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { useUiStore } from "@/newtab/state/ui/uiStore";
-import { findItemById } from "@/newtab/state/actionHelpers";
+import { useChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
+import { findBookmarkItem } from "@/newtab/state/dashboard/itemUtils";
 import { TopBar } from "@/newtab/components/common/TopBar/TopBar";
 import { getBookmarksViewState } from "./getBookmarksViewState";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
@@ -20,7 +20,9 @@ import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
 
-export function Bookmarks(p: { appState: AppState }) {
+export function Bookmarks() {
+  const spaces = useDashboardStore((state) => state.spaces);
+  const currentSpaceId = useDashboardStore((state) => state.currentSpaceId);
   const createFolder = useDashboardStore((state) => state.createFolder);
   const moveFolderItems = useDashboardStore((state) => state.moveFolderItems);
   const moveFolder = useDashboardStore((state) => state.moveFolder);
@@ -29,6 +31,17 @@ export function Bookmarks(p: { appState: AppState }) {
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const setPage = useUiStore((state) => state.setPage);
   const showNotification = useUiStore((state) => state.showNotification);
+  const search = useUiStore((state) => state.search);
+  const searchFilters = useUiStore((state) => state.searchFilters);
+  const searchFilterMode = useUiStore((state) => state.searchFilterMode);
+  const showArchived = useUiStore((state) => state.showArchived);
+  const showNotUsed = useUiStore((state) => state.showNotUsed);
+  const itemInEdit = useUiStore((state) => state.itemInEdit);
+  const sidebarCollapsed = useUiStore((state) => state.sidebarCollapsed);
+  const openBookmarksInNewTab = useUiStore((state) => state.openBookmarksInNewTab);
+  const hiddenFeatureIsEnabled = useUiStore((state) => state.hiddenFeatureIsEnabled);
+  const tabs = useChromeRuntimeStore((state) => state.tabs);
+  const recentItems = useChromeRuntimeStore((state) => state.recentItems);
   const [mouseDownEvent, setMouseDownEvent] = useState<
     React.MouseEvent | undefined
   >(undefined);
@@ -38,13 +51,13 @@ export function Bookmarks(p: { appState: AppState }) {
 
   useEffect(() => {
     if (
-      __prevCurrentSpaceId !== p.appState.currentSpaceId ||
-      __prevSearch !== p.appState.search
+      __prevCurrentSpaceId !== currentSpaceId ||
+      __prevSearch !== search
     ) {
-      __prevCurrentSpaceId = p.appState.currentSpaceId;
-      __prevSearch = p.appState.search;
+      __prevCurrentSpaceId = currentSpaceId;
+      __prevSearch = search;
     }
-  }, [p.appState.currentSpaceId, p.appState.search]);
+  }, [currentSpaceId, search]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +99,7 @@ export function Bookmarks(p: { appState: AppState }) {
         targetSpaceId: number | undefined,
         insertBeforeFolderId: number | undefined
       ) => {
-        moveFolder({ folderId, targetSpaceId: targetSpaceId ?? p.appState.currentSpaceId, insertBeforeFolderId });
+        moveFolder({ folderId, targetSpaceId: targetSpaceId ?? currentSpaceId, insertBeforeFolderId });
 
         setMouseDownEvent(undefined);
       };
@@ -110,7 +123,7 @@ export function Bookmarks(p: { appState: AppState }) {
       };
 
       const canDrag = () => {
-        if (!p.appState.search) return true;
+        if (!search) return true;
         showNotification({ message: "Sorting is unavailable in search" });
         return false;
       };
@@ -131,7 +144,7 @@ export function Bookmarks(p: { appState: AppState }) {
         },
         {
           onChangeSpacePosition,
-          canSortSpaces: () => p.appState.spaces.length > 1,
+          canSortSpaces: () => spaces.length > 1,
         }
       );
     }
@@ -151,7 +164,7 @@ export function Bookmarks(p: { appState: AppState }) {
   }
 
   function openFolderItem(itemId: number, inNewTab: boolean) {
-    const item = findItemById({ spaces: p.appState.spaces }, itemId);
+    const item = findBookmarkItem({ spaces }, itemId);
     if (!item) return;
     if (item.isSection) {
       setItemInEdit(item.id);
@@ -169,14 +182,14 @@ export function Bookmarks(p: { appState: AppState }) {
       chrome.tabs.create({ url: item.url, active: false });
       return;
     }
-    const openedTab = p.appState.tabs.find((tab) => tab.url === item.url);
+    const openedTab = tabs.find((tab) => tab.url === item.url);
     if (openedTab?.id) {
       chrome.tabs.update(openedTab.id, { active: true });
       chrome.windows.update(openedTab.windowId, { focused: true });
       return;
     }
     chrome.tabs.getCurrent((tab) => {
-      if (p.appState.openBookmarksInNewTab) {
+      if (openBookmarksInNewTab) {
         chrome.tabs.create({ url: item.url, active: true });
       } else if (tab?.id) {
         chrome.tabs.update(tab.id, { url: item.url });
@@ -184,14 +197,19 @@ export function Bookmarks(p: { appState: AppState }) {
     });
   }
 
-  const { folders } = getBookmarksViewState(p.appState);
-  const searchFilters = p.appState.searchFilters ?? [];
-  const searchFilterMode = p.appState.searchFilterMode ?? "or";
+  const { folders } = getBookmarksViewState({
+    spaces,
+    currentSpaceId,
+    search,
+    searchFilters,
+    searchFilterMode,
+    showArchived,
+  });
 
   return (
     <div
       className={cn(styles.bookmarksBox, {
-        [styles.withCollapsedSidebar]: p.appState.sidebarCollapsed,
+        [styles.withCollapsedSidebar]: sidebarCollapsed,
       })}
       onMouseDown={onMouseDown}
     >
@@ -200,26 +218,26 @@ export function Bookmarks(p: { appState: AppState }) {
         className={styles.bookmarks}
         data-role={DOM_ROLE.bookmarks}
         ref={bookmarksRef}
-        onKeyDown={(event) => handleBookmarksKeyDown(event, p.appState, openFolderItem)}
+        onKeyDown={(event) => handleBookmarksKeyDown(event, { spaces }, openFolderItem)}
       >
         {folders.map((folder) => (
           <Folder
             key={folder.id}
-            spaces={p.appState.spaces}
+            spaces={spaces}
             folder={folder}
-            tabs={p.appState.tabs}
-            recentItems={p.appState.recentItems}
-            showNotUsed={p.appState.showNotUsed}
-            showArchived={p.appState.showArchived}
-            search={p.appState.search}
+            tabs={tabs}
+            recentItems={recentItems}
+            showNotUsed={showNotUsed}
+            showArchived={showArchived}
+            search={search}
             searchFilters={searchFilters}
             searchFilterMode={searchFilterMode}
-            itemInEdit={p.appState.itemInEdit}
-            hiddenFeatureIsEnabled={p.appState.hiddenFeatureIsEnabled}
+            itemInEdit={itemInEdit}
+            hiddenFeatureIsEnabled={hiddenFeatureIsEnabled}
           />
         ))}
 
-        {p.appState.search === "" &&
+        {search === "" &&
         !searchFilters.some((filter) => filter.enabled) ? (
           <div
             className={cn(folderStyles.root, folderStyles.newFolder)}

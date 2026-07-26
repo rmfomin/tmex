@@ -1,22 +1,27 @@
 import {
   hasSearch,
   isContainsSearch,
+  SearchFilter,
   SearchFilterMode,
 } from "@/newtab/helpers/utils";
 import { SpaceV3, FolderV3 } from "@/newtab/helpers/types";
-import type { AppState } from "@/newtab/state/state";
-import { findSpaceById } from "@/newtab/state/actionHelpers";
+
+/**
+ * Только данные, нужные для построения списка folders.
+ *
+ * Это не AppState: dashboard и UI stores владеют этими полями раздельно.
+ */
+export type BookmarksViewStateInput = {
+  spaces: SpaceV3[];
+  currentSpaceId: number;
+  search: string;
+  searchFilters?: SearchFilter[];
+  searchFilterMode?: SearchFilterMode;
+  showArchived: boolean;
+};
 
 export function getBookmarksViewState(
-  appState: Pick<
-    AppState,
-    | "spaces"
-    | "currentSpaceId"
-    | "search"
-    | "searchFilters"
-    | "searchFilterMode"
-    | "showArchived"
-  >,
+  appState: BookmarksViewStateInput,
 ): {
   folders: FolderV3[];
 } {
@@ -27,9 +32,8 @@ export function getBookmarksViewState(
   let folders: FolderV3[] = [];
 
   if (!searchActive) {
-    const currentSpace = findSpaceById(
-      appState as { spaces: SpaceV3[]; currentSpaceId: number },
-      appState.currentSpaceId,
+    const currentSpace = appState.spaces.find(
+      (space) => space.id === appState.currentSpaceId,
     );
 
     if (currentSpace) {

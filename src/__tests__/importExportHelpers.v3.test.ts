@@ -1,10 +1,5 @@
 import { SpaceV3 } from "@/newtab/helpers/types";
 
-jest.mock("@/newtab/state/actions", () => ({}));
-jest.mock("@/newtab/helpers/actionsHelpersWithDOM", () => ({
-  showMessage: jest.fn(),
-}));
-
 const localStorageMock = {
   getItem: jest.fn(() => null),
   setItem: jest.fn(),
@@ -44,8 +39,11 @@ Object.defineProperty(global, "window", {
 const {
   createExportBackupV3,
   createExportSpaceBackupV3,
-  importFromJson,
-  importSpaceFromJson,
+  parseDashboardImportJson,
+  parseSpaceImportJson,
+  importFromJsonWithCallbacks,
+  importSpaceFromJsonWithCallback,
+  createBrowserBookmarksFolderInputs,
 } = require("../newtab/helpers/importExportHelpers");
 const { normalizeBackupV3 } = require("../newtab/helpers/dataFormatAdapters");
 const v3ExportFixture = require("../../docs/tech-debt/02apr.json");
@@ -228,9 +226,8 @@ test("createExportSpaceBackupV3 exports one normalized v3 space", () => {
   });
 });
 
-test("importFromJson accepts tabme-branded v3 backups", () => {
-  const dispatch = jest.fn();
-  const fileContents = JSON.stringify({
+test("parseDashboardImportJson accepts tabme-branded v3 backups", () => {
+  const result = parseDashboardImportJson(JSON.stringify({
     isTabme: true,
     version: 3,
     spaces: [
@@ -242,21 +239,10 @@ test("importFromJson accepts tabme-branded v3 backups", () => {
         folders: [],
       },
     ],
-  });
+  }));
 
-  mockFileReaderWithContents(fileContents);
-
-  importFromJson(
-    {
-      target: {
-        files: [{}],
-      },
-    },
-    dispatch
-  );
-
-  expect(dispatch).toHaveBeenCalledWith({
-    type: "init-dashboard",
+  expect(result).toEqual({
+    ok: true,
     spaces: [
       {
         id: 1,
@@ -266,17 +252,11 @@ test("importFromJson accepts tabme-branded v3 backups", () => {
         folders: [],
       },
     ],
-    saveToLS: true,
-  });
-  expect(dispatch).toHaveBeenCalledWith({
-    type: "select-space",
-    spaceId: -1,
   });
 });
 
-test("importFromJson tells users to use Import space for space backups", () => {
-  const dispatch = jest.fn();
-  const fileContents = JSON.stringify({
+test("parseDashboardImportJson tells users to use Import space for space backups", () => {
+  const result = parseDashboardImportJson(JSON.stringify({
     isTablo: true,
     version: 3,
     objectType: "space-backup",
@@ -287,33 +267,16 @@ test("importFromJson tells users to use Import space for space backups", () => {
       title: "Main",
       folders: [],
     },
-  });
+  }));
 
-  mockFileReaderWithContents(fileContents);
-
-  importFromJson(
-    {
-      target: {
-        files: [{}],
-      },
-    },
-    dispatch
-  );
-
-  expect(dispatch).toHaveBeenCalledWith({
-    type: "show-notification",
-    isError: true,
+  expect(result).toEqual({
+    ok: false,
     message: "This is a space backup. Use Import space button to add it.",
   });
-  expect(dispatch).not.toHaveBeenCalledWith(
-    expect.objectContaining({ type: "init-dashboard" })
-  );
 });
 
-test("importFromJson rejects structurally invalid v3 backups without replacing the dashboard", () => {
-  const dispatch = jest.fn();
-  mockFileReaderWithContents(
-    JSON.stringify({
+test("parseDashboardImportJson rejects structurally invalid v3 backups", () => {
+  const result = parseDashboardImportJson(JSON.stringify({
       isTablo: true,
       version: 3,
       spaces: [
@@ -333,23 +296,40 @@ test("importFromJson rejects structurally invalid v3 backups without replacing t
           ],
         },
       ],
-    })
-  );
+    }));
 
-  importFromJson({ target: { files: [{}] } }, dispatch);
-
-  expect(dispatch).toHaveBeenCalledWith({
-    type: "show-notification",
-    isError: true,
+  expect(result).toEqual({
+    ok: false,
     message: "Unsupported JSON format",
   });
-  expect(dispatch).not.toHaveBeenCalledWith(
-    expect.objectContaining({ type: "init-dashboard" })
-  );
 });
 
-test("importSpaceFromJson appends one remapped space backup", () => {
-  const dispatch = jest.fn();
+test("importFromJsonWithCallbacks hydrates through callback and resets input", () => {
+  mockFileReaderWithContents(JSON.stringify({
+    isTablo: true,
+    version: 3,
+    spaces: [{
+      id: 1,
+      position: "a0",
+      objectType: "space",
+      title: "Main",
+      folders: [],
+    }],
+  }));
+  const onImported = jest.fn();
+  const onMessage = jest.fn();
+  const event = { target: { files: [{}], value: "backup.json" } };
+
+  importFromJsonWithCallbacks(event, onImported, onMessage);
+
+  expect(onImported).toHaveBeenCalledWith(expect.arrayContaining([
+    expect.objectContaining({ title: "Main" }),
+  ]));
+  expect(onMessage).toHaveBeenCalledWith("Backup has been imported");
+  expect(event.target.value).toBe("");
+});
+
+test("parseSpaceImportJson remaps one imported space backup", () => {
   const existingSpaces: SpaceV3[] = [
     {
       id: 1,
@@ -399,24 +379,11 @@ test("importSpaceFromJson appends one remapped space backup", () => {
     },
   });
 
-  mockFileReaderWithContents(fileContents);
+  const result = parseSpaceImportJson(fileContents, existingSpaces);
+  expect(result.ok).toBe(true);
+  if (!result.ok) throw new Error(result.message);
 
-  const event = {
-    target: {
-      files: [{}],
-      value: "space.json",
-    },
-  };
-
-  importSpaceFromJson(event, dispatch, existingSpaces);
-
-  const initAction = dispatch.mock.calls.find(
-    ([action]) => action.type === "init-dashboard"
-  )?.[0];
-  expect(initAction.saveToLS).toBe(true);
-  expect(initAction.spaces).toHaveLength(2);
-
-  const importedSpace = initAction.spaces[1];
+  const importedSpace = result.space;
   const importedFolder = importedSpace.folders[0];
   const importedGroup = importedFolder.items[0];
   const importedBookmark = importedGroup.groupItems[0];
@@ -426,15 +393,9 @@ test("importSpaceFromJson appends one remapped space backup", () => {
   expect(importedFolder.id).not.toBe(10);
   expect(importedGroup.id).not.toBe(100);
   expect(importedBookmark.id).not.toBe(101);
-  expect(event.target.value).toBe("");
-  expect(dispatch).toHaveBeenCalledWith({
-    type: "select-space",
-    spaceId: importedSpace.id,
-  });
 });
 
-test("importSpaceFromJson accepts a v3 backup with exactly one space", () => {
-  const dispatch = jest.fn();
+test("parseSpaceImportJson accepts a v3 backup with exactly one space", () => {
   const fileContents = JSON.stringify({
     isTablo: true,
     version: 3,
@@ -449,28 +410,26 @@ test("importSpaceFromJson accepts a v3 backup with exactly one space", () => {
     ],
   });
 
-  mockFileReaderWithContents(fileContents);
-
-  importSpaceFromJson(
-    {
-      target: {
-        files: [{}],
-        value: "backup.json",
-      },
-    },
-    dispatch,
-    []
-  );
-
-  const initAction = dispatch.mock.calls.find(
-    ([action]) => action.type === "init-dashboard"
-  )?.[0];
-  expect(initAction.spaces).toHaveLength(1);
-  expect(initAction.spaces[0].title).toBe("Single");
+  const result = parseSpaceImportJson(fileContents, []);
+  expect(result.ok).toBe(true);
+  if (!result.ok) throw new Error(result.message);
+  expect(result.space.title).toBe("Single");
 });
 
-test("importSpaceFromJson rejects v3 backups with multiple spaces", () => {
-  const dispatch = jest.fn();
+test("importSpaceFromJsonWithCallback reports an invalid file through callback", () => {
+  mockFileReaderWithContents("not json");
+  const onImported = jest.fn();
+  const onError = jest.fn();
+  const event = { target: { files: [{}], value: "broken.json" } };
+
+  importSpaceFromJsonWithCallback(event, [], onImported, onError);
+
+  expect(onImported).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledWith("Unsupported space JSON format");
+  expect(event.target.value).toBe("");
+});
+
+test("parseSpaceImportJson rejects v3 backups with multiple spaces", () => {
   const fileContents = JSON.stringify({
     isTablo: true,
     version: 3,
@@ -492,25 +451,35 @@ test("importSpaceFromJson rejects v3 backups with multiple spaces", () => {
     ],
   });
 
-  mockFileReaderWithContents(fileContents);
-
-  importSpaceFromJson(
-    {
-      target: {
-        files: [{}],
-        value: "backup.json",
-      },
-    },
-    dispatch,
-    []
-  );
-
-  expect(dispatch).toHaveBeenCalledWith({
-    type: "show-notification",
-    isError: true,
+  expect(parseSpaceImportJson(fileContents, [])).toEqual({
+    ok: false,
     message: "Unsupported space JSON format",
   });
-  expect(dispatch).not.toHaveBeenCalledWith(
-    expect.objectContaining({ type: "init-dashboard" })
-  );
+});
+
+test("createBrowserBookmarksFolderInputs keeps selected bookmarks only", () => {
+  const inputs = createBrowserBookmarksFolderInputs([
+    {
+      breadcrumbs: [],
+      folder: {
+        id: "folder-1",
+        title: "Work",
+        checked: true,
+        children: [
+          { id: "a", title: "Selected", url: "https://selected.example", checked: true },
+          { id: "b", title: "Skipped", url: "https://skipped.example", checked: false },
+        ],
+      },
+    },
+    {
+      breadcrumbs: [],
+      folder: { id: "folder-2", title: "Unchecked", checked: false, children: [] },
+    },
+  ], false);
+
+  expect(inputs).toHaveLength(1);
+  expect(inputs[0]).toMatchObject({
+    title: "Work",
+    items: [{ title: "Selected", url: "https://selected.example" }],
+  });
 });

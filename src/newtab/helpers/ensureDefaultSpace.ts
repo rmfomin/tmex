@@ -1,8 +1,14 @@
-import { SavingState } from "@/newtab/state/storage";
+import type { SpaceV3 } from "@/newtab/helpers/types";
 
 const DEFAULT_SPACE_ID = 1;
 
-export function ensureDefaultSpace(state: SavingState): void {
+/** Минимальный изменяемый снимок, нужный startup-предобработке. */
+export type DashboardStateForInitialization = {
+  spaces: SpaceV3[];
+  currentSpaceId: number | undefined;
+};
+
+export function ensureDefaultSpace(state: DashboardStateForInitialization): void {
   if (state.spaces.length > 0) {
     return;
   }

@@ -20,7 +20,7 @@ import Tab = chrome.tabs.Tab;
 import {
   convertTabOrRecentToItem,
   convertTabToItem,
-} from "@/newtab/state/actionHelpers";
+} from "@/newtab/state/dashboard/itemUtils";
 import { SidebarRecent } from "@/newtab/components/common/SidebarRecent/SidebarRecent";
 import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";

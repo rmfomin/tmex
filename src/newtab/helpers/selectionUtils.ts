@@ -1,6 +1,5 @@
-import { BookmarkItemV3 } from "@/newtab/helpers/types";
-import { getGlobalAppState } from "@/newtab/components/root/App";
-import { findItemById } from "@/newtab/state/actionHelpers";
+import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
+import { dashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 
 let selectedItemsElements: HTMLElement[] = [];
 const SELECTED_ATTR = "selected";
@@ -60,8 +59,35 @@ export function getSelectedItemsIds(): number[] {
 }
 
 export function getSelectedItems(): BookmarkItemV3[] {
-  const state = getGlobalAppState();
-  return selectedItemsElements.map((el) => findItemById(state, getId(el))!);
+  const { spaces } = dashboardStore.getState();
+
+  // Выбор DOM-элементов живёт вне React, поэтому здесь нужен vanilla store,
+  // а не React hook. Не найденный item мог быть удалён между select и menu.
+  return getSelectedItemsIds()
+    .map((itemId) => findBookmarkById(spaces, itemId))
+    .filter((item): item is BookmarkItemV3 => item !== undefined);
+}
+
+function findBookmarkById(
+  spaces: SpaceV3[],
+  itemId: number,
+): BookmarkItemV3 | undefined {
+  for (const space of spaces) {
+    for (const folder of space.folders) {
+      for (const item of folder.items) {
+        if (item.type === "bookmark" && item.id === itemId) {
+          return item as BookmarkItemV3;
+        }
+
+        if (item.type === "group") {
+          const groupItem = item.groupItems.find(
+            (candidate) => candidate.id === itemId,
+          );
+          if (groupItem) return groupItem;
+        }
+      }
+    }
+  }
 }
 
 function getId(el: HTMLElement): number {

@@ -16,7 +16,7 @@ import {
   convertTabOrRecentToItem,
   isTabData,
   TabOrRecentData,
-} from "@/newtab/state/actionHelpers";
+} from "@/newtab/state/dashboard/itemUtils";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import IconSaved from "./icons/saved.svg";
 import { getFoldersList } from "@/newtab/helpers/moveToHelpers";

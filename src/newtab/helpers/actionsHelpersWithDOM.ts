@@ -3,21 +3,48 @@ import {
   FolderItemToCreate,
   SpaceV3,
 } from "@/newtab/helpers/types";
-import { ActionDispatcher, executeCustomAction } from "@/newtab/state/actions";
-import { Action, AppState } from "@/newtab/state/state";
 import {
-  findItemById,
-  genUniqLocalId,
-  isCustomActionItem,
-} from "@/newtab/state/actionHelpers";
+  findBookmarkItem,
+  generateLocalId,
+  isCustomActionBookmark,
+} from "@/newtab/state/dashboard/itemUtils";
+
+/**
+ * Явная граница между DOM-обработчиком и Zustand stores.
+ *
+ * Раньше сюда передавался legacy dispatch и helper создавал Action-объекты.
+ * Теперь caller передаёт только нужные commands из uiStore/dashboardStore.
+ */
+export type UiFeedbackCommands = {
+  showNotification(notification: {
+    message: string;
+    isError?: boolean;
+    isLoading?: boolean;
+    button?: { text: string; onClick?: () => void };
+  }): void;
+  hideNotification(): void;
+  setItemInEdit(itemId: number | undefined): void;
+  setPage(page: "default" | "import"): void;
+};
+
+export type DashboardFolderCommands = {
+  createFolder(input: {
+    id: number;
+    title?: string;
+    color?: string;
+    position?: string;
+    items?: FolderItemToCreate[];
+    spaceId?: number;
+  }): void;
+  undo(): void;
+};
 
 export function showMessage(
   message: string,
-  dispatch: ActionDispatcher,
+  commands: Pick<UiFeedbackCommands, "showNotification">,
   isLoading = false
 ): void {
-  dispatch({
-    type: Action.ShowNotification,
+  commands.showNotification({
     message: message,
     isLoading,
   });
@@ -25,10 +52,9 @@ export function showMessage(
 
 export function showErrorMessage(
   errorMessage: string,
-  dispatch: ActionDispatcher
+  commands: Pick<UiFeedbackCommands, "showNotification">
 ): void {
-  dispatch({
-    type: Action.ShowNotification,
+  commands.showNotification({
     message: errorMessage,
     isError: true,
   });
@@ -44,26 +70,29 @@ type CreateFolderProps = {
 };
 
 export function createFolderWithStat(
-  dispatch: any,
+  commands: Pick<DashboardFolderCommands, "createFolder">,
   props: CreateFolderProps
 ): number {
-  const newFolderId = genUniqLocalId();
-  dispatch({ type: Action.CreateFolder, newFolderId, ...props });
+  const newFolderId = generateLocalId();
+  // historyStepId был технической деталью reducer undo. Zustand store хранит
+  // snapshot сам, поэтому это поле намеренно не передаётся дальше.
+  const { historyStepId: _historyStepId, ...folderProps } = props;
+  commands.createFolder({ id: newFolderId, ...folderProps });
   return newFolderId;
 }
 
 export function showMessageWithUndo(
   message: string,
-  dispatch: ActionDispatcher
+  commands: Pick<UiFeedbackCommands, "showNotification" | "hideNotification">
+    & Pick<DashboardFolderCommands, "undo">
 ): void {
-  dispatch({
-    type: Action.ShowNotification,
+  commands.showNotification({
     message: message,
     button: {
       text: "Undo",
       onClick: () => {
-        dispatch({ type: Action.Undo, dispatch });
-        dispatch({ type: Action.HideNotification });
+        commands.undo();
+        commands.hideNotification();
       },
     },
   });
@@ -71,12 +100,11 @@ export function showMessageWithUndo(
 
 export function getCanDragChecker(
   search: string,
-  dispatch: ActionDispatcher
+  commands: Pick<UiFeedbackCommands, "showNotification">
 ): () => boolean {
   return () => {
     if (search) {
-      dispatch({
-        type: Action.ShowNotification,
+      commands.showNotification({
         message: "Sorting is unavailable in search",
       });
       return false;
@@ -88,19 +116,19 @@ export function getCanDragChecker(
 
 export function clickFolderItem(
   targetId: number,
-  appState: { spaces: SpaceV3[]; tabs: AppState["tabs"] },
-  dispatch: ActionDispatcher,
+  appState: { spaces: SpaceV3[]; tabs: chrome.tabs.Tab[] },
+  commands: Pick<UiFeedbackCommands, "showNotification" | "setItemInEdit" | "setPage">,
   openInNewTab: boolean,
   openBookmarksInNewTab: boolean
 ) {
-  const targetItem = findItemById(appState, targetId);
+  const targetItem = findBookmarkItem(appState, targetId);
   if (targetItem?.isSection) {
     onRenameSection(targetItem);
-  } else if (isCustomActionItem(targetItem) && targetItem?.url) {
-    executeCustomAction(targetItem.url, dispatch);
+  } else if (isCustomActionBookmark(targetItem) && targetItem?.url) {
+    executeCustomAction(targetItem.url);
   } else if (targetItem) {
     if (!targetItem.url) {
-      showErrorMessage("Bookmark URL is empty", dispatch);
+      showErrorMessage("Bookmark URL is empty", commands);
       return;
     }
 
@@ -127,9 +155,12 @@ export function clickFolderItem(
   }
 
   function onRenameSection(targetItem: BookmarkItemV3) {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { itemInEdit: targetItem.id },
-    });
+    commands.setItemInEdit(targetItem.id);
+  }
+
+  function executeCustomAction(actionUrl: string): void {
+    if (actionUrl.split("//")[1] === "import-bookmarks") {
+      commands.setPage("import");
+    }
   }
 }

@@ -1,4 +1,7 @@
-import { convertToURL, getTempFavIconUrl } from "@/newtab/state/actionHelpers";
+import {
+  getTemporaryFaviconUrl,
+  toUrl,
+} from "@/newtab/state/dashboard/itemUtils";
 
 type FaviconInfo = {
   faviconUrl: string;
@@ -25,7 +28,7 @@ function findInCache(
   siteUrl: string | URL,
   useFallback = true
 ): string | undefined {
-  const url = convertToURL(siteUrl);
+  const url = toUrl(siteUrl);
   if (url?.host) {
     const infos = cache.get(url?.host);
     if (infos && infos.length > 0) {
@@ -47,11 +50,11 @@ function findInCache(
         }
         return (
           bestMatchedInfo?.faviconUrl ??
-          (useFallback ? getTempFavIconUrl(url) : undefined)
+          (useFallback ? getTemporaryFaviconUrl(url) : undefined)
         );
       }
     } else {
-      return useFallback ? getTempFavIconUrl(url) : undefined;
+      return useFallback ? getTemporaryFaviconUrl(url) : undefined;
     }
   } else {
     return undefined;
@@ -59,7 +62,7 @@ function findInCache(
 }
 
 function registerInCache(faviconUrl: string, siteUrl?: string | URL): void {
-  const itemUrl = convertToURL(siteUrl);
+  const itemUrl = toUrl(siteUrl);
   if (itemUrl?.host) {
     const infos = cache.get(itemUrl.host) ?? [];
     if (!infos.some((info) => info.faviconUrl === faviconUrl)) {

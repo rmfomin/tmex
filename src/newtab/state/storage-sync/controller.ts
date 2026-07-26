@@ -1,4 +1,5 @@
 import type { StoreApi } from "zustand/vanilla";
+import { getFirstSortedByPosition } from "@/newtab/helpers/fractionalIndexes";
 import type { DashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import type { DashboardState } from "@/newtab/state/dashboard/types";
 import type { StorageSyncAdapter, PersistedNewtabState } from "@/newtab/state/storage-sync/types";
@@ -36,18 +37,19 @@ export function createStorageSyncController(
   }
 
   function applyPersistedState(state: PersistedNewtabState): void {
+    const preparedState = preparePersistedState(state);
     dashboardStore.getState().hydrate({
-      spaces: state.spaces,
-      currentSpaceId: state.currentSpaceId ?? state.spaces[0]?.id ?? -1,
+      spaces: preparedState.spaces,
+      currentSpaceId: preparedState.currentSpaceId,
     });
     uiStore.getState().hydratePreferences({
-      sidebarCollapsed: state.sidebarCollapsed,
-      openBookmarksInNewTab: state.openBookmarksInNewTab,
-      colorTheme: state.colorTheme,
-      showRecent: state.showRecent,
-      showArchived: state.showArchived,
-      showNotUsed: state.showNotUsed,
-      hiddenFeatureIsEnabled: state.hiddenFeatureIsEnabled,
+      sidebarCollapsed: preparedState.sidebarCollapsed,
+      openBookmarksInNewTab: preparedState.openBookmarksInNewTab,
+      colorTheme: preparedState.colorTheme,
+      showRecent: preparedState.showRecent,
+      showArchived: preparedState.showArchived,
+      showNotUsed: preparedState.showNotUsed,
+      hiddenFeatureIsEnabled: preparedState.hiddenFeatureIsEnabled,
     });
   }
 
@@ -84,6 +86,31 @@ export function createStorageSyncController(
       saveTimer = undefined;
     },
   };
+}
+
+/**
+ * Инвариант нового tab: после hydration всегда существует выбранный space.
+ *
+ * Раньше это выполнялось в index.tsx над legacy SavingState. Теперь правило
+ * находится рядом с загрузкой Zustand stores и не зависит от reducer state.
+ */
+export function preparePersistedState(
+  state: PersistedNewtabState,
+): PersistedNewtabState & { currentSpaceId: number } {
+  const spaces = state.spaces.length > 0
+    ? state.spaces
+    : [{
+        id: 1,
+        position: "a0",
+        objectType: "space" as const,
+        title: "Default bookmarks",
+        folders: [],
+      }];
+  const currentSpaceId = spaces.some((space) => space.id === state.currentSpaceId)
+    ? state.currentSpaceId!
+    : getFirstSortedByPosition(spaces)?.id ?? -1;
+
+  return { ...state, spaces, currentSpaceId };
 }
 
 function toPersistedState(dashboard: DashboardState, ui: UiStore): PersistedNewtabState {

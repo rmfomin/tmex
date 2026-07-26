@@ -1,9 +1,8 @@
 import { getBookmarksViewState } from "@/newtab/components/common/Bookmarks/getBookmarksViewState";
-import { AppState } from "@/newtab/state/state";
+import type { BookmarksViewStateInput } from "@/newtab/components/common/Bookmarks/getBookmarksViewState";
 
-function createAppState(): AppState {
+function createViewState(): BookmarksViewStateInput {
   return {
-    version: 3,
     currentSpaceId: 1,
     spaces: [
       {
@@ -62,46 +61,13 @@ function createAppState(): AppState {
         ],
       },
     ],
-    recentItems: [],
-    tabs: [],
-    currentWindowId: undefined,
-    notification: { visible: false, message: "" },
-    lastActiveTabIds: [],
     search: "",
-    itemInEdit: undefined,
-    showRecent: false,
     showArchived: false,
-    showNotUsed: false,
-    openBookmarksInNewTab: false,
-    sidebarCollapsed: false,
-    colorTheme: "light",
-    sidebarHovered: false,
-    page: "default",
-    achievements: {
-      folderCreated: 0,
-      folderRenamed: 0,
-      folderColorChanged: 0,
-      folderDeleted: 0,
-      folderDragged: 0,
-      itemDraggedFromSidebar: 0,
-      itemRenamed: 0,
-      itemCopiedUrl: 0,
-      itemEditedUrl: 0,
-      itemArchived: 0,
-      itemUnarchived: 0,
-      sectionAddedFromSidebar: 0,
-      sectionAddedFromFolder: 0,
-      cleanupUsed: 0,
-      archivedItemsShowed: 0,
-    },
-    loaded: true,
-    undoSteps: [],
-    hiddenFeatureIsEnabled: false,
   };
 }
 
 test("getBookmarksViewState uses current v3 space when search is empty", () => {
-  const appState = createAppState();
+  const appState = createViewState();
 
   expect(getBookmarksViewState(appState)).toEqual({
     folders: [
@@ -117,7 +83,7 @@ test("getBookmarksViewState uses current v3 space when search is empty", () => {
 });
 
 test("getBookmarksViewState searches through v3 folders across spaces", () => {
-  const appState = createAppState();
+  const appState = createViewState();
   appState.search = "graf";
 
   expect(getBookmarksViewState(appState)).toEqual({

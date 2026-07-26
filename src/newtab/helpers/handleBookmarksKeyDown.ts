@@ -1,6 +1,5 @@
 import React from "react";
-import { AppState } from "@/newtab/state/state";
-import { findFolderByItemId } from "@/newtab/state/actionHelpers";
+import type { SpaceV3 } from "@/newtab/helpers/types";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 const FOLDER_ITEM_SELECTOR = `a${roleSelector(DOM_ROLE.folderItem)}`;
@@ -31,7 +30,9 @@ function focusVerticalItem(offset: number) {
   }
 }
 
-function focusHorizontalItem(offset: number, appState: AppState) {
+type BookmarksKeyboardState = { spaces: SpaceV3[] };
+
+function focusHorizontalItem(offset: number, appState: BookmarksKeyboardState) {
   if (document.activeElement) {
     const folderItems = convertItemsIntoHorizontalList(
       document.activeElement as HTMLElement,
@@ -43,7 +44,6 @@ function focusHorizontalItem(offset: number, appState: AppState) {
 
 function openFocusedItem(
   event: React.KeyboardEvent,
-  appState: AppState,
   onOpen: (itemId: number, inNewTab: boolean) => void,
 ) {
   const link = event.target as HTMLLinkElement;
@@ -59,7 +59,7 @@ function openFocusedItem(
 
 export function handleBookmarksKeyDown(
   event: React.KeyboardEvent,
-  appState: AppState,
+  appState: BookmarksKeyboardState,
   onOpen: (itemId: number, inNewTab: boolean) => void,
 ) {
   const activeElement = document.activeElement as HTMLElement;
@@ -88,7 +88,7 @@ export function handleBookmarksKeyDown(
       break;
     case "Space":
     case "Enter":
-      openFocusedItem(event, appState, onOpen);
+      openFocusedItem(event, onOpen);
       event.preventDefault();
     default:
       break;
@@ -157,12 +157,14 @@ function convertItemsIntoVerticalList(): Element[] {
 
 function convertItemsIntoHorizontalList(
   currentItem: HTMLElement,
-  appState: AppState
+  appState: BookmarksKeyboardState
 ): Element[] {
-  const currentFolder = findFolderByItemId(
-    appState,
-    parseInt(currentItem.dataset.id || "", 10)
-  );
+  const itemId = parseInt(currentItem.dataset.id || "", 10);
+  const currentFolder = appState.spaces
+    .flatMap((space) => space.folders)
+    .find((folder) => folder.items.some((item) => (
+      item.id === itemId || (item.type === "group" && item.groupItems.some((child) => child.id === itemId))
+    )));
   if (!currentFolder) {
     return [];
   }

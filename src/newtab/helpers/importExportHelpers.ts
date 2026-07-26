@@ -4,14 +4,11 @@ import {
   SpaceBackupV3,
   SpaceV3,
 } from "@/newtab/helpers/types";
-import { Action } from "@/newtab/state/state";
-import { ActionDispatcher } from "@/newtab/state/actions";
 import {
   createNewFolderItem,
-  genUniqLocalId,
-  getTempFavIconUrl,
-} from "@/newtab/state/actionHelpers";
-import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
+  generateLocalId,
+  getTemporaryFaviconUrl,
+} from "@/newtab/state/dashboard/itemUtils";
 import { getTopVisitedFromHistory } from "@/newtab/helpers/utils";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import {
@@ -51,51 +48,32 @@ function getImportableSpaceV3(data: unknown): SpaceV3 | undefined {
   return undefined;
 }
 
-export function importFromJson(event: any, dispatch: ActionDispatcher) {
-  function receivedText(e: any) {
-    let lines = e.target.result;
-    try {
-      const res = JSON.parse(lines);
-      if (isDataBackupV3(res)) {
-        dispatch({
-          type: Action.InitDashboard,
-          spaces: normalizeBackupV3(res).spaces,
-          saveToLS: true,
-        });
+export type DashboardImportResult =
+  | { ok: true; spaces: SpaceV3[] }
+  | { ok: false; message: string };
 
-        dispatch({
-          type: Action.SelectSpace,
-          spaceId: -1, //hack to force update
-        });
-
-        showMessage("Backup has been imported", dispatch);
-      } else if (isSpaceBackupJsonV3(res)) {
-        dispatch({
-          type: Action.ShowNotification,
-          isError: true,
-          message: "This is a space backup. Use Import space button to add it.",
-        });
-      } else {
-        dispatch({
-          type: Action.ShowNotification,
-          isError: true,
-          message: "Unsupported JSON format",
-        });
-      }
-    } catch (e) {
-      console.error(e);
-      dispatch({
-        type: Action.ShowNotification,
-        isError: true,
-        message: "Unsupported JSON format",
-      });
+/**
+ * Чистая часть импорта dashboard backup.
+ *
+ * Она не знает ни о React event, ни о Zustand, ни о Chrome API. Поэтому UI
+ * сам выбирает, какой store обновить, а этот helper легко проверять без DOM.
+ */
+export function parseDashboardImportJson(text: string): DashboardImportResult {
+  try {
+    const parsed = JSON.parse(text);
+    if (isDataBackupV3(parsed)) {
+      return { ok: true, spaces: normalizeBackupV3(parsed).spaces };
     }
-  }
 
-  const file = event.target.files[0];
-  const fr = new FileReader();
-  fr.onload = receivedText;
-  fr.readAsText(file);
+    return {
+      ok: false,
+      message: isSpaceBackupJsonV3(parsed)
+        ? "This is a space backup. Use Import space button to add it."
+        : "Unsupported JSON format",
+    };
+  } catch {
+    return { ok: false, message: "Unsupported JSON format" };
+  }
 }
 
 export function importFromJsonWithCallbacks(
@@ -107,16 +85,14 @@ export function importFromJsonWithCallbacks(
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (loadEvent) => {
-    try {
-      const parsed = JSON.parse(String(loadEvent.target?.result ?? ""));
-      if (!isDataBackupV3(parsed)) {
-        onMessage("Unsupported JSON format", true);
-        return;
-      }
-      onImported(normalizeBackupV3(parsed).spaces);
+    const result = parseDashboardImportJson(
+      String(loadEvent.target?.result ?? ""),
+    );
+    if (result.ok) {
+      onImported(result.spaces);
       onMessage("Backup has been imported");
-    } catch {
-      onMessage("Unsupported JSON format", true);
+    } else {
+      onMessage(result.message, true);
     }
   };
   reader.readAsText(file);
@@ -181,25 +157,25 @@ function cloneSpaceForImport(
 
   return {
     ...normalized,
-    id: genUniqLocalId(),
+    id: generateLocalId(),
     position: insertBetween(lastSpace?.position ?? "", ""),
     folders: normalized.folders.map((folder) => ({
       ...folder,
-      id: genUniqLocalId(),
+      id: generateLocalId(),
       items: folder.items.map((item) => {
         if (item.type === "bookmark") {
           return {
             ...item,
-            id: genUniqLocalId(),
+            id: generateLocalId(),
           };
         }
 
         return {
           ...item,
-          id: genUniqLocalId(),
+          id: generateLocalId(),
           groupItems: item.groupItems.map((groupItem) => ({
             ...groupItem,
-            id: genUniqLocalId(),
+            id: generateLocalId(),
           })),
         };
       }),
@@ -207,56 +183,23 @@ function cloneSpaceForImport(
   };
 }
 
-export function importSpaceFromJson(
-  event: any,
-  dispatch: ActionDispatcher,
-  existingSpaces: SpaceV3[]
-) {
-  function receivedText(e: any) {
-    try {
-      const parsed = JSON.parse(e.target.result);
-      const space = getImportableSpaceV3(parsed);
+export type SpaceImportResult =
+  | { ok: true; space: SpaceV3 }
+  | { ok: false; message: "Unsupported space JSON format" };
 
-      if (!space) {
-        dispatch({
-          type: Action.ShowNotification,
-          isError: true,
-          message: "Unsupported space JSON format",
-        });
-        return;
-      }
-
-      const importedSpace = cloneSpaceForImport(space, existingSpaces);
-      dispatch({
-        type: Action.InitDashboard,
-        spaces: normalizeBackupV3({
-          isTablo: true,
-          version: 3,
-          spaces: [...existingSpaces, importedSpace],
-        }).spaces,
-        saveToLS: true,
-      });
-      dispatch({ type: Action.SelectSpace, spaceId: importedSpace.id });
-      showMessage("Space has been imported", dispatch);
-    } catch (e) {
-      console.error(e);
-      dispatch({
-        type: Action.ShowNotification,
-        isError: true,
-        message: "Unsupported space JSON format",
-      });
-    }
+/** Чистая часть single-space импорта с remap локальных id. */
+export function parseSpaceImportJson(
+  text: string,
+  existingSpaces: SpaceV3[],
+): SpaceImportResult {
+  try {
+    const space = getImportableSpaceV3(JSON.parse(text));
+    return space
+      ? { ok: true, space: cloneSpaceForImport(space, existingSpaces) }
+      : { ok: false, message: "Unsupported space JSON format" };
+  } catch {
+    return { ok: false, message: "Unsupported space JSON format" };
   }
-
-  const file = event.target.files[0];
-  if (!file) {
-    return;
-  }
-
-  const fr = new FileReader();
-  fr.onload = receivedText;
-  fr.readAsText(file);
-  event.target.value = "";
 }
 
 /** Новый API импорта: helper парсит файл, а caller сам решает, в какой store
@@ -271,15 +214,14 @@ export function importSpaceFromJsonWithCallback(
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (loadEvent) => {
-    try {
-      const space = getImportableSpaceV3(JSON.parse(String(loadEvent.target?.result ?? "")));
-      if (!space) {
-        onError("Unsupported space JSON format");
-        return;
-      }
-      onImported(cloneSpaceForImport(space, existingSpaces));
-    } catch {
-      onError("Unsupported space JSON format");
+    const result = parseSpaceImportJson(
+      String(loadEvent.target?.result ?? ""),
+      existingSpaces,
+    );
+    if (result.ok) {
+      onImported(result.space);
+    } else {
+      onError(result.message);
     }
   };
   reader.readAsText(file);
@@ -326,30 +268,6 @@ export type PlainListRecord = {
 };
 export type BookmarksAsPlainList = PlainListRecord[];
 
-export function getBrowserBookmarks(
-  onReady: (res: BookmarksAsPlainList) => void,
-  recentItems: RecentItem[],
-  dispatch: ActionDispatcher
-): void {
-  const history = getTopVisitedFromHistory(recentItems, 1000);
-
-  // Fetch bookmark folders from Chrome API
-  chrome.bookmarks.getTree((bookmarks) => {
-    const root = bookmarks[0];
-    if (root.children) {
-      const plain: BookmarksAsPlainList = [];
-      traverseTree(root.children, plain, [], history);
-      onReady(plain);
-    } else {
-      dispatch({
-        type: Action.ShowNotification,
-        message: "No browser bookmarks found",
-        isError: true,
-      });
-    }
-  });
-}
-
 /** Browser API adapter без state-зависимостей: ошибки и данные отдаёт caller. */
 export function getBrowserBookmarksForImport(
   onReady: (res: BookmarksAsPlainList) => void,
@@ -390,42 +308,39 @@ function traverseTree(
   });
 }
 
-export function importBrowserBookmarks(
-  records: BookmarksAsPlainList,
-  dispatch: ActionDispatcher,
-  skipChecked: boolean
-) {
-  let count = 0;
-  records.forEach((rec) => {
-    if (skipChecked || rec.folder.checked) {
-      const items = rec.folder.children
-        ?.filter((item) => (skipChecked || item.checked) && item.url)
-        .map((item) =>
-          createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url))
-        );
-      count += items?.length ?? 0;
+export type BrowserBookmarksFolderInput = {
+  id: number;
+  title: string;
+  items: FolderItemToCreate[];
+};
 
-      const newFolderId = genUniqLocalId();
-      dispatch({
-        type: Action.CreateFolder,
-        newFolderId,
-        title: rec.folder.title,
-        items,
-      });
-    }
+/**
+ * Преобразует дерево Chrome bookmarks в входы dashboard-команд.
+ *
+ * Здесь нет dispatch: UI может передать результат в Zustand, в тестовый store
+ * или показать preview без изменения dashboard.
+ */
+export function createBrowserBookmarksFolderInputs(
+  records: BookmarksAsPlainList,
+  skipChecked: boolean,
+): BrowserBookmarksFolderInput[] {
+  return records.flatMap((record) => {
+    if (!skipChecked && !record.folder.checked) return [];
+
+    const items = record.folder.children
+      ?.filter((item) => (skipChecked || item.checked) && item.url)
+      .map((item) =>
+        createNewFolderItem(item.url, item.title, getTemporaryFaviconUrl(item.url)),
+      ) ?? [];
+
+    return [{ id: generateLocalId(), title: record.folder.title, items }];
   });
 }
 
 export function importBrowserBookmarksWithCallback(
   records: BookmarksAsPlainList,
   skipChecked: boolean,
-  onCreateFolder: (input: { id: number; title: string; items: FolderItemToCreate[] }) => void,
+  onCreateFolder: (input: BrowserBookmarksFolderInput) => void,
 ): void {
-  records.forEach((record) => {
-    if (!skipChecked && !record.folder.checked) return;
-    const items = record.folder.children
-      ?.filter((item) => (skipChecked || item.checked) && item.url)
-      .map((item) => createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url))) ?? [];
-    onCreateFolder({ id: genUniqLocalId(), title: record.folder.title, items });
-  });
+  createBrowserBookmarksFolderInputs(records, skipChecked).forEach(onCreateFolder);
 }

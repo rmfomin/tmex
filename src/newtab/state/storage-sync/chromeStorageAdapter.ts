@@ -75,7 +75,11 @@ export function normalizePersistedState(value: StorageRecord): PersistedNewtabSt
       ? value.currentSpaceId
       : undefined,
     sidebarCollapsed: value.sidebarCollapsed === true,
-    openBookmarksInNewTab: value.openBookmarksInNewTab === true,
+    // Сохраняем поведение legacy storage: в обычном new tab новая закладка
+    // открывается в отдельной вкладке, а в override mode — в текущей.
+    openBookmarksInNewTab: typeof value.openBookmarksInNewTab === "boolean"
+      ? value.openBookmarksInNewTab
+      : !__OVERRIDE_NEWTAB,
     colorTheme: normalizeColorTheme(value.colorTheme),
     showRecent: value.showRecent === true,
     showArchived: value.showArchived === true,

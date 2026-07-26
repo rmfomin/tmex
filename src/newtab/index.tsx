@@ -1,56 +1,35 @@
 import React from "react";
 import { App } from "@/newtab/components/root/App";
 import "@/styles/index.scss";
-import { setInitAppState } from "@/newtab/state/state";
-import {
-  applyTheme,
-  getStateFromLS,
-  SavingState,
-} from "@/newtab/state/storage";
 import { createRoot } from "react-dom/client";
-import { getFirstSortedByPosition } from "@/newtab/helpers/fractionalIndexes";
 import { faviconsStorage } from "@/newtab/helpers/faviconUtils";
-import { ensureDefaultSpace } from "@/newtab/helpers/ensureDefaultSpace";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 import { dashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { uiStore } from "@/newtab/state/ui/uiStore";
 import { createBrowserStorageAdapter } from "@/newtab/state/storage-sync/chromeStorageAdapter";
 import { createStorageSyncController } from "@/newtab/state/storage-sync/controller";
+import { createBrowserThemeController } from "@/newtab/state/ui/themeController";
 
-async function startLocally() {
-  // Читает сохраненное состояние из chrome.storage.local.
-  getStateFromLS((res) => {
-    // Подготавливает состояние перед запуском React.
-    preprocessLoadedState(res);
-    hydrateZustandStores(res);
-    // Кладет загруженное состояние в стартовое состояние reducer.
-    setInitAppState(res);
-    mountApp();
-  });
-}
-
-function hydrateZustandStores(state: SavingState): void {
-  dashboardStore.getState().hydrate({
-    spaces: state.spaces,
-    currentSpaceId: state.currentSpaceId ?? state.spaces[0]?.id ?? -1,
-  });
-  uiStore.getState().hydratePreferences({
-    sidebarCollapsed: state.sidebarCollapsed,
-    openBookmarksInNewTab: state.openBookmarksInNewTab,
-    colorTheme: state.colorTheme ?? "system",
-    showRecent: state.showRecent,
-    showArchived: state.showArchived,
-    showNotUsed: state.showNotUsed,
-    hiddenFeatureIsEnabled: state.hiddenFeatureIsEnabled,
-  });
-
-  // Новый persistence controller запускается только после initial hydration,
-  // поэтому пустой Zustand store не может затереть данные пользователя.
-  createStorageSyncController(
+async function startNewtab(): Promise<void> {
+  const storageSync = createStorageSyncController(
     dashboardStore,
     uiStore,
     createBrowserStorageAdapter(),
-  ).start();
+  );
+  const themeController = createBrowserThemeController();
+
+  // Сначала гидрируем stores. Только после этого подписываем persistence,
+  // иначе стартовое пустое Zustand state могло бы перезаписать chrome.storage.
+  await storageSync.hydrate();
+  registerStoredFavicons();
+  themeController.applyTheme(uiStore.getState().colorTheme);
+  uiStore.subscribe((state, previous) => {
+    if (state.colorTheme !== previous.colorTheme) {
+      themeController.applyTheme(state.colorTheme);
+    }
+  });
+  storageSync.start();
+  mountApp();
 }
 
 function mountApp() {
@@ -62,24 +41,12 @@ function mountApp() {
   );
 }
 
-function preprocessLoadedState(state: SavingState): void {
-  ensureDefaultSpace(state);
-
-  const selectedSpace = state.spaces.find((s) => s.id === state.currentSpaceId);
-  if (!selectedSpace) {
-    const firstSortedSpace = getFirstSortedByPosition(state.spaces);
-    if (firstSortedSpace) {
-      state.currentSpaceId = firstSortedSpace.id;
-    }
-  }
-
+function registerStoredFavicons(): void {
   // Собирает все закладки из spaces, включая закладки внутри групп.
-  collectBookmarksV3(state.spaces).forEach((item) => {
+  collectBookmarksV3(dashboardStore.getState().spaces).forEach((item) => {
     faviconsStorage.registerInCache(item.favIconUrl, item.url);
   });
-
-  applyTheme(state.colorTheme);
 }
 
 // Запуск
-startLocally();
+void startNewtab();

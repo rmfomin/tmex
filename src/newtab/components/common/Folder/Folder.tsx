@@ -25,7 +25,7 @@ import Tab = chrome.tabs.Tab;
 import {
   createNewFolderItem,
   createNewSection,
-} from "@/newtab/state/actionHelpers";
+} from "@/newtab/state/dashboard/itemUtils";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { getVisibleFolderDisplayItems } from "./getFolderDisplayItems";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";

@@ -1,5 +1,8 @@
 import { createDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
-import { createStorageSyncController } from "@/newtab/state/storage-sync/controller";
+import {
+  createStorageSyncController,
+  preparePersistedState,
+} from "@/newtab/state/storage-sync/controller";
 import type { StorageSyncAdapter } from "@/newtab/state/storage-sync/types";
 import { createUiStore } from "@/newtab/state/ui/uiStore";
 
@@ -46,4 +49,33 @@ test("controller гидрирует stores и сохраняет изменен�
   }));
   expect(adapter.broadcastUpdated).toHaveBeenCalledTimes(1);
   controller.stop();
+});
+
+test("hydration создаёт default space и выбирает первый space по position", () => {
+  const empty = preparePersistedState({
+    version: 3,
+    spaces: [],
+    currentSpaceId: undefined,
+    sidebarCollapsed: false,
+    openBookmarksInNewTab: false,
+    colorTheme: "system",
+    showRecent: false,
+    showArchived: false,
+    showNotUsed: false,
+    hiddenFeatureIsEnabled: false,
+  });
+  const withInvalidSelection = preparePersistedState({
+    ...empty,
+    spaces: [
+      { id: 2, position: "b0", objectType: "space", title: "Later", folders: [] },
+      { id: 1, position: "a0", objectType: "space", title: "First", folders: [] },
+    ],
+    currentSpaceId: 100,
+  });
+
+  expect(empty).toMatchObject({
+    currentSpaceId: 1,
+    spaces: [{ id: 1, title: "Default bookmarks" }],
+  });
+  expect(withInvalidSelection.currentSpaceId).toBe(1);
 });

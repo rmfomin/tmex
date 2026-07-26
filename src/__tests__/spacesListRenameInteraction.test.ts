@@ -16,7 +16,7 @@ test("space rename starts on double click, while single click only selects", () 
     /const onSpaceClick = \(spaceId: number\) => \{([\s\S]*?)\n  \};/
   );
 
-  expect(onSpaceClickMatch?.[1]).toContain("type: Action.SelectSpace");
+  expect(onSpaceClickMatch?.[1]).toContain("selectSpace(spaceId)");
   expect(onSpaceClickMatch?.[1]).not.toContain("setEditingSpaceId");
   expect(source).toContain("onClick={() => onSpaceClick(space.id)}");
   expect(source).toContain("onDoubleClick={() => setEditingSpaceId(space.id)}");

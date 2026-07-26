@@ -1,18 +1,23 @@
-import { AppState } from "@/newtab/state/state";
-import { findSpaceById } from "@/newtab/state/actionHelpers";
-import { hasSearch } from "@/newtab/helpers/utils";
+import { SpaceV3 } from "@/newtab/helpers/types";
+import { hasSearch, SearchFilter } from "@/newtab/helpers/utils";
+
+export type EmptyDashboardInput = {
+  spaces: SpaceV3[];
+  currentSpaceId: number;
+  search: string;
+  searchFilters?: SearchFilter[];
+};
 
 export function isEmptyDashboard(
-  appState: Pick<
-    AppState,
-    "spaces" | "currentSpaceId" | "search" | "searchFilters"
-  >,
+  appState: EmptyDashboardInput,
 ): boolean {
   if (hasSearch(appState.search, appState.searchFilters ?? [])) {
     return false;
   }
 
-  const currentSpace = findSpaceById(appState, appState.currentSpaceId);
+  const currentSpace = appState.spaces.find(
+    (space) => space.id === appState.currentSpaceId,
+  );
   if (!currentSpace) {
     return true;
   }
