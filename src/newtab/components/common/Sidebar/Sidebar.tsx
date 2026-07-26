@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cn from "clsx";
 import styles from "./Sidebar.module.scss";
 import { SidebarOpenTabs } from "@/newtab/components/common/SidebarOpenTabs/SidebarOpenTabs";
@@ -10,8 +10,9 @@ import {
   scrollElementIntoView,
 } from "@/newtab/helpers/utils";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import { Action, AppState } from "@/newtab/state/state";
-import { DispatchContext } from "@/newtab/state/actions";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
+import { useChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
 import IconDelDuplicates from "./icons/delete-duplicates.svg";
 import IconSave from "./icons/save.svg";
 import IconPin from "./icons/pin.svg";
@@ -20,22 +21,31 @@ import {
   convertTabOrRecentToItem,
   convertTabToItem,
 } from "@/newtab/state/actionHelpers";
-import {
-  createFolderWithStat,
-  showMessage,
-} from "@/newtab/helpers/actionsHelpersWithDOM";
 import { SidebarRecent } from "@/newtab/components/common/SidebarRecent/SidebarRecent";
 import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { SearchInput } from "@/newtab/components/common/SearchInput/SearchInput";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 
-export function Sidebar(p: { appState: AppState }) {
-  const dispatch = useContext(DispatchContext);
-  const searchFilters = p.appState.searchFilters ?? [];
-  const searchFilterMode = p.appState.searchFilterMode ?? "or";
+export function Sidebar() {
+  const spaces = useDashboardStore((state) => state.spaces);
+  const createFolder = useDashboardStore((state) => state.createFolder);
+  const createFolderItem = useDashboardStore((state) => state.createFolderItem);
+  const search = useUiStore((state) => state.search);
+  const searchFilters = useUiStore((state) => state.searchFilters);
+  const searchFilterMode = useUiStore((state) => state.searchFilterMode);
+  const sidebarCollapsedValue = useUiStore((state) => state.sidebarCollapsed);
+  const sidebarHovered = useUiStore((state) => state.sidebarHovered);
+  const setSidebarHovered = useUiStore((state) => state.setSidebarHovered);
+  const setSidebarCollapsed = useUiStore((state) => state.setSidebarCollapsed);
+  const setItemInEdit = useUiStore((state) => state.setItemInEdit);
+  const tabs = useChromeRuntimeStore((state) => state.tabs);
+  const recentItems = useChromeRuntimeStore((state) => state.recentItems);
+  const lastActiveTabIds = useChromeRuntimeStore((state) => state.lastActiveTabIds);
+  const currentWindowId = useChromeRuntimeStore((state) => state.currentWindowId);
+  const showRecent = useUiStore((state) => state.showRecent);
   const keepSidebarOpened =
-    !p.appState.sidebarCollapsed || p.appState.sidebarHovered;
+    !sidebarCollapsedValue || sidebarHovered;
   const sidebarCollapsed = !keepSidebarOpened;
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const openTabsHeaderRef = useRef<HTMLDivElement | null>(null);
@@ -57,36 +67,25 @@ export function Sidebar(p: { appState: AppState }) {
         let tabOrRecentItem:
           | Tab
           | RecentItem
-          | undefined = p.appState.tabs.find((t) => t.id === targetTabId);
+          | undefined = tabs.find((t) => t.id === targetTabId);
 
         if (!tabOrRecentItem) {
-          tabOrRecentItem = p.appState.recentItems.find(
+          tabOrRecentItem = recentItems.find(
             (hi) => hi.id === targetTabId
           );
         }
 
         if (folderId === -1) {
           // we need to create new folder first
-          folderId = createFolderWithStat(dispatch, {});
+          folderId = Date.now() + Math.round(Math.random() * 10_000_000);
+          createFolder({ id: folderId });
         }
 
         if (tabOrRecentItem && tabOrRecentItem.id) {
           // Add existing Tab
           const item = convertTabOrRecentToItem(tabOrRecentItem);
-          dispatch({
-            type: Action.CreateFolderItem,
-            folderId,
-            targetGroupId,
-            insertBeforeItemId,
-            item,
-          });
-
-          dispatch({
-            type: Action.UpdateAppState,
-            newState: {
-              itemInEdit: item.id,
-            },
-          });
+          createFolderItem({ folderId, targetGroupId, insertBeforeItemId, item });
+          setItemInEdit(item.id);
         } else {
           console.error("ERROR: tab not found");
         }
@@ -96,12 +95,12 @@ export function Sidebar(p: { appState: AppState }) {
         setMouseDownEvent(undefined);
       };
       const onClick = (tabOrRecentId: number) => {
-        const tab = p.appState.tabs.find((t) => t.id === tabOrRecentId);
+        const tab = tabs.find((t) => t.id === tabOrRecentId);
         if (tab) {
           chrome.tabs.update(tabOrRecentId, { active: true });
           chrome.windows.update(tab.windowId, { focused: true });
         } else {
-          const recent = p.appState.recentItems.find(
+          const recent = recentItems.find(
             (ri) => ri.id === tabOrRecentId
           );
           if (recent && recent.url) {
@@ -121,7 +120,7 @@ export function Sidebar(p: { appState: AppState }) {
         onDragStarted,
       });
     }
-  }, [mouseDownEvent]);
+  }, [mouseDownEvent, tabs, recentItems, createFolder, createFolderItem, setItemInEdit]);
 
   function onMouseDown(e: React.MouseEvent) {
     if (isTargetSupportsDragAndDrop(e)) {
@@ -131,43 +130,32 @@ export function Sidebar(p: { appState: AppState }) {
   }
 
   const onSidebarMouseEnter = () => {
-    if (!p.appState.sidebarCollapsed) {
+    if (!sidebarCollapsedValue) {
       return;
     }
 
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { sidebarHovered: true },
-    });
+    setSidebarHovered(true);
   };
 
   const onSidebarMouseLeave = (e: any) => {
-    if (!p.appState.sidebarCollapsed) {
+    if (!sidebarCollapsedValue) {
       return;
     }
 
     if (e.relatedTarget.id !== "toggle-sidebar-btn") {
-      dispatch({
-        type: Action.UpdateAppState,
-        newState: { sidebarHovered: false },
-      });
+      setSidebarHovered(false);
     }
   };
 
   function onToggleSidebar() {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: {
-        sidebarCollapsed: !p.appState.sidebarCollapsed,
-        sidebarHovered: false,
-      },
-    });
+    setSidebarCollapsed(!sidebarCollapsedValue);
+    setSidebarHovered(false);
   }
 
   return (
     <div
       className={cn(styles.root, {
-        [styles.floating]: p.appState.sidebarCollapsed,
+        [styles.floating]: sidebarCollapsedValue,
         [styles.collapsed]: sidebarCollapsed,
       })}
       data-role={DOM_ROLE.sidebar}
@@ -185,40 +173,40 @@ export function Sidebar(p: { appState: AppState }) {
         ref={openTabsHeaderRef}
       >
         <span className={styles.headerText}>Open tabs</span>
-        <CleanupButton tabs={p.appState.tabs} />
-        <StashButton tabs={p.appState.tabs} />
+        <CleanupButton tabs={tabs} />
+        <StashButton tabs={tabs} />
         <button
           id="toggle-sidebar-btn"
           className="btn__icon"
           onClick={onToggleSidebar}
           style={
-            p.appState.sidebarCollapsed ? { transform: "rotate(180deg)" } : {}
+            sidebarCollapsedValue ? { transform: "rotate(180deg)" } : {}
           }
-          title={p.appState.sidebarCollapsed ? "Pin" : "Collapse"}
+          title={sidebarCollapsedValue ? "Pin" : "Collapse"}
         >
           <IconPin />
         </button>
       </div>
 
       <SidebarOpenTabs
-        tabs={p.appState.tabs}
-        spaces={p.appState.spaces}
-        search={p.appState.search}
+        tabs={tabs}
+        spaces={spaces}
+        search={search}
         searchFilters={searchFilters}
         searchFilterMode={searchFilterMode}
-        lastActiveTabIds={p.appState.lastActiveTabIds}
-        currentWindowId={p.appState.currentWindowId}
+        lastActiveTabIds={lastActiveTabIds}
+        currentWindowId={currentWindowId}
         sidebarCollapsed={sidebarCollapsed}
       />
-      {(p.appState.showRecent ||
-        p.appState.search ||
+      {(showRecent ||
+        search ||
         searchFilters.some((filter) => filter.enabled)) && (
         <SidebarRecent
-          search={p.appState.search}
+          search={search}
           searchFilters={searchFilters}
           searchFilterMode={searchFilterMode}
-          recentItems={p.appState.recentItems}
-          spaces={p.appState.spaces}
+          recentItems={recentItems}
+          spaces={spaces}
           sidebarCollapsed={sidebarCollapsed}
         ></SidebarRecent>
       )}
@@ -229,7 +217,8 @@ export function Sidebar(p: { appState: AppState }) {
 const StashButton = React.memo((props: { tabs: Tab[] }) => {
   const [confirmationOpened, setConfirmationOpened] = useState(false);
   const [shouldCloseTabs, setShouldCloseTabs] = useState(true);
-  const dispatch = useContext(DispatchContext);
+  const createFolder = useDashboardStore((state) => state.createFolder);
+  const showNotification = useUiStore((state) => state.showNotification);
 
   const onStashClick = () => {
     setConfirmationOpened(!confirmationOpened);
@@ -257,12 +246,9 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
 
       const items = tabsToShelve.map(convertTabToItem);
       const title = `Saved ${getCurrentData()}`;
-      const folderId = createFolderWithStat(dispatch, { title, items });
-
-      dispatch({
-        type: Action.ShowNotification,
-        message: "All Tabs has been saved",
-      });
+      const folderId = Date.now() + Math.round(Math.random() * 10_000_000);
+      createFolder({ id: folderId, title, items });
+      showNotification({ message: "All Tabs has been saved" });
       scrollElementIntoView(`[data-folder-id="${folderId}"]`);
     });
   };
@@ -323,7 +309,7 @@ const StashButton = React.memo((props: { tabs: Tab[] }) => {
 
 const CleanupButton = React.memo((props: { tabs: Tab[] }) => {
   const [duplicateTabsCount, setDuplicateTabsCount] = useState(0);
-  const dispatch = useContext(DispatchContext);
+  const showNotification = useUiStore((state) => state.showNotification);
 
   function onCleanupTabs() {
     getDuplicatedTabs((duplicatedTabs) => {
@@ -336,7 +322,7 @@ const CleanupButton = React.memo((props: { tabs: Tab[] }) => {
         duplicatedTabs.length > 0
           ? `${duplicatedTabs.length} duplicate tabs was closed`
           : "There are no duplicate tabs";
-      showMessage(message, dispatch);
+      showNotification({ message });
     });
   }
 

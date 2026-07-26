@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   extractHostname,
   hlSearch,
@@ -10,17 +10,13 @@ import {
   DropdownSubMenu,
 } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import cn from "clsx";
-import { Action } from "@/newtab/state/state";
-import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import {
   convertTabOrRecentToItem,
   isTabData,
   TabOrRecentData,
 } from "@/newtab/state/actionHelpers";
-import {
-  createFolderWithStat,
-  showMessage,
-} from "@/newtab/helpers/actionsHelpersWithDOM";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import IconSaved from "./icons/saved.svg";
 import { getFoldersList } from "@/newtab/helpers/moveToHelpers";
@@ -36,7 +32,11 @@ export const TabOrRecentItem = (p: {
   search: string;
   onCloseTab?: (tabId: number) => void;
 }) => {
-  const dispatch = useContext(DispatchContext);
+  const createFolderItem = useDashboardStore((state) => state.createFolderItem);
+  const createFolder = useDashboardStore((state) => state.createFolder);
+  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setItemInEdit = useUiStore((state) => state.setItemInEdit);
+  const showNotification = useUiStore((state) => state.showNotification);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const isTab = isTabData(p.data);
 
@@ -67,31 +67,16 @@ export const TabOrRecentItem = (p: {
 
   const onMenuCopyClicked = () => {
     navigator.clipboard.writeText(p.data.url ?? "");
-    showMessage("URL has been copied", dispatch);
+    showNotification({ message: "URL has been copied" });
     hideMenu();
   };
 
   const moveToFolder = (folderId: number, spaceId: number) => {
     const item = convertTabOrRecentToItem(p.data);
 
-    dispatch({
-      type: Action.CreateFolderItem,
-      folderId,
-      insertBeforeItemId: undefined,
-      item,
-    });
-
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: {
-        itemInEdit: item.id,
-      },
-    });
-
-    dispatch({
-      type: Action.SelectSpace,
-      spaceId,
-    });
+    createFolderItem({ folderId, item });
+    setItemInEdit(item.id);
+    selectSpace(spaceId);
 
     scrollElementIntoView(`a[data-id="${item.id}"]`);
 
@@ -104,13 +89,9 @@ export const TabOrRecentItem = (p: {
   }
 
   const moveToNewFolder = (spaceId: number) => {
-    mergeStepsInHistory((historyStepId) => {
-      const folderId = createFolderWithStat(dispatch, {
-        historyStepId,
-        spaceId,
-      });
-      moveToFolder(folderId, spaceId);
-    });
+    const folderId = Date.now() + Math.round(Math.random() * 10_000_000);
+    createFolder({ id: folderId, spaceId });
+    moveToFolder(folderId, spaceId);
   };
 
   const shortenedTitle = removeUselessProductName(p.data.title);

@@ -264,11 +264,11 @@ export function App() {
         >
           <Notification />
           {appState.page === "import" && (
-            <ImportBookmarksFromSettings appState={appState} />
+            <ImportBookmarksFromSettings />
           )}
           {appState.page === "default" && (
             <>
-              <Sidebar appState={appState} />
+              <Sidebar />
               <Bookmarks appState={appState} />
               <KeyboardAndMouseManager search={appState.search} />
             </>

@@ -1,19 +1,20 @@
-import React, { useContext } from "react";
+import React from "react";
 import { BookmarkImporter } from "@/newtab/components/common/BookmarksImporter/BookmarksImporter";
-import { Action, AppState } from "@/newtab/state/state";
-import { DispatchContext } from "@/newtab/state/actions";
+import { useChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 
-export function ImportBookmarksFromSettings(props: { appState: AppState }) {
-  const dispatch = useContext(DispatchContext);
+export function ImportBookmarksFromSettings() {
+  const recentItems = useChromeRuntimeStore((state) => state.recentItems);
+  const setPage = useUiStore((state) => state.setPage);
 
   const onClose = () => {
-    dispatch({ type: Action.UpdateAppState, newState: { page: "default" } });
+    setPage("default");
   };
 
   return (
     <div className="welcome welcome__align-top">
       <div className="welcome-scrollable">
-        <BookmarkImporter appState={props.appState} onClose={onClose} />
+        <BookmarkImporter recentItems={recentItems} onClose={onClose} />
       </div>
     </div>
   );

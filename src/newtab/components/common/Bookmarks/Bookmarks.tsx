@@ -195,7 +195,7 @@ export function Bookmarks(p: { appState: AppState }) {
       })}
       onMouseDown={onMouseDown}
     >
-      <TopBar appState={p.appState} isScrolled={isScrolled} />
+      <TopBar isScrolled={isScrolled} />
       <div
         className={styles.bookmarks}
         data-role={DOM_ROLE.bookmarks}

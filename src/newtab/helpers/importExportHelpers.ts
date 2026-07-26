@@ -1,5 +1,6 @@
 import {
   DataBackupV3,
+  FolderItemToCreate,
   SpaceBackupV3,
   SpaceV3,
 } from "@/newtab/helpers/types";
@@ -95,6 +96,31 @@ export function importFromJson(event: any, dispatch: ActionDispatcher) {
   const fr = new FileReader();
   fr.onload = receivedText;
   fr.readAsText(file);
+}
+
+export function importFromJsonWithCallbacks(
+  event: React.ChangeEvent<HTMLInputElement>,
+  onImported: (spaces: SpaceV3[]) => void,
+  onMessage: (message: string, isError?: boolean) => void,
+): void {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (loadEvent) => {
+    try {
+      const parsed = JSON.parse(String(loadEvent.target?.result ?? ""));
+      if (!isDataBackupV3(parsed)) {
+        onMessage("Unsupported JSON format", true);
+        return;
+      }
+      onImported(normalizeBackupV3(parsed).spaces);
+      onMessage("Backup has been imported");
+    } catch {
+      onMessage("Unsupported JSON format", true);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
 }
 
 export function createExportBackupV3(spaces: SpaceV3[]): DataBackupV3 {
@@ -324,6 +350,25 @@ export function getBrowserBookmarks(
   });
 }
 
+/** Browser API adapter без state-зависимостей: ошибки и данные отдаёт caller. */
+export function getBrowserBookmarksForImport(
+  onReady: (res: BookmarksAsPlainList) => void,
+  recentItems: RecentItem[],
+  onEmpty: () => void,
+): void {
+  const history = getTopVisitedFromHistory(recentItems, 1000);
+  chrome.bookmarks.getTree((bookmarks) => {
+    const root = bookmarks[0];
+    if (!root?.children) {
+      onEmpty();
+      return;
+    }
+    const plain: BookmarksAsPlainList = [];
+    traverseTree(root.children, plain, [], history);
+    onReady(plain);
+  });
+}
+
 function traverseTree(
   nodes: CustomBookmarkTreeNode[],
   plainList: BookmarksAsPlainList,
@@ -368,5 +413,19 @@ export function importBrowserBookmarks(
         items,
       });
     }
+  });
+}
+
+export function importBrowserBookmarksWithCallback(
+  records: BookmarksAsPlainList,
+  skipChecked: boolean,
+  onCreateFolder: (input: { id: number; title: string; items: FolderItemToCreate[] }) => void,
+): void {
+  records.forEach((record) => {
+    if (!skipChecked && !record.folder.checked) return;
+    const items = record.folder.children
+      ?.filter((item) => (skipChecked || item.checked) && item.url)
+      .map((item) => createNewFolderItem(item.url, item.title, getTempFavIconUrl(item.url))) ?? [];
+    onCreateFolder({ id: genUniqLocalId(), title: record.folder.title, items });
   });
 }

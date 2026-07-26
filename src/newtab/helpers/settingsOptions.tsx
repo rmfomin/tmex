@@ -1,14 +1,11 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { hasItemsToHighlight } from "@/newtab/helpers/utils";
-import { Action, AppState } from "@/newtab/state/state";
-import { DispatchContext } from "@/newtab/state/actions";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
+import { useChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
 import Switch from "react-switch";
 import {
-  showErrorMessage,
-  showMessage,
-} from "@/newtab/helpers/actionsHelpersWithDOM";
-import {
-  importFromJson,
+  importFromJsonWithCallbacks,
   onExportJson,
 } from "@/newtab/helpers/importExportHelpers";
 import { ImportConfirmationModal } from "@/newtab/components/common/ImportConfirmationModal/ImportConfirmationModal";
@@ -55,8 +52,11 @@ export type OptionsConfig = Array<
   OnClickOption | OnToggleOption | SegmentedOption<any> | { separator: true }
 >;
 
-export const HelpOptions = (p: { appState: AppState }) => {
-  const dispatch = useContext(DispatchContext);
+export const HelpOptions = () => {
+  const spaces = useDashboardStore((state) => state.spaces);
+  const currentSpaceId = useDashboardStore((state) => state.currentSpaceId);
+  const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
+  const showNotification = useUiStore((state) => state.showNotification);
   // const [isJoinBetaModalOpen, setJoinBetaModalOpen] = useState(false);
   const [isShortcutsModalOpen, setShortcutsModalOpen] = useState(false);
 
@@ -75,11 +75,7 @@ export const HelpOptions = (p: { appState: AppState }) => {
     if (folderItem.url) {
       return loadFaviconUrl(folderItem.url).then((newFaviconUrl) => {
         if (newFaviconUrl !== folderItem.favIconUrl) {
-          dispatch({
-            type: Action.UpdateFolderItem,
-            itemId: folderItem.id,
-            favIconUrl: newFaviconUrl,
-          });
+          updateFolderItem(folderItem.id, { favIconUrl: newFaviconUrl });
         }
       });
     } else {
@@ -93,8 +89,8 @@ export const HelpOptions = (p: { appState: AppState }) => {
 
   function invalidateBrokenIcons() {
     const promises: Promise<unknown>[] = [minTimeoutPromise()];
-    const currentSpace = p.appState.spaces.find(
-      (s) => s.id === p.appState.currentSpaceId
+    const currentSpace = spaces.find(
+      (space) => space.id === currentSpaceId
     );
     if (currentSpace) {
       promises.push(
@@ -102,9 +98,9 @@ export const HelpOptions = (p: { appState: AppState }) => {
       );
     }
 
-    showMessage("updating...", dispatch, true);
+    showNotification({ message: "updating...", isLoading: true });
     Promise.all(promises).then(() => {
-      showMessage("Favicons are updated", dispatch);
+      showNotification({ message: "Favicons are updated" });
     });
   }
 
@@ -156,59 +152,63 @@ export const HelpOptions = (p: { appState: AppState }) => {
   );
 };
 
-export const SettingsOptions = (p: { appState: AppState }) => {
+export const SettingsOptions = () => {
   const [importConfirmationOpen, setImportConfirmationOpen] = useState(false);
   const fileEvent = useRef(null);
-  const dispatch = useContext(DispatchContext);
+  const spaces = useDashboardStore((state) => state.spaces);
+  const currentSpaceId = useDashboardStore((state) => state.currentSpaceId);
+  const hydrate = useDashboardStore((state) => state.hydrate);
+  const showNotUsed = useUiStore((state) => state.showNotUsed);
+  const setShowNotUsed = useUiStore((state) => state.setShowNotUsed);
+  const showArchived = useUiStore((state) => state.showArchived);
+  const setShowArchived = useUiStore((state) => state.setShowArchived);
+  const showRecent = useUiStore((state) => state.showRecent);
+  const setShowRecent = useUiStore((state) => state.setShowRecent);
+  const openBookmarksInNewTab = useUiStore((state) => state.openBookmarksInNewTab);
+  const setOpenBookmarksInNewTab = useUiStore((state) => state.setOpenBookmarksInNewTab);
+  const colorTheme = useUiStore((state) => state.colorTheme);
+  const setColorTheme = useUiStore((state) => state.setColorTheme);
+  const hiddenFeatureIsEnabled = useUiStore((state) => state.hiddenFeatureIsEnabled);
+  const setPage = useUiStore((state) => state.setPage);
+  const showNotification = useUiStore((state) => state.showNotification);
+  const recentItems = useChromeRuntimeStore((state) => state.recentItems);
 
   function onToggleNotUsed() {
-    if (p.appState.showNotUsed) {
-      dispatch({ type: Action.UpdateShowNotUsedItems, value: false });
-      showMessage("Highlighting canceled", dispatch);
+    if (showNotUsed) {
+      setShowNotUsed(false);
+      showNotification({ message: "Highlighting canceled" });
     } else {
-      if (hasItemsToHighlight(p.appState.spaces, p.appState.recentItems)) {
-        dispatch({ type: Action.UpdateShowNotUsedItems, value: true });
-        showMessage(
-          "Unused items for the past 60 days are highlighted",
-          dispatch
-        );
+      if (hasItemsToHighlight(spaces, recentItems)) {
+        setShowNotUsed(true);
+        showNotification({ message: "Unused items for the past 60 days are highlighted" });
       } else {
-        showErrorMessage(`There are no unused items to highlight`, dispatch);
+        showNotification({ message: "There are no unused items to highlight", isError: true });
       }
     }
   }
 
   function onToggleHidden() {
-    dispatch({
-      type: Action.UpdateShowArchivedItems,
-      value: !p.appState.showArchived,
-    });
-    const message = !p.appState.showArchived
+    setShowArchived(!showArchived);
+    const message = !showArchived
       ? "Hidden items are visible"
       : "Hidden items are hidden";
-    showMessage(message, dispatch);
+    showNotification({ message });
   }
 
   function onImportExistingBookmarks() {
-    dispatch({ type: Action.UpdateAppState, newState: { page: "import" } });
+    setPage("import");
   }
 
   function onToggleRecentVisibility() {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { showRecent: !p.appState.showRecent },
-    });
+    setShowRecent(!showRecent);
   }
 
   function onSelectColorTheme(colorTheme: ColorTheme) {
-    dispatch({ type: Action.SetColorTheme, colorTheme });
+    setColorTheme(colorTheme);
   }
 
   function onToggleOpenInTheNewTab() {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { openBookmarksInNewTab: !p.appState.openBookmarksInNewTab },
-    });
+    setOpenBookmarksInNewTab(!openBookmarksInNewTab);
   }
 
   function onImportClick(e: any) {
@@ -218,15 +218,17 @@ export const SettingsOptions = (p: { appState: AppState }) => {
 
   function onImportTypeConfirmed(opt: string) {
     setImportConfirmationOpen(false);
-    if (opt === "import") {
-      importFromJson(fileEvent.current, dispatch);
+    if (opt === "import" && fileEvent.current) {
+      importFromJsonWithCallbacks(fileEvent.current, (importedSpaces) => {
+        hydrate({ spaces: importedSpaces, currentSpaceId: importedSpaces[0]?.id ?? -1 });
+      }, (message, isError) => showNotification({ message, isError }));
     }
   }
 
   const settingsOptions: OptionsConfig = [
     {
       onSelect: onSelectColorTheme,
-      value: p.appState.colorTheme ?? "system",
+      value: colorTheme,
       title: "Choose light theme, system theme, or dark theme",
       text: "Theme",
       items: [
@@ -258,30 +260,30 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     },
     {
       onToggle: onToggleNotUsed,
-      value: p.appState.showNotUsed,
+      value: showNotUsed,
       title:
         "Highlight not used in past 60 days to archive them. It helps to keep workspace clean.",
-      text: p.appState.showNotUsed
+      text: showNotUsed
         ? "Unhighlight not used"
         : "Highlight not used",
     },
     {
       onToggle: onToggleHidden,
-      value: p.appState.showArchived,
+      value: showArchived,
       title: "You can hide unused folders and bookmarks to keep space clean",
       text: "Show hidden items",
-      hidden: !p.appState.hiddenFeatureIsEnabled,
+      hidden: !hiddenFeatureIsEnabled,
     },
     {
       onToggle: onToggleRecentVisibility,
-      value: p.appState.showRecent,
+      value: showRecent,
       title:
         "Show recently closed tabs in the sidebar. When off, they appear only during search.",
       text: "Show Recent in Sidebar",
     },
     {
       onToggle: onToggleOpenInTheNewTab,
-      value: !p.appState.openBookmarksInNewTab,
+      value: !openBookmarksInNewTab,
       title:
         "You can also open bookmarks on the new tab with pressed CMD or CTRL",
       text: "Open bookmarks on the same tab",
@@ -302,7 +304,7 @@ export const SettingsOptions = (p: { appState: AppState }) => {
     },
     {
       onClick: () => {
-        onExportJson(p.appState.spaces);
+        onExportJson(spaces);
       },
       title: "Export all Folders and Bookmarks to JSON file",
       text: "Export to JSON",

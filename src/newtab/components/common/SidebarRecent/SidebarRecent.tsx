@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import cn from "clsx";
 import {
   filterRecentItemsBySearch,
@@ -10,8 +10,7 @@ import {
   getBaseFilteredRecentItems,
   tryLoadMoreHistory,
 } from "@/newtab/helpers/recentHistoryUtils";
-import { DispatchContext } from "@/newtab/state/actions";
-import { Action } from "@/newtab/state/state";
+import { useChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
 import { TabOrRecentItem } from "@/newtab/components/common/SidebarItem/SidebarItem";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import styles from "./SidebarRecent.module.scss";
@@ -21,7 +20,7 @@ const PAGE_SIZE = 100;
 
 const RecentList = React.memo(
   (p: { items: RecentItem[]; spaces: SpaceV3[]; search: string }) => {
-    const dispatch = useContext(DispatchContext);
+    const setRecentItems = useChromeRuntimeStore((state) => state.setRecentItems);
     const [displayedItems, setDisplayedItems] = useState<RecentItem[]>([]);
     const [page, setPage] = useState<number>(1);
 
@@ -37,10 +36,8 @@ const RecentList = React.memo(
         setDisplayedItems(nextItems);
         setPage(nextPage);
       }
-      tryLoadMoreHistory((recentItems) => {
-        dispatch({ type: Action.SetTabsOrHistory, recentItems });
-      });
-    }, [page, p.items, displayedItems, dispatch]);
+      tryLoadMoreHistory(setRecentItems);
+    }, [page, p.items, displayedItems, setRecentItems]);
 
     const handleScroll = useCallback(() => {
       const sidebar = document.querySelector(roleSelector(DOM_ROLE.sidebar))!;

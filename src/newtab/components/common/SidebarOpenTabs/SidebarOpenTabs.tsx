@@ -1,4 +1,4 @@
-import React, { memo, useContext } from "react";
+import React, { memo } from "react";
 import cn from "clsx";
 import {
   filterTabsBySearch,
@@ -7,9 +7,8 @@ import {
   SearchFilterMode,
 } from "@/newtab/helpers/utils";
 import { SpaceV3 } from "@/newtab/helpers/types";
-import { DispatchContext } from "@/newtab/state/actions";
-import { Action } from "@/newtab/state/state";
-import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
+import { useChromeRuntimeStore } from "@/newtab/state/chrome-runtime/chromeRuntimeStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import { TabOrRecentItem } from "@/newtab/components/common/SidebarItem/SidebarItem";
 import styles from "./SidebarOpenTabs.module.scss";
 import Tab = chrome.tabs.Tab;
@@ -25,14 +24,13 @@ export const SidebarOpenTabs = memo(
     currentWindowId: number | undefined;
     sidebarCollapsed: boolean;
   }) => {
-    const dispatch = useContext(DispatchContext);
+    const closeTabs = useChromeRuntimeStore((state) => state.closeTabs);
+    const showNotification = useUiStore((state) => state.showNotification);
 
     function onCloseTab(tabId: number) {
-      dispatch({
-        type: Action.CloseTabs,
-        tabIds: [tabId],
-      });
-      showMessage("Tab has been closed", dispatch);
+      chrome.tabs.remove(tabId);
+      closeTabs([tabId]);
+      showNotification({ message: "Tab has been closed" });
     }
 
     const tabsByWindows: Map<number, Tab[]> = new Map();

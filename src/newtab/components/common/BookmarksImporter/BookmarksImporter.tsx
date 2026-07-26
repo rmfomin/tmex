@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { DispatchContext } from "@/newtab/state/actions";
-import { AppState } from "@/newtab/state/state";
-import { showMessage } from "@/newtab/helpers/actionsHelpersWithDOM";
+import React, { useEffect, useRef, useState } from "react";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import {
   BookmarksAsPlainList,
   CustomBookmarkTreeNode,
-  getBrowserBookmarks,
-  importBrowserBookmarks,
+  getBrowserBookmarksForImport,
+  importBrowserBookmarksWithCallback,
   PlainListRecord,
 } from "@/newtab/helpers/importExportHelpers";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
@@ -21,19 +20,20 @@ const BookmarkList = (p: {
   onClose: () => void;
   onBack?: () => void;
 }) => {
-  const dispatch = useContext(DispatchContext);
+  const createFolder = useDashboardStore((state) => state.createFolder);
+  const showNotification = useUiStore((state) => state.showNotification);
   const recordsRefs = useRef<HTMLInputElement[]>([]);
   const [records, setPlainRecords] = useState<BookmarksAsPlainList>([]);
 
   useEffect(() => {
-    getBrowserBookmarks(
+    getBrowserBookmarksForImport(
       (plain) => {
         setPlainRecords(plain);
       },
       p.recentItems,
-      dispatch,
+      () => showNotification({ message: "No browser bookmarks found", isError: true }),
     );
-  }, []);
+  }, [p.recentItems, showNotification]);
 
   const handleFolderCheckChange = (recIndex: number, isChecked: boolean) => {
     const updatedRecords = records.map<PlainListRecord>(
@@ -118,7 +118,7 @@ const BookmarkList = (p: {
   });
 
   const onImport = () => {
-    importBrowserBookmarks(records, dispatch, false);
+    importBrowserBookmarksWithCallback(records, false, createFolder);
     p.onClose();
   };
 
@@ -134,7 +134,7 @@ const BookmarkList = (p: {
       });
     });
     if (mostVisitedNum === 0) {
-      showMessage('Sorry, "Recently visited" bookmarks not found', dispatch);
+      showNotification({ message: 'Sorry, "Recently visited" bookmarks not found' });
     } else {
       onImport();
     }
@@ -160,7 +160,7 @@ const BookmarkList = (p: {
   };
 
   const onImportAll = () => {
-    importBrowserBookmarks(records, dispatch, true);
+    importBrowserBookmarksWithCallback(records, true, createFolder);
     p.onClose();
   };
 
@@ -288,7 +288,7 @@ const BookmarkList = (p: {
 };
 
 export function BookmarkImporter(p: {
-  appState: AppState;
+  recentItems: RecentItem[];
   onClose: () => void;
   onBack?: () => void;
 }) {
@@ -302,7 +302,7 @@ export function BookmarkImporter(p: {
       <h1>Importing browser bookmarks 📦</h1>
       <h2>Select the bookmarks you'd like to import</h2>
       <BookmarkList
-        recentItems={p.appState.recentItems}
+        recentItems={p.recentItems}
         onClose={p.onClose}
         onBack={p.onBack}
       />
