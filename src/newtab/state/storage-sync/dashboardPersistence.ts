@@ -4,10 +4,6 @@ import type { DashboardState } from "@/newtab/state/dashboard/types";
 
 /**
  * Адаптер отделяет persistence-правила от конкретного API хранения.
- *
- * В полной миграции его реализацией станет chrome.storage.local вместе с
- * текущей v3-нормализацией и BroadcastChannel. В тестах вместо Chrome
- * передаётся простой mock, поэтому store и domain-логика не зависят от браузера.
  */
 export type DashboardPersistenceAdapter = {
   load(): Promise<DashboardState>;

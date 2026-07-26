@@ -1,7 +1,7 @@
 import {
-  selectCurrentFolders,
-  selectCurrentSpace,
-  selectFolderById,
+  currentFoldersSelector,
+  currentSpaceSelector,
+  folderByIdSelector,
 } from "@/newtab/state/dashboard/selectors";
 import { createDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 
@@ -17,7 +17,7 @@ test("dashboard selectors возвращают минимальный срез �
     }],
   }).getState();
 
-  expect(selectCurrentSpace(state)).toEqual(expect.objectContaining({ id: 1 }));
-  expect(selectCurrentFolders(state)).toEqual([expect.objectContaining({ id: 10 })]);
-  expect(selectFolderById(10)(state)).toEqual(expect.objectContaining({ title: "Инструменты" }));
+  expect(currentSpaceSelector(state)).toEqual(expect.objectContaining({ id: 1 }));
+  expect(currentFoldersSelector(state)).toEqual([expect.objectContaining({ id: 10 })]);
+  expect(folderByIdSelector(10)(state)).toEqual(expect.objectContaining({ title: "Инструменты" }));
 });

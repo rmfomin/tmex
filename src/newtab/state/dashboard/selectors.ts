@@ -1,17 +1,17 @@
 import type { FolderV3, SpaceV3 } from "@/newtab/helpers/types";
 import type { DashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 
-export const selectSpaces = (state: DashboardStore): SpaceV3[] => state.spaces;
+export const spacesSelector = (state: DashboardStore): SpaceV3[] => state.spaces;
 
-export const selectCurrentSpace = (
+export const currentSpaceSelector = (
   state: DashboardStore,
 ): SpaceV3 | undefined =>
   state.spaces.find((space) => space.id === state.currentSpaceId);
 
-export const selectCurrentFolders = (state: DashboardStore): FolderV3[] =>
-  selectCurrentSpace(state)?.folders ?? [];
+export const currentFoldersSelector = (state: DashboardStore): FolderV3[] =>
+  currentSpaceSelector(state)?.folders ?? [];
 
-export const selectFolderById = (folderId: number) => (
+export const folderByIdSelector = (folderId: number) => (
   state: DashboardStore,
 ): FolderV3 | undefined =>
   state.spaces

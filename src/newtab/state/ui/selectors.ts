@@ -1,7 +1,7 @@
 import type { UiPreferences, UiStore } from "@/newtab/state/ui/uiStore";
 
 /** Селекторы дают компонентам стабильный узкий контракт вместо полного store. */
-export function selectSearchState(state: UiStore) {
+export function searchStateSelector(state: UiStore) {
   return {
     search: state.search,
     searchFilters: state.searchFilters,
@@ -9,7 +9,7 @@ export function selectSearchState(state: UiStore) {
   };
 }
 
-export function selectPersistedPreferences(state: UiStore): UiPreferences {
+export function persistedPreferencesSelector(state: UiStore): UiPreferences {
   return {
     sidebarCollapsed: state.sidebarCollapsed,
     openBookmarksInNewTab: state.openBookmarksInNewTab,

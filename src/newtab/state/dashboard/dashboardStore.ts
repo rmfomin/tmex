@@ -63,15 +63,13 @@ const emptyDashboardState: DashboardState = {
 
 const maxUndoSteps = 50;
 
-/** Создаёт initial state и actions, получая set/get от Zustand при создании store. */
+// Данные и команды
 function createDashboardSlice(
   initialState: DashboardState,
 ): StateCreator<DashboardStore> {
   return (set) => ({
     ...initialState,
 
-    // Store намеренно не обращается к Chrome API. Он только применяет чистую
-    // domain-операцию, поэтому одинаково работает в браузере и Jest.
     undoSteps: [],
 
     createSpace: (input) => set((state) => applyWithUndo(state, createSpace(state, input))),
@@ -109,6 +107,8 @@ function createDashboardSlice(
   });
 }
 
+// createStore — это Zustand vanilla, который не привязан к React. 
+// В vanilla store нет React-хуков, их добавит useStore
 export function createDashboardStore(
   initialState: DashboardState = emptyDashboardState,
 ): StoreApi<DashboardStore> {
@@ -127,16 +127,9 @@ function applyWithUndo(state: DashboardStore, nextState: DashboardState): Partia
   };
 }
 
-/**
- * Будущий singleton для runtime приложения. Пока UI его не использует: это
- * сохраняет один источник истины в работающем приложении на время прототипа.
- */
 export const dashboardStore = createDashboardStore();
 
-/**
- * React-аналог RTK useSelector. Компонент передаёт selector и перерисовывается
- * только когда меняется возвращённый этим selector значимый срез state.
- */
+// React-хук для использования dashboardStore в компонентах React
 export function useDashboardStore<T>(
   selector: (state: DashboardStore) => T,
 ): T {

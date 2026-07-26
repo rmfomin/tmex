@@ -1,7 +1,7 @@
 import { createUiStore } from "@/newtab/state/ui/uiStore";
 import {
-  selectPersistedPreferences,
-  selectSearchState,
+  persistedPreferencesSelector,
+  searchStateSelector,
 } from "@/newtab/state/ui/selectors";
 
 test("ui store меняет transient state и сохраняемые preferences через именованные actions", () => {
@@ -71,10 +71,10 @@ test("ui selectors возвращают только нужный срез state
   store.getState().setSearch("grafana");
   store.getState().setShowArchived(true);
 
-  expect(selectSearchState(store.getState())).toEqual({
+  expect(searchStateSelector(store.getState())).toEqual({
     search: "grafana",
     searchFilters: [],
     searchFilterMode: "or",
   });
-  expect(selectPersistedPreferences(store.getState()).showArchived).toBe(true);
+  expect(persistedPreferencesSelector(store.getState()).showArchived).toBe(true);
 });

@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import cn from "clsx";
 import styles from "./Bookmarks.module.scss";
-import folderStyles from "@/newtab/components/common/Folder/Folder.module.scss";
 import {
   blurSearch,
   isTargetSupportsDragAndDrop,
 } from "@/newtab/helpers/utils";
 import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { Folder } from "@/newtab/components/common/Folder/Folder";
+import { NewFolderPlaceholder } from "@/newtab/components/common/Folder/NewFolderPlaceholder";
 import { handleBookmarksKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
 import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { useUiStore } from "@/newtab/state/ui/uiStore";
@@ -239,22 +239,7 @@ export function Bookmarks() {
 
         {search === "" &&
         !searchFilters.some((filter) => filter.enabled) ? (
-          <div
-            className={cn(folderStyles.root, folderStyles.newFolder)}
-            data-role={DOM_ROLE.folder}
-            data-folder-id="-1"
-            data-folder-new="true"
-          >
-            <h2 className={folderStyles.header} onClick={onCreateFolder}>
-              New folder{" "}
-              <span className={folderStyles.newText}>+ Click to add</span>
-            </h2>
-            <div
-              className={folderStyles.items}
-              data-role={DOM_ROLE.folderItems}
-              data-folder-id="-1"
-            />
-          </div>
+          <NewFolderPlaceholder onCreate={onCreateFolder} />
         ) : folders.length === 0 ? (
           <div className={styles.noBookmarksFound}>No bookmarks found</div>
         ) : null}

@@ -10,5 +10,5 @@ test("empty bookmarks area offers new folder instead of JSON import", () => {
   );
 
   expect(source).not.toContain("Import from JSON");
-  expect(source).toContain("data-folder-new=\"true\"");
+  expect(source).toContain("<NewFolderPlaceholder onCreate={onCreateFolder} />");
 });

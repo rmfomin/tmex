@@ -13,7 +13,7 @@ export type NotificationState = {
 
 export type NotificationInput = Omit<NotificationState, "visible">;
 
-/** Поля, которые сохраняются вместе с dashboard в chrome.storage.local. */
+// Поля, которые сохраняются вместе с dashboard в chrome.storage.local
 export type UiPreferences = {
   sidebarCollapsed: boolean;
   openBookmarksInNewTab: boolean;
@@ -77,11 +77,11 @@ const defaultUiState: UiState = {
   sidebarHovered: false,
 };
 
-/** Создаёт initial state и actions, получая set/get от Zustand при создании store. */
 function createUiSlice(initialState: Partial<UiState>): StateCreator<UiStore> {
   return (set) => ({
     ...defaultUiState,
     ...initialState,
+    
     setSearch: (search) => set({ search }),
     setSearchFilters: (searchFilters) => set({ searchFilters }),
     setSearchFilterMode: (searchFilterMode) => set({ searchFilterMode }),
@@ -105,16 +105,12 @@ function createUiSlice(initialState: Partial<UiState>): StateCreator<UiStore> {
     setShowNotUsed: (showNotUsed) => set({ showNotUsed }),
     setHiddenFeatureIsEnabled: (hiddenFeatureIsEnabled) =>
       set({ hiddenFeatureIsEnabled }),
-    // Hydration заменяет только сериализуемые preferences, не search, modal и
-    // notification текущего UI instance.
+
     hydratePreferences: (preferences) => set(preferences),
   });
 }
 
-/**
- * Zustand-аналог RTK ui slice. Внутри только синхронное UI state; применение
- * темы, storage и таймеры находятся в controllers, чтобы store был тестируемым.
- */
+// createStore единообразно для всех трёх store
 export function createUiStore(
   initialState: Partial<UiState> = {},
 ): StoreApi<UiStore> {

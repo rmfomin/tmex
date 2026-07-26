@@ -31,18 +31,12 @@ const initialChromeRuntimeState: ChromeRuntimeState = {
   loaded: false,
 };
 
-/**
- * Runtime-срез не сохраняется в chrome.storage: вкладки и история принадлежат
- * браузеру и должны обновляться только его событиями. Это Zustand-аналог RTK
- * slice: store содержит данные и именованные синхронные actions, но не эффекты.
- */
 export function createChromeRuntimeStore(
   initialState: Partial<ChromeRuntimeState> = {},
 ): StoreApi<ChromeRuntimeStore> {
   return createStore<ChromeRuntimeStore>()(createChromeRuntimeSlice(initialState));
 }
 
-/** Создаёт initial state и actions, получая set/get от Zustand при создании store. */
 function createChromeRuntimeSlice(
   initialState: Partial<ChromeRuntimeState>,
 ): StateCreator<ChromeRuntimeStore> {
@@ -70,10 +64,6 @@ function createChromeRuntimeSlice(
   });
 }
 
-/**
- * Singleton нужен controller-коду вне React. Компоненты ниже подписываются
- * через selector, как через RTK useSelector, и не читают весь store целиком.
- */
 export const chromeRuntimeStore = createChromeRuntimeStore();
 
 export function useChromeRuntimeStore<T>(
