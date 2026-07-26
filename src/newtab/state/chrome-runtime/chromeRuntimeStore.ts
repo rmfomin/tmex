@@ -1,5 +1,5 @@
 import { useStore } from "zustand";
-import { createStore, type StoreApi } from "zustand/vanilla";
+import { createStore, type StateCreator, type StoreApi } from "zustand/vanilla";
 import type { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 
@@ -39,7 +39,14 @@ const initialChromeRuntimeState: ChromeRuntimeState = {
 export function createChromeRuntimeStore(
   initialState: Partial<ChromeRuntimeState> = {},
 ): StoreApi<ChromeRuntimeStore> {
-  return createStore<ChromeRuntimeStore>()((set) => ({
+  return createStore<ChromeRuntimeStore>()(createChromeRuntimeSlice(initialState));
+}
+
+/** Создаёт initial state и actions, получая set/get от Zustand при создании store. */
+function createChromeRuntimeSlice(
+  initialState: Partial<ChromeRuntimeState>,
+): StateCreator<ChromeRuntimeStore> {
+  return (set) => ({
     ...initialChromeRuntimeState,
     ...initialState,
 
@@ -60,7 +67,7 @@ export function createChromeRuntimeStore(
     setCurrentWindowId: (currentWindowId) => set({ currentWindowId }),
     setLastActiveTabIds: (lastActiveTabIds) => set({ lastActiveTabIds }),
     setLoaded: (loaded) => set({ loaded }),
-  }));
+  });
 }
 
 /**

@@ -1,5 +1,5 @@
 import { useStore } from "zustand";
-import { createStore, type StoreApi } from "zustand/vanilla";
+import { createStore, type StateCreator, type StoreApi } from "zustand/vanilla";
 import {
   createFolder,
   createFolderItem,
@@ -63,20 +63,11 @@ const emptyDashboardState: DashboardState = {
 
 const maxUndoSteps = 50;
 
-/**
- * Vanilla store — это Zustand store без привязки к React.
- *
- * Аналогия с RTK: createDashboardStore играет роль configureStore + dashboard
- * slice, а методы ниже — именованные actions slice. В отличие от RTK action
- * не проходит через dispatch/reducer: Zustand вызывает set() напрямую.
- *
- * Такая форма нужна расширению, потому что Chrome callbacks и storage-sync
- * работают вне React и могут использовать store.getState() / store.subscribe().
- */
-export function createDashboardStore(
-  initialState: DashboardState = emptyDashboardState,
-): StoreApi<DashboardStore> {
-  return createStore<DashboardStore>()((set) => ({
+/** Создаёт initial state и actions, получая set/get от Zustand при создании store. */
+function createDashboardSlice(
+  initialState: DashboardState,
+): StateCreator<DashboardStore> {
+  return (set) => ({
     ...initialState,
 
     // Store намеренно не обращается к Chrome API. Он только применяет чистую
@@ -115,7 +106,13 @@ export function createDashboardStore(
     hydrate: (state) => {
       set({ ...state, undoSteps: [] });
     },
-  }));
+  });
+}
+
+export function createDashboardStore(
+  initialState: DashboardState = emptyDashboardState,
+): StoreApi<DashboardStore> {
+  return createStore<DashboardStore>()(createDashboardSlice(initialState));
 }
 
 function applyWithUndo(state: DashboardStore, nextState: DashboardState): Partial<DashboardStore> {

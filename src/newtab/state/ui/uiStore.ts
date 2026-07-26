@@ -1,5 +1,5 @@
 import { useStore } from "zustand";
-import { createStore, type StoreApi } from "zustand/vanilla";
+import { createStore, type StateCreator, type StoreApi } from "zustand/vanilla";
 import type { ColorTheme } from "@/newtab/helpers/types";
 import type { SearchFilter, SearchFilterMode } from "@/newtab/helpers/utils";
 
@@ -77,14 +77,9 @@ const defaultUiState: UiState = {
   sidebarHovered: false,
 };
 
-/**
- * Zustand-аналог RTK ui slice. Внутри только синхронное UI state; применение
- * темы, storage и таймеры находятся в controllers, чтобы store был тестируемым.
- */
-export function createUiStore(
-  initialState: Partial<UiState> = {},
-): StoreApi<UiStore> {
-  return createStore<UiStore>()((set) => ({
+/** Создаёт initial state и actions, получая set/get от Zustand при создании store. */
+function createUiSlice(initialState: Partial<UiState>): StateCreator<UiStore> {
+  return (set) => ({
     ...defaultUiState,
     ...initialState,
     setSearch: (search) => set({ search }),
@@ -113,7 +108,17 @@ export function createUiStore(
     // Hydration заменяет только сериализуемые preferences, не search, modal и
     // notification текущего UI instance.
     hydratePreferences: (preferences) => set(preferences),
-  }));
+  });
+}
+
+/**
+ * Zustand-аналог RTK ui slice. Внутри только синхронное UI state; применение
+ * темы, storage и таймеры находятся в controllers, чтобы store был тестируемым.
+ */
+export function createUiStore(
+  initialState: Partial<UiState> = {},
+): StoreApi<UiStore> {
+  return createStore<UiStore>()(createUiSlice(initialState));
 }
 
 function getNextColorTheme(theme: ColorTheme): ColorTheme {
