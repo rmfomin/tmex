@@ -1,4 +1,9 @@
-import type { BookmarkItemV3, FolderItemToCreate, GroupV3, SpaceV3 } from "@/newtab/helpers/types";
+import type {
+  BookmarkItemV3,
+  FolderItemToCreate,
+  GroupV3,
+  SpaceV3,
+} from "@/newtab/helpers/types";
 import type { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 
@@ -9,29 +14,52 @@ export function isTabData(data: TabOrRecentData): data is Tab {
 }
 
 export function convertTabToItem(tab: Tab): FolderItemToCreate {
-  return { id: generateLocalId(), favIconUrl: tab.favIconUrl || "", title: tab.title || "", url: tab.url || "" };
+  return {
+    id: generateLocalId(),
+    favIconUrl: tab.favIconUrl || "",
+    title: tab.title || "",
+    url: tab.url || "",
+  };
 }
 
-export function convertTabOrRecentToItem(data: TabOrRecentData): FolderItemToCreate {
+export function convertTabOrRecentToItem(
+  data: TabOrRecentData,
+): FolderItemToCreate {
   return isTabData(data)
     ? convertTabToItem(data)
-    : { id: generateLocalId(), favIconUrl: data.favIconUrl || getTemporaryFaviconUrl(data.url), title: data.title || "", url: data.url || "" };
+    : {
+        id: generateLocalId(),
+        favIconUrl: data.favIconUrl || getTemporaryFaviconUrl(data.url),
+        title: data.title || "",
+        url: data.url || "",
+      };
 }
 
-export function createNewFolderItem(url?: string, title?: string, favIconUrl?: string): FolderItemToCreate {
-  return { id: generateLocalId(), favIconUrl: favIconUrl ?? getTemporaryFaviconUrl(url), title: title ?? "", url: url ?? "" };
+export function createNewFolderItem(
+  url?: string,
+  title?: string,
+  favIconUrl?: string,
+): FolderItemToCreate {
+  return {
+    id: generateLocalId(),
+    favIconUrl: favIconUrl ?? getTemporaryFaviconUrl(url),
+    title: title ?? "",
+    url: url ?? "",
+  };
 }
 
 export function createNewSection(title = "Title"): GroupV3 {
-  return { id: generateLocalId(), position: "", type: "group", objectType: "group", title, collapsed: false, groupItems: [] };
+  return {
+    id: generateLocalId(),
+    position: "",
+    type: "group",
+    objectType: "group",
+    title,
+    collapsed: false,
+    groupItems: [],
+  };
 }
 
-/**
- * Небольшие чистые утилиты для dashboard-данных.
- *
- * Они живут рядом с Zustand domain, а не в legacy actionHelpers: их можно
- * вызывать из controller и UI-helper без reducer/action dispatcher.
- */
 export function generateLocalId(): number {
   return new Date().valueOf() + Math.round(Math.random() * 10000000);
 }
