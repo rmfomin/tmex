@@ -11,7 +11,7 @@ import { isTargetInputOrTextArea } from "@/newtab/helpers/utils";
 export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
   const deleteFolderItems = useDashboardStore((state) => state.deleteFolderItems);
   const undo = useDashboardStore((state) => state.undo);
-  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setCurrentSpace = useDashboardStore((state) => state.selectSpace);
   const spaces = useDashboardStore((state) => state.spaces);
   const showNotification = useUiStore((state) => state.showNotification);
   useEffect(() => {
@@ -57,7 +57,7 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
           if (e.ctrlKey || e.altKey) {
             const spaceIndex = parseInt(e.code.at(5) ?? "", 10);
             if (spaceIndex > 0 && spaceIndex < 10) {
-              selectSpace(spaces[spaceIndex - 1]?.id ?? -1);
+              setCurrentSpace(spaces[spaceIndex - 1]?.id ?? -1);
               return;
             }
           }
@@ -69,6 +69,6 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [p.search, deleteFolderItems, undo, selectSpace, spaces, showNotification]);
+  }, [p.search, deleteFolderItems, undo, setCurrentSpace, spaces, showNotification]);
   return null;
 });

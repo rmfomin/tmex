@@ -17,7 +17,7 @@ import styles from "./SpacesList.module.scss";
 export function SpacesList() {
   const spaces = useDashboardStore((state) => state.spaces);
   const currentSpaceId = useDashboardStore((state) => state.currentSpaceId);
-  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setCurrentSpace = useDashboardStore((state) => state.selectSpace);
   const createSpace = useDashboardStore((state) => state.createSpace);
   const updateSpace = useDashboardStore((state) => state.updateSpace);
   const deleteDashboardSpace = useDashboardStore((state) => state.deleteSpace);
@@ -34,7 +34,7 @@ export function SpacesList() {
   };
 
   const onSpaceClick = (spaceId: number) => {
-    selectSpace(spaceId);
+    setCurrentSpace(spaceId);
   };
 
   const onSaveNewSpaceTitle = (spaceId: number, title: string) => {
@@ -71,7 +71,7 @@ export function SpacesList() {
     setShowActionsMenu(false);
     const spaceId = Date.now() + Math.round(Math.random() * 10_000_000);
     createSpace({ id: spaceId, title: "New space" });
-    selectSpace(spaceId);
+    setCurrentSpace(spaceId);
 
     setEditingSpaceId(spaceId);
   };
@@ -98,7 +98,7 @@ export function SpacesList() {
                 // createSpace создаёт пустой space; импортированное дерево нужно
                 // положить целиком через hydrate-подобное обновление ниже.
                 updateSpace(space.id, { folders: space.folders });
-                selectSpace(space.id);
+                setCurrentSpace(space.id);
                 showNotification({ message: "Space has been imported" });
               },
               (message) => showNotification({ message, isError: true }),

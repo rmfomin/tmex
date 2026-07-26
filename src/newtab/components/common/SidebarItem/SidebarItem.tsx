@@ -34,7 +34,7 @@ export const TabOrRecentItem = (p: {
 }) => {
   const createFolderItem = useDashboardStore((state) => state.createFolderItem);
   const createFolder = useDashboardStore((state) => state.createFolder);
-  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setCurrentSpace = useDashboardStore((state) => state.selectSpace);
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const showNotification = useUiStore((state) => state.showNotification);
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -76,7 +76,7 @@ export const TabOrRecentItem = (p: {
 
     createFolderItem({ folderId, item });
     setItemInEdit(item.id);
-    selectSpace(spaceId);
+    setCurrentSpace(spaceId);
 
     scrollElementIntoView(`a[data-id="${item.id}"]`);
 

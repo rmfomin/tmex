@@ -26,7 +26,7 @@ export function Bookmarks() {
   const createFolder = useDashboardStore((state) => state.createFolder);
   const moveFolderItems = useDashboardStore((state) => state.moveFolderItems);
   const moveFolder = useDashboardStore((state) => state.moveFolder);
-  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setCurrentSpace = useDashboardStore((state) => state.selectSpace);
   const updateSpace = useDashboardStore((state) => state.updateSpace);
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const setPage = useUiStore((state) => state.setPage);
@@ -115,7 +115,7 @@ export function Bookmarks() {
       };
 
       const onChangeSpace = (spaceId: number) => {
-        selectSpace(spaceId);
+        setCurrentSpace(spaceId);
       };
 
       const onChangeSpacePosition = (spaceId: number, newPosition: string) => {

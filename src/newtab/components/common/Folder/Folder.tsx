@@ -49,7 +49,7 @@ export const Folder = React.memo(function Folder(p: {
   const createFolderItem = useDashboardStore((state) => state.createFolderItem);
   const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
   const moveFolder = useDashboardStore((state) => state.moveFolder);
-  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setCurrentSpace = useDashboardStore((state) => state.selectSpace);
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const showNotification = useUiStore((state) => state.showNotification);
   const [showMenu, setShowMenu] = useState<boolean>(false);
@@ -227,7 +227,7 @@ export const Folder = React.memo(function Folder(p: {
 
   const moveFolderToSpace = (spaceId: number) => {
     moveFolder({ folderId: p.folder.id, targetSpaceId: spaceId });
-    selectSpace(spaceId);
+    setCurrentSpace(spaceId);
     showNotification({ message: "Folder has been moved" });
 
     scrollElementIntoView(`[data-folder-id="${p.folder.id}"]`);
