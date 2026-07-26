@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FolderV3, SpaceV3 } from "@/newtab/helpers/types";
 import {
   colors,
@@ -15,22 +15,16 @@ import { FolderItem } from "@/newtab/components/common/FolderItem/FolderItem";
 import { FolderGroup } from "@/newtab/components/common/FolderGroup/FolderGroup";
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
 import cn from "clsx";
-import { Action } from "@/newtab/state/state";
-import {
-  canShowArchived,
-  DispatchContext,
-  mergeStepsInHistory,
-} from "@/newtab/state/actions";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import { Color } from "@/newtab/helpers/color";
 import MenuIcon from "./icons/menu.svg";
 import ChevronIcon from "./icons/chevron.svg";
 import { getSpacesList } from "@/newtab/helpers/moveToHelpers";
 import Tab = chrome.tabs.Tab;
-import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
 import {
   createNewFolderItem,
   createNewSection,
-  findSpaceByFolderId,
 } from "@/newtab/state/actionHelpers";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import { getVisibleFolderDisplayItems } from "./getFolderDisplayItems";
@@ -50,7 +44,14 @@ export const Folder = React.memo(function Folder(p: {
   itemInEdit: undefined | number;
   hiddenFeatureIsEnabled: boolean;
 }) {
-  const dispatch = useContext(DispatchContext);
+  const deleteFolder = useDashboardStore((state) => state.deleteFolder);
+  const updateFolder = useDashboardStore((state) => state.updateFolder);
+  const createFolderItem = useDashboardStore((state) => state.createFolderItem);
+  const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
+  const moveFolder = useDashboardStore((state) => state.moveFolder);
+  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const setItemInEdit = useUiStore((state) => state.setItemInEdit);
+  const showNotification = useUiStore((state) => state.showNotification);
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [localColor, setLocalColor] = useState<string | undefined>(undefined);
   const [localTitle, setLocalTitle] = useState<string>(p.folder.title);
@@ -72,20 +73,13 @@ export const Folder = React.memo(function Folder(p: {
       }
     }
 
-    dispatch({
-      type: Action.DeleteFolder,
-      folderId: p.folder.id,
-    });
-    showMessageWithUndo("Folder has been deleted", dispatch);
+    deleteFolder(p.folder.id);
+    showNotification({ message: "Folder has been deleted" });
   }
 
   function saveFolderTitle(newTitle: string) {
     if (p.folder.title !== newTitle) {
-      dispatch({
-        type: Action.UpdateFolder,
-        folderId: p.folder.id,
-        title: newTitle,
-      });
+      updateFolder(p.folder.id, { title: newTitle });
     }
     setEditing(false);
   }
@@ -98,32 +92,19 @@ export const Folder = React.memo(function Folder(p: {
     );
 
     const newArchiveState = !p.folder.archived;
-    dispatch({
-      type: Action.UpdateFolder,
-      folderId: p.folder.id,
-      archived: newArchiveState,
-    });
+    updateFolder(p.folder.id, { archived: newArchiveState });
 
     const message = `Folder has been ${
       newArchiveState ? "hidden" : "restored"
     }`;
-    showMessageWithUndo(message, dispatch);
+    showNotification({ message });
     setShowMenu(false);
   }
 
   function onAddSection() {
     const newSection = createNewSection();
-    dispatch({
-      type: Action.CreateFolderItem,
-      folderId: p.folder.id,
-      insertBeforeItemId: undefined,
-      item: newSection,
-    });
-
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { itemInEdit: newSection.id },
-    });
+    createFolderItem({ folderId: p.folder.id, item: newSection });
+    setItemInEdit(newSection.id);
 
     setShowMenu(false);
 
@@ -132,12 +113,7 @@ export const Folder = React.memo(function Folder(p: {
 
   function onAddBookmark() {
     const newBookmark = createNewFolderItem(undefined, "New bookmark");
-    dispatch({
-      type: Action.CreateFolderItem,
-      folderId: p.folder.id,
-      insertBeforeItemId: undefined,
-      item: newBookmark,
-    });
+    createFolderItem({ folderId: p.folder.id, item: newBookmark });
 
     requestAnimationFrame(() => {
       const bookmarkElement = document.querySelector(
@@ -162,11 +138,7 @@ export const Folder = React.memo(function Folder(p: {
 
   function setColorConfirmed(color: string) {
     setLocalColor(undefined);
-    dispatch({
-      type: Action.UpdateFolder,
-      folderId: p.folder.id,
-      color: color,
-    });
+    updateFolder(p.folder.id, { color });
   }
 
   function onOpenAll() {
@@ -180,17 +152,10 @@ export const Folder = React.memo(function Folder(p: {
   }
 
   function setAllGroupsCollapsed(collapsed: boolean) {
-    mergeStepsInHistory((historyStepId) => {
-      p.folder.items.forEach((item) => {
-        if (item.type === "group" && item.collapsed !== collapsed) {
-          dispatch({
-            type: Action.UpdateFolderItem,
-            itemId: item.id,
-            collapsed,
-            historyStepId,
-          });
-        }
-      });
+    p.folder.items.forEach((item) => {
+      if (item.type === "group" && item.collapsed !== collapsed) {
+        updateFolderItem(item.id, { collapsed });
+      }
     });
 
     setShowMenu(false);
@@ -212,18 +177,11 @@ export const Folder = React.memo(function Folder(p: {
   function onToggleCollapsed(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    dispatch({
-      type: Action.UpdateFolder,
-      folderId: p.folder.id,
-      collapsed: !p.folder.collapsed,
-    });
+    updateFolder(p.folder.id, { collapsed: !p.folder.collapsed });
   }
 
   function setEditing(val: boolean) {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { itemInEdit: val ? p.folder.id : undefined },
-    });
+    setItemInEdit(val ? p.folder.id : undefined);
   }
 
   const visibleFolderDisplayItems = getVisibleFolderDisplayItems(
@@ -241,7 +199,7 @@ export const Folder = React.memo(function Folder(p: {
   });
 
   const folderItems = flatFolderDisplayItems.filter(
-    (i) => canShowArchived(p) || !i.archived,
+    (item) => p.showArchived || p.search.length > 0 || !item.archived,
   );
 
   const folderIsEmptyDuringSearch =
@@ -268,22 +226,9 @@ export const Folder = React.memo(function Folder(p: {
   };
 
   const moveFolderToSpace = (spaceId: number) => {
-    dispatch({
-      type: Action.MoveFolder,
-      folderId: p.folder.id,
-      targetSpaceId: spaceId,
-      insertBeforeFolderId: undefined,
-    });
-
-    dispatch({
-      type: Action.SelectSpace,
-      spaceId: spaceId,
-    });
-
-    dispatch({
-      type: Action.ShowNotification,
-      message: "Folder has been moved",
-    });
+    moveFolder({ folderId: p.folder.id, targetSpaceId: spaceId });
+    selectSpace(spaceId);
+    showNotification({ message: "Folder has been moved" });
 
     scrollElementIntoView(`[data-folder-id="${p.folder.id}"]`);
 
@@ -435,7 +380,9 @@ export const Folder = React.memo(function Folder(p: {
                 submenuContent={getSpacesList(
                   p.spaces,
                   moveFolderToSpace,
-                  findSpaceByFolderId(p, p.folder.id)?.id,
+                  p.spaces.find((space) => (
+                    space.folders.some((folder) => folder.id === p.folder.id)
+                  ))?.id,
                 )}
               />
             ) : null}
@@ -472,7 +419,7 @@ export const Folder = React.memo(function Folder(p: {
       >
         {visibleFolderDisplayItems.map((item) => {
           if (item.type === "bookmark") {
-            if (!canShowArchived(p) && item.item.archived) {
+            if (!p.showArchived && p.search.length === 0 && item.item.archived) {
               return null;
             }
 
@@ -492,7 +439,7 @@ export const Folder = React.memo(function Folder(p: {
           }
 
           const visibleGroupItems = item.items.filter(
-            (groupItem) => canShowArchived(p) || !groupItem.archived,
+            (groupItem) => p.showArchived || p.search.length > 0 || !groupItem.archived,
           );
 
           if (p.search !== "" && visibleGroupItems.length === 0) {

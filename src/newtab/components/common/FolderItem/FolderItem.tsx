@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
 import { findTabsByURL, isFolderItemNotUsed } from "@/newtab/helpers/utils";
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
-import { Action } from "@/newtab/state/state";
-import { DispatchContext } from "@/newtab/state/actions";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import cn from "clsx";
 import IconClose from "./icons/close.svg";
 import { FolderItemMenu } from "@/newtab/components/common/FolderItemMenu/FolderItemMenu";
@@ -24,7 +24,8 @@ export const FolderItem = React.memo(
     search: string;
     hiddenFeatureIsEnabled: boolean;
   }) => {
-    const dispatch = useContext(DispatchContext);
+    const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
+    const setItemInEdit = useUiStore((state) => state.setItemInEdit);
     const [showMenu, setShowMenu] = useState<boolean>(false);
     const [localTitle, setLocalTitle] = useState<string>(p.item.title);
 
@@ -36,30 +37,18 @@ export const FolderItem = React.memo(
       const titleChanged = p.item.title !== newTitle;
       const urlChanged = newUrl && p.item.url !== newUrl;
       if (titleChanged || urlChanged) {
-        dispatch({
-          type: Action.UpdateFolderItem,
-          itemId: p.item.id,
-          title: newTitle,
-          url: newUrl ?? p.item.url,
-        });
+        updateFolderItem(p.item.id, { title: newTitle, url: newUrl ?? p.item.url });
 
         if (urlChanged) {
           loadFaviconUrl(newUrl).then((faviconUrl) => {
-            dispatch({
-              type: Action.UpdateFolderItem,
-              itemId: p.item.id,
-              favIconUrl: faviconUrl,
-            });
+            updateFolderItem(p.item.id, { favIconUrl: faviconUrl });
           });
         }
       }
     }
 
     function setEditing(val: boolean) {
-      dispatch({
-        type: Action.UpdateAppState,
-        newState: { itemInEdit: val ? p.item.id : undefined },
-      });
+      setItemInEdit(val ? p.item.id : undefined);
     }
 
     function onContextMenu(e: React.MouseEvent) {
@@ -70,10 +59,7 @@ export const FolderItem = React.memo(
     function onCloseTab() {
       const tabs = findTabsByURL(p.item.url, p.tabs);
       const tabIds = tabs.filter((t) => t.id).map((t) => t.id!);
-      dispatch({
-        type: Action.CloseTabs,
-        tabIds: tabIds,
-      });
+      chrome.tabs.remove(tabIds);
     }
 
     function handleImageError(e: React.SyntheticEvent) {

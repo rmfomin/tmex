@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BookmarkItemV3, GroupV3, SpaceV3 } from "@/newtab/helpers/types";
 import { RecentItem } from "@/newtab/helpers/recentHistoryUtils";
 import Tab = chrome.tabs.Tab;
 import { FolderItem } from "@/newtab/components/common/FolderItem/FolderItem";
 import { EditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
-import { DispatchContext } from "@/newtab/state/actions";
-import { Action } from "@/newtab/state/state";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import cn from "clsx";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import ChevronIcon from "./icons/chevron.svg";
@@ -24,7 +24,8 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   itemInEdit: number | undefined;
   hiddenFeatureIsEnabled: boolean;
 }) {
-  const dispatch = useContext(DispatchContext);
+  const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
+  const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const [showMenu, setShowMenu] = useState(false);
   const [localTitle, setLocalTitle] = useState(p.group.title);
 
@@ -35,27 +36,16 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   function onToggleCollapsed(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    dispatch({
-      type: Action.UpdateFolderItem,
-      itemId: p.group.id,
-      collapsed: !p.group.collapsed,
-    });
+    updateFolderItem(p.group.id, { collapsed: !p.group.collapsed });
   }
 
   function setEditing(value: boolean) {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { itemInEdit: value ? p.group.id : undefined },
-    });
+    setItemInEdit(value ? p.group.id : undefined);
   }
 
   function saveGroupTitle(title: string) {
     if (title !== p.group.title) {
-      dispatch({
-        type: Action.UpdateFolderItem,
-        itemId: p.group.id,
-        title,
-      });
+      updateFolderItem(p.group.id, { title });
     }
     setEditing(false);
   }

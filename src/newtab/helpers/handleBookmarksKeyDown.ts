@@ -1,7 +1,5 @@
 import React from "react";
 import { AppState } from "@/newtab/state/state";
-import { ActionDispatcher } from "@/newtab/state/actions";
-import { clickFolderItem } from "@/newtab/helpers/actionsHelpersWithDOM";
 import { findFolderByItemId } from "@/newtab/state/actionHelpers";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
@@ -46,7 +44,7 @@ function focusHorizontalItem(offset: number, appState: AppState) {
 function openFocusedItem(
   event: React.KeyboardEvent,
   appState: AppState,
-  dispatch: ActionDispatcher
+  onOpen: (itemId: number, inNewTab: boolean) => void,
 ) {
   const link = event.target as HTMLLinkElement;
   if (link && link.href) {
@@ -54,13 +52,7 @@ function openFocusedItem(
     if (itemId) {
       const inNewTab =
         event.ctrlKey || event.metaKey || event.shiftKey || event.altKey;
-      clickFolderItem(
-        itemId,
-        appState,
-        dispatch,
-        inNewTab,
-        appState.openBookmarksInNewTab
-      );
+      onOpen(itemId, inNewTab);
     }
   }
 }
@@ -68,7 +60,7 @@ function openFocusedItem(
 export function handleBookmarksKeyDown(
   event: React.KeyboardEvent,
   appState: AppState,
-  dispatch: ActionDispatcher
+  onOpen: (itemId: number, inNewTab: boolean) => void,
 ) {
   const activeElement = document.activeElement as HTMLElement;
   const isActiveLink =
@@ -96,7 +88,7 @@ export function handleBookmarksKeyDown(
       break;
     case "Space":
     case "Enter":
-      openFocusedItem(event, appState, dispatch);
+      openFocusedItem(event, appState, onOpen);
       event.preventDefault();
     default:
       break;

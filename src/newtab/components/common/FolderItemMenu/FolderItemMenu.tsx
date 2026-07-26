@@ -1,19 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
 import {
   DropdownMenu,
   DropdownSubMenu,
 } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
 import { getSelectedItems } from "@/newtab/helpers/selectionUtils";
-import { Action } from "@/newtab/state/state";
-import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import { getSpacesWithNestedFoldersList } from "@/newtab/helpers/moveToHelpers";
-import {
-  createFolderWithStat,
-  showMessage,
-  showMessageWithUndo,
-} from "@/newtab/helpers/actionsHelpersWithDOM";
-import { findFolderByItemId } from "@/newtab/state/actionHelpers";
 import { scrollElementIntoView } from "@/newtab/helpers/utils";
 
 export const FolderItemMenu = React.memo(
@@ -26,7 +20,11 @@ export const FolderItemMenu = React.memo(
     item: BookmarkItemV3;
     hiddenFeatureIsEnabled: boolean;
   }) => {
-    const dispatch = useContext(DispatchContext);
+    const deleteFolderItems = useDashboardStore((state) => state.deleteFolderItems);
+    const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
+    const moveFolderItems = useDashboardStore((state) => state.moveFolderItems);
+    const createFolder = useDashboardStore((state) => state.createFolder);
+    const showNotification = useUiStore((state) => state.showNotification);
     const [selectedItems, setSelectedItems] = useState<BookmarkItemV3[]>([]);
     const [localURL, setLocalURL] = useState<string>(p.item.url);
 
@@ -51,17 +49,14 @@ export const FolderItemMenu = React.memo(
 
     // support multiple
     function onDeleteItem() {
-      dispatch({
-        type: Action.DeleteFolderItems,
-        itemIds: selectedItems.map((i) => i.id),
-      });
-      showMessageWithUndo("Bookmark has been deleted", dispatch);
+      deleteFolderItems(selectedItems.map((item) => item.id));
+      showNotification({ message: "Bookmark has been deleted" });
     }
 
     function onCopyUrl() {
       navigator.clipboard.writeText(p.item.url);
       p.onClose();
-      showMessage("URL has been copied", dispatch);
+      showNotification({ message: "URL has been copied" });
     }
 
     // support multiple
@@ -71,31 +66,13 @@ export const FolderItemMenu = React.memo(
           "All previously hidden bookmarks will became visible again.\n" +
           "Sorry for the inconvenience, and thank you for understanding!",
       );
-      mergeStepsInHistory((historyStepId) => {
-        selectedItems.forEach((item) => {
-          dispatch({
-            type: Action.UpdateFolderItem,
-            itemId: item.id,
-            archived: true,
-            historyStepId,
-          });
-        });
-      });
-      showMessageWithUndo("Bookmark has been hidden", dispatch);
+      selectedItems.forEach((item) => updateFolderItem(item.id, { archived: true }));
+      showNotification({ message: "Bookmark has been hidden" });
     }
 
     function onRestore() {
-      mergeStepsInHistory((historyStepId) => {
-        selectedItems.forEach((item) => {
-          dispatch({
-            type: Action.UpdateFolderItem,
-            itemId: item.id,
-            archived: false,
-            historyStepId,
-          });
-        });
-      });
-      showMessage("Bookmark has been restored", dispatch);
+      selectedItems.forEach((item) => updateFolderItem(item.id, { archived: false }));
+      showNotification({ message: "Bookmark has been restored" });
     }
 
     function onSaveAndClose() {
@@ -104,14 +81,13 @@ export const FolderItemMenu = React.memo(
     }
 
     const moveToFolder = (folderId: number) => {
-      dispatch({
-        type: Action.MoveFolderItems,
+      moveFolderItems({
         itemIds: selectedItems.map((item) => item.id),
         targetFolderId: folderId,
         insertBeforeItemId: undefined,
       });
 
-      showMessage("Bookmarks has been moved", dispatch); // todo place all texts in a single file
+      showNotification({ message: "Bookmarks has been moved" });
 
       scrollElementIntoView(`a[data-id="${p.item.id}"]`);
 
@@ -119,21 +95,14 @@ export const FolderItemMenu = React.memo(
     };
 
     const moveToNewFolder = (spaceId: number) => {
-      mergeStepsInHistory((historyStepId) => {
-        const folderId = createFolderWithStat(dispatch, {
-          historyStepId,
-          spaceId,
-        });
-        dispatch({
-          type: Action.MoveFolderItems,
-          itemIds: selectedItems.map((item) => item.id),
-          targetFolderId: folderId,
-          insertBeforeItemId: undefined,
-          historyStepId,
-        });
+      const folderId = Date.now() + Math.round(Math.random() * 10_000_000);
+      createFolder({ id: folderId, spaceId });
+      moveFolderItems({
+        itemIds: selectedItems.map((item) => item.id),
+        targetFolderId: folderId,
+        insertBeforeItemId: undefined,
       });
-
-      showMessage("Bookmarks has been moved", dispatch);
+      showNotification({ message: "Bookmarks has been moved" });
 
       p.onClose();
     };
@@ -176,7 +145,11 @@ export const FolderItemMenu = React.memo(
                 p.spaces,
                 moveToFolder,
                 moveToNewFolder,
-                findFolderByItemId(p, p.item.id)?.id,
+                p.spaces.flatMap((space) => space.folders).find((folder) => (
+                  folder.items.some((item) => item.id === p.item.id || (
+                    item.type === "group" && item.groupItems.some((child) => child.id === p.item.id)
+                  ))
+                ))?.id,
               )}
             />
             <button
@@ -292,7 +265,11 @@ export const FolderItemMenu = React.memo(
                     p.spaces,
                     moveToFolder,
                     moveToNewFolder,
-                    findFolderByItemId(p, p.item.id)?.id,
+                    p.spaces.flatMap((space) => space.folders).find((folder) => (
+                      folder.items.some((item) => item.id === p.item.id || (
+                        item.type === "group" && item.groupItems.some((child) => child.id === p.item.id)
+                      ))
+                    ))?.id,
                   )}
                 />
                 <button

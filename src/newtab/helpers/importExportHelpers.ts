@@ -233,6 +233,33 @@ export function importSpaceFromJson(
   event.target.value = "";
 }
 
+/** Новый API импорта: helper парсит файл, а caller сам решает, в какой store
+ * положить space и как показать ошибку. */
+export function importSpaceFromJsonWithCallback(
+  event: React.ChangeEvent<HTMLInputElement>,
+  existingSpaces: SpaceV3[],
+  onImported: (space: SpaceV3) => void,
+  onError: (message: string) => void,
+): void {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (loadEvent) => {
+    try {
+      const space = getImportableSpaceV3(JSON.parse(String(loadEvent.target?.result ?? "")));
+      if (!space) {
+        onError("Unsupported space JSON format");
+        return;
+      }
+      onImported(cloneSpaceForImport(space, existingSpaces));
+    } catch {
+      onError("Unsupported space JSON format");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
 //////////////////////////////////////////////////////////////////////
 // IMPORT BROWSER BOOKMARKS HELPERS
 //////////////////////////////////////////////////////////////////////

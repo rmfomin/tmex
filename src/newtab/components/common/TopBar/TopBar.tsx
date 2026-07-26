@@ -36,11 +36,7 @@ export function TopBar(p: { appState: AppState; isScrolled: boolean }) {
       )}
 
       {!searchActive && (
-        <SpacesList
-          spaces={p.appState.spaces}
-          currentSpaceId={p.appState.currentSpaceId}
-          itemInEdit={p.appState.itemInEdit}
-        />
+        <SpacesList />
       )}
 
       <div className={styles.stretchingSpace}></div>

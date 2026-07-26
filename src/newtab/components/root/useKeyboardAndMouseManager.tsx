@@ -1,16 +1,19 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   getSelectedItemsElements,
   getSelectedItemsIds,
 } from "@/newtab/helpers/selectionUtils";
-import { DispatchContext } from "@/newtab/state/actions";
-import { Action } from "@/newtab/state/state";
-import { showMessageWithUndo } from "@/newtab/helpers/actionsHelpersWithDOM";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import { isSomeModalOpened } from "@/newtab/components/common/Modal/Modal";
 import { isTargetInputOrTextArea } from "@/newtab/helpers/utils";
 
 export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
-  const dispatch = useContext(DispatchContext);
+  const deleteFolderItems = useDashboardStore((state) => state.deleteFolderItems);
+  const undo = useDashboardStore((state) => state.undo);
+  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const spaces = useDashboardStore((state) => state.spaces);
+  const showNotification = useUiStore((state) => state.showNotification);
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (isSomeModalOpened()) {
@@ -27,11 +30,8 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
 
       if (getSelectedItemsElements().length > 0) {
         if (e.code === "Backspace" || e.code === "Delete") {
-          dispatch({
-            type: Action.DeleteFolderItems,
-            itemIds: getSelectedItemsIds(),
-          });
-          showMessageWithUndo("Bookmark has been deleted", dispatch);
+          deleteFolderItems(getSelectedItemsIds());
+          showNotification({ message: "Bookmark has been deleted" });
           return;
         }
       }
@@ -43,10 +43,7 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
       }
 
       if (e.code === "KeyZ" && (e.metaKey || e.ctrlKey)) {
-        dispatch({
-          type: Action.Undo,
-          dispatch,
-        });
+        undo();
         return;
       }
 
@@ -60,10 +57,7 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
           if (e.ctrlKey || e.altKey) {
             const spaceIndex = parseInt(e.code.at(5) ?? "", 10);
             if (spaceIndex > 0 && spaceIndex < 10) {
-              dispatch({
-                type: Action.SelectSpace,
-                spaceIndex: spaceIndex - 1,
-              });
+              selectSpace(spaces[spaceIndex - 1]?.id ?? -1);
               return;
             }
           }
@@ -75,6 +69,6 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [p.search]);
+  }, [p.search, deleteFolderItems, undo, selectSpace, spaces, showNotification]);
   return null;
 });

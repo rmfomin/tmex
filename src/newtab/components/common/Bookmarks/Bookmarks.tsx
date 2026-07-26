@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import cn from "clsx";
 import styles from "./Bookmarks.module.scss";
 import folderStyles from "@/newtab/components/common/Folder/Folder.module.scss";
@@ -9,13 +9,10 @@ import {
 import { bindDADItemEffect } from "@/newtab/feature/dragging";
 import { Folder } from "@/newtab/components/common/Folder/Folder";
 import { handleBookmarksKeyDown } from "@/newtab/helpers/handleBookmarksKeyDown";
-import { Action, AppState } from "@/newtab/state/state";
-import { DispatchContext, mergeStepsInHistory } from "@/newtab/state/actions";
-import {
-  clickFolderItem,
-  createFolderWithStat,
-  getCanDragChecker,
-} from "@/newtab/helpers/actionsHelpersWithDOM";
+import { AppState } from "@/newtab/state/state";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
+import { findItemById } from "@/newtab/state/actionHelpers";
 import { TopBar } from "@/newtab/components/common/TopBar/TopBar";
 import { getBookmarksViewState } from "./getBookmarksViewState";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
@@ -24,7 +21,14 @@ let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
 
 export function Bookmarks(p: { appState: AppState }) {
-  const dispatch = useContext(DispatchContext);
+  const createFolder = useDashboardStore((state) => state.createFolder);
+  const moveFolderItems = useDashboardStore((state) => state.moveFolderItems);
+  const moveFolder = useDashboardStore((state) => state.moveFolder);
+  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const updateSpace = useDashboardStore((state) => state.updateSpace);
+  const setItemInEdit = useUiStore((state) => state.setItemInEdit);
+  const setPage = useUiStore((state) => state.setPage);
+  const showNotification = useUiStore((state) => state.showNotification);
   const [mouseDownEvent, setMouseDownEvent] = useState<
     React.MouseEvent | undefined
   >(undefined);
@@ -69,20 +73,11 @@ export function Bookmarks(p: { appState: AppState }) {
         targetsIds: number[],
         targetGroupId?: number
       ) => {
-        mergeStepsInHistory((historyStepId) => {
-          if (folderId === -1) {
-            folderId = createFolderWithStat(dispatch, { historyStepId });
-          }
-
-          dispatch({
-            type: Action.MoveFolderItems,
-            itemIds: targetsIds,
-            targetFolderId: folderId,
-            targetGroupId,
-            insertBeforeItemId: insertBeforeItemId,
-            historyStepId,
-          });
-        });
+        if (folderId === -1) {
+          folderId = Date.now() + Math.round(Math.random() * 10_000_000);
+          createFolder({ id: folderId });
+        }
+        moveFolderItems({ itemIds: targetsIds, targetFolderId: folderId, targetGroupId, insertBeforeItemId });
 
         setMouseDownEvent(undefined);
       };
@@ -91,12 +86,7 @@ export function Bookmarks(p: { appState: AppState }) {
         targetSpaceId: number | undefined,
         insertBeforeFolderId: number | undefined
       ) => {
-        dispatch({
-          type: Action.MoveFolder,
-          folderId,
-          targetSpaceId: targetSpaceId ?? p.appState.currentSpaceId,
-          insertBeforeFolderId,
-        });
+        moveFolder({ folderId, targetSpaceId: targetSpaceId ?? p.appState.currentSpaceId, insertBeforeFolderId });
 
         setMouseDownEvent(undefined);
       };
@@ -108,31 +98,22 @@ export function Bookmarks(p: { appState: AppState }) {
           mouseDownEvent.metaKey ||
           mouseDownEvent.ctrlKey ||
           mouseDownEvent.button === 1;
-        clickFolderItem(
-          targetId,
-          p.appState,
-          dispatch,
-          meta,
-          p.appState.openBookmarksInNewTab
-        );
+        openFolderItem(targetId, meta);
       };
 
       const onChangeSpace = (spaceId: number) => {
-        dispatch({
-          type: Action.SelectSpace,
-          spaceId,
-        });
+        selectSpace(spaceId);
       };
 
       const onChangeSpacePosition = (spaceId: number, newPosition: string) => {
-        dispatch({
-          type: Action.UpdateSpace,
-          spaceId: spaceId,
-          position: newPosition,
-        });
+        updateSpace(spaceId, { position: newPosition });
       };
 
-      const canDrag = getCanDragChecker(p.appState.search, dispatch);
+      const canDrag = () => {
+        if (!p.appState.search) return true;
+        showNotification({ message: "Sorting is unavailable in search" });
+        return false;
+      };
       return bindDADItemEffect(
         mouseDownEvent,
         {
@@ -164,10 +145,42 @@ export function Bookmarks(p: { appState: AppState }) {
   }
 
   function onCreateFolder() {
-    const folderId = createFolderWithStat(dispatch, {});
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { itemInEdit: folderId },
+    const folderId = Date.now() + Math.round(Math.random() * 10_000_000);
+    createFolder({ id: folderId });
+    setItemInEdit(folderId);
+  }
+
+  function openFolderItem(itemId: number, inNewTab: boolean) {
+    const item = findItemById({ spaces: p.appState.spaces }, itemId);
+    if (!item) return;
+    if (item.isSection) {
+      setItemInEdit(item.id);
+      return;
+    }
+    if (item.url === "tablo://import-bookmarks") {
+      setPage("import");
+      return;
+    }
+    if (!item.url) {
+      showNotification({ message: "Bookmark URL is empty", isError: true });
+      return;
+    }
+    if (inNewTab) {
+      chrome.tabs.create({ url: item.url, active: false });
+      return;
+    }
+    const openedTab = p.appState.tabs.find((tab) => tab.url === item.url);
+    if (openedTab?.id) {
+      chrome.tabs.update(openedTab.id, { active: true });
+      chrome.windows.update(openedTab.windowId, { focused: true });
+      return;
+    }
+    chrome.tabs.getCurrent((tab) => {
+      if (p.appState.openBookmarksInNewTab) {
+        chrome.tabs.create({ url: item.url, active: true });
+      } else if (tab?.id) {
+        chrome.tabs.update(tab.id, { url: item.url });
+      }
     });
   }
 
@@ -187,7 +200,7 @@ export function Bookmarks(p: { appState: AppState }) {
         className={styles.bookmarks}
         data-role={DOM_ROLE.bookmarks}
         ref={bookmarksRef}
-        onKeyDown={(e) => handleBookmarksKeyDown(e, p.appState, dispatch)}
+        onKeyDown={(event) => handleBookmarksKeyDown(event, p.appState, openFolderItem)}
       >
         {folders.map((folder) => (
           <Folder

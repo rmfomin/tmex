@@ -1,52 +1,44 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import MenuIcon from "./icons/menu.svg";
 import { SpaceV3 } from "@/newtab/helpers/types";
 import cn from "clsx";
-import { DispatchContext } from "@/newtab/state/actions";
-import { Action } from "@/newtab/state/state";
+import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { useUiStore } from "@/newtab/state/ui/uiStore";
 import { SimpleEditableTitle } from "@/newtab/components/common/EditableTitle/EditableTitle";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import { genUniqLocalId } from "@/newtab/state/actionHelpers";
-import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
 import { collectBookmarksV3 } from "@/newtab/helpers/v3Traversal";
 import {
-  importSpaceFromJson,
+  importSpaceFromJsonWithCallback,
   onExportSpaceJson,
 } from "@/newtab/helpers/importExportHelpers";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 import styles from "./SpacesList.module.scss";
 
-export function SpacesList(p: {
-  spaces: SpaceV3[];
-  currentSpaceId: number;
-  itemInEdit: number | undefined;
-}) {
-  const dispatch = useContext(DispatchContext);
+export function SpacesList() {
+  const spaces = useDashboardStore((state) => state.spaces);
+  const currentSpaceId = useDashboardStore((state) => state.currentSpaceId);
+  const selectSpace = useDashboardStore((state) => state.selectSpace);
+  const createSpace = useDashboardStore((state) => state.createSpace);
+  const updateSpace = useDashboardStore((state) => state.updateSpace);
+  const deleteDashboardSpace = useDashboardStore((state) => state.deleteSpace);
+  const itemInEdit = useUiStore((state) => state.itemInEdit);
+  const setItemInEdit = useUiStore((state) => state.setItemInEdit);
+  const showNotification = useUiStore((state) => state.showNotification);
   const importSpaceInputRef = useRef<HTMLInputElement>(null);
 
   const [menuSpaceId, setMenuSpaceId] = useState(-1);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
 
   const setEditingSpaceId = (spaceId: number | undefined) => {
-    dispatch({
-      type: Action.UpdateAppState,
-      newState: { itemInEdit: spaceId },
-    });
+    setItemInEdit(spaceId);
   };
 
   const onSpaceClick = (spaceId: number) => {
-    dispatch({
-      type: Action.SelectSpace,
-      spaceId: spaceId,
-    });
+    selectSpace(spaceId);
   };
 
   const onSaveNewSpaceTitle = (spaceId: number, title: string) => {
-    dispatch({
-      type: Action.UpdateSpace,
-      spaceId,
-      title,
-    });
+    updateSpace(spaceId, { title });
     setEditingSpaceId(undefined);
   };
 
@@ -71,28 +63,15 @@ export function SpacesList(p: {
       res = confirm(`Delete the space '${space.title}'?`);
     }
     if (res) {
-      dispatch({
-        type: Action.DeleteSpace,
-        spaceId: space.id,
-      });
+      deleteDashboardSpace(space.id);
     }
   };
 
   const onAddSpace = () => {
     setShowActionsMenu(false);
-    const lastSpace = p.spaces.at(-1);
-    const spaceId = genUniqLocalId();
-    dispatch({
-      type: Action.CreateSpace,
-      spaceId: spaceId,
-      title: `New space`,
-      position: insertBetween(lastSpace?.position ?? "", ""),
-    });
-
-    dispatch({
-      type: Action.SelectSpace,
-      spaceId: spaceId,
-    });
+    const spaceId = Date.now() + Math.round(Math.random() * 10_000_000);
+    createSpace({ id: spaceId, title: "New space" });
+    selectSpace(spaceId);
 
     setEditingSpaceId(spaceId);
   };
@@ -104,14 +83,26 @@ export function SpacesList(p: {
 
   return (
     <div className={styles.root}>
-      {!p.itemInEdit && (
+      {!itemInEdit && (
         <div className={styles.actions}>
           <input
             ref={importSpaceInputRef}
             type="file"
             accept=".json,application/json"
             className={styles.importInput}
-            onChange={(e) => importSpaceFromJson(e, dispatch, p.spaces)}
+            onChange={(event) => importSpaceFromJsonWithCallback(
+              event,
+              spaces,
+              (space) => {
+                createSpace({ id: space.id, title: space.title, position: space.position });
+                // createSpace создаёт пустой space; импортированное дерево нужно
+                // положить целиком через hydrate-подобное обновление ниже.
+                updateSpace(space.id, { folders: space.folders });
+                selectSpace(space.id);
+                showNotification({ message: "Space has been imported" });
+              },
+              (message) => showNotification({ message, isError: true }),
+            )}
           />
           {showActionsMenu && (
             <DropdownMenu
@@ -144,15 +135,15 @@ export function SpacesList(p: {
         </div>
       )}
       <div className={styles.spacesList} data-role={DOM_ROLE.spacesList}>
-        {p.spaces.length === 0 && (
+        {spaces.length === 0 && (
           <span style={{ padding: "8px" }}>no spaces</span>
         )}
-        {p.spaces.map((space) => {
+        {spaces.map((space) => {
           return (
             <span
               key={space.id}
               className={cn(styles.item, {
-                [styles.active]: space.id === p.currentSpaceId,
+                [styles.active]: space.id === currentSpaceId,
               })}
               data-role={DOM_ROLE.spaceItem}
               onClick={() => onSpaceClick(space.id)}
@@ -161,13 +152,13 @@ export function SpacesList(p: {
               data-space-id={space.id}
             >
               <SimpleEditableTitle
-                inEdit={space.id === p.itemInEdit}
+                inEdit={space.id === itemInEdit}
                 onContextMenu={() => setMenuSpaceId(space.id)}
                 value={space.title || "untitled"}
                 onSave={(title) => onSaveNewSpaceTitle(space.id, title)}
                 onUnmount={onSpaceTitleElementUnmount}
               />
-              {space.id === p.itemInEdit && p.spaces.length > 1 && (
+              {space.id === itemInEdit && spaces.length > 1 && (
                 <button
                   className={styles.deleteButton}
                   data-role={DOM_ROLE.spaceDelete}
@@ -195,7 +186,7 @@ export function SpacesList(p: {
                   >
                     Export space
                   </button>
-                  {p.spaces.length > 1 && (
+                  {spaces.length > 1 && (
                     <button
                       className="dropdown-menu__button dropdown-menu__button--dander focusable"
                       onClick={() => deleteSpace(space)}
