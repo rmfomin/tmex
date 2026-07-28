@@ -1,8 +1,8 @@
 import type { PConfigSpaces } from "@/newtab/feature/dragging/dragAndDrop";
 import { subscribeMouseEvents } from "@/newtab/feature/dragging/dragAndDropUtils";
 import { insertBetween } from "@/newtab/helpers/fractionalIndexes";
-import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
+import { uiStore } from "@/newtab/state/ui/uiStore";
 
 type InitRes = {
   clonedSpacesList: HTMLElement;
@@ -138,7 +138,7 @@ export function processSpacesDragAndDrop(
       // do nothing here
     }
 
-    unselectAllItems();
+    uiStore.getState().clearSelectedItemIds();
   };
 
   return subscribeMouseEvents(mouseDownEvent, onMouseMove, onMouseUp);

@@ -29,6 +29,7 @@ jest.mock("@/newtab/feature/dragging/dragAndDrop", () => ({
   getDragLayoutElement: jest.fn((element) => element),
   getFolderId: jest.fn(() => 10),
   getIdsFromElements: jest.fn(() => [101]),
+  getItemDropAreaElements: jest.fn(() => []),
   getItemIdByIndex: jest.fn(),
   getNewPlacementForItem: jest.fn(() => ({ index: 0, placeholderY: 0 })),
   getOverlappedDropArea: jest.fn(() => dropArea),

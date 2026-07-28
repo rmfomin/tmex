@@ -1,5 +1,6 @@
 import { BookmarkItemV3, SpaceV3 } from "@/newtab/helpers/types";
 import { dashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import { uiStore } from "@/newtab/state/ui/uiStore";
 
 let selectedItemsElements: HTMLElement[] = [];
 const SELECTED_ATTR = "selected";
@@ -33,6 +34,7 @@ export function selectItems(elements: HTMLElement[]) {
   }
 
   selectedItemsElements = elements;
+  uiStore.getState().setSelectedItemIds(elements.map((element) => getId(element)));
 }
 
 function unselectItemForced(el: HTMLElement) {
@@ -48,6 +50,7 @@ function unselectItemForced(el: HTMLElement) {
 export function unselectAllItems() {
   selectedItemsElements.forEach((item) => unselectItemForced(item));
   selectedItemsElements.length = 0;
+  uiStore.getState().clearSelectedItemIds();
 }
 
 export function getSelectedItemsElements(): HTMLElement[] {
@@ -55,7 +58,7 @@ export function getSelectedItemsElements(): HTMLElement[] {
 }
 
 export function getSelectedItemsIds(): number[] {
-  return selectedItemsElements.map((el) => getId(el));
+  return uiStore.getState().selectedItemIds;
 }
 
 export function getSelectedItems(): BookmarkItemV3[] {

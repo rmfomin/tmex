@@ -58,7 +58,8 @@
   }
 
   &[data-selected="true"] {
-    background-color: rgb(209 224 255 / 80%);
+    outline: 1px solid var(--colors-blue-500);
+    background: color-mix(in srgb, var(--colors-blue-500) 12%, transparent 88%);
   }
 
   &.dragPreviewSelected {

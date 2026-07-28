@@ -1,5 +1,6 @@
 export const DOM_ROLE = {
   bookmarks: "bookmarks",
+  areaSelectionFrame: "area-selection-frame",
   spacesList: "spaces-list",
   spaceItem: "space-item",
   spaceDelete: "space-delete",

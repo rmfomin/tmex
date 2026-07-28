@@ -1,8 +1,4 @@
 import {
-  getSelectedItemsElements,
-  unselectAllItems,
-} from "@/newtab/helpers/selectionUtils";
-import {
   isSomeParentHaveClass,
   isTargetInputOrTextArea,
 } from "@/newtab/helpers/utils";
@@ -11,6 +7,7 @@ import { processFolderDragAndDrop } from "@/newtab/feature/dragging/processFolde
 import { processItemDragAndDrop } from "@/newtab/feature/dragging/processItemDragAndDrop";
 import { processSpacesDragAndDrop } from "@/newtab/feature/dragging/processSpacesDragAndDrop";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
+import { uiStore } from "@/newtab/state/ui/uiStore";
 
 export type DropArea = {
   objectId: number;
@@ -71,14 +68,13 @@ export function bindDADItemEffect(
   if (mouseDownEvent.button === 0) {
     // LEFT_CLICK
     if (targetRoot) {
-      // checking if we start d&d one of selected item
-      let targetRoots = [targetRoot];
-      if (getSelectedItemsElements().includes(targetRoot)) {
-        targetRoots = getSelectedItemsElements();
-      }
+      const targetRoots = getSelectedTargetRoots(
+        targetRoot,
+        uiStore.getState().selectedItemIds,
+      );
       return processItemDragAndDrop(mouseDownEvent, itemConfig, targetRoots);
     } else if (targetFolderHeader && folderConfig) {
-      unselectAllItems();
+      uiStore.getState().clearSelectedItemIds();
       return processFolderDragAndDrop(
         mouseDownEvent,
         folderConfig,
@@ -92,10 +88,53 @@ export function bindDADItemEffect(
         !target.closest(roleSelector(DOM_ROLE.spaceDelete)) &&
         spacesConfig.canSortSpaces()
       ) {
+        uiStore.getState().clearSelectedItemIds();
         processSpacesDragAndDrop(mouseDownEvent, spacesConfig);
       }
     }
   }
+}
+
+export function getSelectedTargetRoots(
+  pressedRoot: HTMLElement,
+  selectedItemIds: number[],
+  root: ParentNode = document,
+): HTMLElement[] {
+  const pressedGroup = pressedRoot.closest(
+    roleSelector(DOM_ROLE.folderGroup),
+  ) as HTMLElement | null;
+  const directPressedId = getIdFromElement(pressedRoot);
+  const pressedId = selectedItemIds.includes(directPressedId)
+    ? directPressedId
+    : pressedGroup
+      ? Number(pressedGroup.dataset.groupId)
+      : directPressedId;
+  if (!selectedItemIds.includes(pressedId)) {
+    return [pressedRoot];
+  }
+
+  return selectedItemIds.flatMap((id) => {
+    const element = root.querySelector<HTMLElement>(
+      `${roleSelector(DOM_ROLE.folderItem)}[data-id="${id}"], ${roleSelector(
+        DOM_ROLE.groupHeader,
+      )}[data-id="${id}"]`,
+    );
+    return element ? [element] : [];
+  });
+}
+
+export function getItemDropAreaElements(
+  root: ParentNode = document,
+  canDropIntoGroups = true,
+): Element[] {
+  const selectors = [roleSelector(DOM_ROLE.folderItems)];
+  if (canDropIntoGroups) {
+    selectors.unshift(
+      roleSelector(DOM_ROLE.groupHeader),
+      roleSelector(DOM_ROLE.groupItems),
+    );
+  }
+  return Array.from(root.querySelectorAll(selectors.join(", ")));
 }
 
 const FOLDER_TOP_OFFSET = 50;

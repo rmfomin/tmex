@@ -28,6 +28,7 @@ export type UiState = UiPreferences & {
   search: string;
   searchFilters: SearchFilter[];
   searchFilterMode: SearchFilterMode;
+  selectedItemIds: number[];
   itemInEdit: number | undefined;
   notification: NotificationState;
   page: "default" | "import";
@@ -38,6 +39,8 @@ export type UiActions = {
   setSearch(search: string): void;
   setSearchFilters(searchFilters: SearchFilter[]): void;
   setSearchFilterMode(searchFilterMode: SearchFilterMode): void;
+  setSelectedItemIds(itemIds: number[]): void;
+  clearSelectedItemIds(): void;
   setItemInEdit(itemInEdit: number | undefined): void;
   showNotification(notification: NotificationInput): void;
   hideNotification(): void;
@@ -71,6 +74,7 @@ const defaultUiState: UiState = {
   search: "",
   searchFilters: [],
   searchFilterMode: "or",
+  selectedItemIds: [],
   itemInEdit: undefined,
   notification: { visible: false, message: "" },
   page: "default",
@@ -85,6 +89,9 @@ function createUiSlice(initialState: Partial<UiState>): StateCreator<UiStore> {
     setSearch: (search) => set({ search }),
     setSearchFilters: (searchFilters) => set({ searchFilters }),
     setSearchFilterMode: (searchFilterMode) => set({ searchFilterMode }),
+    setSelectedItemIds: (itemIds) =>
+      set({ selectedItemIds: [...new Set(itemIds)] }),
+    clearSelectedItemIds: () => set({ selectedItemIds: [] }),
     setItemInEdit: (itemInEdit) => set({ itemInEdit }),
     showNotification: (notification) =>
       set({ notification: { visible: true, ...notification } }),

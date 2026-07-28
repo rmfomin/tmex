@@ -29,6 +29,9 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
     (state) => state.deleteFolderGroup
   );
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
+  const isSelected = useUiStore((state) =>
+    state.selectedItemIds.includes(p.group.id),
+  );
   const [showMenu, setShowMenu] = useState(false);
   const [localTitle, setLocalTitle] = useState(p.group.title);
 
@@ -85,6 +88,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
       className={styles.root}
       data-role={DOM_ROLE.folderGroup}
       data-group-id={p.group.id}
+      data-selected={isSelected || undefined}
     >
       <div
         className={cn("draggable-item", styles.header)}

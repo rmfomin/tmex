@@ -29,6 +29,11 @@
     outline: 2px solid var(--colors-blue-500);
     background: color-mix(in srgb, var(--colors-blue-500) 14%, transparent 86%);
   }
+
+  &[data-selected="true"]::before {
+    outline: 1px solid var(--colors-blue-500);
+    background: color-mix(in srgb, var(--colors-blue-500) 12%, transparent 88%);
+  }
 }
 
 .header {

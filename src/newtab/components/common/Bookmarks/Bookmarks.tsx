@@ -16,6 +16,7 @@ import { findBookmarkItem } from "@/newtab/state/dashboard/itemUtils";
 import { TopBar } from "@/newtab/components/common/TopBar/TopBar";
 import { getBookmarksViewState } from "./getBookmarksViewState";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
+import { useAreaSelection } from "./useAreaSelection";
 
 let __prevCurrentSpaceId: number | undefined = undefined;
 let __prevSearch: string | undefined = undefined;
@@ -30,6 +31,10 @@ export function Bookmarks() {
   const updateSpace = useDashboardStore((state) => state.updateSpace);
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const setPage = useUiStore((state) => state.setPage);
+  const setSelectedItemIds = useUiStore((state) => state.setSelectedItemIds);
+  const clearSelectedItemIds = useUiStore(
+    (state) => state.clearSelectedItemIds,
+  );
   const showNotification = useUiStore((state) => state.showNotification);
   const search = useUiStore((state) => state.search);
   const searchFilters = useUiStore((state) => state.searchFilters);
@@ -48,6 +53,12 @@ export function Bookmarks() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const bookmarksRef = useRef<HTMLDivElement>(null);
+  const { onMouseDown: onAreaSelectionMouseDown, selectionRect } =
+    useAreaSelection({
+      containerRef: bookmarksRef,
+      setSelectedItemIds,
+      clearSelectedItemIds,
+    });
 
   useEffect(() => {
     if (
@@ -58,6 +69,18 @@ export function Bookmarks() {
       __prevSearch = search;
     }
   }, [currentSpaceId, search]);
+
+  useEffect(() => {
+    clearSelectedItemIds();
+  }, [
+    clearSelectedItemIds,
+    currentSpaceId,
+    search,
+    searchFilters,
+    searchFilterMode,
+    showArchived,
+    showNotUsed,
+  ]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,8 +174,11 @@ export function Bookmarks() {
   }, [mouseDownEvent]);
 
   function onMouseDown(e: React.MouseEvent) {
+    blurSearch(e);
+    if (onAreaSelectionMouseDown(e)) {
+      return;
+    }
     if (isTargetSupportsDragAndDrop(e)) {
-      blurSearch(e);
       setMouseDownEvent(e);
     }
   }
@@ -236,6 +262,19 @@ export function Bookmarks() {
             hiddenFeatureIsEnabled={hiddenFeatureIsEnabled}
           />
         ))}
+
+        {selectionRect ? (
+          <div
+            data-role={DOM_ROLE.areaSelectionFrame}
+            className={styles.areaSelectionFrame}
+            style={{
+              left: selectionRect.left,
+              top: selectionRect.top,
+              width: selectionRect.right - selectionRect.left,
+              height: selectionRect.bottom - selectionRect.top,
+            }}
+          />
+        ) : null}
 
         {search === "" &&
         !searchFilters.some((filter) => filter.enabled) ? (

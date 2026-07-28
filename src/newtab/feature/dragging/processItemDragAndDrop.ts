@@ -1,4 +1,3 @@
-import { unselectAllItems } from "@/newtab/helpers/selectionUtils";
 import {
   setScrollByDummyClientY,
   subscribeMouseEvents,
@@ -11,6 +10,7 @@ import {
   getFolderId,
   getIdsFromElements,
   getItemIdByIndex,
+  getItemDropAreaElements,
   getNewPlacementForItem,
   getOverlappedDropArea,
   placeDropPreview,
@@ -20,6 +20,7 @@ import {
   DropArea,
 } from "@/newtab/feature/dragging/dragAndDrop";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
+import { uiStore } from "@/newtab/state/ui/uiStore";
 
 export function processItemDragAndDrop(
   mouseDownEvent: React.MouseEvent,
@@ -31,22 +32,12 @@ export function processItemDragAndDrop(
   let dummy: undefined | HTMLElement = undefined;
   let previews: HTMLElement[] = [];
   let restoreSource = () => {};
-  const canDropIntoGroupHeader = targetRoots.every(
+  const canDropIntoGroups = targetRoots.every(
     (targetRoot) => targetRoot.dataset.role !== DOM_ROLE.groupHeader
   );
 
   const getFolderElements = () =>
-    Array.from(
-      document.querySelectorAll(
-        `${
-          canDropIntoGroupHeader
-            ? `${roleSelector(DOM_ROLE.groupHeader)}, `
-            : ""
-        }${roleSelector(DOM_ROLE.groupItems)}, ${roleSelector(
-          DOM_ROLE.folderItems
-        )}`
-      )
-    );
+    getItemDropAreaElements(document, canDropIntoGroups);
   let dropAreas = calculateFoldersDropAreas(getFolderElements(), true);
 
   let prevBoxToDrop: HTMLElement | undefined = undefined;
@@ -194,7 +185,7 @@ export function processItemDragAndDrop(
       config.onClick(getIdsFromElements(targetRoots)[0]);
     }
 
-    unselectAllItems();
+    uiStore.getState().clearSelectedItemIds();
   };
 
   const unsubscribeEvents = subscribeMouseEvents(

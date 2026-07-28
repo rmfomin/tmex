@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import {
-  getSelectedItemsElements,
   getSelectedItemsIds,
+  unselectAllItems,
 } from "@/newtab/helpers/selectionUtils";
 import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { useUiStore } from "@/newtab/state/ui/uiStore";
@@ -28,9 +28,11 @@ export const KeyboardAndMouseManager = React.memo((p: { search: string }) => {
         return;
       }
 
-      if (getSelectedItemsElements().length > 0) {
+      const selectedItemIds = getSelectedItemsIds();
+      if (selectedItemIds.length > 0) {
         if (e.code === "Backspace" || e.code === "Delete") {
-          deleteFolderItems(getSelectedItemsIds());
+          deleteFolderItems(selectedItemIds);
+          unselectAllItems();
           showNotification({ message: "Bookmark has been deleted" });
           return;
         }
