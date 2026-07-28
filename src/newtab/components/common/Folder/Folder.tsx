@@ -181,6 +181,9 @@ export const Folder = React.memo(function Folder(p: {
   }
 
   function setEditing(val: boolean) {
+    if (val) {
+      setShowMenu(false);
+    }
     setItemInEdit(val ? p.folder.id : undefined);
   }
 
@@ -270,14 +273,16 @@ export const Folder = React.memo(function Folder(p: {
           onDoubleClick={() => setEditing(true)}
         />
         {p.folder.archived ? <span> [hidden]</span> : ""}
-        <span
-          className={cn(styles.menuButton, {
-            [styles.menuButtonVisible]: showMenu,
-          })}
-          onClick={() => setShowMenu(!showMenu)}
-        >
-          <MenuIcon />
-        </span>
+        {p.folder.id !== p.itemInEdit ? (
+          <span
+            className={cn(styles.menuButton, {
+              [styles.menuButtonVisible]: showMenu,
+            })}
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MenuIcon />
+          </span>
+        ) : null}
 
         {showMenu ? (
           <DropdownMenu

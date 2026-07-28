@@ -63,6 +63,17 @@ describe("folder and group header contracts", () => {
     expect(source).not.toContain("onClick={() => setEditing(true)}");
   });
 
+  test("folder header hides its menu button and closes the menu while renaming", () => {
+    const source = readSource("newtab/components/common/Folder/Folder.tsx");
+
+    expect(source).toMatch(
+      /p\.folder\.id !== p\.itemInEdit \? \([\s\S]*className=\{cn\(styles\.menuButton/,
+    );
+    expect(source).toMatch(
+      /function setEditing\(val: boolean\) \{\s*if \(val\) \{\s*setShowMenu\(false\);\s*\}/,
+    );
+  });
+
   test("group header supports a context menu with rename and open-all actions", () => {
     const source = readSource(
       "newtab/components/common/FolderGroup/FolderGroup.tsx"
