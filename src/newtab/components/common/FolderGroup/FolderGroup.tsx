@@ -109,6 +109,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
         </button>
         <EditableTitle
           className={styles.title}
+          singleLine
           inEdit={p.group.id === p.itemInEdit}
           setEditing={setEditing}
           localTitle={localTitle}

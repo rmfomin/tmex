@@ -11,26 +11,32 @@ export function EditableTitle(p: {
   setLocalTitle: (val: string) => void;
   search: string;
   onSaveTitle: (title: string) => void;
+  singleLine?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (p.inEdit && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.select();
+    const titleInput = p.singleLine ? inputRef.current : textareaRef.current;
+
+    if (p.inEdit && titleInput) {
+      titleInput.focus();
+      titleInput.select();
     }
-  }, [p.inEdit]);
+  }, [p.inEdit, p.singleLine]);
 
   useEffect(() => {
-    if (p.inEdit && textareaRef.current) {
+    if (!p.singleLine && p.inEdit && textareaRef.current) {
       textareaRef.current.style.height = "0px";
       textareaRef.current.style.height = `${
         textareaRef.current.scrollHeight + 2
       }px`;
     }
-  }, [p.inEdit, p.localTitle]);
+  }, [p.inEdit, p.localTitle, p.singleLine]);
 
-  function handleTitleChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+  function handleTitleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     p.setLocalTitle(event.target.value);
   }
 
@@ -41,7 +47,9 @@ export function EditableTitle(p: {
     p.onSaveTitle(p.localTitle);
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const isCmdEnter = event.metaKey && event.key === "Enter";
     const isCtrlEnter = event.ctrlKey && event.key === "Enter";
     const isEnter = event.key === "Enter" && !event.shiftKey;
@@ -60,14 +68,26 @@ export function EditableTitle(p: {
   return (
     <>
       {p.inEdit ? (
-        <textarea
-          tabIndex={2}
-          ref={textareaRef}
-          onKeyDown={handleKeyDown}
-          onChange={handleTitleChange}
-          onBlur={trySaveChange}
-          value={p.localTitle}
-        />
+        p.singleLine ? (
+          <input
+            className={p.className}
+            tabIndex={2}
+            ref={inputRef}
+            onKeyDown={handleKeyDown}
+            onChange={handleTitleChange}
+            onBlur={trySaveChange}
+            value={p.localTitle}
+          />
+        ) : (
+          <textarea
+            tabIndex={2}
+            ref={textareaRef}
+            onKeyDown={handleKeyDown}
+            onChange={handleTitleChange}
+            onBlur={trySaveChange}
+            value={p.localTitle}
+          />
+        )
       ) : (
         <span
           onClick={p.onClick}

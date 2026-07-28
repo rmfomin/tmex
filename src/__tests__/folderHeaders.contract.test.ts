@@ -50,6 +50,27 @@ describe("folder and group header contracts", () => {
     expect(source).toContain("onContextMenu={onHeaderContextMenu}");
   });
 
+  test("group rename uses a compact single-line input", () => {
+    const groupSource = readSource(
+      "newtab/components/common/FolderGroup/FolderGroup.tsx"
+    );
+    const editableTitleSource = readSource(
+      "newtab/components/common/EditableTitle/EditableTitle.tsx"
+    );
+    const groupStyles = readSource(
+      "newtab/components/common/FolderGroup/FolderGroup.module.scss"
+    );
+
+    expect(groupSource).toMatch(/<EditableTitle[\s\S]*singleLine/);
+    expect(editableTitleSource).toContain("singleLine?: boolean;");
+    expect(editableTitleSource).toMatch(
+      /p\.singleLine \? \(\s*<input[\s\S]*?\) : \(\s*<textarea/
+    );
+    expect(groupStyles).toMatch(
+      /\.header input\.title \{[\s\S]*background: none;/
+    );
+  });
+
   test("group open-all action opens non-archived group bookmarks in background tabs", () => {
     const source = readSource(
       "newtab/components/common/FolderGroup/FolderGroup.tsx"

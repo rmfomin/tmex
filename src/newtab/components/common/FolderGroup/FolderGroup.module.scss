@@ -83,9 +83,15 @@
   cursor: grab;
 }
 
-.header textarea {
+.header input.title {
   font-family: var(--title-font-family);
+  font-size: 13px;
   font-weight: 700;
+  line-height: 16px;
+  height: 16px;
+  padding: 0;
+  background: none;
+  cursor: text;
 }
 
 .items {
