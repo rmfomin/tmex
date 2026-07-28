@@ -2,15 +2,15 @@ import {
   calculateFoldersDropAreas,
   calculateSpacesDropAreas,
   calculateTargetInsertBeforeFolderId,
-  createDropPreview,
   createFolderDummy,
+  createFolderDropIndicator,
   DropArea,
   getFolderId,
   getOverlappedDropArea,
   getOverlappedSpaceDropArea,
-  placeDropPreview,
+  placeFolderDropIndicator,
   PConfigFolder,
-  removeDropPreview,
+  removeFolderDropIndicator,
   setDragSourceHidden,
 } from "@/newtab/feature/dragging/dragAndDrop";
 import {
@@ -25,9 +25,7 @@ export function processFolderDragAndDrop(
   targetRoot: HTMLElement
 ) {
   let dummy: undefined | HTMLElement = undefined;
-  let previews: HTMLElement[] = [];
-  let previewContainer: HTMLElement | undefined = undefined;
-  let previewIndex: number | undefined = undefined;
+  let dropIndicator: HTMLElement | undefined = undefined;
   let restoreSource = () => {};
   const folderEls = Array.from(
     document.querySelectorAll(
@@ -42,11 +40,9 @@ export function processFolderDragAndDrop(
   let targetInsertBeforeFolderId: number | undefined;
   let lastSelectedSpaceId: number | undefined;
 
-  const clearPreview = () => {
-    removeDropPreview(previews);
-    previews = [];
-    previewContainer = undefined;
-    previewIndex = undefined;
+  const clearDropIndicator = () => {
+    removeFolderDropIndicator(dropIndicator);
+    dropIndicator = undefined;
   };
 
   const onViewportScrolled = () => {
@@ -55,7 +51,9 @@ export function processFolderDragAndDrop(
         `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`
       )
     );
-    dropFoldersAreas = calculateFoldersDropAreas(folderEls);
+    dropFoldersAreas = calculateFoldersDropAreas(
+      folderEls.filter((folderEl) => folderEl !== targetRoot),
+    );
   };
 
   const onMouseMove = (e: MouseEvent, mouseMoved: boolean) => {
@@ -74,7 +72,7 @@ export function processFolderDragAndDrop(
           lastSelectedSpaceId = spaceDropArea.objectId;
           requestAnimationFrame(onViewportScrolled); // to recalculate dropFoldersAreas
         }
-        clearPreview();
+        clearDropIndicator();
         dropArea = undefined;
       } else {
         prevSpaceDropArea = undefined;
@@ -89,31 +87,13 @@ export function processFolderDragAndDrop(
           );
 
           if (dropArea.objectId !== draggingFolderId) {
-            const container = dropArea.element.parentElement;
-            if (container) {
-              const targetIndex = Array.from(container.children)
-                .filter(
-                  (child) =>
-                    (child as HTMLElement).dataset.dadPreview !== "true"
-                )
-                .indexOf(dropArea.element);
-              const nextPreviewIndex = targetIndex + (insertBefore ? 0 : 1);
-              if (
-                container !== previewContainer ||
-                nextPreviewIndex !== previewIndex
-              ) {
-                clearPreview();
-                previews = createDropPreview([targetRoot]);
-                placeDropPreview(container, previews, nextPreviewIndex);
-                previewContainer = container;
-                previewIndex = nextPreviewIndex;
-              }
-            }
+            dropIndicator ??= createFolderDropIndicator();
+            placeFolderDropIndicator(dropIndicator, dropArea, insertBefore);
           } else {
-            clearPreview();
+            clearDropIndicator();
           }
         } else {
-          clearPreview();
+          clearDropIndicator();
         }
       }
 
@@ -131,6 +111,9 @@ export function processFolderDragAndDrop(
           e.clientY + "px"
         })`;
         restoreSource = setDragSourceHidden([targetRoot]);
+        dropFoldersAreas = calculateFoldersDropAreas(
+          folderEls.filter((folderEl) => folderEl !== targetRoot),
+        );
         document.body.classList.add("dragging");
         document.body.append(dummy);
         onMouseMove(e, true);
@@ -141,7 +124,7 @@ export function processFolderDragAndDrop(
     if (dummy) {
       document.body.classList.remove("dragging");
       dummy.remove();
-      clearPreview();
+      clearDropIndicator();
       restoreSource();
       if (dropArea) {
         config.onDrop(

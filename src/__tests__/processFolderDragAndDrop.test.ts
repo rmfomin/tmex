@@ -29,26 +29,35 @@ jest.mock("@/newtab/feature/dragging/dragAndDrop", () => ({
   calculateFoldersDropAreas: jest.fn(() => [dropArea]),
   calculateSpacesDropAreas: jest.fn(() => []),
   calculateTargetInsertBeforeFolderId: jest.fn(),
+  createFolderDropIndicator: jest.fn(() => ({ style: {}, remove: jest.fn() })),
   createDropPreview: jest.fn(() => [{}]),
   createFolderDummy: jest.fn(() => ({ style: {} })),
   getFolderId: jest.fn(() => 10),
   getOverlappedDropArea: jest.fn(() => dropArea),
   getOverlappedSpaceDropArea: jest.fn(),
+  placeFolderDropIndicator: jest.fn(),
   placeDropPreview: jest.fn(),
+  removeFolderDropIndicator: jest.fn(),
   removeDropPreview: jest.fn(),
   setDragSourceHidden: jest.fn(() => jest.fn()),
 }));
 
-import { placeDropPreview } from "@/newtab/feature/dragging/dragAndDrop";
-import { calculateFoldersDropAreas } from "@/newtab/feature/dragging/dragAndDrop";
-import { createDropPreview } from "@/newtab/feature/dragging/dragAndDrop";
+import {
+  calculateFoldersDropAreas,
+  createFolderDropIndicator,
+  createDropPreview,
+  placeFolderDropIndicator,
+} from "@/newtab/feature/dragging/dragAndDrop";
 import { processFolderDragAndDrop } from "@/newtab/feature/dragging/processFolderDragAndDrop";
 
-test("first drag movement renders folder preview at current cursor position", () => {
+test("folder drag does not insert a preview into the folder layout", () => {
   const body = {
     classList: { add: jest.fn(), remove: jest.fn() },
     append: jest.fn(),
   };
+  (createFolderDropIndicator as jest.Mock).mockClear();
+  (createDropPreview as jest.Mock).mockClear();
+  (placeFolderDropIndicator as jest.Mock).mockClear();
   (global as any).document = {
     body,
     querySelectorAll: jest.fn(() => []),
@@ -67,17 +76,21 @@ test("first drag movement renders folder preview at current cursor position", ()
 
   onMouseMove!({ clientX: 100, clientY: 100 } as MouseEvent, true);
 
-  expect(placeDropPreview).toHaveBeenCalledTimes(1);
+  expect(createDropPreview).not.toHaveBeenCalled();
+  expect(createFolderDropIndicator).toHaveBeenCalledTimes(1);
+  expect(placeFolderDropIndicator).toHaveBeenCalledTimes(1);
 });
 
-test("first folder drag movement uses geometry from before source collapse", () => {
+test("folder drag recalculates target geometry after removing its source", () => {
   const body = {
     classList: { add: jest.fn(), remove: jest.fn() },
     append: jest.fn(),
   };
+  const source = { dataset: {}, style: {} } as unknown as HTMLElement;
+  const sibling = { dataset: {}, style: {} } as unknown as HTMLElement;
   (global as any).document = {
     body,
-    querySelectorAll: jest.fn(() => []),
+    querySelectorAll: jest.fn(() => [source, sibling]),
   };
   (calculateFoldersDropAreas as jest.Mock).mockClear();
 
@@ -89,12 +102,15 @@ test("first folder drag movement uses geometry from before source collapse", () 
       onCancel: jest.fn(),
       onDrop: jest.fn(),
     },
-    ({ dataset: {}, style: {} } as unknown) as HTMLElement
+    source
   );
 
   onMouseMove!({ clientX: 10, clientY: 0 } as MouseEvent, true);
 
-  expect(calculateFoldersDropAreas).toHaveBeenCalledTimes(1);
+  expect(calculateFoldersDropAreas).toHaveBeenCalledTimes(2);
+  expect((calculateFoldersDropAreas as jest.Mock).mock.calls[1][0]).toEqual([
+    sibling,
+  ]);
 });
 
 test("stable folder target does not recreate preview on every mouse move", () => {
@@ -122,5 +138,5 @@ test("stable folder target does not recreate preview on every mouse move", () =>
   onMouseMove!({ clientX: 100, clientY: 100 } as MouseEvent, true);
   onMouseMove!({ clientX: 100, clientY: 100 } as MouseEvent, true);
 
-  expect(createDropPreview).toHaveBeenCalledTimes(1);
+  expect(createDropPreview).not.toHaveBeenCalled();
 });

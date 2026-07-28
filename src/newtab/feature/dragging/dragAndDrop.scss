@@ -34,6 +34,16 @@ body.spaces-drag-outside * {
   transition: opacity 0.12s ease;
 }
 
+.dad-folder-drop-indicator {
+  position: fixed;
+  z-index: 3;
+  width: 3px;
+  pointer-events: none;
+  border-radius: 3px;
+  background: var(--colors-blue-500);
+  transform: translateX(-1px);
+}
+
 .tablo-caption {
   font-size: 22px;
   padding-top: 6px;

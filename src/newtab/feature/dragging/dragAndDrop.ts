@@ -438,6 +438,29 @@ export function removeDropPreview(previews: HTMLElement[]) {
   previews.forEach((preview) => preview.remove());
 }
 
+export function createFolderDropIndicator(): HTMLElement {
+  const indicator = document.createElement("div");
+  indicator.classList.add("dad-folder-drop-indicator");
+  return indicator;
+}
+
+export function placeFolderDropIndicator(
+  indicator: HTMLElement,
+  dropArea: DropArea,
+  insertBefore: boolean,
+) {
+  if (!indicator.isConnected) {
+    document.body.append(indicator);
+  }
+  indicator.style.left = `${insertBefore ? dropArea.rect.left : dropArea.rect.right}px`;
+  indicator.style.top = `${dropArea.rect.top}px`;
+  indicator.style.height = `${dropArea.rect.height}px`;
+}
+
+export function removeFolderDropIndicator(indicator: HTMLElement | undefined) {
+  indicator?.remove();
+}
+
 export function calculateFoldersDropAreas(
   folderEls: Element[],
   calcItemRects = false
