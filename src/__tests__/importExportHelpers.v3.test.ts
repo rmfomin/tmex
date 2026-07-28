@@ -44,6 +44,7 @@ const {
   importFromJsonWithCallbacks,
   importSpaceFromJsonWithCallback,
   createBrowserBookmarksFolderInputs,
+  onExportJson,
 } = require("../newtab/helpers/importExportHelpers");
 const { normalizeBackupV3 } = require("../newtab/helpers/dataFormatAdapters");
 const v3ExportFixture = require("../../docs/tech-debt/02apr.json");
@@ -60,6 +61,29 @@ function mockFileReaderWithContents(fileContents: string) {
     configurable: true,
   });
 }
+
+test("onExportJson downloads a backup with the current date in its filename", () => {
+  const anchor = {
+    setAttribute: jest.fn(),
+    click: jest.fn(),
+    remove: jest.fn(),
+  };
+  Object.defineProperty(global, "document", {
+    value: {
+      createElement: () => anchor,
+      body: { appendChild: jest.fn() },
+    },
+    configurable: true,
+  });
+  const currentDate = new Date().toISOString().slice(0, 10);
+
+  onExportJson([]);
+
+  expect(anchor.setAttribute).toHaveBeenCalledWith(
+    "download",
+    `backup_tablo_${currentDate}.json`,
+  );
+});
 
 test("createExportBackupV3 preserves grouped and collapsed v3 structure", () => {
   const spaces: SpaceV3[] = [

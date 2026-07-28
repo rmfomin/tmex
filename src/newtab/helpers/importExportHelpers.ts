@@ -134,7 +134,8 @@ function downloadObjectAsJson(exportObj: unknown, exportName: string) {
 
 export function onExportJson(spaces: SpaceV3[]) {
   const backup = createExportBackupV3(spaces);
-  downloadObjectAsJson(backup, "tablo_backup");
+  const currentDate = new Date().toISOString().slice(0, 10);
+  downloadObjectAsJson(backup, `backup_tablo_${currentDate}`);
 }
 
 export function onExportSpaceJson(space: SpaceV3) {
