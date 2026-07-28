@@ -1,38 +1,60 @@
-# Tmex
+# Tablo
 
-## publish
+Tablo is a Chrome extension that replaces the default New Tab page with a personal bookmark dashboard. It helps you organize links and quickly access browser activity without leaving the page.
 
-1. Run `node publish.js` for minor version update or `node publish.js --path` for path version update.
-2. Commit changes
-3. Upload update in the ChromeStore admin panel
+## Features
 
-Ниже короткая последовательность работы приложения, от старта к основным сценариям.
+- Organize bookmarks into spaces, folders, and groups.
+- Create, edit, move, and delete bookmarks and folders with drag and drop.
+- Search bookmarks and select multiple items for bulk actions.
+- View open tabs and recent browser history in the sidebar.
+- Switch between light, dark, and automatic themes.
+- Import and export dashboard or individual-space backups as JSON.
+- Keep application data locally in Chrome storage.
+- Undo the latest dashboard changes.
 
-1. Старт расширения идет из [background.ts](/Users/romanfomin/rmfomin-projects/tmex/src/background.ts). Он поднимает background-скрипт, по клику на иконку расширения открывает `newtab.html`, хранит последние активные вкладки через `chrome.tabs`, рассылает их через `BroadcastChannel` и отвечает на `get-last-active-tabs`.
+## Requirements
 
-2. UI новой вкладки начинается в [newtab.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/newtab.tsx). Приложение загружает данные только из `chrome.storage.local`, валидирует и нормализует локальный v3-формат, подготавливает состояние, тему, favicon-кеш и `whats new`, затем монтирует [App.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/App.tsx).
+- Google Chrome or another Chromium-based browser.
+- Node.js and npm.
 
-3. Базовые типы и стартовое состояние описаны в [types.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/types.ts), [state.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/state/state.ts), [storage.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/state/storage.ts). `storage.ts` читает и сохраняет state в `chrome.storage.local`, применяет тему и синхронизирует вкладки через `BroadcastChannel`.
+## Install and run locally
 
-4. Главный runtime живет в [App.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/App.tsx). Он поднимает `useReducer` с редьюсером из [actions.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/state/actions.ts), загружает открытые вкладки, историю и текущее окно, подписывается на события `chrome.tabs`, `chrome.windows` и сообщения background-скрипта.
+1. Install dependencies:
 
-5. Редьюсер и доменная логика сосредоточены в [actions.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/state/actions.ts) и [actionHelpers.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/state/actionHelpers.ts). Здесь создаются/обновляются/удаляются `spaces`, `folders` и `items`, ведется undo и локальное сохранение в `chrome.storage.local`.
+   ```bash
+   npm install
+   ```
 
-6. Основной экран рендерят [Bookmarks.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Bookmarks.tsx) и [Sidebar.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Sidebar.tsx).  
-   Верхняя панель и навигация: [TopBar.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/TopBar.tsx), [SpacesList.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/SpacesList.tsx), [Toolbar.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Toolbar.tsx), [Notification.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Notification.tsx).  
-   Содержимое закладок: [Folder.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Folder.tsx), [FolderItem.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/FolderItem.tsx), [EditableTitle.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/EditableTitle.tsx).  
-   Боковая панель: [SidebarOpenTabs.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/SidebarOpenTabs.tsx), [SidebarRecent.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/SidebarRecent.tsx), [SidebarItem.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/SidebarItem.tsx).
+2. Start the development build in watch mode:
 
-7. Drag-and-drop подключается из [dragAndDrop.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/dragAndDrop.ts). Частные сценарии разнесены по [processItemDragAndDrop.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/processItemDragAndDrop.ts), [processFolderDragAndDrop.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/processFolderDragAndDrop.ts), [processSpacesDragAndDrop.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/processSpacesDragAndDrop.ts), [processWidgetsDragAndDrop.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/processWidgetsDragAndDrop.ts), [processMultiselection.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/processMultiselection.ts), а общие утилиты лежат в [dragAndDropUtils.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/dragging/dragAndDropUtils.ts).
+   ```bash
+   npm run watch
+   ```
 
-8. Canvas и sticky notes работают через [Canvas.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Canvas.tsx), [canvasAPI.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/canvasAPI.ts), [WidgetSticker.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/WidgetSticker.tsx), [WidgetsHorMenu.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/WidgetsHorMenu.tsx), [widgetsSelectionFrame.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/widgetsSelectionFrame.ts), [widgetsContextMenu.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/widgetsContextMenu.ts), [getCanvasMenuOptions.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/getCanvasMenuOptions.ts), [const.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/canvas/const.ts).
+3. Open `chrome://extensions` in Chrome.
+4. Enable **Developer mode**.
+5. Click **Load unpacked** and select the project's `dist` directory.
 
-9. Глобальные действия пользователя обрабатывает [KeyboardAndMouseManager.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/KeyboardAndMouseManager.tsx): hotkeys, undo, удаление, поиск, работа с canvas. Контекстные меню и переносы собираются через [DropdownMenu.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/dropdown/DropdownMenu.tsx), [FolderItemMenu.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/dropdown/FolderItemMenu.tsx), [moveToHelpers.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/dropdown/moveToHelpers.tsx).
+Webpack updates `dist` after source changes. To apply an update in Chrome, click the extension's reload button on `chrome://extensions`.
 
-10. Импорт/онбординг идут через [Welcome.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/Welcome.tsx), [BookmarksImporter.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/BookmarksImporter.tsx), [ImportBookmarksFromSettings.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/ImportBookmarksFromSettings.tsx), модалки [Modal.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/modals/Modal.tsx), [ImportConfirmationModal.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/modals/ImportConfirmationModal.tsx), [ShortcutsModal.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/components/modals/ShortcutsModal.tsx), а стартовые данные создаются в [welcomeLogic.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/welcomeLogic.ts) и [importExportHelpers.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/importExportHelpers.ts).
+## Production build
 
-11. Вспомогательная логика распределена по helper-файлам: [utils.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/utils.ts), [fractionalIndexes.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/fractionalIndexes.ts), [selectionUtils.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/selectionUtils.ts), [actionsHelpersWithDOM.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/actionsHelpersWithDOM.ts), [handleBookmarksKeyDown.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/handleBookmarksKeyDown.ts), [recentHistoryUtils.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/recentHistoryUtils.ts), [faviconUtils.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/faviconUtils.ts), [isTabloTab.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/isTabloTab.ts), [bookmarksSwipes.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/bookmarksSwipes.ts), [mathUtils.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/mathUtils.ts), [MathTypes.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/MathTypes.ts), [Color.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/Color.ts), [classNameHelper.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/classNameHelper.ts), [whats-new.ts](/Users/romanfomin/rmfomin-projects/tmex/src/newtab/helpers/whats-new.ts).
+Create an optimized build:
 
-12. Файлы [popup.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/popup.tsx), [options.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/options.tsx), [content_script.tsx](/Users/romanfomin/rmfomin-projects/tmex/src/content_script.tsx) сейчас помечены как `disabled` и в основной логике новой вкладки не участвуют. [sum.ts](/Users/romanfomin/rmfomin-projects/tmex/src/sum.ts), [**tests**/sum.ts](/Users/romanfomin/rmfomin-projects/tmex/src/__tests__/sum.ts), [declaration.d.ts](/Users/romanfomin/rmfomin-projects/tmex/src/declaration.d.ts) тоже не относятся к runtime-логике приложения.
+```bash
+npm run build
+```
 
-Если хочешь, следующим сообщением могу сделать еще более сжатую версию: буквально 5-7 шагов без группировки по файлам, но с упоминанием всех файлов по ролям.
+When the command completes, select the `dist` directory through **Load unpacked** in `chrome://extensions`.
+
+## Available commands
+
+| Command | Description |
+| --- | --- |
+| `npm run watch` | Build in development mode and rebuild on file changes. The extension replaces the New Tab page. |
+| `npm run watch2` | Build in development mode without replacing the New Tab page. |
+| `npm run build` | Run TypeScript checks and create an optimized production build in `dist`. |
+| `npm run typecheck` | Run TypeScript type checks without creating build files. |
+| `npm test` | Run the test suite. |
+| `npm run clean` | Remove the `dist` build directory. |
