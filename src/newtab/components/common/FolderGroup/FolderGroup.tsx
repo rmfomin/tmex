@@ -25,6 +25,9 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
   hiddenFeatureIsEnabled: boolean;
 }) {
   const updateFolderItem = useDashboardStore((state) => state.updateFolderItem);
+  const deleteFolderGroup = useDashboardStore(
+    (state) => state.deleteFolderGroup
+  );
   const setItemInEdit = useUiStore((state) => state.setItemInEdit);
   const [showMenu, setShowMenu] = useState(false);
   const [localTitle, setLocalTitle] = useState(p.group.title);
@@ -62,6 +65,13 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
       }
     });
 
+    setShowMenu(false);
+  }
+
+  function onDelete() {
+    if (confirm(`Delete group '${p.group.title}'?`)) {
+      deleteFolderGroup(p.group.id);
+    }
     setShowMenu(false);
   }
 
@@ -124,6 +134,12 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
               onClick={onOpenAllTabs}
             >
               Open all tabs
+            </button>
+            <button
+              className="dropdown-menu__button dropdown-menu__button--dander focusable"
+              onClick={onDelete}
+            >
+              Delete group
             </button>
           </DropdownMenu>
         ) : null}

@@ -264,6 +264,25 @@ export function deleteFolderItems(
   }, state);
 }
 
+export function deleteFolderGroup(
+  state: DashboardState,
+  groupId: number,
+): DashboardState {
+  const folder = findFolderByItemId(state.spaces, groupId);
+  const group = folder?.items.find(
+    (item): item is GroupV3 => item.type === "group" && item.id === groupId,
+  );
+  if (!folder || !group) return state;
+
+  return updateFolderInState(state, folder.id, (currentFolder) => ({
+    ...currentFolder,
+    items: addItemsToFolder(
+      group.groupItems,
+      currentFolder.items.filter((item) => item.id !== groupId),
+    ),
+  }));
+}
+
 export function moveFolderItems(
   state: DashboardState,
   input: MoveFolderItemsInput,

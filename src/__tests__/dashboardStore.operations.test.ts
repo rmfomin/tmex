@@ -1,4 +1,60 @@
 import { createDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
+import type { DashboardState } from "@/newtab/state/dashboard/types";
+
+const stateWithGroup: DashboardState = {
+  currentSpaceId: 1,
+  spaces: [
+    {
+      id: 1,
+      position: "a0",
+      objectType: "space",
+      title: "Работа",
+      folders: [
+        {
+          id: 10,
+          position: "a0",
+          objectType: "folder",
+          title: "Инфраструктура",
+          items: [
+            {
+              id: 200,
+              position: "a0",
+              objectType: "group",
+              type: "group",
+              title: "Мониторинг",
+              groupItems: [
+                {
+                  id: 201,
+                  position: "a0",
+                  objectType: "bookmark",
+                  type: "bookmark",
+                  title: "Grafana",
+                  url: "https://grafana.example",
+                  favIconUrl: "",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+test("dashboard store восстанавливает удалённую группу через undo", () => {
+  const store = createDashboardStore(stateWithGroup);
+
+  store.getState().deleteFolderGroup(200);
+  expect(store.getState().spaces[0].folders[0].items).not.toContainEqual(
+    expect.objectContaining({ id: 200 }),
+  );
+
+  store.getState().undo();
+
+  expect(store.getState().spaces[0].folders[0].items).toEqual(
+    stateWithGroup.spaces[0].folders[0].items,
+  );
+});
 
 test("dashboard store moves items and restores the preceding dashboard snapshot with undo", () => {
   const store = createDashboardStore({

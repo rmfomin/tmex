@@ -66,4 +66,21 @@ describe("folder and group header contracts", () => {
     );
     expect(openAllFunction).toContain("setShowMenu(false)");
   });
+
+  test("group header menu confirms before deleting the group", () => {
+    const source = readSource(
+      "newtab/components/common/FolderGroup/FolderGroup.tsx"
+    );
+
+    const deleteFunction = source.match(
+      /function onDelete\(\) \{([\s\S]*?)\n  \}/,
+    )?.[1];
+
+    expect(source).toMatch(
+      /className="dropdown-menu__button dropdown-menu__button--dander focusable"[\s\S]*?Delete group/,
+    );
+    expect(deleteFunction).toMatch(
+      /if \(confirm\([^)]*\)\) \{\s*deleteFolderGroup\(p\.group\.id\);\s*\}/,
+    );
+  });
 });

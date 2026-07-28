@@ -6,6 +6,7 @@ import {
   createFolderItems,
   createSpace,
   deleteFolder,
+  deleteFolderGroup,
   deleteFolderItems,
   deleteSpace,
   moveFolder,
@@ -41,6 +42,7 @@ export type DashboardActions = {
   createFolderItem(input: CreateFolderItemInput): void;
   createFolderItems(input: CreateFolderItemsInput): void;
   deleteFolder(folderId: number): void;
+  deleteFolderGroup(groupId: number): void;
   deleteFolderItems(itemIds: number[]): void;
   updateFolderItem(itemId: number, patch: FolderItemPatch): void;
   selectSpace(spaceId: number): void;
@@ -80,6 +82,7 @@ function createDashboardSlice(
     createFolderItem: (input) => set((state) => applyWithUndo(state, createFolderItem(state, input))),
     createFolderItems: (input) => set((state) => applyWithUndo(state, createFolderItems(state, input))),
     deleteFolder: (folderId) => set((state) => applyWithUndo(state, deleteFolder(state, folderId))),
+    deleteFolderGroup: (groupId) => set((state) => applyWithUndo(state, deleteFolderGroup(state, groupId))),
     deleteFolderItems: (itemIds) => set((state) => applyWithUndo(state, deleteFolderItems(state, itemIds))),
     updateFolderItem: (itemId, patch) => set((state) => applyWithUndo(state, updateFolderItem(state, itemId, patch))),
     selectSpace: (spaceId) => {
