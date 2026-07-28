@@ -40,6 +40,8 @@ jest.mock("@/newtab/feature/dragging/dragAndDrop", () => ({
 }));
 
 import { placeDropPreview } from "@/newtab/feature/dragging/dragAndDrop";
+import { calculateFoldersDropAreas } from "@/newtab/feature/dragging/dragAndDrop";
+import { createDropPreview } from "@/newtab/feature/dragging/dragAndDrop";
 import { processFolderDragAndDrop } from "@/newtab/feature/dragging/processFolderDragAndDrop";
 
 test("first drag movement renders folder preview at current cursor position", () => {
@@ -66,4 +68,59 @@ test("first drag movement renders folder preview at current cursor position", ()
   onMouseMove!({ clientX: 100, clientY: 100 } as MouseEvent, true);
 
   expect(placeDropPreview).toHaveBeenCalledTimes(1);
+});
+
+test("first folder drag movement uses geometry from before source collapse", () => {
+  const body = {
+    classList: { add: jest.fn(), remove: jest.fn() },
+    append: jest.fn(),
+  };
+  (global as any).document = {
+    body,
+    querySelectorAll: jest.fn(() => []),
+  };
+  (calculateFoldersDropAreas as jest.Mock).mockClear();
+
+  processFolderDragAndDrop(
+    { clientX: 0, clientY: 0 } as React.MouseEvent,
+    {
+      onChangeSpace: jest.fn(),
+      onDragStarted: jest.fn(() => true),
+      onCancel: jest.fn(),
+      onDrop: jest.fn(),
+    },
+    ({ dataset: {}, style: {} } as unknown) as HTMLElement
+  );
+
+  onMouseMove!({ clientX: 10, clientY: 0 } as MouseEvent, true);
+
+  expect(calculateFoldersDropAreas).toHaveBeenCalledTimes(1);
+});
+
+test("stable folder target does not recreate preview on every mouse move", () => {
+  const body = {
+    classList: { add: jest.fn(), remove: jest.fn() },
+    append: jest.fn(),
+  };
+  (global as any).document = {
+    body,
+    querySelectorAll: jest.fn(() => []),
+  };
+  (createDropPreview as jest.Mock).mockClear();
+
+  processFolderDragAndDrop(
+    { clientX: 0, clientY: 0 } as React.MouseEvent,
+    {
+      onChangeSpace: jest.fn(),
+      onDragStarted: jest.fn(() => true),
+      onCancel: jest.fn(),
+      onDrop: jest.fn(),
+    },
+    ({ dataset: {}, style: {} } as unknown) as HTMLElement
+  );
+
+  onMouseMove!({ clientX: 100, clientY: 100 } as MouseEvent, true);
+  onMouseMove!({ clientX: 100, clientY: 100 } as MouseEvent, true);
+
+  expect(createDropPreview).toHaveBeenCalledTimes(1);
 });

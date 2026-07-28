@@ -26,6 +26,8 @@ export function processFolderDragAndDrop(
 ) {
   let dummy: undefined | HTMLElement = undefined;
   let previews: HTMLElement[] = [];
+  let previewContainer: HTMLElement | undefined = undefined;
+  let previewIndex: number | undefined = undefined;
   let restoreSource = () => {};
   const folderEls = Array.from(
     document.querySelectorAll(
@@ -39,6 +41,13 @@ export function processFolderDragAndDrop(
   const draggingFolderId = getFolderId(targetRoot);
   let targetInsertBeforeFolderId: number | undefined;
   let lastSelectedSpaceId: number | undefined;
+
+  const clearPreview = () => {
+    removeDropPreview(previews);
+    previews = [];
+    previewContainer = undefined;
+    previewIndex = undefined;
+  };
 
   const onViewportScrolled = () => {
     const folderEls = Array.from(
@@ -65,8 +74,7 @@ export function processFolderDragAndDrop(
           lastSelectedSpaceId = spaceDropArea.objectId;
           requestAnimationFrame(onViewportScrolled); // to recalculate dropFoldersAreas
         }
-        removeDropPreview(previews);
-        previews = [];
+        clearPreview();
         dropArea = undefined;
       } else {
         prevSpaceDropArea = undefined;
@@ -83,24 +91,29 @@ export function processFolderDragAndDrop(
           if (dropArea.objectId !== draggingFolderId) {
             const container = dropArea.element.parentElement;
             if (container) {
-              const targetIndex = Array.from(container.children).indexOf(
-                dropArea.element
-              );
-              removeDropPreview(previews);
-              previews = createDropPreview([targetRoot]);
-              placeDropPreview(
-                container,
-                previews,
-                targetIndex + (insertBefore ? 0 : 1)
-              );
+              const targetIndex = Array.from(container.children)
+                .filter(
+                  (child) =>
+                    (child as HTMLElement).dataset.dadPreview !== "true"
+                )
+                .indexOf(dropArea.element);
+              const nextPreviewIndex = targetIndex + (insertBefore ? 0 : 1);
+              if (
+                container !== previewContainer ||
+                nextPreviewIndex !== previewIndex
+              ) {
+                clearPreview();
+                previews = createDropPreview([targetRoot]);
+                placeDropPreview(container, previews, nextPreviewIndex);
+                previewContainer = container;
+                previewIndex = nextPreviewIndex;
+              }
             }
           } else {
-            removeDropPreview(previews);
-            previews = [];
+            clearPreview();
           }
         } else {
-          removeDropPreview(previews);
-          previews = [];
+          clearPreview();
         }
       }
 
@@ -118,7 +131,6 @@ export function processFolderDragAndDrop(
           e.clientY + "px"
         })`;
         restoreSource = setDragSourceHidden([targetRoot]);
-        onViewportScrolled();
         document.body.classList.add("dragging");
         document.body.append(dummy);
         onMouseMove(e, true);
@@ -129,7 +141,7 @@ export function processFolderDragAndDrop(
     if (dummy) {
       document.body.classList.remove("dragging");
       dummy.remove();
-      removeDropPreview(previews);
+      clearPreview();
       restoreSource();
       if (dropArea) {
         config.onDrop(
