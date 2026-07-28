@@ -4,6 +4,11 @@ body.dragging * {
   pointer-events: none;
 }
 
+body.spaces-drag-outside,
+body.spaces-drag-outside * {
+  cursor: not-allowed !important;
+}
+
 .dad-dummy {
   position: absolute;
   z-index: 2;

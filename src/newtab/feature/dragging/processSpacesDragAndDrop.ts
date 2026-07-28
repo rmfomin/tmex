@@ -11,6 +11,7 @@ type InitRes = {
   itemSlotLefts: number[];
   draggingItem: HTMLElement;
   draggingItemStartLeft: number;
+  draggingItemStartPosition: string;
 };
 
 export function processSpacesDragAndDrop(
@@ -18,6 +19,7 @@ export function processSpacesDragAndDrop(
   config: PConfigSpaces
 ) {
   let dummy: InitRes | undefined;
+  let restoreSource = () => {};
   let prevOverItem: HTMLElement | undefined = undefined;
   let prevInsertType: string = "";
 
@@ -75,10 +77,13 @@ export function processSpacesDragAndDrop(
     if (dummy) {
       // move dummy
       const delta = mouseDownEvent.clientX - e.clientX;
-      if (
+      const isInsideSpacesList =
         dummy.clonedSpacesListRect.left - 10 < e.clientX &&
-        e.clientX < dummy.clonedSpacesListRect.right + 10
-      ) {
+        e.clientX < dummy.clonedSpacesListRect.right + 10 &&
+        dummy.clonedSpacesListRect.top - 10 < e.clientY &&
+        e.clientY < dummy.clonedSpacesListRect.bottom + 10;
+      if (isInsideSpacesList) {
+        document.body.classList.remove("spaces-drag-outside");
         dummy.draggingItem.style.left = `${
           dummy.draggingItemStartLeft - delta
         }px`;
@@ -96,17 +101,35 @@ export function processSpacesDragAndDrop(
           prevInsertType = insertType;
           insertSpaceBetween(overItem, insertType);
         }
+      } else {
+        document.body.classList.add("spaces-drag-outside");
+        dummy.draggingItem.style.left = `${dummy.draggingItemStartLeft}px`;
+        dummy.draggingItem.dataset.position = dummy.draggingItemStartPosition;
+        updateItemsOrder(
+          dummy.clonedItems,
+          dummy.itemSlotLefts,
+          dummy.draggingItem
+        );
+        prevOverItem = undefined;
+        prevInsertType = "";
       }
     } else if (mouseMoved) {
       //create dummy
       dummy = createClonedSpacesList(target);
       document.body.appendChild(dummy.clonedSpacesList);
+      const sourceVisibility = target.style.visibility;
+      target.style.visibility = "hidden";
+      restoreSource = () => {
+        target.style.visibility = sourceVisibility;
+      };
     }
   };
   const onMouseUp = () => {
     if (dummy) {
       document.body.classList.remove("dragging");
+      document.body.classList.remove("spaces-drag-outside");
       dummy.clonedSpacesList.remove();
+      restoreSource();
       config.onChangeSpacePosition(
         parseInt(dummy.draggingItem.dataset.spaceId!, 10),
         dummy.draggingItem.dataset.position!
@@ -181,6 +204,7 @@ function createClonedSpacesList(target: HTMLElement): InitRes {
     itemSlotLefts,
     draggingItem,
     draggingItemStartLeft: parseFloat(draggingItem.style.left),
+    draggingItemStartPosition: draggingItem.dataset.position!,
   };
 }
 
