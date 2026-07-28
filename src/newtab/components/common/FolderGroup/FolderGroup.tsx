@@ -8,7 +8,7 @@ import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { useUiStore } from "@/newtab/state/ui/uiStore";
 import cn from "clsx";
 import { DropdownMenu } from "@/newtab/components/common/DropdownMenu/DropdownMenu";
-import ChevronIcon from "./icons/chevron.svg";
+import GroupChevronIcon from "./icons/group-chevron.svg";
 import { DOM_ROLE } from "@/newtab/helpers/domRoles";
 import styles from "./FolderGroup.module.scss";
 
@@ -105,7 +105,7 @@ export const FolderGroup = React.memo(function FolderGroup(p: {
           onClick={onToggleCollapsed}
           title={p.group.collapsed ? "Expand group" : "Collapse group"}
         >
-          <ChevronIcon />
+          <GroupChevronIcon />
         </button>
         <EditableTitle
           className={styles.title}

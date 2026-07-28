@@ -8,6 +8,34 @@ function readSource(relativePath: string): string {
 }
 
 describe("folder and group header contracts", () => {
+  test("folder and group use independent chevrons with their own color rules", () => {
+    const folderSource = readSource("newtab/components/common/Folder/Folder.tsx");
+    const groupSource = readSource(
+      "newtab/components/common/FolderGroup/FolderGroup.tsx"
+    );
+    const groupStyles = readSource(
+      "newtab/components/common/FolderGroup/FolderGroup.module.scss"
+    );
+    const folderChevron = readSource(
+      "newtab/components/common/Folder/icons/folder-chevron.svg"
+    );
+    const groupChevron = readSource(
+      "newtab/components/common/FolderGroup/icons/group-chevron.svg"
+    );
+
+    expect(folderSource).toContain(
+      'import FolderChevronIcon from "./icons/folder-chevron.svg";'
+    );
+    expect(groupSource).toContain(
+      'import GroupChevronIcon from "./icons/group-chevron.svg";'
+    );
+    expect(folderChevron).toContain('stroke="#242424"');
+    expect(groupChevron).toContain('stroke="currentColor"');
+    expect(groupStyles).toContain(
+      "color: var(--icon-color-group-chevron);"
+    );
+  });
+
   test("group header styles keep the title row aligned with inner items", () => {
     const source = readSource(
       "newtab/components/common/FolderGroup/FolderGroup.module.scss"

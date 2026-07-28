@@ -19,7 +19,7 @@ import { useDashboardStore } from "@/newtab/state/dashboard/dashboardStore";
 import { useUiStore } from "@/newtab/state/ui/uiStore";
 import { Color } from "@/newtab/helpers/color";
 import MenuIcon from "./icons/menu.svg";
-import ChevronIcon from "./icons/chevron.svg";
+import FolderChevronIcon from "./icons/folder-chevron.svg";
 import { getSpacesList } from "@/newtab/helpers/moveToHelpers";
 import Tab = chrome.tabs.Tab;
 import {
@@ -258,7 +258,7 @@ export const Folder = React.memo(function Folder(p: {
           onClick={onToggleCollapsed}
           title={p.folder.collapsed ? "Expand folder" : "Collapse folder"}
         >
-          <ChevronIcon />
+          <FolderChevronIcon />
         </button>
         <EditableTitle
           className={styles.titleText}
