@@ -2,13 +2,16 @@ import {
   calculateFoldersDropAreas,
   calculateSpacesDropAreas,
   calculateTargetInsertBeforeFolderId,
+  createDropPreview,
   createFolderDummy,
-  createPlaceholder,
   DropArea,
   getFolderId,
   getOverlappedDropArea,
   getOverlappedSpaceDropArea,
+  placeDropPreview,
   PConfigFolder,
+  removeDropPreview,
+  setDragSourceHidden,
 } from "@/newtab/feature/dragging/dragAndDrop";
 import {
   setScrollByDummyClientY,
@@ -19,14 +22,15 @@ import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 export function processFolderDragAndDrop(
   mouseDownEvent: React.MouseEvent,
   config: PConfigFolder,
-  targetRoot: HTMLElement,
+  targetRoot: HTMLElement
 ) {
   let dummy: undefined | HTMLElement = undefined;
-  const placeholder: HTMLElement = createPlaceholder(false);
+  let previews: HTMLElement[] = [];
+  let restoreSource = () => {};
   const folderEls = Array.from(
     document.querySelectorAll(
-      `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`,
-    ),
+      `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`
+    )
   );
   let dropFoldersAreas = calculateFoldersDropAreas(folderEls);
   let dropSpacesAreas = calculateSpacesDropAreas();
@@ -39,8 +43,8 @@ export function processFolderDragAndDrop(
   const onViewportScrolled = () => {
     const folderEls = Array.from(
       document.querySelectorAll(
-        `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`,
-      ),
+        `${roleSelector(DOM_ROLE.folder)}:not([data-folder-new="true"])`
+      )
     );
     dropFoldersAreas = calculateFoldersDropAreas(folderEls);
   };
@@ -61,7 +65,8 @@ export function processFolderDragAndDrop(
           lastSelectedSpaceId = spaceDropArea.objectId;
           requestAnimationFrame(onViewportScrolled); // to recalculate dropFoldersAreas
         }
-        placeholder.remove();
+        removeDropPreview(previews);
+        previews = [];
         dropArea = undefined;
       } else {
         prevSpaceDropArea = undefined;
@@ -72,28 +77,30 @@ export function processFolderDragAndDrop(
           targetInsertBeforeFolderId = calculateTargetInsertBeforeFolderId(
             dropFoldersAreas,
             dropArea,
-            insertBefore,
+            insertBefore
           );
 
           if (dropArea.objectId !== draggingFolderId) {
-            const leftShift = 10;
-            dropArea.element.parentElement?.appendChild(placeholder);
-            placeholder.style.top = `${dropArea.element.offsetTop + 22}px`;
-            placeholder.style.left = insertBefore
-              ? `${dropArea.element.offsetLeft + leftShift}px`
-              : `${
-                  dropArea.element.offsetLeft +
-                  dropArea.element.clientWidth +
-                  leftShift
-                }px`;
-            placeholder.style.height = `${
-              dropArea.element.clientHeight - 80
-            }px`;
+            const container = dropArea.element.parentElement;
+            if (container) {
+              const targetIndex = Array.from(container.children).indexOf(
+                dropArea.element
+              );
+              removeDropPreview(previews);
+              previews = createDropPreview([targetRoot]);
+              placeDropPreview(
+                container,
+                previews,
+                targetIndex + (insertBefore ? 0 : 1)
+              );
+            }
           } else {
-            placeholder.remove();
+            removeDropPreview(previews);
+            previews = [];
           }
         } else {
-          placeholder.remove();
+          removeDropPreview(previews);
+          previews = [];
         }
       }
 
@@ -110,9 +117,11 @@ export function processFolderDragAndDrop(
         dummy.style.transform = `translateX(${e.clientX + "px"}) translateY(${
           e.clientY + "px"
         })`;
-        targetRoot.style.opacity = "0.2";
+        restoreSource = setDragSourceHidden([targetRoot]);
+        onViewportScrolled();
         document.body.classList.add("dragging");
         document.body.append(dummy);
+        onMouseMove(e, true);
       }
     }
   };
@@ -120,13 +129,13 @@ export function processFolderDragAndDrop(
     if (dummy) {
       document.body.classList.remove("dragging");
       dummy.remove();
-      placeholder.remove();
-      targetRoot.style.removeProperty("opacity");
+      removeDropPreview(previews);
+      restoreSource();
       if (dropArea) {
         config.onDrop(
           draggingFolderId,
           lastSelectedSpaceId,
-          targetInsertBeforeFolderId,
+          targetInsertBeforeFolderId
         );
       } else {
         config.onCancel();
@@ -138,7 +147,7 @@ export function processFolderDragAndDrop(
     mouseDownEvent,
     onMouseMove,
     onMouseUp,
-    onViewportScrolled,
+    onViewportScrolled
   );
   return unsubscribeEvents;
 }

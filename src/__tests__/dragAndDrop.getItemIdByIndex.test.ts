@@ -23,9 +23,13 @@ import {
   getDropAreaFolderId,
   getDropAreaGroupId,
   createTabDummy,
+  createDropPreview,
   getDragPreviewElement,
   getItemIdByIndex,
   getOverlappedDropArea,
+  placeDropPreview,
+  removeDropPreview,
+  setDragSourceHidden,
 } from "@/newtab/feature/dragging/dragAndDrop";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
@@ -63,6 +67,64 @@ test("getItemIdByIndex returns bookmark id for top-level bookmark drop target", 
   } as unknown) as HTMLElement;
 
   expect(getItemIdByIndex(folderItemsBox, 0)).toBe(102);
+});
+
+test("temporary preview is ignored when resolving the next item id", () => {
+  const item = (id: string) => ({
+    dataset: {},
+    querySelector: jest.fn(() => ({ dataset: { id } })),
+  });
+  const preview = { dataset: { dadPreview: "true" } };
+  const children = [item("101"), preview, item("102")];
+  const container = ({
+    children: {
+      length: children.length,
+      item: (index: number) => children[index],
+    },
+  } as unknown) as HTMLElement;
+
+  expect(getItemIdByIndex(container, 1)).toBe(102);
+});
+
+test("preview occupies a target position while source is hidden and is restored on cleanup", () => {
+  const previewStyle = {
+    display: "none",
+    removeProperty(property: string) {
+      if (property === "display") {
+        this.display = "";
+      }
+    },
+  };
+  const preview = ({
+    dataset: {},
+    classList: { add: jest.fn() },
+    style: previewStyle,
+    remove: jest.fn(),
+  } as unknown) as HTMLElement;
+  const source = ({
+    dataset: {},
+    style: { display: "" },
+    cloneNode: jest.fn(() => preview),
+  } as unknown) as HTMLElement;
+  const target = ({
+    children: { length: 0, item: jest.fn() },
+    insertBefore: jest.fn(),
+  } as unknown) as HTMLElement;
+  const restoreSource = setDragSourceHidden([source]);
+  const previews = createDropPreview([source]);
+
+  placeDropPreview(target, previews, 0);
+
+  expect(source.style.display).toBe("none");
+  expect(preview.dataset.dadPreview).toBe("true");
+  expect(preview.style.display).toBe("");
+  expect(target.insertBefore).toHaveBeenCalledWith(preview, null);
+
+  removeDropPreview(previews);
+  restoreSource();
+
+  expect(preview.remove).toHaveBeenCalledTimes(2);
+  expect(source.style.display).toBe("");
 });
 
 test("group header drag preview uses the whole group element", () => {
@@ -201,6 +263,14 @@ test("group header can be used as a drop area that inserts into group end", () =
   ]);
 });
 
+test("temporary preview is excluded from drop areas", () => {
+  const preview = ({
+    closest: jest.fn(() => ({ dataset: { dadPreview: "true" } })),
+  } as unknown) as Element;
+
+  expect(calculateFoldersDropAreas([preview], true)).toEqual([]);
+});
+
 test("group drop target style outlines the whole group", () => {
   const source = fs.readFileSync(
     path.join(
@@ -212,4 +282,16 @@ test("group drop target style outlines the whole group", () => {
 
   expect(source).toContain('[data-drop-target="true"]');
   expect(source).toContain("outline:");
+});
+
+test("drag preview has no selected-item background", () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, "../newtab/feature/dragging/dragAndDrop.scss"),
+    "utf8"
+  );
+
+  expect(source).toContain(".dad-drop-preview");
+  expect(source).toContain("opacity: 0.18");
+  expect(source).toContain('.dad-dummy [data-selected="true"]');
+  expect(source).toContain("background-color: transparent !important;");
 });

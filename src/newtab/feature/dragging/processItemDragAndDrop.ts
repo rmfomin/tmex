@@ -5,43 +5,49 @@ import {
 } from "@/newtab/feature/dragging/dragAndDropUtils";
 import {
   calculateFoldersDropAreas,
-  createPlaceholder,
+  createDropPreview,
   createTabDummy,
-  getDragPreviewElement,
+  getDragLayoutElement,
   getFolderId,
   getIdsFromElements,
   getItemIdByIndex,
   getNewPlacementForItem,
   getOverlappedDropArea,
+  placeDropPreview,
   PConfigItem,
+  removeDropPreview,
+  setDragSourceHidden,
   DropArea,
 } from "@/newtab/feature/dragging/dragAndDrop";
-import { inRange } from "@/newtab/helpers/mathUtils";
 import { DOM_ROLE, roleSelector } from "@/newtab/helpers/domRoles";
 
 export function processItemDragAndDrop(
   mouseDownEvent: React.MouseEvent,
   config: PConfigItem,
-  targetRoots: HTMLElement[],
+  targetRoots: HTMLElement[]
 ) {
   let originalFolderId: number;
   let originalIndex: number;
   let dummy: undefined | HTMLElement = undefined;
-  const placeholder: HTMLElement = createPlaceholder(true);
+  let previews: HTMLElement[] = [];
+  let restoreSource = () => {};
   const canDropIntoGroupHeader = targetRoots.every(
-    (targetRoot) => targetRoot.dataset.role !== DOM_ROLE.groupHeader,
+    (targetRoot) => targetRoot.dataset.role !== DOM_ROLE.groupHeader
   );
 
-  const folderEls = Array.from(
-    document.querySelectorAll(
-      `${
-        canDropIntoGroupHeader ? `${roleSelector(DOM_ROLE.groupHeader)}, ` : ""
-      }${roleSelector(DOM_ROLE.groupItems)}, ${roleSelector(
-        DOM_ROLE.folderItems,
-      )}`,
-    ),
-  );
-  let dropAreas = calculateFoldersDropAreas(folderEls, true);
+  const getFolderElements = () =>
+    Array.from(
+      document.querySelectorAll(
+        `${
+          canDropIntoGroupHeader
+            ? `${roleSelector(DOM_ROLE.groupHeader)}, `
+            : ""
+        }${roleSelector(DOM_ROLE.groupItems)}, ${roleSelector(
+          DOM_ROLE.folderItems
+        )}`
+      )
+    );
+  let dropAreas = calculateFoldersDropAreas(getFolderElements(), true);
 
   let prevBoxToDrop: HTMLElement | undefined = undefined;
   let prevHighlightedGroup: HTMLElement | undefined = undefined;
@@ -51,7 +57,7 @@ export function processItemDragAndDrop(
 
   const onViewportScrolled = () => {
     // recalculate drop areas if viewport was scrolled
-    dropAreas = calculateFoldersDropAreas(folderEls, true);
+    dropAreas = calculateFoldersDropAreas(getFolderElements(), true);
   };
 
   const onMouseMove = (e: MouseEvent, mouseMoved: boolean) => {
@@ -73,19 +79,14 @@ export function processItemDragAndDrop(
 
         if (curBoxToDrop) {
           if (dropArea?.insertAtEnd) {
-            placeholder.remove();
             prevHighlightedGroup =
               (curBoxToDrop.closest(
-                roleSelector(DOM_ROLE.folderGroup),
+                roleSelector(DOM_ROLE.folderGroup)
               ) as HTMLElement | null) ?? undefined;
             if (prevHighlightedGroup) {
               prevHighlightedGroup.dataset.dropTarget = "true";
             }
-          } else {
-            curBoxToDrop.appendChild(placeholder);
           }
-        } else {
-          placeholder.remove();
         }
         prevBoxToDrop = curBoxToDrop;
       }
@@ -96,18 +97,32 @@ export function processItemDragAndDrop(
         const tryAddToOriginalPos =
           !targetGroupId &&
           targetFolderId === originalFolderId &&
-          inRange(res.index, originalIndex, originalIndex + targetRoots.length);
+          res.index === originalIndex;
         if (tryAddToOriginalPos) {
-          //actual only for isFolderItem
-          placeholder.style.top = `${dropArea.itemRects[originalIndex].itemTop}px`;
           indexToDrop = originalIndex;
         } else if (dropArea.insertAtEnd) {
-          placeholder.remove();
           indexToDrop = dropArea.itemRects.length;
         } else {
-          placeholder.style.top = `${res.placeholderY}px`;
           indexToDrop = res.index;
         }
+
+        const previewContainer = dropArea.insertAtEnd
+          ? (curBoxToDrop
+              .closest(roleSelector(DOM_ROLE.folderGroup))
+              ?.querySelector(roleSelector(DOM_ROLE.groupItems)) as HTMLElement)
+          : curBoxToDrop;
+        if (previewContainer) {
+          removeDropPreview(previews);
+          previews = createDropPreview(targetRoots);
+          placeDropPreview(
+            previewContainer,
+            previews,
+            dropArea.insertAtEnd ? Number.MAX_SAFE_INTEGER : indexToDrop
+          );
+        }
+      } else {
+        removeDropPreview(previews);
+        previews = [];
       }
 
       setScrollByDummyClientY(e.clientY);
@@ -121,7 +136,7 @@ export function processItemDragAndDrop(
         dummy = createTabDummy(
           targetRoots,
           mouseDownEvent,
-          config.isFolderItem,
+          config.isFolderItem
         );
         dummy.style.transform = `translateX(${e.clientX + "px"}) translateY(${
           e.clientY + "px"
@@ -133,12 +148,17 @@ export function processItemDragAndDrop(
           const targetRoot = targetRoots[0];
           // here we remember only first index from all selected elements
           originalIndex = Array.from(
-            targetRoot.parentElement!.parentElement!.children,
+            targetRoot.parentElement!.parentElement!.children
           ).indexOf(targetRoot.parentElement!);
           originalFolderId = getFolderId(
-            targetRoot.parentElement!.parentElement!,
+            targetRoot.parentElement!.parentElement!
           );
         }
+        restoreSource = setDragSourceHidden(
+          targetRoots.map(getDragLayoutElement)
+        );
+        onViewportScrolled();
+        onMouseMove(e, true);
       }
     }
   };
@@ -146,17 +166,15 @@ export function processItemDragAndDrop(
     if (dummy) {
       document.body.classList.remove("dragging");
       dummy.remove();
-      placeholder.remove();
+      removeDropPreview(previews);
+      restoreSource();
       if (prevHighlightedGroup) {
         delete prevHighlightedGroup.dataset.dropTarget;
       }
-      targetRoots.forEach((el) =>
-        getDragPreviewElement(el).style.removeProperty("opacity"),
-      );
       const tryAddToOriginalPos =
         !currentDropArea?.groupId &&
         targetFolderId === originalFolderId &&
-        inRange(indexToDrop, originalIndex, originalIndex + targetRoots.length);
+        indexToDrop === originalIndex;
       if (prevBoxToDrop && !tryAddToOriginalPos) {
         const folderId = getFolderId(prevBoxToDrop);
         const insertBeforeItemId = currentDropArea?.insertAtEnd
@@ -166,7 +184,7 @@ export function processItemDragAndDrop(
           folderId,
           insertBeforeItemId,
           getIdsFromElements(targetRoots),
-          currentDropArea?.groupId,
+          currentDropArea?.groupId
         );
       } else {
         config.onCancel();
@@ -183,7 +201,7 @@ export function processItemDragAndDrop(
     mouseDownEvent,
     onMouseMove,
     onMouseUp,
-    onViewportScrolled,
+    onViewportScrolled
   );
   return unsubscribeEvents;
 }

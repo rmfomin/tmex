@@ -1,0 +1,77 @@
+<style>
+  .drag-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .drag-choice { cursor: pointer; }
+  .drag-choice:focus-within, .drag-choice:hover { outline: 2px solid var(--primary); outline-offset: 4px; }
+  .drag-title { font-weight: 500; margin: 10px 0 4px; }
+  .drag-note { color: var(--muted-foreground); margin: 0; }
+  .board { position: relative; min-height: 300px; padding: 14px; background: var(--background); color: var(--foreground); }
+  .label { color: var(--muted-foreground); margin-bottom: 8px; }
+  .source { opacity: .38; }
+  .target { margin-top: 20px; }
+  .bookmark { display: flex; align-items: center; gap: 8px; min-height: 31px; padding: 3px 6px; border-radius: 5px; }
+  .bookmark + .bookmark { margin-top: 2px; }
+  .favicon { width: 16px; height: 16px; border-radius: 4px; background: var(--secondary); }
+  .line { height: 9px; border-radius: 4px; background: var(--secondary); flex: 1; }
+  .line.short { max-width: 54%; }
+  .gap { height: 31px; margin: 2px 0; border-top: 1px dashed var(--muted-foreground); border-bottom: 1px dashed var(--muted-foreground); opacity: .55; }
+  .preview { border: 1px solid var(--primary); background: color-mix(in srgb, var(--primary) var(--preview-opacity), transparent); }
+  .floating { position: absolute; right: 10px; top: 93px; width: 68%; border: 1px solid var(--primary); background: color-mix(in srgb, var(--primary) var(--preview-opacity), transparent); box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 16%, transparent); }
+  .no-fill { background: transparent; }
+  @media (max-width: 660px) { .drag-choices { grid-template-columns: 1fr; } }
+</style>
+
+<h2>Прозрачность перетаскиваемой закладки</h2>
+<p class="subtitle">Во всех вариантах источник исчезает, соседние элементы схлопываются, а в цели появляется preview.</p>
+
+<div class="drag-choices" data-multiselect="false">
+  <button class="drag-choice" type="button" data-choice="subtle" onclick="toggleSelect(this)" style="--preview-opacity: 18%;">
+    <div class="board">
+      <div class="label">Источник</div>
+      <div class="source">
+        <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+        <div class="bookmark"><span class="favicon"></span><span class="line short"></span></div>
+      </div>
+      <div class="label target">Место вставки</div>
+      <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+      <div class="bookmark preview"><span class="favicon"></span><span class="line short"></span></div>
+      <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+      <div class="bookmark floating"><span class="favicon"></span><span class="line short"></span></div>
+    </div>
+    <p class="drag-title">A · Лёгкий фон — рекомендую</p>
+    <p class="drag-note">18%: видно форму, содержимое под курсором почти не перекрывается.</p>
+  </button>
+
+  <button class="drag-choice" type="button" data-choice="visible" onclick="toggleSelect(this)" style="--preview-opacity: 32%;">
+    <div class="board">
+      <div class="label">Источник</div>
+      <div class="source">
+        <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+        <div class="bookmark"><span class="favicon"></span><span class="line short"></span></div>
+      </div>
+      <div class="label target">Место вставки</div>
+      <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+      <div class="bookmark preview"><span class="favicon"></span><span class="line short"></span></div>
+      <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+      <div class="bookmark floating"><span class="favicon"></span><span class="line short"></span></div>
+    </div>
+    <p class="drag-title">B · Заметный фон</p>
+    <p class="drag-note">32%: цель заметнее, но плавающий элемент сильнее закрывает список.</p>
+  </button>
+
+  <button class="drag-choice" type="button" data-choice="outline" onclick="toggleSelect(this)" style="--preview-opacity: 0%;">
+    <div class="board">
+      <div class="label">Источник</div>
+      <div class="source">
+        <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+        <div class="bookmark"><span class="favicon"></span><span class="line short"></span></div>
+      </div>
+      <div class="label target">Место вставки</div>
+      <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+      <div class="bookmark preview no-fill"><span class="favicon"></span><span class="line short"></span></div>
+      <div class="bookmark"><span class="favicon"></span><span class="line"></span></div>
+      <div class="bookmark floating no-fill"><span class="favicon"></span><span class="line short"></span></div>
+    </div>
+    <p class="drag-title">C · Только контур</p>
+    <p class="drag-note">Фон отсутствует: минимальное перекрытие, но слабее ощущение захвата.</p>
+  </button>
+</div>
